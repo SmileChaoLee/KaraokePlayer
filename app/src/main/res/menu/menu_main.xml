@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity" >
+
+    <item android:id="@+id/file"
+        android:title="@string/fileString"
+        android:orderInCategory="1"
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/autoPlay"
+                android:title="@string/autoPlayString"
+                android:orderInCategory="1"
+                android:checkable="true"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/open"
+                android:title="@string/openString"
+                android:orderInCategory="2"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/close"
+                android:title="@string/closeString"
+                android:orderInCategory="3"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/privacyPolicy"
+                android:title="@string/privacyPolicyString"
+                android:orderInCategory="4"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/exit"
+                android:title="@string/exitString"
+                android:orderInCategory="5"
+                app:showAsAction="never">
+            </item>
+        </menu>
+    </item>
+
+    <item android:id="@+id/action"
+        android:title="@string/actionString"
+        android:orderInCategory="2"
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/play"
+                android:title="@string/playString"
+                android:orderInCategory="1"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/pause"
+                android:title="@string/pauseString"
+                android:orderInCategory="2"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/stop"
+                android:title="@string/stopString"
+                android:orderInCategory="3"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/replayString"
+                android:title="@string/replayString"
+                android:orderInCategory="4"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/fforward"
+                android:title="@string/fforwardString"
+                android:orderInCategory="5"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/volume"
+                android:title="@string/volumeString"
+                android:orderInCategory="6"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/toTV"
+                android:title="@string/toTVString"
+                android:orderInCategory="7"
+                app:showAsAction="never">
+            </item>
+        </menu>
+    </item>
+
+    <item android:id="@+id/audioTrack"
+        android:title="@string/audioTrackString"
+        android:orderInCategory="3"
+        app:showAsAction="always">
+    </item>
+
+    <item android:id="@+id/channel"
+        android:title="@string/channelString"
+        android:orderInCategory="4"
+        app:showAsAction="always">
+        <menu>
+            <item android:id="@+id/leftChannel"
+                android:title="@string/leftChannelString"
+                android:orderInCategory="1"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/rightChannel"
+                android:title="@string/rightChannelString"
+                android:orderInCategory="2"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/stereoChannel"
+                android:title="@string/stereoChannelString"
+                android:orderInCategory="3"
+                app:showAsAction="never">
+            </item>
+        </menu>
+    </item>
+
+</menu>

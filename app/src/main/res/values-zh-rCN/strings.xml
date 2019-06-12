@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">卡拉OK播放器</string>
+    <string name="fileString">档案</string>
+    <string name="autoPlayString">自动播放</string>
+    <string name="openString">开启</string>
+    <string name="closeString">关闭</string>
+    <string name="privacyPolicyString">隐私政策</string>
+    <string name="exitString">离开</string>
+    <string name="actionString">动作</string>
+    <string name="playString">播放</string>
+    <string name="pauseString">暂停</string>
+    <string name="stopString">切歌</string>
+    <string name="replayString">重播</string>
+    <string name="fforwardString">快转</string>
+    <string name="toTVString">电视播放</string>
+    <string name="volumeString">音量</string>
+    <string name="audioTrackString">音轨</string>
+    <string name="channelString">声道</string>
+    <string name="leftChannelString">左声道</string>
+    <string name="rightChannelString">右声道</string>
+    <string name="stereoChannelString">立体声</string>
+</resources>

@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">KaraokePlayer</string>
+    <string name="fileString">File</string>
+    <string name="autoPlayString">Auto Play</string>
+    <string name="openString">Open</string>
+    <string name="closeString">Close</string>
+    <string name="privacyPolicyString">Privacy Policy</string>
+    <string name="exitString">Exit</string>
+    <string name="actionString">Action</string>
+    <string name="playString">Play</string>
+    <string name="pauseString">Pause</string>
+    <string name="stopString">Stop</string>
+    <string name="replayString">Replay</string>
+    <string name="fforwardString">Fast-Forward</string>
+    <string name="toTVString">To TV</string>
+    <string name="volumeString">Volume</string>
+    <string name="audioTrackString">Audio</string>
+    <string name="channelString">Channel</string>
+    <string name="leftChannelString">Left</string>
+    <string name="rightChannelString">Right</string>
+    <string name="stereoChannelString">Stereo</string>
+</resources>
