@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--    use customized ToolBar
     <include layout="@layout/toolbar_layout" />
-
-
+    -->
 
 </android.support.constraint.ConstraintLayout>
