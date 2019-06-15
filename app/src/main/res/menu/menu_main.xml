@@ -58,7 +58,7 @@
                 android:orderInCategory="3"
                 app:showAsAction="never">
             </item>
-            <item android:id="@+id/replayString"
+            <item android:id="@+id/replay"
                 android:title="@string/replayString"
                 android:orderInCategory="4"
                 app:showAsAction="never">
@@ -68,8 +68,8 @@
                 android:orderInCategory="5"
                 app:showAsAction="never">
             </item>
-            <item android:id="@+id/volume"
-                android:title="@string/volumeString"
+            <item android:id="@+id/rewind"
+                android:title="@string/rewindString"
                 android:orderInCategory="6"
                 app:showAsAction="never">
             </item>

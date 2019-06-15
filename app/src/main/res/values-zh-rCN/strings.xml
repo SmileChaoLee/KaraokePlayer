@@ -13,6 +13,7 @@
     <string name="stopString">切歌</string>
     <string name="replayString">重播</string>
     <string name="fforwardString">快转</string>
+    <string name="rewindString">倒转</string>
     <string name="toTVString">电视播放</string>
     <string name="volumeString">音量</string>
     <string name="audioTrackString">音轨</string>

@@ -12,6 +12,7 @@
     <string name="stopString">Stop</string>
     <string name="replayString">Replay</string>
     <string name="fforwardString">Fast-Forward</string>
+    <string name="rewindString">Rewind</string>
     <string name="toTVString">To TV</string>
     <string name="volumeString">Volume</string>
     <string name="audioTrackString">Audio</string>
