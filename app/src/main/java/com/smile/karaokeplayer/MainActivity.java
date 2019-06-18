@@ -1,10 +1,14 @@
 package com.smile.karaokeplayer;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -14,20 +18,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.io.File;
 import java.util.Locale;
+
+import static com.smile.karaokeplayer.Utilities.ExternalStorageUtil.isExternalStorageReadable;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String TAG = new String(".MainActivity");
-    private final String LOG_TAG = new String("MediaSessionCompatTag");
+    private static final String TAG = new String(".MainActivity");
+    private static final String LOG_TAG = new String("MediaSessionCompatTag");
+    private static final int PERMISSION_REQUEST_CODE = 0x11;
     private final int PrivacyPolicyActivityRequestCode = 10;
 
     private float textFontSize;
@@ -59,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
 
     private boolean isAutoPlay;
+    private boolean hasPermissionForExternalStorage;
     private int mCurrentState;
 
     @Override
@@ -125,13 +137,14 @@ public class MainActivity extends AppCompatActivity {
         mediaTransportControls = mediaControllerCompat.getTransportControls();
 
         mediaPlayer =  new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        /*
         try {
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             // AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.demo_video);
             // mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             // afd.close();
-            // Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.demo_video);
-            Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_music);
+            Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.perfume_h264);
+            // Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_music);
             mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
             mediaPlayer.prepare();
             mediaPlayer.setVolume(1.0f, 1.0f);
@@ -140,8 +153,17 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "Exception happened to MediaPlayer.");
             ex.printStackTrace();
         }
+        */
 
         isAutoPlay = false;
+        hasPermissionForExternalStorage = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+            }
+        }
     }
 
     @Override
@@ -202,6 +224,38 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.open:
+                if (!hasPermissionForExternalStorage) {
+                    Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (isExternalStorageReadable()) {
+                        // has readable external storage
+                        Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
+                        try {
+                            String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                            Log.d(TAG, "Public root directory: " + externalPath);
+                            String filePath = externalPath + "/Song/perfume_h264.mp4";
+                            Log.d(TAG, "File path: " + filePath);
+                            File songFile = new File(filePath);
+                            if (songFile.exists()) {
+                                Log.d(TAG, "perfume_h264.mp4 exists");
+                            } else {
+                                Log.d(TAG, "perfume_h264.mp4 does not exist");
+                            }
+
+                            Uri mediaUri = Uri.parse("file://" + filePath);
+                            mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
+                            mediaPlayer.prepare();
+                            mediaPlayer.setVolume(1.0f, 1.0f);
+                            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
+                        } catch (Exception ex) {
+                            Log.d(TAG, "Exception happened to MediaPlayer.");
+                            ex.printStackTrace();
+                        }
+                    } else {
+                        Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
+                        Log.d(TAG, "Does not Have readable external storage.");
+                    }
+                }
                 break;
             case R.id.close:
                 break;
@@ -285,6 +339,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                hasPermissionForExternalStorage = false;
+                Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+            } else {
+                hasPermissionForExternalStorage = true;
+            }
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -303,6 +371,15 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        exitApplication();
+    }
+
+    private void exitApplication() {
+        finish();
     }
 
     private void setMediaPlaybackState(int state) {
