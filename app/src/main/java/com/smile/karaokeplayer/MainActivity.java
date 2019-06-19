@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -17,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = new String(".MainActivity");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
-    private final int PrivacyPolicyActivityRequestCode = 10;
+    private static final int PrivacyPolicyActivityRequestCode = 10;
+
+    private static final int STATE_NONE = 0;
+    private static final int STATE_PREPARED = 1;
+    private static final int STATE_PLAYING = 2;
+    private static final int STATE_PAUSED = 3;
+    private static final int STATE_STOPPED = 4;
+    private static final int STATE_COMPLETED = 5;
 
     private float textFontSize;
     private float fontScale;
@@ -61,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
+
+    private VideoSurfaceView videoSurfaceView;
 
     private MediaSessionCompat mediaSessionCompat;
     private PlaybackStateCompat.Builder playbackStateBuilder;
@@ -108,6 +119,39 @@ public class MainActivity extends AppCompatActivity {
         supportToolbar.setCustomView(titleView);
         //
 
+        // Video player view
+        final LinearLayout videoPlayViewLayout = findViewById(R.id.videoPlayViewLayout);
+        videoSurfaceView = new VideoSurfaceView(this);
+        videoPlayViewLayout.addView(videoSurfaceView);
+        //
+
+        mediaPlayer =  new MediaPlayer();
+        mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mediaPlayer) {
+                mediaPlayer.stop(); // has to be here before prepare()
+                mediaTransportControls.prepare();
+            }
+        });
+        /*
+        try {
+            // AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.demo_video);
+            // mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            // afd.close();
+            Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.perfume_h264);
+            // Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_music);
+            mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
+            mediaPlayer.prepare();
+            mediaPlayer.setVolume(1.0f, 1.0f);
+            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
+        } catch (Exception ex) {
+            Log.d(TAG, "Exception happened to MediaPlayer.");
+            ex.printStackTrace();
+        }
+        */
+
         // Create a MediaSessionCompat
         mediaSessionCompat = new MediaSessionCompat(this, LOG_TAG);
 
@@ -135,25 +179,6 @@ public class MainActivity extends AppCompatActivity {
         mediaControllerCallback = new MediaControllerCallback();
         mediaControllerCompat.registerCallback(mediaControllerCallback);
         mediaTransportControls = mediaControllerCompat.getTransportControls();
-
-        mediaPlayer =  new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        /*
-        try {
-            // AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.demo_video);
-            // mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            // afd.close();
-            Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.perfume_h264);
-            // Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_music);
-            mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
-            mediaPlayer.prepare();
-            mediaPlayer.setVolume(1.0f, 1.0f);
-            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-        } catch (Exception ex) {
-            Log.d(TAG, "Exception happened to MediaPlayer.");
-            ex.printStackTrace();
-        }
-        */
 
         isAutoPlay = false;
         hasPermissionForExternalStorage = true;
@@ -230,26 +255,17 @@ public class MainActivity extends AppCompatActivity {
                     if (isExternalStorageReadable()) {
                         // has readable external storage
                         Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
-                        try {
-                            String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                            Log.d(TAG, "Public root directory: " + externalPath);
-                            String filePath = externalPath + "/Song/perfume_h264.mp4";
-                            Log.d(TAG, "File path: " + filePath);
-                            File songFile = new File(filePath);
-                            if (songFile.exists()) {
-                                Log.d(TAG, "perfume_h264.mp4 exists");
-                            } else {
-                                Log.d(TAG, "perfume_h264.mp4 does not exist");
-                            }
-
+                        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                        Log.d(TAG, "Public root directory: " + externalPath);
+                        String filePath = externalPath + "/Song/perfume_h264.mp4";
+                        Log.d(TAG, "File path: " + filePath);
+                        File songFile = new File(filePath);
+                        if (songFile.exists()) {
+                            Log.d(TAG, "perfume_h264.mp4 exists");
                             Uri mediaUri = Uri.parse("file://" + filePath);
-                            mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
-                            mediaPlayer.prepare();
-                            mediaPlayer.setVolume(1.0f, 1.0f);
-                            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-                        } catch (Exception ex) {
-                            Log.d(TAG, "Exception happened to MediaPlayer.");
-                            ex.printStackTrace();
+                            mediaTransportControls.prepareFromUri(mediaUri, null);
+                        } else {
+                            Log.d(TAG, "perfume_h264.mp4 does not exist");
                         }
                     } else {
                         Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
@@ -423,6 +439,41 @@ public class MainActivity extends AppCompatActivity {
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
 
         @Override
+        public void onPrepare() {
+            super.onPrepare();
+            try {
+                mediaPlayer.prepare();
+                mediaPlayer.seekTo(0);
+                setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+            } catch (Exception ex) {
+                Log.d(TAG, "Exception happened to MediaPlayer.prepare().");
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onPrepareFromUri(Uri uri, Bundle extras) {
+            super.onPrepareFromUri(uri, extras);
+            try {
+                mediaPlayer.setDisplay(videoSurfaceView.getSurfaceHolder());
+                mediaPlayer.setDataSource(getApplicationContext(), uri);
+                mediaPlayer.prepare();
+                mediaPlayer.setVolume(1.0f, 1.0f);
+                setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+            } catch (Exception ex) {
+                Log.d(TAG, "Exception happened to onPrepareFromUri() of MediaSessionCallback.");
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onPlayFromMediaId(String mediaId, Bundle extras) {
+            super.onPlayFromMediaId(mediaId, extras);
+            setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
+            Log.d(TAG, "MediaSessionCallback.onPlayFromMediaId() is onPlayFromMediaId.");
+        }
+
+        @Override
         public void onPlay() {
             super.onPlay();
             if (!mediaPlayer.isPlaying()) {
@@ -432,12 +483,13 @@ public class MainActivity extends AppCompatActivity {
                     int state = stateCompat.getState();
                     if (state == PlaybackStateCompat.STATE_STOPPED) {
                         mediaPlayer.prepare();
+                        mediaPlayer.seekTo(0);
                     }
+                    mediaPlayer.start();
+                    setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                mediaPlayer.start();
-                setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
             }
             Log.d(TAG, "MediaSessionCallback.onPlay() is called.");
         }
@@ -459,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.stop();
                 setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
             }
-            Log.d(TAG, "MediaSessionCallback.onPause() is onStop.");
+            Log.d(TAG, "MediaSessionCallback.onStop() is called.");
         }
 
         @Override
@@ -474,13 +526,6 @@ public class MainActivity extends AppCompatActivity {
             super.onRewind();
             setMediaPlaybackState(PlaybackStateCompat.STATE_REWINDING);
             Log.d(TAG, "MediaSessionCallback.onRewind() is onStop.");
-        }
-
-        @Override
-        public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            super.onPlayFromMediaId(mediaId, extras);
-            setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-            Log.d(TAG, "MediaSessionCallback.onPlayFromMediaId() is onPlayFromMediaId.");
         }
     }
 }

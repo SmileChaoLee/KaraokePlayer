@@ -10,4 +10,15 @@
     <include layout="@layout/toolbar_layout" />
     -->
 
+    <LinearLayout
+        android:id="@+id/videoPlayViewLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintHeight_percent="1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
