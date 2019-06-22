@@ -3,6 +3,7 @@ package com.smile.karaokeplayer.Utilities;
 import android.os.Environment;
 
 public class ExternalStorageUtil {
+
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();

@@ -81,7 +81,7 @@ public class KaraokePlayerInstrumentedTest {
         onView(withText(R.string.stopString)).check(matches(isDisplayed()));
         onView(withText(R.string.replayString)).check(matches(isDisplayed()));
         onView(withText(R.string.fforwardString)).check(matches(isDisplayed()));
-        onView(withText(R.string.volumeString)).check(matches(isDisplayed()));
+        onView(withText(R.string.rewindString)).check(matches(isDisplayed()));
         onView(withText(R.string.toTVString)).check(matches(isDisplayed()));
         Espresso.pressBack();
     }

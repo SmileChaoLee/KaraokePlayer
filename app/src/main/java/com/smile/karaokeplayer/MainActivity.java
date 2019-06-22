@@ -4,13 +4,10 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.os.PowerManager;
+import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -18,7 +15,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +22,31 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
+import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.io.File;
 import java.util.Locale;
 
+import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID;
+import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE;
+import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_MEDIA_ID;
+import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH;
+import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_URI;
 import static com.smile.karaokeplayer.Utilities.ExternalStorageUtil.isExternalStorageReadable;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem playMenuItem;
     private MenuItem pauseMenuItem;
     private MenuItem stopMenuItem;
-    private MenuItem replayMenuItem;
     private MenuItem fforwardMenuItem;
     private MenuItem rewindMenuItem;
     private MenuItem toTvMenuItem;
@@ -78,7 +90,12 @@ public class MainActivity extends AppCompatActivity {
     private MediaControllerCompat mediaControllerCompat;
     private MediaControllerCallback mediaControllerCallback;
     private MediaControllerCompat.TransportControls mediaTransportControls;
-    private MediaPlayer mediaPlayer;
+
+    private PlayerView videoPlayerView;
+    private DataSource.Factory dataSourceFactory;
+    private DefaultTrackSelector trackSelector;
+    private DefaultTrackSelector.Parameters trackSelectorParameters;
+    private SimpleExoPlayer exoPlayer;
 
     private boolean isAutoPlay;
     private boolean hasPermissionForExternalStorage;
@@ -94,19 +111,10 @@ public class MainActivity extends AppCompatActivity {
 
         // int colorDarkOrange = ContextCompat.getColor(KaraokeApp.AppContext, R.color.darkOrange);
         // int colorRed = ContextCompat.getColor(KaraokeApp.AppContext, R.color.red);
-        int colorDarkRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.darkRed);
+        // int colorDarkRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.darkRed);
         // int colorDarkGreen = ContextCompat.getColor(KaraokeApp.AppContext, R.color.darkGreen);
 
         setContentView(R.layout.activity_main);
-
-        /*
-        // use customized ToolBar
-        setSupportActionBar(supportToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView toolbarTitleTextView = findViewById(R.id.toolbarTitleTextView);
-        ScreenUtil.resizeTextSize(toolbarTitleTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        //
-        */
 
         // use default ActionBar
         setTitle(String.format(Locale.getDefault(), ""));
@@ -120,65 +128,12 @@ public class MainActivity extends AppCompatActivity {
         //
 
         // Video player view
-        final LinearLayout videoPlayViewLayout = findViewById(R.id.videoPlayViewLayout);
-        videoSurfaceView = new VideoSurfaceView(this);
-        videoPlayViewLayout.addView(videoSurfaceView);
+        videoPlayerView = findViewById(R.id.videoPlayView);
         //
 
-        mediaPlayer =  new MediaPlayer();
-        mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mediaPlayer) {
-                mediaPlayer.stop(); // has to be here before prepare()
-                mediaTransportControls.prepare();
-            }
-        });
-        /*
-        try {
-            // AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.demo_video);
-            // mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            // afd.close();
-            Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.perfume_h264);
-            // Uri mediaUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.background_music);
-            mediaPlayer.setDataSource(getApplicationContext(), mediaUri);
-            mediaPlayer.prepare();
-            mediaPlayer.setVolume(1.0f, 1.0f);
-            mediaPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
-        } catch (Exception ex) {
-            Log.d(TAG, "Exception happened to MediaPlayer.");
-            ex.printStackTrace();
-        }
-        */
+        initExoPlayer();
 
-        // Create a MediaSessionCompat
-        mediaSessionCompat = new MediaSessionCompat(this, LOG_TAG);
-
-        // Enable callbacks from MediaButtons and TransportControls
-        mediaSessionCompat.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
-        // Do not let MediaButtons restart the player when the app is not visible
-        mediaSessionCompat.setMediaButtonReceiver(null);
-        mCurrentState = PlaybackStateCompat.STATE_NONE;
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-        playbackStateBuilder = new PlaybackStateCompat.Builder();
-        setMediaPlaybackState(mCurrentState);
-        mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
-
-        // MySessionCallback has methods that handle callbacks from a media controller
-        MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
-        mediaSessionCompat.setCallback(mediaSessionCallback);
-        mediaSessionCompat.setActive(true); // might need to find better place to put
-
-        // Create a MediaControllerCompat
-        mediaControllerCompat = new MediaControllerCompat(this, mediaSessionCompat);
-        MediaControllerCompat.setMediaController(this, mediaControllerCompat);
-        mediaControllerCallback = new MediaControllerCallback();
-        mediaControllerCompat.registerCallback(mediaControllerCallback);
-        mediaTransportControls = mediaControllerCompat.getTransportControls();
+        initMediaSessionCompat();
 
         isAutoPlay = false;
         hasPermissionForExternalStorage = true;
@@ -197,12 +152,6 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        /*
-        // use customized ToolBar
-        final int popupThemeId = supportToolbar.getPopupTheme();
-        final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
-        */
-
         // use default ActionBar
         final Context wrapper = supportToolbar.getThemedContext();
         //
@@ -216,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
         playMenuItem = menu.findItem(R.id.play);
         pauseMenuItem = menu.findItem(R.id.pause);
         stopMenuItem = menu.findItem(R.id.stop);
-        replayMenuItem = menu.findItem(R.id.replay);
         fforwardMenuItem = menu.findItem(R.id.fforward);
         rewindMenuItem = menu.findItem(R.id.rewind);
         toTvMenuItem = menu.findItem(R.id.toTV);
@@ -231,6 +179,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (!hasPermissionForExternalStorage) {
+            Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+            return super.onOptionsItemSelected(item);
+        }
 
         int id = item.getItemId();
 
@@ -249,28 +202,24 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.open:
-                if (!hasPermissionForExternalStorage) {
-                    Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (isExternalStorageReadable()) {
-                        // has readable external storage
-                        Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
-                        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                        Log.d(TAG, "Public root directory: " + externalPath);
-                        String filePath = externalPath + "/Song/perfume_h264.mp4";
-                        Log.d(TAG, "File path: " + filePath);
-                        File songFile = new File(filePath);
-                        if (songFile.exists()) {
-                            Log.d(TAG, "perfume_h264.mp4 exists");
-                            Uri mediaUri = Uri.parse("file://" + filePath);
-                            mediaTransportControls.prepareFromUri(mediaUri, null);
-                        } else {
-                            Log.d(TAG, "perfume_h264.mp4 does not exist");
-                        }
+                if (isExternalStorageReadable()) {
+                    // has readable external storage
+                    Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
+                    String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    Log.d(TAG, "Public root directory: " + externalPath);
+                    String filePath = externalPath + "/Song/perfume_h264.mp4";
+                    Log.d(TAG, "File path: " + filePath);
+                    File songFile = new File(filePath);
+                    if (songFile.exists()) {
+                        Log.d(TAG, "perfume_h264.mp4 exists");
+                        Uri mediaUri = Uri.parse("file://" + filePath);
+                        mediaTransportControls.prepareFromUri(mediaUri, null);
                     } else {
-                        Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
-                        Log.d(TAG, "Does not Have readable external storage.");
+                        Log.d(TAG, "perfume_h264.mp4 does not exist");
                     }
+                } else {
+                    Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
+                    Log.d(TAG, "Does not Have readable external storage.");
                 }
                 break;
             case R.id.close:
@@ -373,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
+        mediaSessionCompat.setActive(false);
         mediaSessionCompat.release();
         mediaSessionCompat = null;
         mediaTransportControls = null;
@@ -382,10 +332,10 @@ public class MainActivity extends AppCompatActivity {
         mediaControllerCompat = null;
         playbackStateBuilder = null;
 
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
         }
     }
 
@@ -398,6 +348,52 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    private void initExoPlayer() {
+        dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
+        trackSelector = new DefaultTrackSelector();
+        trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+        trackSelector.setParameters(trackSelectorParameters);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+        exoPlayer.addListener(new ExoPlayerEventListener());
+
+        videoPlayerView.setPlayer(exoPlayer);
+        videoPlayerView.requestFocus();
+    }
+
+    private void initMediaSessionCompat() {
+        // Create a MediaSessionCompat
+        mediaSessionCompat = new MediaSessionCompat(this, LOG_TAG);
+
+        // Enable callbacks from MediaButtons and TransportControls
+        mediaSessionCompat.setFlags(
+                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
+                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Do not let MediaButtons restart the player when the app is not visible
+        mediaSessionCompat.setMediaButtonReceiver(null);
+        mCurrentState = PlaybackStateCompat.STATE_NONE;
+        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
+        playbackStateBuilder = new PlaybackStateCompat.Builder();
+        setMediaPlaybackState(mCurrentState);
+        mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
+
+        // MySessionCallback has methods that handle callbacks from a media controller
+        // MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
+        // mediaSessionCompat.setCallback(mediaSessionCallback);
+        mediaSessionCompat.setActive(true); // might need to find better place to put
+
+        // Create a MediaControllerCompat
+        mediaControllerCompat = new MediaControllerCompat(this, mediaSessionCompat);
+        MediaControllerCompat.setMediaController(this, mediaControllerCompat);
+        mediaControllerCallback = new MediaControllerCallback();
+        mediaControllerCompat.registerCallback(mediaControllerCallback);
+        mediaTransportControls = mediaControllerCompat.getTransportControls();
+
+        MediaSessionConnector mediaSessionConnector = new MediaSessionConnector(mediaSessionCompat);
+        mediaSessionConnector.setPlayer(exoPlayer);
+        mediaSessionConnector.setPlaybackPreparer(new PlaybackPreparer());
+    }
+
     private void setMediaPlaybackState(int state) {
         // PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
         if( state == PlaybackStateCompat.STATE_PLAYING ) {
@@ -405,8 +401,24 @@ public class MainActivity extends AppCompatActivity {
         } else {
             playbackStateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY);
         }
-        playbackStateBuilder.setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0);
+        // playbackStateBuilder.setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0);
+        playbackStateBuilder.setState(state, exoPlayer.getContentPosition(), 1f);
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
+    }
+
+    private class ExoPlayerEventListener implements Player.EventListener {
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if (playbackState == Player.STATE_ENDED) {
+                mediaTransportControls.prepare();
+                return;
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+
+        }
     }
 
     private class MediaControllerCallback extends MediaControllerCompat.Callback {
@@ -439,56 +451,48 @@ public class MainActivity extends AppCompatActivity {
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
 
         @Override
+        public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+            super.onCommand(command, extras, cb);
+        }
+
+        @Override
         public void onPrepare() {
             super.onPrepare();
-            try {
-                mediaPlayer.prepare();
-                mediaPlayer.seekTo(0);
-                setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
-            } catch (Exception ex) {
-                Log.d(TAG, "Exception happened to MediaPlayer.prepare().");
-                ex.printStackTrace();
-            }
+
+            exoPlayer.seekTo(0);
+            exoPlayer.setPlayWhenReady(false);
+            setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+
+            Log.d(TAG, "MediaSessionCallback.onPrepare() is called.");
         }
 
         @Override
         public void onPrepareFromUri(Uri uri, Bundle extras) {
             super.onPrepareFromUri(uri, extras);
             try {
-                mediaPlayer.setDisplay(videoSurfaceView.getSurfaceHolder());
-                mediaPlayer.setDataSource(getApplicationContext(), uri);
-                mediaPlayer.prepare();
-                mediaPlayer.setVolume(1.0f, 1.0f);
+                MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+                exoPlayer.prepare(mediaSource);
+                exoPlayer.setPlayWhenReady(false);  // do not start playing
                 setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
             } catch (Exception ex) {
                 Log.d(TAG, "Exception happened to onPrepareFromUri() of MediaSessionCallback.");
                 ex.printStackTrace();
             }
-        }
 
-        @Override
-        public void onPlayFromMediaId(String mediaId, Bundle extras) {
-            super.onPlayFromMediaId(mediaId, extras);
-            setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-            Log.d(TAG, "MediaSessionCallback.onPlayFromMediaId() is onPlayFromMediaId.");
+            Log.d(TAG, "MediaSessionCallback.onPrepareFromUri() is called.");
         }
 
         @Override
         public void onPlay() {
             super.onPlay();
-            if (!mediaPlayer.isPlaying()) {
-                try {
-                    MediaControllerCompat controller = mediaSessionCompat.getController();
-                    PlaybackStateCompat stateCompat = controller.getPlaybackState();
-                    int state = stateCompat.getState();
-                    if (state == PlaybackStateCompat.STATE_STOPPED) {
-                        mediaPlayer.prepare();
-                        mediaPlayer.seekTo(0);
-                    }
-                    mediaPlayer.start();
+            MediaControllerCompat controller = mediaSessionCompat.getController();
+            PlaybackStateCompat stateCompat = controller.getPlaybackState();
+            int state = stateCompat.getState();
+            if (state != PlaybackStateCompat.STATE_PLAYING) {
+                int exoPlayerState = exoPlayer.getPlaybackState();
+                if (exoPlayerState == Player.STATE_READY) {
+                    exoPlayer.setPlayWhenReady(true);
                     setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
                 }
             }
             Log.d(TAG, "MediaSessionCallback.onPlay() is called.");
@@ -497,8 +501,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPause() {
             super.onPause();
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.pause();
+            MediaControllerCompat controller = mediaSessionCompat.getController();
+            PlaybackStateCompat stateCompat = controller.getPlaybackState();
+            int state = stateCompat.getState();
+            if (state != PlaybackStateCompat.STATE_PAUSED) {
+                exoPlayer.setPlayWhenReady(false);
                 setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
             }
             Log.d(TAG, "MediaSessionCallback.onPause() is called.");
@@ -507,8 +514,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onStop() {
             super.onStop();
-            if (mediaPlayer.isPlaying()) {
-                mediaPlayer.stop();
+            MediaControllerCompat controller = mediaSessionCompat.getController();
+            PlaybackStateCompat stateCompat = controller.getPlaybackState();
+            int state = stateCompat.getState();
+            if (state != PlaybackStateCompat.STATE_STOPPED) {
+                // exoPlayer.stop();
+                exoPlayer.setPlayWhenReady(false);
+                exoPlayer.seekTo(0);
+                exoPlayer.retry();
                 setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
             }
             Log.d(TAG, "MediaSessionCallback.onStop() is called.");
@@ -518,14 +531,58 @@ public class MainActivity extends AppCompatActivity {
         public void onFastForward() {
             super.onFastForward();
             setMediaPlaybackState(PlaybackStateCompat.STATE_FAST_FORWARDING);
-            Log.d(TAG, "MediaSessionCallback.onFastForward() is onStop.");
+            Log.d(TAG, "MediaSessionCallback.onFastForward() is called.");
         }
 
         @Override
         public void onRewind() {
             super.onRewind();
             setMediaPlaybackState(PlaybackStateCompat.STATE_REWINDING);
-            Log.d(TAG, "MediaSessionCallback.onRewind() is onStop.");
+            Log.d(TAG, "MediaSessionCallback.onRewind() is called.");
+        }
+    }
+
+    private class PlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
+
+        @Override
+        public long getSupportedPrepareActions() {
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.getSupportedPrepareActions() is called.");
+            // return 0;
+
+            long supportedPrepareActions = ACTION_PREPARE | ACTION_PREPARE_FROM_URI;
+            supportedPrepareActions |= ACTION_PREPARE_FROM_MEDIA_ID | ACTION_PREPARE_FROM_SEARCH;
+
+            return supportedPrepareActions;
+        }
+
+        @Override
+        public void onPrepare() {
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepare() is called.");
+        }
+
+        @Override
+        public void onPrepareFromMediaId(String mediaId, Bundle extras) {
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromMediaId() is called.");
+        }
+
+        @Override
+        public void onPrepareFromSearch(String query, Bundle extras) {
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromSearch() is called.");
+        }
+
+        @Override
+        public void onPrepareFromUri(Uri uri, Bundle extras) {
+
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+            exoPlayer.prepare(mediaSource);
+            exoPlayer.setPlayWhenReady(false);  // do not start playing
+
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromUri() is called.");
+        }
+
+        @Override
+        public boolean onCommand(Player player, ControlDispatcher controlDispatcher, String command, Bundle extras, ResultReceiver cb) {
+            return false;
         }
     }
 }
