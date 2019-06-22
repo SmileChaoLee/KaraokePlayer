@@ -42,11 +42,6 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.io.File;
 import java.util.Locale;
 
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PLAY_FROM_MEDIA_ID;
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE;
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_MEDIA_ID;
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_SEARCH;
-import static android.support.v4.media.session.PlaybackStateCompat.ACTION_PREPARE_FROM_URI;
 import static com.smile.karaokeplayer.Utilities.ExternalStorageUtil.isExternalStorageReadable;
 
 public class MainActivity extends AppCompatActivity {
@@ -55,13 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
     private static final int PrivacyPolicyActivityRequestCode = 10;
-
-    private static final int STATE_NONE = 0;
-    private static final int STATE_PREPARED = 1;
-    private static final int STATE_PLAYING = 2;
-    private static final int STATE_PAUSED = 3;
-    private static final int STATE_STOPPED = 4;
-    private static final int STATE_COMPLETED = 5;
 
     private float textFontSize;
     private float fontScale;
@@ -86,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
     private VideoSurfaceView videoSurfaceView;
 
     private MediaSessionCompat mediaSessionCompat;
-    private PlaybackStateCompat.Builder playbackStateBuilder;
+    // private PlaybackStateCompat.Builder playbackStateBuilder;    // no need if use MediaSessionConnector
     private MediaControllerCompat mediaControllerCompat;
     private MediaControllerCallback mediaControllerCallback;
     private MediaControllerCompat.TransportControls mediaTransportControls;
+    private MediaSessionConnector mediaSessionConnector;
 
     private PlayerView videoPlayerView;
     private DataSource.Factory dataSourceFactory;
@@ -322,21 +311,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        mediaSessionCompat.setActive(false);
-        mediaSessionCompat.release();
-        mediaSessionCompat = null;
-        mediaTransportControls = null;
-        if (mediaControllerCallback != null) {
-            mediaControllerCompat.unregisterCallback(mediaControllerCallback);
-        }
-        mediaControllerCompat = null;
-        playbackStateBuilder = null;
-
-        if (exoPlayer != null) {
-            exoPlayer.stop();
-            exoPlayer.release();
-            exoPlayer = null;
-        }
+        releaseMediaSessionCompat();
+        releaseExoPlayer();
     }
 
     @Override
@@ -354,10 +330,20 @@ public class MainActivity extends AppCompatActivity {
         trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
         trackSelector.setParameters(trackSelectorParameters);
         exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
-        exoPlayer.addListener(new ExoPlayerEventListener());
+
+        // no need. It will ve overridden by MediaSessionConnector
+        // exoPlayer.addListener(new ExoPlayerEventListener());
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
+    }
+
+    private void releaseExoPlayer() {
+        if (exoPlayer != null) {
+            exoPlayer.stop();
+            exoPlayer.release();
+            exoPlayer = null;
+        }
     }
 
     private void initMediaSessionCompat() {
@@ -372,14 +358,20 @@ public class MainActivity extends AppCompatActivity {
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
         mCurrentState = PlaybackStateCompat.STATE_NONE;
+
         // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
+        /*
+        // PlaybackStateCompat is already defined and mapped in MediaSessionConnector
         playbackStateBuilder = new PlaybackStateCompat.Builder();
         setMediaPlaybackState(mCurrentState);
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
+        */
 
         // MySessionCallback has methods that handle callbacks from a media controller
+        // No need because it will be overridden by MediaSessionConnector
         // MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
         // mediaSessionCompat.setCallback(mediaSessionCallback);
+
         mediaSessionCompat.setActive(true); // might need to find better place to put
 
         // Create a MediaControllerCompat
@@ -389,11 +381,29 @@ public class MainActivity extends AppCompatActivity {
         mediaControllerCompat.registerCallback(mediaControllerCallback);
         mediaTransportControls = mediaControllerCompat.getTransportControls();
 
-        MediaSessionConnector mediaSessionConnector = new MediaSessionConnector(mediaSessionCompat);
+        mediaSessionConnector = new MediaSessionConnector(mediaSessionCompat);
         mediaSessionConnector.setPlayer(exoPlayer);
         mediaSessionConnector.setPlaybackPreparer(new PlaybackPreparer());
     }
 
+    private void releaseMediaSessionCompat() {
+        mediaSessionCompat.setActive(false);
+        mediaSessionCompat.release();
+        mediaSessionCompat = null;
+        mediaTransportControls = null;
+        if (mediaControllerCallback != null) {
+            mediaControllerCompat.unregisterCallback(mediaControllerCallback);
+            mediaControllerCallback = null;
+        }
+        mediaControllerCompat = null;
+
+        mediaSessionConnector = null;
+
+        // playbackStateBuilder = null; // no need if use MediaSessionConnector
+    }
+
+    /*
+    // No need if use MediaSessionConnector
     private void setMediaPlaybackState(int state) {
         // PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
         if( state == PlaybackStateCompat.STATE_PLAYING ) {
@@ -405,6 +415,7 @@ public class MainActivity extends AppCompatActivity {
         playbackStateBuilder.setState(state, exoPlayer.getContentPosition(), 1f);
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
     }
+    */
 
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
@@ -431,23 +442,11 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             mCurrentState = state.getState();
-
-            /*
-            switch( state.getState() ) {
-                case PlaybackStateCompat.STATE_PLAYING: {
-                    mCurrentState = PlaybackStateCompat.STATE_PLAYING;
-                    break;
-                }
-                case PlaybackStateCompat.STATE_PAUSED: {
-                    mCurrentState = STATE_PAUSED;
-                    break;
-                }
-            }
-            */
-
         }
     }
 
+    /*
+    // Already defined in MediaSessionConnector if use MediaSessionConnector
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
 
         @Override
@@ -541,17 +540,14 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "MediaSessionCallback.onRewind() is called.");
         }
     }
+    */
 
     private class PlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
 
         @Override
         public long getSupportedPrepareActions() {
+            long supportedPrepareActions = PlaybackPreparer.ACTIONS;
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.getSupportedPrepareActions() is called.");
-            // return 0;
-
-            long supportedPrepareActions = ACTION_PREPARE | ACTION_PREPARE_FROM_URI;
-            supportedPrepareActions |= ACTION_PREPARE_FROM_MEDIA_ID | ACTION_PREPARE_FROM_SEARCH;
-
             return supportedPrepareActions;
         }
 
