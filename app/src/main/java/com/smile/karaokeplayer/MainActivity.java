@@ -23,19 +23,30 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -71,8 +82,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
 
-    private VideoSurfaceView videoSurfaceView;
-
     private MediaSessionCompat mediaSessionCompat;
     // private PlaybackStateCompat.Builder playbackStateBuilder;    // no need if use MediaSessionConnector
     private MediaControllerCompat mediaControllerCompat;
@@ -82,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayerView videoPlayerView;
     private DataSource.Factory dataSourceFactory;
+    private RenderersFactory renderersFactory;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
@@ -196,15 +206,16 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
                     String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                     Log.d(TAG, "Public root directory: " + externalPath);
-                    String filePath = externalPath + "/Song/perfume_h264.mp4";
+                    // String filePath = externalPath + "/Song/perfume_h264.mp4";
+                    String filePath = externalPath + "/Song/a00464.mp4";
                     Log.d(TAG, "File path: " + filePath);
                     File songFile = new File(filePath);
                     if (songFile.exists()) {
-                        Log.d(TAG, "perfume_h264.mp4 exists");
+                        Log.d(TAG, "File exists");
                         Uri mediaUri = Uri.parse("file://" + filePath);
                         mediaTransportControls.prepareFromUri(mediaUri, null);
                     } else {
-                        Log.d(TAG, "perfume_h264.mp4 does not exist");
+                        Log.d(TAG, "File does not exist");
                     }
                 } else {
                     Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
@@ -326,13 +337,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void initExoPlayer() {
         dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
+        // trackSelector = new DefaultTrackSelector();
         trackSelector = new DefaultTrackSelector();
         trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
         trackSelector.setParameters(trackSelectorParameters);
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
+
+        // Tell ExoPlayer to use FfmpegAudioRenderer
+        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+        renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector);
 
         // no need. It will ve overridden by MediaSessionConnector
-        // exoPlayer.addListener(new ExoPlayerEventListener());
+        exoPlayer.addListener(new ExoPlayerEventListener());
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
@@ -420,9 +438,76 @@ public class MainActivity extends AppCompatActivity {
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            if (playbackState == Player.STATE_ENDED) {
-                mediaTransportControls.prepare();
-                return;
+            if (playbackState == Player.STATE_READY) {
+                DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
+                // trackSelectorParameters = parameters.buildUpon().setPreferredAudioLanguage("eng").build();
+                // trackSelector.setParameters(trackSelectorParameters);
+                DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
+
+                TrackGroupArray trackGroups = exoPlayer.getCurrentTrackGroups();
+                for (int i=0; i<trackGroups.length; i++) {
+                    TrackGroup trackGroup = trackGroups.get(i);
+                    for (int j = 0; j < trackGroup.length; j++) {
+                        Format format = trackGroup.getFormat(j);
+                        Log.d(TAG, "Format = " + format);
+                    }
+                }
+
+                int rendererCount = exoPlayer.getRendererCount();
+                Log.d(TAG, "exoPlayer-->rendererCount = " + rendererCount);
+                int audioRenderer = 0;
+                int videoRenderer = 0;
+                int unknownRenderer = 0;
+
+                for (int i = 0; i<rendererCount; i++) {
+                    int rendererType = exoPlayer.getRendererType(i);
+                    switch (rendererType) {
+                        case C.TRACK_TYPE_AUDIO:
+                            audioRenderer++;
+                            Log.d(TAG, "The audio renderer index = " + i);
+                            break;
+                        case C.TRACK_TYPE_VIDEO:
+                            videoRenderer++;
+                            Log.d(TAG, "The video renderer index = " + i);
+                            break;
+                        case C.TRACK_TYPE_UNKNOWN:
+                            unknownRenderer++;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                // parametersBuilder.setRendererDisabled(2, true);
+                // trackSelector.setParameters(parametersBuilder.build());
+
+                Log.d(TAG, "audioRenderer = " + audioRenderer);
+                Log.d(TAG, "videoRenderer = " + videoRenderer);
+                Log.d(TAG, "unknownRenderer = " + unknownRenderer);
+
+                MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+                if (mappedTrackInfo != null) {
+                    rendererCount = mappedTrackInfo.getRendererCount();
+                    Log.d(TAG, "mappedTrackInfo-->rendererCount = " + rendererCount);
+                    for (int i = 0; i<rendererCount; i++) {
+                        TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
+                        if (trackGroupArray != null) {
+                            int arraySize = trackGroupArray.length;
+                            for (int j = 0; j<arraySize; j++) {
+                                TrackGroup trackGroup = trackGroupArray.get(j);
+                                if (trackGroup != null) {
+                                    int groupSize = trackGroup.length;
+                                    for (int k = 0; k<groupSize; k++) {
+                                        Format format = trackGroup.getFormat(k);
+                                        Log.d(TAG, "Format = " + format);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    Log.d(TAG,"mappedTrackInfo is null.");
+                }
             }
         }
 
@@ -569,6 +654,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPrepareFromUri(Uri uri, Bundle extras) {
 
+            // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+            // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
+            // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(false);  // do not start playing
