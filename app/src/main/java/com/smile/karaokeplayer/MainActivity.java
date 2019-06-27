@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,13 +34,10 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.mp4.Mp4Extractor;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -51,7 +49,10 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.smile.karaokeplayer.Utilities.ExternalStorageUtil.isExternalStorageReadable;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     // private Toolbar supportToolbar;  // use customized ToolBar
     private ActionBar supportToolbar;   // use default ActionBar
 
+    private Menu mainMenu;
     // submenu of file
     private MenuItem autoPlayMenuItem;
     // submenu of action
@@ -77,13 +79,13 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem rewindMenuItem;
     private MenuItem toTvMenuItem;
     // submenu of audio
+    private MenuItem audioTrackMenuItem;
     // submenu of channel
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
 
     private MediaSessionCompat mediaSessionCompat;
-    // private PlaybackStateCompat.Builder playbackStateBuilder;    // no need if use MediaSessionConnector
     private MediaControllerCompat mediaControllerCompat;
     private MediaControllerCallback mediaControllerCallback;
     private MediaControllerCompat.TransportControls mediaTransportControls;
@@ -95,7 +97,11 @@ public class MainActivity extends AppCompatActivity {
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
+    private MediaSource mediaSource;
+    private SortedMap<String, Integer> videoRendererIndexMap;
+    private SortedMap<String, Integer> audioRendererIndexMap;
 
+    private boolean isMediaSourcePrepared;
     private boolean isAutoPlay;
     private boolean hasPermissionForExternalStorage;
     private int mCurrentState;
@@ -130,11 +136,14 @@ public class MainActivity extends AppCompatActivity {
         videoPlayerView = findViewById(R.id.videoPlayView);
         //
 
-        initExoPlayer();
+        videoRendererIndexMap = new TreeMap<>();
+        audioRendererIndexMap = new TreeMap<>();
 
+        initExoPlayer();
         initMediaSessionCompat();
 
         isAutoPlay = false;
+        isMediaSourcePrepared = false;
         hasPermissionForExternalStorage = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -150,13 +159,12 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
 
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        mainMenu = menu;
 
         // use default ActionBar
         final Context wrapper = supportToolbar.getThemedContext();
         //
-
-        final float fScale = fontScale;
-        ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fScale, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
@@ -168,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         rewindMenuItem = menu.findItem(R.id.rewind);
         toTvMenuItem = menu.findItem(R.id.toTV);
         // submenu of audio
+        audioTrackMenuItem = menu.findItem(R.id.audioTrack);
         // submenu of channel
         leftChannelMenuItem = menu.findItem(R.id.leftChannel);
         rightChannelMenuItem = menu.findItem(R.id.rightChannel);
@@ -201,13 +210,16 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.open:
+                isMediaSourcePrepared = false;
+                videoRendererIndexMap.clear();
+                audioRendererIndexMap.clear();
                 if (isExternalStorageReadable()) {
                     // has readable external storage
                     Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
                     String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                     Log.d(TAG, "Public root directory: " + externalPath);
-                    // String filePath = externalPath + "/Song/perfume_h264.mp4";
-                    String filePath = externalPath + "/Song/a00464.mp4";
+                    String filePath = externalPath + "/Song/perfume_h264.mp4";
+                    // String filePath = externalPath + "/Song/a00464.mp4";
                     Log.d(TAG, "File path: " + filePath);
                     File songFile = new File(filePath);
                     if (songFile.exists()) {
@@ -286,6 +298,12 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.replay:
                 break;
+            case R.id.audioTrack:
+                // if there are audio tracks
+                SubMenu subMenu = item.getSubMenu();
+                final Context wrapper = supportToolbar.getThemedContext();
+                ScreenUtil.buildActionViewClassMenu(this, wrapper, subMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -343,9 +361,9 @@ public class MainActivity extends AppCompatActivity {
         trackSelector.setParameters(trackSelectorParameters);
 
         // Tell ExoPlayer to use FfmpegAudioRenderer
-        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
         // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
-        renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
         exoPlayer = ExoPlayerFactory.newSimpleInstance(this, renderersFactory, trackSelector);
 
@@ -380,15 +398,15 @@ public class MainActivity extends AppCompatActivity {
         // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
         /*
         // PlaybackStateCompat is already defined and mapped in MediaSessionConnector
-        playbackStateBuilder = new PlaybackStateCompat.Builder();
         setMediaPlaybackState(mCurrentState);
-        mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
         */
 
         // MySessionCallback has methods that handle callbacks from a media controller
         // No need because it will be overridden by MediaSessionConnector
-        // MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
-        // mediaSessionCompat.setCallback(mediaSessionCallback);
+        /*
+        MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
+        mediaSessionCompat.setCallback(mediaSessionCallback);
+        */
 
         mediaSessionCompat.setActive(true); // might need to find better place to put
 
@@ -420,10 +438,9 @@ public class MainActivity extends AppCompatActivity {
         // playbackStateBuilder = null; // no need if use MediaSessionConnector
     }
 
-    /*
     // No need if use MediaSessionConnector
     private void setMediaPlaybackState(int state) {
-        // PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
+        PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
         if( state == PlaybackStateCompat.STATE_PLAYING ) {
             playbackStateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
         } else {
@@ -433,81 +450,84 @@ public class MainActivity extends AppCompatActivity {
         playbackStateBuilder.setState(state, exoPlayer.getContentPosition(), 1f);
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
     }
-    */
+    //
 
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playbackState == Player.STATE_READY) {
-                DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
-                // trackSelectorParameters = parameters.buildUpon().setPreferredAudioLanguage("eng").build();
-                // trackSelector.setParameters(trackSelectorParameters);
-                DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
+                if (!isMediaSourcePrepared) {
+                    DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
+                    DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
 
-                TrackGroupArray trackGroups = exoPlayer.getCurrentTrackGroups();
-                for (int i=0; i<trackGroups.length; i++) {
-                    TrackGroup trackGroup = trackGroups.get(i);
-                    for (int j = 0; j < trackGroup.length; j++) {
-                        Format format = trackGroup.getFormat(j);
-                        Log.d(TAG, "Format = " + format);
-                    }
-                }
+                    int audioRenderer = 0;
+                    int videoRenderer = 0;
+                    int unknownRenderer = 0;
+                    String rendererName = "";
 
-                int rendererCount = exoPlayer.getRendererCount();
-                Log.d(TAG, "exoPlayer-->rendererCount = " + rendererCount);
-                int audioRenderer = 0;
-                int videoRenderer = 0;
-                int unknownRenderer = 0;
-
-                for (int i = 0; i<rendererCount; i++) {
-                    int rendererType = exoPlayer.getRendererType(i);
-                    switch (rendererType) {
-                        case C.TRACK_TYPE_AUDIO:
-                            audioRenderer++;
-                            Log.d(TAG, "The audio renderer index = " + i);
-                            break;
-                        case C.TRACK_TYPE_VIDEO:
-                            videoRenderer++;
-                            Log.d(TAG, "The video renderer index = " + i);
-                            break;
-                        case C.TRACK_TYPE_UNKNOWN:
-                            unknownRenderer++;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-
-                // parametersBuilder.setRendererDisabled(2, true);
-                // trackSelector.setParameters(parametersBuilder.build());
-
-                Log.d(TAG, "audioRenderer = " + audioRenderer);
-                Log.d(TAG, "videoRenderer = " + videoRenderer);
-                Log.d(TAG, "unknownRenderer = " + unknownRenderer);
-
-                MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-                if (mappedTrackInfo != null) {
-                    rendererCount = mappedTrackInfo.getRendererCount();
-                    Log.d(TAG, "mappedTrackInfo-->rendererCount = " + rendererCount);
-                    for (int i = 0; i<rendererCount; i++) {
-                        TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
-                        if (trackGroupArray != null) {
-                            int arraySize = trackGroupArray.length;
-                            for (int j = 0; j<arraySize; j++) {
-                                TrackGroup trackGroup = trackGroupArray.get(j);
-                                if (trackGroup != null) {
-                                    int groupSize = trackGroup.length;
-                                    for (int k = 0; k<groupSize; k++) {
-                                        Format format = trackGroup.getFormat(k);
-                                        Log.d(TAG, "Format = " + format);
+                    MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+                    if (mappedTrackInfo != null) {
+                        int rendererCount = mappedTrackInfo.getRendererCount();
+                        Log.d(TAG, "mappedTrackInfo-->rendererCount = " + rendererCount);
+                        for (int i = 0; i < rendererCount; i++) {
+                            TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
+                            if (trackGroupArray != null) {
+                                int arraySize = trackGroupArray.length;
+                                for (int j = 0; j < arraySize; j++) {
+                                    TrackGroup trackGroup = trackGroupArray.get(j);
+                                    if (trackGroup != null) {
+                                        int groupSize = trackGroup.length;
+                                        for (int k = 0; k < groupSize; k++) {
+                                            Format format = trackGroup.getFormat(k);
+                                            int rendererType = mappedTrackInfo.getRendererType(i);
+                                            switch (rendererType) {
+                                                case C.TRACK_TYPE_AUDIO:
+                                                    Log.d(TAG, "The audio renderer index = " + i);
+                                                    rendererName = "Audio_" + audioRenderer;
+                                                    audioRendererIndexMap.put(rendererName, i);
+                                                    audioRenderer++;
+                                                    break;
+                                                case C.TRACK_TYPE_VIDEO:
+                                                    Log.d(TAG, "The video renderer index = " + i);
+                                                    rendererName = "Video_" + videoRenderer;
+                                                    videoRendererIndexMap.put(rendererName, i);
+                                                    videoRenderer++;
+                                                    break;
+                                                default:
+                                                    unknownRenderer++;
+                                                    break;
+                                            }
+                                            Log.d(TAG, "Format = " + format);
+                                            Log.d(TAG, "Format.sampleMimeType = " + format.sampleMimeType);
+                                            Log.d(TAG, "Format.containerMimeType = " + format.containerMimeType);
+                                            Log.d(TAG, "Format.label = " + format.label);
+                                            Log.d(TAG, "Format.codecs = " + format.codecs);
+                                            Log.d(TAG, "Format.language = " + format.language);
+                                            Log.d(TAG, "Format.channelCount = " + format.channelCount);
+                                            Log.d(TAG, "Format.accessibilityChannel = " + format.accessibilityChannel);
+                                        }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        Log.d(TAG, "mappedTrackInfo is null.");
                     }
-                } else {
-                    Log.d(TAG,"mappedTrackInfo is null.");
+
+                    // build R.id.audioTrack submenu
+                    if (audioTrackMenuItem.hasSubMenu()) {
+                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                        subMenu.clear();
+                        for (String audioTrackString : audioRendererIndexMap.keySet()) {
+                            subMenu.add(audioTrackString);
+                        }
+                    }
+
+                    Log.d(TAG, "audioRenderer = " + audioRenderer);
+                    Log.d(TAG, "videoRenderer = " + videoRenderer);
+                    Log.d(TAG, "unknownRenderer = " + unknownRenderer);
                 }
+                isMediaSourcePrepared = true;
             }
         }
 
@@ -530,7 +550,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*
     // Already defined in MediaSessionConnector if use MediaSessionConnector
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
 
@@ -554,7 +573,7 @@ public class MainActivity extends AppCompatActivity {
         public void onPrepareFromUri(Uri uri, Bundle extras) {
             super.onPrepareFromUri(uri, extras);
             try {
-                MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+                mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
                 exoPlayer.prepare(mediaSource);
                 exoPlayer.setPlayWhenReady(false);  // do not start playing
                 setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
@@ -625,7 +644,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "MediaSessionCallback.onRewind() is called.");
         }
     }
-    */
+    //
 
     private class PlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
 

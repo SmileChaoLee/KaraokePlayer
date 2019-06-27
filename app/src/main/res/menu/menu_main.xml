@@ -85,6 +85,9 @@
         android:title="@string/audioTrackString"
         android:orderInCategory="3"
         app:showAsAction="always">
+        <menu>
+
+        </menu>
     </item>
 
     <item android:id="@+id/channel"
