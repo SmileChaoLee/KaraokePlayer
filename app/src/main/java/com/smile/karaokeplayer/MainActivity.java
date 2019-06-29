@@ -33,6 +33,9 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.audio.AudioListener;
+import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -45,11 +48,11 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -93,11 +96,14 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayerView videoPlayerView;
     private DataSource.Factory dataSourceFactory;
+    private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
     private RenderersFactory renderersFactory;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
     private MediaSource mediaSource;
+    private AudioAttributes.Builder audioAttributesBuilder;
+
     private SortedMap<String, Integer> videoRendererIndexMap;
     private SortedMap<String, Integer> audioRendererIndexMap;
 
@@ -211,8 +217,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.open:
                 isMediaSourcePrepared = false;
-                videoRendererIndexMap.clear();
-                audioRendererIndexMap.clear();
                 if (isExternalStorageReadable()) {
                     // has readable external storage
                     Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
@@ -354,14 +358,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initExoPlayer() {
+
         dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
-        // trackSelector = new DefaultTrackSelector();
         trackSelector = new DefaultTrackSelector();
+        // trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
         trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
         trackSelector.setParameters(trackSelectorParameters);
 
         // Tell ExoPlayer to use FfmpegAudioRenderer
-        renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
+
+        renderersFactory = new DefaultRenderersFactory(this) {
+            @Override
+            protected AudioProcessor[] buildAudioProcessors() {
+                Log.d(TAG,"DefaultRenderersFactory.buildAudioProcessors() is called.");
+
+                // Customized AudioProcessor
+                stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
+                stereoVolumeAudioProcessor.setChannelMap(new int[]{0,1});
+                stereoVolumeAudioProcessor.setVolume(1.0f,1.0f);
+                AudioProcessor[] audioProcessors = new AudioProcessor[] {stereoVolumeAudioProcessor};
+
+                return audioProcessors;
+                // return super.buildAudioProcessors();
+            }
+        }.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+
         // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
 
@@ -369,13 +391,42 @@ public class MainActivity extends AppCompatActivity {
 
         // no need. It will ve overridden by MediaSessionConnector
         exoPlayer.addListener(new ExoPlayerEventListener());
+        exoPlayer.addAudioListener(new AudioListener() {
+            @Override
+            public void onAudioSessionId(int audioSessionId) {
+                Log.d(TAG, "addAudioListener.onAudioSessionId() is called.");
+                Log.d(TAG, "addAudioListener.audioSessionId = " + audioSessionId);
+
+            }
+
+            @Override
+            public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
+                Log.d(TAG, "addAudioListener.onAudioAttributesChanged() is called.");
+            }
+
+            @Override
+            public void onVolumeChanged(float volume) {
+                Log.d(TAG, "addAudioListener.onVolumeChanged() is called.");
+            }
+        });
+
+        audioAttributesBuilder = new AudioAttributes.Builder();
+        audioAttributesBuilder.setUsage(C.USAGE_MEDIA).setContentType(C.CONTENT_TYPE_MOVIE);
+        exoPlayer.setAudioAttributes(audioAttributesBuilder.build(), true);
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
+
+        // Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
+
     }
 
     private void releaseExoPlayer() {
         if (exoPlayer != null) {
+            // exoPlayer.removeListener();
+            // exoPlayer.removeVideoListener();
+            // exoPlayer.removeAudioListener();
+            // exoPlayer.removeAnalyticsListener();
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;
@@ -455,42 +506,55 @@ public class MainActivity extends AppCompatActivity {
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
             if (playbackState == Player.STATE_READY) {
                 if (!isMediaSourcePrepared) {
+                    // the first time of Player.STATE_READY means prepared
+                    exoPlayer.setVolume(1.0f);
+
                     DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
                     DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
+                    // trackSelector.setParameters(parametersBuilder.build());  // for the testing
+                    // or trackSelector.setParameters(parametersBuilder);  // for the testing
 
                     int audioRenderer = 0;
                     int videoRenderer = 0;
                     int unknownRenderer = 0;
                     String rendererName = "";
 
+                    videoRendererIndexMap.clear();
+                    audioRendererIndexMap.clear();
+
                     MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
                     if (mappedTrackInfo != null) {
                         int rendererCount = mappedTrackInfo.getRendererCount();
                         Log.d(TAG, "mappedTrackInfo-->rendererCount = " + rendererCount);
-                        for (int i = 0; i < rendererCount; i++) {
-                            TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
+                        for (int rendererIndex = 0; rendererIndex < rendererCount; rendererIndex++) {
+                            TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
                             if (trackGroupArray != null) {
                                 int arraySize = trackGroupArray.length;
-                                for (int j = 0; j < arraySize; j++) {
-                                    TrackGroup trackGroup = trackGroupArray.get(j);
+                                for (int groupIndex = 0; groupIndex < arraySize; groupIndex++) {
+                                    TrackGroup trackGroup = trackGroupArray.get(groupIndex);
                                     if (trackGroup != null) {
                                         int groupSize = trackGroup.length;
-                                        for (int k = 0; k < groupSize; k++) {
-                                            Format format = trackGroup.getFormat(k);
-                                            int rendererType = mappedTrackInfo.getRendererType(i);
+                                        for (int trackIndex = 0; trackIndex < groupSize; trackIndex++) {
+                                            Format format = trackGroup.getFormat(trackIndex);
+                                            int rendererType = mappedTrackInfo.getRendererType(rendererIndex);
                                             switch (rendererType) {
                                                 case C.TRACK_TYPE_AUDIO:
-                                                    Log.d(TAG, "The audio renderer index = " + i);
+                                                    Log.d(TAG, "The audio renderer index = " + rendererIndex);
                                                     rendererName = "Audio_" + audioRenderer;
-                                                    audioRendererIndexMap.put(rendererName, i);
+                                                    audioRendererIndexMap.put(rendererName, rendererIndex);
+                                                    int stereoMode = format.stereoMode;
+                                                    Log.d(TAG, "Format.stereoMode = " + stereoMode);
+                                                    // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
                                                     audioRenderer++;
                                                     break;
                                                 case C.TRACK_TYPE_VIDEO:
-                                                    Log.d(TAG, "The video renderer index = " + i);
+                                                    Log.d(TAG, "The video renderer index = " + rendererIndex);
                                                     rendererName = "Video_" + videoRenderer;
-                                                    videoRendererIndexMap.put(rendererName, i);
+                                                    videoRendererIndexMap.put(rendererName, rendererIndex);
+                                                    // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
                                                     videoRenderer++;
                                                     break;
                                                 default:
@@ -514,6 +578,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "mappedTrackInfo is null.");
                     }
 
+                    trackSelector.setParameters(parametersBuilder.build());
+
                     // build R.id.audioTrack submenu
                     if (audioTrackMenuItem.hasSubMenu()) {
                         SubMenu subMenu = audioTrackMenuItem.getSubMenu();
@@ -527,6 +593,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d(TAG, "videoRenderer = " + videoRenderer);
                     Log.d(TAG, "unknownRenderer = " + unknownRenderer);
                 }
+
                 isMediaSourcePrepared = true;
             }
         }
