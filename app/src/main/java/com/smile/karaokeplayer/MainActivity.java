@@ -107,10 +107,19 @@ public class MainActivity extends AppCompatActivity {
     private SortedMap<String, Integer> videoRendererIndexMap;
     private SortedMap<String, Integer> audioRendererIndexMap;
 
-    private boolean isMediaSourcePrepared;
-    private boolean isAutoPlay;
     private boolean hasPermissionForExternalStorage;
     private int mCurrentState;
+    private boolean isMediaSourcePrepared;
+    private boolean isAutoPlay;
+
+    private final int leftChannel = 1;
+    private final int rightChannel = 2;
+    private final int stereoChannel = 3;
+    private int currentChannelPlayed = stereoChannel;
+
+    private float currentPosition = 0.0f;
+    private float currentVolume = 1.0f;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -307,6 +316,50 @@ public class MainActivity extends AppCompatActivity {
                 SubMenu subMenu = item.getSubMenu();
                 final Context wrapper = supportToolbar.getThemedContext();
                 ScreenUtil.buildActionViewClassMenu(this, wrapper, subMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+                break;
+            case R.id.channel:
+                if (isMediaSourcePrepared) {
+                    if (currentChannelPlayed == leftChannel) {
+                        leftChannelMenuItem.setCheckable(true);
+                        leftChannelMenuItem.setChecked(true);
+                    } else {
+                        leftChannelMenuItem.setCheckable(false);
+                        leftChannelMenuItem.setChecked(false);
+                    }
+                    if (currentChannelPlayed == rightChannel) {
+                        rightChannelMenuItem.setCheckable(true);
+                        rightChannelMenuItem.setChecked(true);
+                    } else {
+                        rightChannelMenuItem.setCheckable(false);
+                        rightChannelMenuItem.setChecked(false);
+                    }
+                    if (currentChannelPlayed == stereoChannel) {
+                        stereoChannelMenuItem.setCheckable(true);
+                        stereoChannelMenuItem.setChecked(true);
+                    } else {
+                        stereoChannelMenuItem.setCheckable(false);
+                        stereoChannelMenuItem.setChecked(false);
+                    }
+                } else {
+                    leftChannelMenuItem.setCheckable(false);
+                    leftChannelMenuItem.setChecked(false);
+                    rightChannelMenuItem.setCheckable(false);
+                    rightChannelMenuItem.setChecked(false);
+                    stereoChannelMenuItem.setCheckable(false);
+                    stereoChannelMenuItem.setChecked(false);
+                }
+                break;
+            case R.id.leftChannel:
+                currentChannelPlayed = leftChannel;
+                stereoVolumeAudioProcessor.setVolume(currentVolume, 0.0f);
+                break;
+            case R.id.rightChannel:
+                currentChannelPlayed = rightChannel;
+                stereoVolumeAudioProcessor.setVolume(0.0f, currentVolume);
+                break;
+            case R.id.stereoChannel:
+                currentChannelPlayed = stereoChannel;
+                stereoVolumeAudioProcessor.setVolume(currentVolume, currentVolume);
                 break;
         }
 
@@ -507,10 +560,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
+            if (playbackState == Player.STATE_ENDED) {
+                isMediaSourcePrepared = false;
+                return;
+            }
             if (playbackState == Player.STATE_READY) {
                 if (!isMediaSourcePrepared) {
                     // the first time of Player.STATE_READY means prepared
-                    exoPlayer.setVolume(1.0f);
+
+                    currentChannelPlayed = stereoChannel;
+                    currentVolume = 1.0f;
+                    currentPosition = 0.0f;
+
+                    exoPlayer.setVolume(currentVolume);
 
                     DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
                     DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
@@ -595,6 +657,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 isMediaSourcePrepared = true;
+
+                return;
             }
         }
 
