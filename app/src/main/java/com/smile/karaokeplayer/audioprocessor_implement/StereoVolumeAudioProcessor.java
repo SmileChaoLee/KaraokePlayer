@@ -51,6 +51,10 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
         outputBuffer = EMPTY_BUFFER;
         channelCount = Format.NO_VALUE;
         sampleRateHz = Format.NO_VALUE;
+
+        setChannelMap(new int[]{0,1});
+        setVolume(1.0f, 1.0f);
+
         active = false;
     }
 
@@ -64,7 +68,7 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
      */
     public void setChannelMap(@Nullable int[] outputChannels) {
         pendingOutputChannels = outputChannels;
-        Log.d(TAG, "setChannelMap() was executed.");
+        Log.d(TAG, "StereoVolumeAudioProcessor.setChannelMap() was executed.");
     }
 
     /**
@@ -90,15 +94,19 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
     public boolean configure(int sampleRateHz, int channelCount, @C.Encoding int encoding)
             throws UnhandledFormatException {
 
-        Log.d(TAG, "configure() was called.");
+        Log.d(TAG, "StereoVolumeAudioProcessor.configure() was called.");
+
         if (volume == null) {
             throw new IllegalStateException("volume has not been set! Call setVolume(float left,float right)");
         }
 
         boolean outputChannelsChanged = !Arrays.equals(pendingOutputChannels, outputChannels);
+        Log.d(TAG, "StereoVolumeAudioProcessor.outputChannelsChanged() = " + outputChannelsChanged);
         outputChannels = pendingOutputChannels;
         if (outputChannels == null) {
             active = false;
+            Log.d(TAG, "StereoVolumeAudioProcessor.outputChannels is null.");
+            Log.d(TAG, "StereoVolumeAudioProcessor.configure() = " + outputChannelsChanged);
             return outputChannelsChanged;
         }
         if (encoding != C.ENCODING_PCM_16BIT) {
@@ -106,12 +114,17 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
         }
         if (!outputChannelsChanged && this.sampleRateHz == sampleRateHz
                 && this.channelCount == channelCount) {
+            Log.d(TAG, "StereoVolumeAudioProcessor.outputChannelsChanged is not true.");
+            Log.d(TAG, "StereoVolumeAudioProcessor.configure() = " + false);
             return false;
         }
         this.sampleRateHz = sampleRateHz;
         this.channelCount = channelCount;
 
+        Log.d(TAG, "StereoVolumeAudioProcessor.configure() = " + true);
+
         active = true;
+
         return true;
     }
 
@@ -153,11 +166,37 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
         }
 
         if (isActive()) {
-            int ch = 0;
-            for (int i = position; i < limit; i += 2) {
-                short sample = (short) (inputBuffer.getShort(i) * volume[ch++]);
-                buffer.putShort(sample);
-                ch %= channelCount;
+            if ( (volume[LEFT_SPEAKER] != 0) && (volume[RIGHT_SPEAKER] == 0) ) {
+                // only left speaker has sound
+                for (int i = position; i < limit; i += 4) {
+                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
+                    buffer.putShort(sampleLeft);    // left speaker
+                    buffer.putShort(sampleLeft);    // use left sound for right speaker
+                }
+            } else if ( (volume[LEFT_SPEAKER] == 0) && (volume[RIGHT_SPEAKER] != 0) ) {
+                // only right speaker has sound
+                for (int i = position; i < limit; i += 4) {
+                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
+                    buffer.putShort(sampleRight);    // use right sound for left speaker
+                    buffer.putShort(sampleRight);    // right speaker
+                }
+            } else {
+                /*
+                int ch = 0;
+                for (int i = position; i < limit; i += 2) {
+                    short sample = (short) (inputBuffer.getShort(i) * volume[ch++]);
+                    buffer.putShort(sample);
+                    ch %= channelCount;
+                }
+                */
+                for (int i = position; i < limit; i += 4) {
+                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
+                    buffer.putShort(sampleLeft);    //left speaker
+                    buffer.putShort(sampleRight);   // right speaker
+                }
             }
         } else {
             throw new IllegalStateException();

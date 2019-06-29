@@ -112,9 +112,9 @@ public class MainActivity extends AppCompatActivity {
     private boolean isMediaSourcePrepared;
     private boolean isAutoPlay;
 
-    private final int leftChannel = 1;
-    private final int rightChannel = 2;
-    private final int stereoChannel = 3;
+    private static final int leftChannel = 0;
+    private static final int rightChannel = 1;
+    private static final int stereoChannel = 2;
     private int currentChannelPlayed = stereoChannel;
 
     private float currentPosition = 0.0f;
@@ -428,8 +428,6 @@ public class MainActivity extends AppCompatActivity {
 
                 // Customized AudioProcessor
                 stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
-                stereoVolumeAudioProcessor.setChannelMap(new int[]{0,1});
-                stereoVolumeAudioProcessor.setVolume(1.0f,1.0f);
                 AudioProcessor[] audioProcessors = new AudioProcessor[] {stereoVolumeAudioProcessor};
 
                 return audioProcessors;
