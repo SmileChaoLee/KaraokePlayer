@@ -1,7 +1,9 @@
 package com.smile.karaokeplayer;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -65,11 +68,16 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
     private static final int PrivacyPolicyActivityRequestCode = 10;
+    private static final int FILE_READ_REQUEST_CODE = 1;
 
     private float textFontSize;
     private float fontScale;
+    private float toastTextSize;
     // private Toolbar supportToolbar;  // use customized ToolBar
     private ActionBar supportToolbar;   // use default ActionBar
+
+    private String accessExternalStoragePermissionDeniedString;
+    private String noReadableExternalStorageString;
 
     private Menu mainMenu;
     // submenu of file
@@ -123,17 +131,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
+        toastTextSize = 0.8f * textFontSize;
+
+        accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
+        noReadableExternalStorageString = getString(R.string.noReadableExternalStorageString);
 
         // int colorDarkOrange = ContextCompat.getColor(KaraokeApp.AppContext, R.color.darkOrange);
         // int colorRed = ContextCompat.getColor(KaraokeApp.AppContext, R.color.red);
         // int colorDarkRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.darkRed);
         // int colorDarkGreen = ContextCompat.getColor(KaraokeApp.AppContext, R.color.darkGreen);
 
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // use default ActionBar
@@ -204,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (!hasPermissionForExternalStorage) {
-            Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+            ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
             return super.onOptionsItemSelected(item);
         }
 
@@ -228,11 +240,11 @@ public class MainActivity extends AppCompatActivity {
                 isMediaSourcePrepared = false;
                 if (isExternalStorageReadable()) {
                     // has readable external storage
-                    Toast.makeText(this, "Has readable external storage", Toast.LENGTH_LONG).show();
+                    /*
+                    ScreenUtil.showToast(this, "Has readable external storage", toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                     String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
                     Log.d(TAG, "Public root directory: " + externalPath);
                     String filePath = externalPath + "/Song/perfume_h264.mp4";
-                    // String filePath = externalPath + "/Song/a00464.mp4";
                     Log.d(TAG, "File path: " + filePath);
                     File songFile = new File(filePath);
                     if (songFile.exists()) {
@@ -242,9 +254,11 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Log.d(TAG, "File does not exist");
                     }
+                    */
+                    selectFileToOpen();
                 } else {
-                    Toast.makeText(this, "Does not Have readable external storage", Toast.LENGTH_LONG).show();
-                    Log.d(TAG, "Does not Have readable external storage.");
+                    ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                    Log.d(TAG, noReadableExternalStorageString);
                 }
                 break;
             case R.id.close:
@@ -386,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 hasPermissionForExternalStorage = false;
-                Toast.makeText(getApplicationContext(), "PERMISSION_DENIED", Toast.LENGTH_SHORT).show();
+                ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
             } else {
                 hasPermissionForExternalStorage = true;
             }
@@ -402,12 +416,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri mediaUri = null;
+            if (data != null) {
+                mediaUri = data.getData();
+                Log.i(TAG, "Uri: " + mediaUri.toString());
+                mediaTransportControls.prepareFromUri(mediaUri, null);
+            }
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         exitApplication();
     }
 
     private void exitApplication() {
         finish();
+    }
+
+    private void selectFileToOpen() {
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+        // browser.
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+
+        // Filter to only show results that can be "opened", such as a
+        // file (as opposed to a list of contacts or timezones)
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // Filter to show only videos, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers,
+        // it would be "*/*".
+        intent.setType("video/*");
+
+        startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
 
     private void initExoPlayer() {

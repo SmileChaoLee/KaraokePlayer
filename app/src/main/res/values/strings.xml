@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">KaraokePlayer</string>
     <string name="fileString">File</string>
+    <string name="accessExternalStoragePermissionDeniedString"></string>
+    <string name="noReadableExternalStorageString">No readable external storage</string>
     <string name="autoPlayString">Auto Play</string>
     <string name="openString">Open</string>
     <string name="closeString">Close</string>
