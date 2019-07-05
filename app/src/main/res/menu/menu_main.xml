@@ -63,19 +63,9 @@
                 android:orderInCategory="4"
                 app:showAsAction="never">
             </item>
-            <item android:id="@+id/fforward"
-                android:title="@string/fforwardString"
-                android:orderInCategory="5"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/rewind"
-                android:title="@string/rewindString"
-                android:orderInCategory="6"
-                app:showAsAction="never">
-            </item>
             <item android:id="@+id/toTV"
                 android:title="@string/toTVString"
-                android:orderInCategory="7"
+                android:orderInCategory="5"
                 app:showAsAction="never">
             </item>
         </menu>

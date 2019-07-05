@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -86,8 +85,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem playMenuItem;
     private MenuItem pauseMenuItem;
     private MenuItem stopMenuItem;
-    private MenuItem fforwardMenuItem;
-    private MenuItem rewindMenuItem;
     private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
@@ -123,9 +120,14 @@ public class MainActivity extends AppCompatActivity {
     private static final int leftChannel = 0;
     private static final int rightChannel = 1;
     private static final int stereoChannel = 2;
-    private int currentChannelPlayed = stereoChannel;
+    private int musicAudioChannel = leftChannel;    // default
+    private int vocalAudioChannel = stereoChannel;  // default
+    private int currentChannelPlayed = musicAudioChannel;
+    private int musicAudioRenderer = 0;
+    private int vocalAudioRenderer = 1;
+    private int currentAudioRendererPlayed = musicAudioRenderer;
 
-    private float currentPosition = 0.0f;
+    private int currentPosition = 0;
     private float currentVolume = 1.0f;
 
 
@@ -199,8 +201,6 @@ public class MainActivity extends AppCompatActivity {
         playMenuItem = menu.findItem(R.id.play);
         pauseMenuItem = menu.findItem(R.id.pause);
         stopMenuItem = menu.findItem(R.id.stop);
-        fforwardMenuItem = menu.findItem(R.id.fforward);
-        rewindMenuItem = menu.findItem(R.id.rewind);
         toTvMenuItem = menu.findItem(R.id.toTV);
         // submenu of audio
         audioTrackMenuItem = menu.findItem(R.id.audioTrack);
@@ -240,21 +240,6 @@ public class MainActivity extends AppCompatActivity {
                 isMediaSourcePrepared = false;
                 if (isExternalStorageReadable()) {
                     // has readable external storage
-                    /*
-                    ScreenUtil.showToast(this, "Has readable external storage", toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
-                    String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-                    Log.d(TAG, "Public root directory: " + externalPath);
-                    String filePath = externalPath + "/Song/perfume_h264.mp4";
-                    Log.d(TAG, "File path: " + filePath);
-                    File songFile = new File(filePath);
-                    if (songFile.exists()) {
-                        Log.d(TAG, "File exists");
-                        Uri mediaUri = Uri.parse("file://" + filePath);
-                        mediaTransportControls.prepareFromUri(mediaUri, null);
-                    } else {
-                        Log.d(TAG, "File does not exist");
-                    }
-                    */
                     selectFileToOpen();
                 } else {
                     ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
@@ -288,18 +273,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     stopMenuItem.setCheckable(false);
                 }
-                if (mCurrentState == PlaybackStateCompat.STATE_FAST_FORWARDING) {
-                    fforwardMenuItem.setCheckable(true);
-                    fforwardMenuItem.setChecked(true);
-                } else {
-                    fforwardMenuItem.setCheckable(false);
-                }
-                if (mCurrentState == PlaybackStateCompat.STATE_REWINDING) {
-                    rewindMenuItem.setCheckable(true);
-                    rewindMenuItem.setChecked(true);
-                } else {
-                    rewindMenuItem.setCheckable(false);
-                }
                 // toTvMenuItem
                 break;
             case R.id.play:
@@ -324,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.replay:
+                replayMedia();
                 break;
             case R.id.audioTrack:
                 // if there are audio tracks
@@ -447,6 +421,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectFileToOpen() {
+        /*
+                    ScreenUtil.showToast(this, "Has readable external storage", toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                    String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+                    Log.d(TAG, "Public root directory: " + externalPath);
+                    String filePath = externalPath + "/Song/perfume_h264.mp4";
+                    Log.d(TAG, "File path: " + filePath);
+                    File songFile = new File(filePath);
+                    if (songFile.exists()) {
+                        Log.d(TAG, "File exists");
+                        Uri mediaUri = Uri.parse("file://" + filePath);
+                        mediaTransportControls.prepareFromUri(mediaUri, null);
+                    } else {
+                        Log.d(TAG, "File does not exist");
+                    }
+                    */
+
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -459,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers,
         // it would be "*/*".
-        intent.setType("video/*");
+        intent.setType("video/*");  // or intent.setType("*/*");
 
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
@@ -594,6 +584,46 @@ public class MainActivity extends AppCompatActivity {
         // playbackStateBuilder = null; // no need if use MediaSessionConnector
     }
 
+    private void replayMedia() {
+        if (mediaSource != null) {
+            if (isMediaSourcePrepared) {
+                // song is playing, paused, or finished playing
+                exoPlayer.setPlayWhenReady(false);
+                currentPosition = 0;
+                exoPlayer.seekTo(currentPosition);
+                setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
+                exoPlayer.retry();
+                exoPlayer.setPlayWhenReady(true);
+            } else {
+                // song was stopped by user
+                mediaTransportControls.prepare();   // prepare and play
+            }
+            Log.d(TAG, "Replayed the song.");
+        }
+
+        Log.d(TAG, "replayMedia() is called.");
+    }
+
+    private void setAudioTrackAndChannel(int audioRenderer, int audioChannel) {
+        // select audio renderer
+        currentAudioRendererPlayed = audioRenderer;
+
+        // select audio channel
+        currentChannelPlayed = audioChannel;
+        setAudioVolume(currentVolume);
+    }
+
+    private void setAudioVolume(float volume) {
+        if (currentChannelPlayed == leftChannel) {
+            stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
+        } else if (currentChannelPlayed == leftChannel) {
+            stereoVolumeAudioProcessor.setVolume(0.0f, volume);
+        } else {
+            stereoVolumeAudioProcessor.setVolume(volume, volume);
+        }
+    }
+
+    /*
     // No need if use MediaSessionConnector
     private void setMediaPlaybackState(int state) {
         PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
@@ -607,24 +637,33 @@ public class MainActivity extends AppCompatActivity {
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
     }
     //
+    */
 
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
             if (playbackState == Player.STATE_ENDED) {
-                isMediaSourcePrepared = false;
+                // isMediaSourcePrepared = false;
+                return;
+            }
+            if (playbackState == Player.STATE_IDLE) {
+                if (mediaSource != null) {
+                    isMediaSourcePrepared = false;
+                    Log.d(TAG, "Song was stopped by user.");
+                }
                 return;
             }
             if (playbackState == Player.STATE_READY) {
                 if (!isMediaSourcePrepared) {
                     // the first time of Player.STATE_READY means prepared
 
-                    currentChannelPlayed = stereoChannel;
+                    musicAudioRenderer = 0;     // defined by user in setting app
+                    musicAudioChannel = leftChannel; // defined by user in setting app
                     currentVolume = 1.0f;
-                    currentPosition = 0.0f;
+                    currentPosition = 0;
 
-                    exoPlayer.setVolume(currentVolume);
+                    setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
 
                     DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
                     DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
@@ -733,6 +772,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /*
     // Already defined in MediaSessionConnector if use MediaSessionConnector
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
 
@@ -827,6 +867,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "MediaSessionCallback.onRewind() is called.");
         }
     }
+    */
     //
 
     private class PlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
@@ -840,6 +881,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPrepare() {
+            exoPlayer.prepare(mediaSource);
+            exoPlayer.setPlayWhenReady(true);
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepare() is called.");
         }
 
@@ -858,10 +901,10 @@ public class MainActivity extends AppCompatActivity {
 
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
-            // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+            // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(false);  // do not start playing
+            exoPlayer.setPlayWhenReady(true);  // start playing when ready
 
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromUri() is called.");
         }
