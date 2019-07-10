@@ -2,7 +2,6 @@
 <resources>
 
     <style name="CustomActionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="background">?attr/colorPrimary</item>
         <item name="actionMenuTextColor">@color/white</item>
         <item name="android:textSize">60px</item>
         <item name="android:textStyle">normal</item>

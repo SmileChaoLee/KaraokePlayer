@@ -4,7 +4,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- no Status Bar -->
         <item name="android:windowFullscreen">true</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@android:color/black</item>   <!-- background for ActionBar -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">@android:color/black</item>
@@ -47,7 +47,6 @@
     </style>
 
     <style name="CustomActionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="background">?attr/colorPrimary</item>
         <item name="actionMenuTextColor">@color/white</item>
         <item name="android:textSize">@dimen/textFontSize</item>
         <item name="android:textStyle">normal</item>

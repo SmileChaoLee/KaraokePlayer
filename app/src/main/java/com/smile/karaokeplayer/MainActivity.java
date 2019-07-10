@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,7 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
@@ -54,7 +56,6 @@ import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcess
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.io.File;
 import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -162,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         //
 
         // Video player view
-        videoPlayerView = findViewById(R.id.videoPlayView);
+        videoPlayerView = findViewById(R.id.videoPlayerView);
         //
 
         videoRendererIndexMap = new TreeMap<>();
@@ -449,7 +450,9 @@ public class MainActivity extends AppCompatActivity {
         // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
         // To search for all documents available via installed storage providers,
         // it would be "*/*".
-        intent.setType("video/*");  // or intent.setType("*/*");
+        // intent.setType("video/*");
+        // or
+        intent.setType("*/*");
 
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
@@ -511,6 +514,18 @@ public class MainActivity extends AppCompatActivity {
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
+        videoPlayerView.setControllerShowTimeoutMs(5000);  //  5 seconds
+        videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+                if (visibility == View.VISIBLE) {
+                    supportToolbar.show();
+                } else {
+                    supportToolbar.hide();
+                    mainMenu.close();
+                }
+            }
+        });
 
         // Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
 
