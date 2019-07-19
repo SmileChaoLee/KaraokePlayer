@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -53,10 +54,12 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -83,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
     private Menu mainMenu;
     // submenu of file
     private MenuItem autoPlayMenuItem;
+    private MenuItem openMenuItem;
+    private MenuItem closeMenuItem;
     // submenu of action
     private MenuItem playMenuItem;
     private MenuItem pauseMenuItem;
@@ -111,9 +116,6 @@ public class MainActivity extends AppCompatActivity {
     private MediaSource mediaSource;
     private AudioAttributes.Builder audioAttributesBuilder;
 
-    private SortedMap<String, Integer> videoRendererIndexMap;
-    private SortedMap<String, Integer> audioRendererIndexMap;
-
     private boolean hasPermissionForExternalStorage;
     private int mCurrentState;
     private boolean isMediaSourcePrepared;
@@ -122,15 +124,20 @@ public class MainActivity extends AppCompatActivity {
     private static final int leftChannel = 0;
     private static final int rightChannel = 1;
     private static final int stereoChannel = 2;
-    private int musicAudioChannel = leftChannel;    // default
-    private int vocalAudioChannel = stereoChannel;  // default
-    private int currentChannelPlayed = musicAudioChannel;
-    private int musicAudioRenderer = 0;
-    private int vocalAudioRenderer = 1;
-    private int currentAudioRendererPlayed = musicAudioRenderer;
+    private int musicAudioChannel;
+    private int vocalAudioChannel;
+    private int currentChannelPlayed;
+    private int musicAudioRenderer;
+    private int vocalAudioRenderer;
+    private int currentAudioRendererPlayed;
+    private int currentPosition;
+    private float currentVolume;
 
-    private int currentPosition = 0;
-    private float currentVolume = 1.0f;
+    private SortedMap<String, Integer> videoRendererIndexMap;
+    private SortedMap<String, Integer> audioRendererIndexMap;
+
+    private ArrayList<SongInfo> publicSongList;
+    private int publicSongIndex;
 
 
     @Override
@@ -167,14 +174,11 @@ public class MainActivity extends AppCompatActivity {
         videoPlayerView = findViewById(R.id.videoPlayerView);
         //
 
-        videoRendererIndexMap = new TreeMap<>();
-        audioRendererIndexMap = new TreeMap<>();
+        initializeVariables();
 
         initExoPlayer();
         initMediaSessionCompat();
 
-        isAutoPlay = false;
-        isMediaSourcePrepared = false;
         hasPermissionForExternalStorage = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -199,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
+        openMenuItem = menu.findItem(R.id.open);
+        closeMenuItem = menu.findItem(R.id.close);
         // submenu of action
         playMenuItem = menu.findItem(R.id.play);
         pauseMenuItem = menu.findItem(R.id.pause);
@@ -229,6 +235,12 @@ public class MainActivity extends AppCompatActivity {
                 autoPlayMenuItem.setCheckable(true);
                 if (isAutoPlay) {
                     autoPlayMenuItem.setChecked(true);
+                    openMenuItem.setEnabled(false);
+                    closeMenuItem.setEnabled(false);
+                } else {
+                    autoPlayMenuItem.setChecked(false);
+                    openMenuItem.setEnabled(true);
+                    closeMenuItem.setEnabled(true);
                 }
                 break;
             case R.id.autoPlay:
@@ -236,19 +248,30 @@ public class MainActivity extends AppCompatActivity {
                 isAutoPlay = !isAutoPlay;
                 if (isAutoPlay) {
                     // start playing video from list
+                    if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
+                        // no media is playing or prepared
+                        exoPlayer.stop();   // will go to onPlayerStateChanged()
+                        Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
+                    } else {
+                        autoStartPlay();
+                    }
                 }
                 break;
             case R.id.open:
-                isMediaSourcePrepared = false;
-                if (isExternalStorageReadable()) {
-                    // has readable external storage
-                    selectFileToOpen();
-                } else {
-                    ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
-                    Log.d(TAG, noReadableExternalStorageString);
+                if (!isAutoPlay) {
+                    isMediaSourcePrepared = false;
+                    if (isExternalStorageReadable()) {
+                        // has readable external storage
+                        selectFileToOpen();
+                    } else {
+                        ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        Log.d(TAG, noReadableExternalStorageString);
+                    }
                 }
                 break;
             case R.id.close:
+                if (!isAutoPlay) {
+                }
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, SmileApplication.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
@@ -341,15 +364,15 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.leftChannel:
                 currentChannelPlayed = leftChannel;
-                stereoVolumeAudioProcessor.setVolume(currentVolume, 0.0f);
+                setAudioVolume(currentVolume);
                 break;
             case R.id.rightChannel:
                 currentChannelPlayed = rightChannel;
-                stereoVolumeAudioProcessor.setVolume(0.0f, currentVolume);
+                setAudioVolume(currentVolume);
                 break;
             case R.id.stereoChannel:
                 currentChannelPlayed = stereoChannel;
-                stereoVolumeAudioProcessor.setVolume(currentVolume, currentVolume);
+                setAudioVolume(currentVolume);
                 break;
         }
 
@@ -408,6 +431,10 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) {
                 mediaUri = data.getData();
                 Log.i(TAG, "Uri: " + mediaUri.toString());
+
+                musicAudioRenderer = 0;
+                musicAudioChannel = leftChannel;
+
                 mediaTransportControls.prepareFromUri(mediaUri, null);
             }
         }
@@ -420,6 +447,35 @@ public class MainActivity extends AppCompatActivity {
 
     private void exitApplication() {
         finish();
+    }
+
+    private void initializeVariables() {
+
+        isAutoPlay = false;
+        isMediaSourcePrepared = false;
+        mCurrentState = PlaybackStateCompat.STATE_NONE;
+
+        musicAudioChannel = leftChannel;    // default
+        vocalAudioChannel = stereoChannel;  // default
+        currentChannelPlayed = musicAudioChannel;
+        musicAudioRenderer = 0;
+        vocalAudioRenderer = 1;
+        currentAudioRendererPlayed = musicAudioRenderer;
+        int currentPosition = 0;
+        currentVolume = 1.0f;
+
+        videoRendererIndexMap = new TreeMap<>();
+        audioRendererIndexMap = new TreeMap<>();
+
+        publicSongList = new ArrayList<>();
+        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String filePath = externalPath + "/Song";
+        String fileName = "perfume_h264.mp4";
+
+        SongInfo songInfo = new SongInfo("000001", "香水", filePath, fileName, 0, 0, leftChannel, rightChannel);
+        publicSongList.add(songInfo);
+        publicSongIndex = 0;
+
     }
 
     private void selectFileToOpen() {
@@ -558,7 +614,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
-        mCurrentState = PlaybackStateCompat.STATE_NONE;
+        // mCurrentState = PlaybackStateCompat.STATE_NONE;
 
         // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
         /*
@@ -603,6 +659,25 @@ public class MainActivity extends AppCompatActivity {
         // playbackStateBuilder = null; // no need if use MediaSessionConnector
     }
 
+    private void autoStartPlay() {
+
+        if (!isFinishing()) {
+            // activity is not being destroyed
+            SongInfo songInfo = publicSongList.get(publicSongIndex);
+
+            musicAudioRenderer = songInfo.getMusicTrackNo();
+            vocalAudioRenderer = songInfo.getVocalTrackNo();
+            musicAudioChannel = songInfo.getMusicChannel();
+            vocalAudioChannel = songInfo.getVocalChannel();
+
+            // isMediaSourcePrepared = false;
+
+            String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
+            Uri mediaUri = Uri.parse("file://" + filePath);
+            mediaTransportControls.prepareFromUri(mediaUri, null);
+        }
+    }
+
     private void replayMedia() {
         if (mediaSource != null) {
             if (isMediaSourcePrepared) {
@@ -632,10 +707,18 @@ public class MainActivity extends AppCompatActivity {
         setAudioVolume(currentVolume);
     }
 
+    private void switchAudioToVocal() {
+        setAudioTrackAndChannel(vocalAudioRenderer, vocalAudioChannel);
+    }
+
+    private void switchAudioToMusic() {
+        setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
+    }
+
     private void setAudioVolume(float volume) {
         if (currentChannelPlayed == leftChannel) {
             stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-        } else if (currentChannelPlayed == leftChannel) {
+        } else if (currentChannelPlayed == rightChannel) {
             stereoVolumeAudioProcessor.setVolume(0.0f, volume);
         } else {
             stereoVolumeAudioProcessor.setVolume(volume, volume);
@@ -661,26 +744,34 @@ public class MainActivity extends AppCompatActivity {
     private class ExoPlayerEventListener implements Player.EventListener {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
             Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
+            Log.d(TAG, "Playback state = " + playbackState);
+
             if (playbackState == Player.STATE_ENDED) {
-                // isMediaSourcePrepared = false;
+                if (isAutoPlay) {
+                    // start playing next video from list
+                    autoStartPlay();
+                }
                 return;
             }
             if (playbackState == Player.STATE_IDLE) {
                 if (mediaSource != null) {
-                    isMediaSourcePrepared = false;
                     Log.d(TAG, "Song was stopped by user.");
+                    if (isAutoPlay) {
+                        // start playing next video from list
+                        if (isMediaSourcePrepared) {
+                            autoStartPlay();
+                        }
+                    } else {
+                        isMediaSourcePrepared = false;
+                    }
                 }
                 return;
             }
             if (playbackState == Player.STATE_READY) {
                 if (!isMediaSourcePrepared) {
                     // the first time of Player.STATE_READY means prepared
-
-                    musicAudioRenderer = 0;     // defined by user in setting app
-                    musicAudioChannel = leftChannel; // defined by user in setting app
-                    currentVolume = 1.0f;
-                    currentPosition = 0;
 
                     setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
 
@@ -782,12 +873,24 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPlaybackStateChanged(PlaybackStateCompat state) {
-            Log.d(TAG, "MediaControllerCallback.onPlaybackStateChanged() is called.");
             super.onPlaybackStateChanged(state);
             if( state == null ) {
                 return;
             }
-            mCurrentState = state.getState();
+
+            int currentState = state.getState();
+            switch (currentState) {
+                case PlaybackStateCompat.STATE_NONE:
+                    // initial state and when playing is stopped by user
+                    Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
+                    break;
+                case PlaybackStateCompat.STATE_STOPPED:
+                    // when finished playing
+                    Log.d(TAG, "PlaybackStateCompat.STATE_STOPPED");
+                    break;
+            }
+            mCurrentState = currentState;
+            Log.d(TAG, "MediaControllerCallback.onPlaybackStateChanged() is called. " + currentState);
         }
     }
 
@@ -921,6 +1024,8 @@ public class MainActivity extends AppCompatActivity {
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
             // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+            isMediaSourcePrepared = false;
+            currentPosition = 0;
             mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);  // start playing when ready
