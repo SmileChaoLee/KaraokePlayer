@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<SongInfo> publicSongList;
     private int publicSongIndex;
+    private boolean isPlayingPUblic;
 
 
     @Override
@@ -248,18 +249,19 @@ public class MainActivity extends AppCompatActivity {
                 isAutoPlay = !isAutoPlay;
                 if (isAutoPlay) {
                     // start playing video from list
-                    if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
-                        // no media is playing or prepared
-                        exoPlayer.stop();   // will go to onPlayerStateChanged()
+                    // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
+                    if (mCurrentState != PlaybackStateCompat.STATE_NONE) {
+                        // media is playing or prepared
+                        // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
                         Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
-                    } else {
-                        autoStartPlay();
+
                     }
+                    autoStartPlay();
                 }
                 break;
             case R.id.open:
                 if (!isAutoPlay) {
-                    isMediaSourcePrepared = false;
+                    // isMediaSourcePrepared = false;
                     if (isExternalStorageReadable()) {
                         // has readable external storage
                         selectFileToOpen();
@@ -270,8 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.close:
-                if (!isAutoPlay) {
-                }
+                stopPlay();
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, SmileApplication.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
@@ -292,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     pauseMenuItem.setCheckable(false);
                 }
-                if (mCurrentState == PlaybackStateCompat.STATE_STOPPED) {
+                if ( (mediaSource != null) && (mCurrentState == PlaybackStateCompat.STATE_NONE) ) {
                     stopMenuItem.setCheckable(true);
                     stopMenuItem.setChecked(true);
                 } else {
@@ -315,11 +316,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.stop:
-                if (mCurrentState != PlaybackStateCompat.STATE_STOPPED) {
-                    item.setCheckable(true);
-                    item.setChecked(true);
-                    mediaTransportControls.stop();
-                }
+                // if (mCurrentState != PlaybackStateCompat.STATE_STOPPED) {
+                // mCurrentState = PlaybackStateCompat.STATE_STOPPED when finished playing
+                stopPlay();
                 break;
             case R.id.replay:
                 replayMedia();
@@ -470,11 +469,17 @@ public class MainActivity extends AppCompatActivity {
         publicSongList = new ArrayList<>();
         String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         String filePath = externalPath + "/Song";
-        String fileName = "perfume_h264.mp4";
 
+        String fileName = "perfume_h264.mp4";
         SongInfo songInfo = new SongInfo("000001", "香水", filePath, fileName, 0, 0, leftChannel, rightChannel);
         publicSongList.add(songInfo);
+
+        fileName = "saving_all_my_love_for_you.flv";
+        songInfo = new SongInfo("000002", "Saving All My Love For You", filePath, fileName, 0, 0, leftChannel, rightChannel);
+        publicSongList.add(songInfo);
+
         publicSongIndex = 0;
+        isPlayingPUblic = true;
 
     }
 
@@ -574,7 +579,7 @@ public class MainActivity extends AppCompatActivity {
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
-        videoPlayerView.setControllerShowTimeoutMs(5000);  //  5 seconds
+        videoPlayerView.setControllerShowTimeoutMs(10000);  //  10 seconds
         videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
@@ -661,20 +666,50 @@ public class MainActivity extends AppCompatActivity {
 
     private void autoStartPlay() {
 
-        if (!isFinishing()) {
-            // activity is not being destroyed
-            SongInfo songInfo = publicSongList.get(publicSongIndex);
+        if (isFinishing()) {
+            // activity is being destroyed
+            return;
+        }
 
-            musicAudioRenderer = songInfo.getMusicTrackNo();
-            vocalAudioRenderer = songInfo.getVocalTrackNo();
-            musicAudioChannel = songInfo.getMusicChannel();
-            vocalAudioChannel = songInfo.getVocalChannel();
+        // activity is not being destroyed then check
+        // if there are still songs to be play
 
-            // isMediaSourcePrepared = false;
+        if (isPlayingPUblic) {
+            // no next song to be played
+            int publicSongListSize = publicSongList.size();
+            if (publicSongListSize > 0) {
+                // There are public songs to be played
+                SongInfo songInfo = publicSongList.get(publicSongIndex);
+                musicAudioRenderer = songInfo.getMusicTrackNo();
+                vocalAudioRenderer = songInfo.getVocalTrackNo();
+                musicAudioChannel = songInfo.getMusicChannel();
+                vocalAudioChannel = songInfo.getVocalChannel();
 
-            String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
-            Uri mediaUri = Uri.parse("file://" + filePath);
-            mediaTransportControls.prepareFromUri(mediaUri, null);
+                String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
+                Uri mediaUri = Uri.parse("file://" + filePath);
+                Log.d(TAG, "publicSongIndex = " + publicSongIndex);
+                Log.d(TAG, "Uri = " + mediaUri);
+                mediaTransportControls.prepareFromUri(mediaUri, null);
+
+                publicSongIndex++;  // next index that will be played
+                if (publicSongIndex >= publicSongListSize) {
+                    publicSongIndex = 0;
+                }
+            }
+        } else {
+            // play next song that user has ordered
+        }
+    }
+
+    private void stopPlay() {
+        if (isAutoPlay) {
+            // auto play
+            autoStartPlay();
+        } else {
+            if ( (mediaSource != null) && (mCurrentState != PlaybackStateCompat.STATE_NONE) ) {
+                // no media file opened or playing has been stopped
+                mediaTransportControls.stop();
+            }
         }
     }
 
@@ -756,8 +791,16 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
             if (playbackState == Player.STATE_IDLE) {
+                // There is bug here
+                // The listener will get twice of (Player.STATE_IDLE)
+                // when user stop playing using ExoPlayer.stop()
+                // so do not put autoStartPlay() inside this event
                 if (mediaSource != null) {
+                    isMediaSourcePrepared = false;
                     Log.d(TAG, "Song was stopped by user.");
+                    /*
+                    // the followings cannot be here because of bug of ExoPlayer
+                    // , which is twice of STATE_IDLE event when explayer.stop()
                     if (isAutoPlay) {
                         // start playing next video from list
                         if (isMediaSourcePrepared) {
@@ -766,6 +809,7 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         isMediaSourcePrepared = false;
                     }
+                    */
                 }
                 return;
             }
@@ -883,6 +927,9 @@ public class MainActivity extends AppCompatActivity {
                 case PlaybackStateCompat.STATE_NONE:
                     // initial state and when playing is stopped by user
                     Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
+                    if (mediaSource != null) {
+                        Log.d(TAG, "MediaControllerCallback--> Song was stopped by user.");
+                    }
                     break;
                 case PlaybackStateCompat.STATE_STOPPED:
                     // when finished playing
