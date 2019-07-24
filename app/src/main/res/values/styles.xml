@@ -30,7 +30,7 @@
         <item name="contentInsetEnd">0dp</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/blue</item>
+        <item name="android:textColor">@drawable/menuitem_color</item>
         <item name="android:textSize">60px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:itemBackground">#ffa500</item>

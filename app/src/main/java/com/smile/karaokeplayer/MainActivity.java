@@ -436,6 +436,7 @@ public class MainActivity extends AppCompatActivity {
 
                 mediaTransportControls.prepareFromUri(mediaUri, null);
             }
+            return;
         }
     }
 
@@ -613,9 +614,10 @@ public class MainActivity extends AppCompatActivity {
         mediaSessionCompat = new MediaSessionCompat(this, LOG_TAG);
 
         // Enable callbacks from MediaButtons and TransportControls
-        mediaSessionCompat.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |
-                        MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS is deprecated
+        // MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS is deprecated
+        // mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
 
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
@@ -687,8 +689,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
                 Uri mediaUri = Uri.parse("file://" + filePath);
-                Log.d(TAG, "publicSongIndex = " + publicSongIndex);
-                Log.d(TAG, "Uri = " + mediaUri);
                 mediaTransportControls.prepareFromUri(mediaUri, null);
 
                 publicSongIndex++;  // next index that will be played
@@ -723,11 +723,12 @@ public class MainActivity extends AppCompatActivity {
                 setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
                 exoPlayer.retry();
                 exoPlayer.setPlayWhenReady(true);
+                Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentPosition).");
             } else {
                 // song was stopped by user
                 mediaTransportControls.prepare();   // prepare and play
+                Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
             }
-            Log.d(TAG, "Replayed the song.");
         }
 
         Log.d(TAG, "replayMedia() is called.");

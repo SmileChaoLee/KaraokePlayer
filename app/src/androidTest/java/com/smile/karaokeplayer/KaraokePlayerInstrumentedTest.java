@@ -2,18 +2,24 @@ package com.smile.karaokeplayer;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.SystemClock;
+import android.view.View;
 
+import androidx.appcompat.widget.MenuPopupWindow;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -70,7 +76,24 @@ public class KaraokePlayerInstrumentedTest {
         onView(withText(R.string.closeString)).check(matches(isDisplayed()));
         onView(withText(R.string.privacyPolicyString)).check(matches(isDisplayed()));
         onView(withText(R.string.exitString)).check(matches(isDisplayed()));
+        onView(withText(R.string.privacyPolicyString)).check(matches(isDisplayed()));
         Espresso.pressBack();
+    }
+
+    @Test
+    public void test_PrivacyPolicy() {
+        onView(withId(R.id.file)).perform(click());
+        // test PrivacyPolicy MenuItem of File menu
+        onData(CoreMatchers.anything())
+                .inRoot(RootMatchers.isPlatformPopup()) // isPlatformPopup() == is in PopupWindow
+                .inAdapterView(CoreMatchers.<View>instanceOf(MenuPopupWindow.MenuDropDownListView.class))
+                .atPosition(3) // for the fourth submenu item, here: R.id.privacyPolicy
+                .perform(click());
+
+        SystemClock.sleep(5000);
+
+        // R.id.privacyPolicy
+        // onView(withText("Privacy Policy")).check(matches(isDisplayed()));  // succeeded
     }
 
     @Test
@@ -80,8 +103,6 @@ public class KaraokePlayerInstrumentedTest {
         onView(withText(R.string.pauseString)).check(matches(isDisplayed()));
         onView(withText(R.string.stopString)).check(matches(isDisplayed()));
         onView(withText(R.string.replayString)).check(matches(isDisplayed()));
-        onView(withText(R.string.fforwardString)).check(matches(isDisplayed()));
-        onView(withText(R.string.rewindString)).check(matches(isDisplayed()));
         onView(withText(R.string.toTVString)).check(matches(isDisplayed()));
         Espresso.pressBack();
     }
