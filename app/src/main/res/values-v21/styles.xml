@@ -15,7 +15,7 @@
     </style>
 
     <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <!-- Required for Lollipop. -->
-        <item name="android:overlapAnchor">false</item>
+        <!-- Required for Lollipop and later. -->
+        <item name="android:overlapAnchor">true</item>
     </style>
 </resources>

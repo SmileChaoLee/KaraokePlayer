@@ -61,6 +61,6 @@
 
     <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- Required for pre-Lollipop. -->
-        <item name="overlapAnchor">false</item>
+        <item name="overlapAnchor">true</item>
     </style>
 </resources>

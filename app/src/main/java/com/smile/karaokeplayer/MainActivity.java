@@ -48,8 +48,10 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaSessionConnector mediaSessionConnector;
 
     private PlayerView videoPlayerView;
+
     private DataSource.Factory dataSourceFactory;
     private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
     private RenderersFactory renderersFactory;
@@ -233,13 +236,12 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.file:
+                autoPlayMenuItem.setCheckable(true);
                 if (isAutoPlay) {
-                    autoPlayMenuItem.setCheckable(true);
                     autoPlayMenuItem.setChecked(true);
                     openMenuItem.setEnabled(false);
                     closeMenuItem.setEnabled(false);
                 } else {
-                    autoPlayMenuItem.setCheckable(false);
                     autoPlayMenuItem.setChecked(false);
                     openMenuItem.setEnabled(true);
                     closeMenuItem.setEnabled(true);
@@ -581,6 +583,7 @@ public class MainActivity extends AppCompatActivity {
 
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
+
         videoPlayerView.setControllerShowTimeoutMs(10000);  //  10 seconds
         videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
