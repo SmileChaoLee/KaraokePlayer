@@ -1,13 +1,13 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- no Status Bar -->
         <item name="android:windowFullscreen">true</item>
-        <item name="colorPrimary">@android:color/black</item>   <!-- background for ActionBar -->
+        <item name="colorPrimary">@android:color/black</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">72px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
@@ -56,6 +56,7 @@
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingRight">0dp</item>
         <item name="android:paddingBottom">0dp</item>
+        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
         <item name="actionBarPopupTheme">@style/menu_text_style</item>
     </style>
 

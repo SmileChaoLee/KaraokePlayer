@@ -26,6 +26,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.exoplayer2.C;
@@ -79,8 +81,8 @@ public class MainActivity extends AppCompatActivity {
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
-    // private Toolbar supportToolbar;  // use customized ToolBar
-    private ActionBar supportToolbar;   // use default ActionBar
+    private Toolbar supportToolbar;  // use customized ToolBar
+    // private ActionBar supportToolbar;   // use default ActionBar
 
     private String accessExternalStoragePermissionDeniedString;
     private String noReadableExternalStorageString;
@@ -163,20 +165,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // use default ActionBar
-        setTitle(String.format(Locale.getDefault(), ""));
-        supportToolbar = getSupportActionBar();
-        TextView titleView = new TextView(this);
-        titleView.setText(supportToolbar.getTitle());
-        titleView.setTextColor(Color.WHITE);
-        ScreenUtil.resizeTextSize(titleView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        supportToolbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        supportToolbar.setCustomView(titleView);
-        //
-
         // Video player view
         videoPlayerView = findViewById(R.id.videoPlayerView);
+        videoPlayerView.setVisibility(View.VISIBLE);
         //
+
+        TextView toolbarTitleView;
+
+        // use default ActionBar
+        /*
+        setTitle(String.format(Locale.getDefault(), ""));
+        supportToolbar = getSupportActionBar();
+        supportToolbar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        supportToolbar.setCustomView(titleView);
+        toolbarTitleView = new TextView(this);
+        toolbarTitleView.setText(supportToolbar.getTitle());
+        toolbarTitleView.setTextColor(Color.WHITE);
+        ScreenUtil.resizeTextSize(toolbarTitleView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        */
+        //
+
+        // or
+        // use custom toolbar
+        supportToolbar = findViewById(R.id.custom_toolbar);
+        supportToolbar.bringToFront();
+        setSupportActionBar(supportToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        supportToolbar.setVisibility(View.VISIBLE);
+        toolbarTitleView = supportToolbar.findViewById(R.id.toolbarTitleTextView);
+        ScreenUtil.resizeTextSize(toolbarTitleView, textFontSize, SmileApplication.FontSize_Scale_Type);
 
         initializeVariables();
 
@@ -201,8 +218,12 @@ public class MainActivity extends AppCompatActivity {
         mainMenu = menu;
 
         // use default ActionBar
-        final Context wrapper = supportToolbar.getThemedContext();
-        //
+        // final Context wrapper = supportToolbar.getThemedContext();
+        // or use
+        // use custom toolbar
+        final int popupThemeId = supportToolbar.getPopupTheme();
+        final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
+
         ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
 
         // submenu of file
@@ -329,7 +350,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.audioTrack:
                 // if there are audio tracks
                 SubMenu subMenu = item.getSubMenu();
-                final Context wrapper = supportToolbar.getThemedContext();
+                // use default ActionBar
+                // final Context wrapper = supportToolbar.getThemedContext();
+                // or
+                // use custom toolbar
+                final int popupThemeId = supportToolbar.getPopupTheme();
+                final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
                 ScreenUtil.buildActionViewClassMenu(this, wrapper, subMenu, fontScale, SmileApplication.FontSize_Scale_Type);
                 break;
             case R.id.channel:
@@ -589,9 +615,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onVisibilityChange(int visibility) {
                 if (visibility == View.VISIBLE) {
-                    supportToolbar.show();
+                    // use default ActionBar
+                    // supportToolbar.show();
+                    // or
+                    // use custom toolbar
+                    supportToolbar.setVisibility(View.VISIBLE);
                 } else {
-                    supportToolbar.hide();
+                    // use defualt ActionBar
+                    // supportToolbar.hide();
+                    // or
+                    // use custom toolbar
+                    supportToolbar.setVisibility(View.GONE);
                     mainMenu.close();
                 }
             }
