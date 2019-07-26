@@ -233,12 +233,13 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.file:
-                autoPlayMenuItem.setCheckable(true);
                 if (isAutoPlay) {
+                    autoPlayMenuItem.setCheckable(true);
                     autoPlayMenuItem.setChecked(true);
                     openMenuItem.setEnabled(false);
                     closeMenuItem.setEnabled(false);
                 } else {
+                    autoPlayMenuItem.setCheckable(false);
                     autoPlayMenuItem.setChecked(false);
                     openMenuItem.setEnabled(true);
                     closeMenuItem.setEnabled(true);
