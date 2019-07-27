@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
@@ -50,10 +48,8 @@ import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -64,7 +60,6 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -126,6 +121,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean isMediaSourcePrepared;
     private boolean isAutoPlay;
 
+    private static final int noVideoRenderer = -1;
+    private int numberOfVideoRenderers;
+    private int currentVideoRendererPlayed;
+
+    private static final int noAudioTrack = -1;
+    private static final int noAudioChannel = -1;
     private static final int leftChannel = 0;
     private static final int rightChannel = 1;
     private static final int stereoChannel = 2;
@@ -134,8 +135,9 @@ public class MainActivity extends AppCompatActivity {
     private int currentChannelPlayed;
     private int musicAudioRenderer;
     private int vocalAudioRenderer;
+    private int numberOfAudioRenderers;
     private int currentAudioRendererPlayed;
-    private int currentPosition;
+    private int currentAudioPosition;
     private float currentVolume;
 
     private SortedMap<String, Integer> videoRendererIndexMap;
@@ -357,6 +359,19 @@ public class MainActivity extends AppCompatActivity {
                 final int popupThemeId = supportToolbar.getPopupTheme();
                 final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
                 ScreenUtil.buildActionViewClassMenu(this, wrapper, subMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+
+                // check if MenuItems of audioTrack need CheckBox
+                for (int i=0; i<subMenu.size(); i++) {
+                    MenuItem mItem = subMenu.getItem(i);
+                    if (i == currentAudioRendererPlayed) {
+                        mItem.setCheckable(true);
+                        mItem.setChecked(true);
+                    } else {
+                        mItem.setCheckable(false);
+                    }
+                }
+                //
+
                 break;
             case R.id.channel:
                 if (isMediaSourcePrepared) {
@@ -756,12 +771,12 @@ public class MainActivity extends AppCompatActivity {
             if (isMediaSourcePrepared) {
                 // song is playing, paused, or finished playing
                 exoPlayer.setPlayWhenReady(false);
-                currentPosition = 0;
-                exoPlayer.seekTo(currentPosition);
-                setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
+                currentAudioPosition = 0;
+                exoPlayer.seekTo(currentAudioPosition);
+                setProperAudioTrackAndChannel();
                 exoPlayer.retry();
                 exoPlayer.setPlayWhenReady(true);
-                Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentPosition).");
+                Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");
             } else {
                 // song was stopped by user
                 mediaTransportControls.prepare();   // prepare and play
@@ -773,12 +788,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAudioTrackAndChannel(int audioRenderer, int audioChannel) {
-        // select audio renderer
-        currentAudioRendererPlayed = audioRenderer;
+        if (numberOfAudioRenderers > 0) {
+            // select audio renderer
+            currentAudioRendererPlayed = audioRenderer;
 
-        // select audio channel
-        currentChannelPlayed = audioChannel;
-        setAudioVolume(currentVolume);
+            // select audio channel
+            currentChannelPlayed = audioChannel;
+            setAudioVolume(currentVolume);
+        }
     }
 
     private void switchAudioToVocal() {
@@ -790,12 +807,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAudioVolume(float volume) {
-        if (currentChannelPlayed == leftChannel) {
-            stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-        } else if (currentChannelPlayed == rightChannel) {
-            stereoVolumeAudioProcessor.setVolume(0.0f, volume);
-        } else {
-            stereoVolumeAudioProcessor.setVolume(volume, volume);
+        if (numberOfAudioRenderers > 0) {
+            if (currentChannelPlayed == leftChannel) {
+                stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
+            } else if (currentChannelPlayed == rightChannel) {
+                stereoVolumeAudioProcessor.setVolume(0.0f, volume);
+            } else {
+                stereoVolumeAudioProcessor.setVolume(volume, volume);
+            }
+        }
+    }
+
+    private void setProperAudioTrackAndChannel() {
+        if (numberOfAudioRenderers > 0) {
+            if (isAutoPlay) {
+                if (isPlayingPUblic) {
+                    switchAudioToVocal();
+                } else {
+                    switchAudioToMusic();
+                }
+            } else {
+                // not auto playing media, means using open menu to open a media
+                switchAudioToVocal();   // music and vocal are the same in this case
+            }
         }
     }
 
@@ -863,9 +897,9 @@ public class MainActivity extends AppCompatActivity {
                     // trackSelector.setParameters(parametersBuilder.build());  // for the testing
                     // or trackSelector.setParameters(parametersBuilder);  // for the testing
 
-                    int audioRenderer = 0;
-                    int videoRenderer = 0;
-                    int unknownRenderer = 0;
+                    int numAudioRenderer = 0;
+                    int numVideoRenderer = 0;
+                    int numUnknownRenderer = 0;
                     String rendererName = "";
 
                     videoRendererIndexMap.clear();
@@ -889,22 +923,22 @@ public class MainActivity extends AppCompatActivity {
                                             switch (rendererType) {
                                                 case C.TRACK_TYPE_AUDIO:
                                                     Log.d(TAG, "The audio renderer index = " + rendererIndex);
-                                                    rendererName = "Audio_" + audioRenderer;
+                                                    rendererName = "Audio_" + numAudioRenderer;
                                                     audioRendererIndexMap.put(rendererName, rendererIndex);
                                                     int stereoMode = format.stereoMode;
                                                     Log.d(TAG, "Format.stereoMode = " + stereoMode);
                                                     // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
-                                                    audioRenderer++;
+                                                    numAudioRenderer++;
                                                     break;
                                                 case C.TRACK_TYPE_VIDEO:
                                                     Log.d(TAG, "The video renderer index = " + rendererIndex);
-                                                    rendererName = "Video_" + videoRenderer;
+                                                    rendererName = "Video_" + numVideoRenderer;
                                                     videoRendererIndexMap.put(rendererName, rendererIndex);
                                                     // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
-                                                    videoRenderer++;
+                                                    numVideoRenderer++;
                                                     break;
                                                 default:
-                                                    unknownRenderer++;
+                                                    numUnknownRenderer++;
                                                     break;
                                             }
                                             Log.d(TAG, "Format = " + format);
@@ -935,9 +969,25 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
 
-                    Log.d(TAG, "audioRenderer = " + audioRenderer);
-                    Log.d(TAG, "videoRenderer = " + videoRenderer);
-                    Log.d(TAG, "unknownRenderer = " + unknownRenderer);
+                    Log.d(TAG, "audioRenderer = " + numAudioRenderer);
+                    Log.d(TAG, "videoRenderer = " + numVideoRenderer);
+                    Log.d(TAG, "unknownRenderer = " + numUnknownRenderer);
+
+                    numberOfVideoRenderers = numVideoRenderer;
+                    if (numberOfVideoRenderers == 0) {
+                        currentVideoRendererPlayed = noVideoRenderer;
+                    }
+                    numberOfAudioRenderers = numAudioRenderer;
+                    if (numberOfAudioRenderers == 0) {
+                        currentAudioRendererPlayed = noAudioTrack;
+                        currentChannelPlayed = noAudioChannel;
+                    } else {
+                        musicAudioRenderer = 0;
+                        vocalAudioRenderer = musicAudioRenderer;
+                        musicAudioChannel = stereoChannel;
+                        vocalAudioChannel = musicAudioChannel;
+                        setProperAudioTrackAndChannel();
+                    }
                 }
 
                 isMediaSourcePrepared = true;
@@ -1111,7 +1161,7 @@ public class MainActivity extends AppCompatActivity {
             // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
             // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             isMediaSourcePrepared = false;
-            currentPosition = 0;
+            currentAudioPosition = 0;
             mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             exoPlayer.setPlayWhenReady(true);  // start playing when ready
