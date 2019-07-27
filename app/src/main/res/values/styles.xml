@@ -11,14 +11,14 @@
         <item name="android:textSize">72px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:capitalize">none</item>
+
         <!-- item name="android:listChoiceIndicatorMultiple">@drawable/custom_checkbox -->
-        <!-- for menu items (submenu) -->
-        <!-- for ActionBar
+        <!-- for menu items (submenu) in ActionBar or Toolbar-->
+        <!--
         <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
         <item name="actionBarTheme">@style/CustomActionBarTheme</item>
-        <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
         -->
+        <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
     </style>
 
     <style name="AppThemeTransparent" parent="AppTheme">
@@ -63,6 +63,10 @@
     </style>
 
     <style name="CustomActionButtonTheme" parent="@style/Widget.AppCompat.ActionButton">
+        <!-- makes MenuItems in ActionBar, Toolbar, and Button not be capitalized automatically.
+        this style can be put in main AppThem or the themes of ActionBar or Toolbar
+        using item of <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
+        -->
         <item name="textAllCaps">false</item>
     </style>
 
