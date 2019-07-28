@@ -9,12 +9,13 @@
         <item name="android:paddingTop">0dp</item>
         <item name="android:paddingRight">0dp</item>
         <item name="android:paddingBottom">0dp</item>
-        <item name="actionOverflowMenuStyle">@style/OverflowMenu</item>
+        <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
         <item name="actionBarPopupTheme">@style/menu_text_style</item>
     </style>
 
-    <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">
+    <style name="CustomOverflowMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
         <!-- Required for Lollipop and later. -->
         <item name="android:overlapAnchor">false</item>
+        <item name="android:popupBackground">@android:color/transparent</item>
     </style>
 </resources>
