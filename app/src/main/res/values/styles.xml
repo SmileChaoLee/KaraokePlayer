@@ -11,7 +11,6 @@
         <item name="android:textSize">72px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
-
         <!-- item name="android:listChoiceIndicatorMultiple">@drawable/custom_checkbox -->
         <!-- for menu items (submenu) in ActionBar or Toolbar-->
         <!--
@@ -21,15 +20,7 @@
         <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
     </style>
 
-    <style name="AppThemeTransparent" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:backgroundDimEnabled">false</item>
-        <item name="android:colorBackgroundCacheHint">@null</item>
-    </style>
-
-    <style name="menu_text_style" parent="@style/ThemeOverlay.AppCompat.Light">
+    <style name="menu_text_style" parent="@android:style/Theme.Translucent" >
         <item name="contentInsetStart">0dp</item>
         <item name="contentInsetEnd">0dp</item>
         <item name="android:layout_width">wrap_content</item>
@@ -37,7 +28,7 @@
         <item name="android:textColor">@drawable/menuitem_color</item>
         <item name="android:textSize">60px</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:itemBackground">@color/white</item>
+        <item name="android:itemBackground">@drawable/menuitem_background_color</item>
         <item name="android:itemPadding">0dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="textAllCaps">false</item>
@@ -46,12 +37,14 @@
     </style>
 
     <style name="PopupMenuListView">
-        <item name="android:divider">@android:color/black</item>
+        <item name="android:divider">@color/white</item>
         <item name="android:dividerHeight">2dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
-    <style name="CustomActionBarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="actionMenuTextColor">@color/white</item>
+    <style name="CustomActionBarTheme" parent="@android:style/Theme.Translucent">
+        <item name="actionMenuTextColor">@drawable/menuitem_color</item>
         <item name="android:textSize">@dimen/textFontSize</item>
         <item name="android:textStyle">normal</item>
         <item name="android:paddingLeft">0dp</item>
@@ -68,6 +61,7 @@
         using item of <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
         -->
         <item name="textAllCaps">false</item>
+        <item name="android:background">@drawable/menuitem_background_color</item>
     </style>
 
     <style name="OverflowMenu" parent="Widget.AppCompat.PopupMenu.Overflow">

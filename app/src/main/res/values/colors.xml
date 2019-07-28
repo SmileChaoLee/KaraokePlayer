@@ -13,5 +13,6 @@
     <color name="yellow2">#ffe8e56a</color>
     <color name="yellow3">#d4d28f</color>
     <color name="green">#00ff00</color>
-    <color name="white">#ffffff</color>
+    <color name="white">#FFFFFF</color>
+    <color name="transparentWhite">#80F5F3EB</color>
 </resources>
