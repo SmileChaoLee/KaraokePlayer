@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem playMenuItem;
     private MenuItem pauseMenuItem;
     private MenuItem stopMenuItem;
+    private MenuItem replayMenuItem;
     private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
@@ -236,6 +237,7 @@ public class MainActivity extends AppCompatActivity {
         playMenuItem = menu.findItem(R.id.play);
         pauseMenuItem = menu.findItem(R.id.pause);
         stopMenuItem = menu.findItem(R.id.stop);
+        replayMenuItem = menu.findItem(R.id.replay);
         toTvMenuItem = menu.findItem(R.id.toTV);
         // submenu of audio
         audioTrackMenuItem = menu.findItem(R.id.audioTrack);
@@ -307,39 +309,44 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action:
-                if (mCurrentState == PlaybackStateCompat.STATE_PLAYING) {
-                    playMenuItem.setCheckable(true);
-                    playMenuItem.setChecked(true);
+                if (mediaSource != null) {
+                    playMenuItem.setEnabled(true);
+                    pauseMenuItem.setEnabled(true);
+                    stopMenuItem.setEnabled(true);
+                    replayMenuItem.setEnabled(true);
+                    toTvMenuItem.setEnabled(true);
+                    if (mCurrentState == PlaybackStateCompat.STATE_PLAYING) {
+                        playMenuItem.setCheckable(true);
+                        playMenuItem.setChecked(true);
+                    } else {
+                        playMenuItem.setCheckable(false);
+                    }
+                    if (mCurrentState == PlaybackStateCompat.STATE_PAUSED) {
+                        pauseMenuItem.setCheckable(true);
+                        pauseMenuItem.setChecked(true);
+                    } else {
+                        pauseMenuItem.setCheckable(false);
+                    }
+                    if ((mediaSource != null) && (mCurrentState == PlaybackStateCompat.STATE_NONE)) {
+                        stopMenuItem.setCheckable(true);
+                        stopMenuItem.setChecked(true);
+                    } else {
+                        stopMenuItem.setCheckable(false);
+                    }
+                    // toTvMenuItem
                 } else {
-                    playMenuItem.setCheckable(false);
+                    playMenuItem.setEnabled(false);
+                    pauseMenuItem.setEnabled(false);
+                    stopMenuItem.setEnabled(false);
+                    replayMenuItem.setEnabled(false);
+                    toTvMenuItem.setEnabled(false);
                 }
-                if (mCurrentState == PlaybackStateCompat.STATE_PAUSED) {
-                    pauseMenuItem.setCheckable(true);
-                    pauseMenuItem.setChecked(true);
-                } else {
-                    pauseMenuItem.setCheckable(false);
-                }
-                if ( (mediaSource != null) && (mCurrentState == PlaybackStateCompat.STATE_NONE) ) {
-                    stopMenuItem.setCheckable(true);
-                    stopMenuItem.setChecked(true);
-                } else {
-                    stopMenuItem.setCheckable(false);
-                }
-                // toTvMenuItem
                 break;
             case R.id.play:
-                if (mCurrentState != PlaybackStateCompat.STATE_PLAYING) {
-                    item.setCheckable(true);
-                    item.setChecked(true);
-                    mediaTransportControls.play();
-                }
+                startPlay();
                 break;
             case R.id.pause:
-                if (mCurrentState != PlaybackStateCompat.STATE_PAUSED) {
-                    item.setCheckable(true);
-                    item.setChecked(true);
-                    mediaTransportControls.pause();
-                }
+                pausePlay();
                 break;
             case R.id.stop:
                 // if (mCurrentState != PlaybackStateCompat.STATE_STOPPED) {
@@ -751,6 +758,20 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // play next song that user has ordered
+        }
+    }
+
+    private void startPlay() {
+        if ( (mediaSource != null) && (mCurrentState != PlaybackStateCompat.STATE_PLAYING) ) {
+            // no media file opened or playing has been stopped
+            mediaTransportControls.play();
+        }
+    }
+
+    private void pausePlay() {
+        if ( (mediaSource != null) && (mCurrentState != PlaybackStateCompat.STATE_PAUSED) ) {
+            // no media file opened or playing has been stopped
+            mediaTransportControls.pause();
         }
     }
 
