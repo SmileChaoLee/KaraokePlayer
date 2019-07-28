@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="textFontSize">31dp</dimen>
+    <dimen name="textFontSize">40dp</dimen>
 </resources>

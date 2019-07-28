@@ -154,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
+        Log.d(TAG, "textFontSize = " + textFontSize);
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
+        Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.8f * textFontSize;
 
         accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
@@ -196,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         supportToolbar.setVisibility(View.VISIBLE);
         toolbarTitleView = supportToolbar.findViewById(R.id.toolbarTitleTextView);
-        ScreenUtil.resizeTextSize(toolbarTitleView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(toolbarTitleView, textFontSize * fontScale, SmileApplication.FontSize_Scale_Type);
 
         initializeVariables();
 
@@ -228,6 +230,13 @@ public class MainActivity extends AppCompatActivity {
         final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
 
         ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
+
+        // for testing
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, R.style.CustomActionBarTheme);
+        Log.d(TAG,"Text font size for overflow menu = " + defaultTextFontSize);
+        TextView toolbarTitleView = supportToolbar.findViewById(R.id.toolbarTitleTextView);
+        ScreenUtil.resizeTextSize(toolbarTitleView, defaultTextFontSize * fontScale, SmileApplication.FontSize_Scale_Type);
+        //
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
