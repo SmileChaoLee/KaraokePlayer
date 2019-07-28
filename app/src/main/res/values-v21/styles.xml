@@ -14,8 +14,8 @@
     </style>
 
     <style name="CustomOverflowMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <!-- Required for Lollipop and later. -->
+        <!-- Required for Lollipop (API 21) and later. -->
         <item name="android:overlapAnchor">false</item>
-        <item name="android:popupBackground">@android:color/transparent</item>
+        <item name="android:popupBackground">@drawable/popupmenu_background</item>
     </style>
 </resources>

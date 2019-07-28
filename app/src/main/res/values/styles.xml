@@ -37,7 +37,7 @@
     </style>
 
     <style name="PopupMenuListViewStyle">
-        <item name="android:divider">@color/white</item>
+        <item name="android:divider">@android:color/darker_gray</item>
         <item name="android:dividerHeight">2dp</item>
         <item name="android:background">@android:color/transparent</item>
     </style>
@@ -64,8 +64,8 @@
     </style>
 
     <style name="CustomOverflowMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
-        <!-- Required for pre-Lollipop. -->
+        <!-- Required for pre-Lollipop (before API 21.) -->
         <item name="overlapAnchor">false</item>
-        <item name="android:popupBackground">@android:color/transparent</item>
+        <item name="android:popupBackground">@drawable/popupmenu_background</item>
     </style>
 </resources>
