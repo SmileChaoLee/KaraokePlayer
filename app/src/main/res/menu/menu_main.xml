@@ -71,8 +71,16 @@
         </menu>
     </item>
 
+    <item android:id="@+id/volume"
+        android:title=""
+        android:icon="@drawable/volume"
+        android:orderInCategory="3"
+        app:showAsAction="always">
+    </item>
+
     <item android:id="@+id/audioTrack"
-        android:title="@string/audioTrackString"
+        android:title=""
+        android:icon="@drawable/audio"
         android:orderInCategory="3"
         app:showAsAction="always">
         <menu>
