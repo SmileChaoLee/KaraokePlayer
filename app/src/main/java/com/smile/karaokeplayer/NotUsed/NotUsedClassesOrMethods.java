@@ -49,6 +49,22 @@ public class NotUsedClassesOrMethods {
     //
     */
 
+    // Enable callbacks from MediaButtons and TransportControls
+    // MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS is deprecated
+    // MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS is deprecated
+    // mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+    // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
+    // PlaybackStateCompat is already defined and mapped in MediaSessionConnector
+    // setMediaPlaybackState(mCurrentState);
+
+    // MySessionCallback has methods that handle callbacks from a media controller
+    // No need because it will be overridden by MediaSessionConnector
+    /*
+    MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
+    mediaSessionCompat.setCallback(mediaSessionCallback);
+    */
+
     /*
     // Already defined in MediaSessionConnector if use MediaSessionConnector
     private class MediaSessionCallback extends MediaSessionCompat.Callback {

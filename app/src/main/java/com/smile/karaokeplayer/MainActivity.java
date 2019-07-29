@@ -645,29 +645,8 @@ public class MainActivity extends AppCompatActivity {
         // Create a MediaSessionCompat
         mediaSessionCompat = new MediaSessionCompat(this, LOG_TAG);
 
-        // Enable callbacks from MediaButtons and TransportControls
-
-        // MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS is deprecated
-        // MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS is deprecated
-        // mediaSessionCompat.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS |MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
-        // mCurrentState = PlaybackStateCompat.STATE_NONE;
-
-        // Set an initial PlaybackState with ACTION_PLAY, so media buttons can start the player
-        /*
-        // PlaybackStateCompat is already defined and mapped in MediaSessionConnector
-        setMediaPlaybackState(mCurrentState);
-        */
-
-        // MySessionCallback has methods that handle callbacks from a media controller
-        // No need because it will be overridden by MediaSessionConnector
-        /*
-        MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
-        mediaSessionCompat.setCallback(mediaSessionCallback);
-        */
-
         mediaSessionCompat.setActive(true); // might need to find better place to put
 
         // Create a MediaControllerCompat
@@ -692,10 +671,7 @@ public class MainActivity extends AppCompatActivity {
             mediaControllerCallback = null;
         }
         mediaControllerCompat = null;
-
         mediaSessionConnector = null;
-
-        // playbackStateBuilder = null; // no need if use MediaSessionConnector
     }
 
     private void autoStartPlay() {
