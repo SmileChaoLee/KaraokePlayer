@@ -7,18 +7,44 @@
 
     android:id="@+id/custom_toolbar"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
+    android:layout_height="wrap_content"
     android:elevation="4dp"
     android:theme="@style/CustomActionBarTheme"
     app:popupTheme="@style/menu_text_style">
 
-    <TextView
-        android:id="@+id/toolbarTitleTextView"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/white"
-        android:text=""
-        android:gravity="center_vertical|left">
-    </TextView>
+        android:layout_height="?actionBarSize"
+        android:gravity="center_vertical"
+        android:layout_margin="0dp"
+        android:padding="0dp">
+
+        <TextView
+            android:id="@+id/dummyTitleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:text="">
+        </TextView>
+
+        <ImageButton
+            android:id="@+id/volumeImageButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:scaleType="fitStart"
+            android:adjustViewBounds="true"
+            android:src="@drawable/volume"
+            android:background="@android:color/transparent">
+        </ImageButton>
+
+    </LinearLayout>
 
 </androidx.appcompat.widget.Toolbar>

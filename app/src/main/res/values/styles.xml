@@ -46,10 +46,9 @@
         <item name="actionMenuTextColor">@drawable/menuitem_color</item>
         <item name="android:textSize">60px</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingTop">0dp</item>
-        <item name="android:paddingRight">0dp</item>
-        <item name="android:paddingBottom">0dp</item>
+        <item name="android:layout_margin">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:layout_alignParentLeft">true</item>
         <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
     </style>
 
@@ -66,5 +65,9 @@
         <!-- Required for pre-Lollipop (before API 21.) -->
         <item name="overlapAnchor">false</item>
         <item name="android:popupBackground">@drawable/popupmenu_background</item>
+    </style>
+
+    <style name="CustomSeekBarTheme">
+        <item name="colorAccent">@color/red</item>
     </style>
 </resources>

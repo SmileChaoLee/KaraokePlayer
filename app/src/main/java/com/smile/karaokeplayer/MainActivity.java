@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -18,6 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +30,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
@@ -56,6 +63,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -81,11 +89,15 @@ public class MainActivity extends AppCompatActivity {
     private static final int rightChannel = 1;
     private static final int stereoChannel = 2;
 
+    private static final int maxProgress = 100;
+
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
     private Toolbar supportToolbar;  // use customized ToolBar
     // private ActionBar supportToolbar;   // use default ActionBar
+    private ImageButton volumeImageButton;
+    private VerticalSeekBar volumeSeekBar;
 
     private String accessExternalStoragePermissionDeniedString;
     private String noReadableExternalStorageString;
@@ -102,8 +114,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem stopMenuItem;
     private MenuItem replayMenuItem;
     private MenuItem toTvMenuItem;
-    // submenu of volume
-    private MenuItem volumeMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
     // submenu of channel
@@ -137,17 +147,24 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayingParameters playingParam;
 
+    private int colorRed;
+    private int colorBlue;
+    private int colorWhite;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
+        Log.d(TAG, "defaultTextFontSize = " + defaultTextFontSize);
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
         Log.d(TAG, "textFontSize = " + textFontSize);
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.8f * textFontSize;
 
-        // int colorRed = ContextCompat.getColor(KaraokeApp.AppContext, R.color.red);
+        colorRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.red);
+        colorBlue = ContextCompat.getColor(SmileApplication.AppContext, R.color.blue);
+        colorWhite = ContextCompat.getColor(SmileApplication.AppContext, R.color.white);
 
         accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
         noReadableExternalStorageString = getString(R.string.noReadableExternalStorageString);
@@ -164,12 +181,42 @@ public class MainActivity extends AppCompatActivity {
 
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
-        supportToolbar.bringToFront();
+        // supportToolbar.bringToFront();
         setSupportActionBar(supportToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
         supportToolbar.setVisibility(View.VISIBLE);
-        TextView toolbarTitleView = supportToolbar.findViewById(R.id.toolbarTitleTextView);
-        ScreenUtil.resizeTextSize(toolbarTitleView, textFontSize * fontScale, SmileApplication.FontSize_Scale_Type);
+        TextView dummyTitleTextView = supportToolbar.findViewById(R.id.dummyTitleTextView);
+        float toolbarTextSize = dummyTitleTextView.getTextSize();
+        Log.d(TAG, "dummyTitleTextView's text size = " + toolbarTextSize);
+        volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
+        volumeImageButton.getLayoutParams().height = (int)(toolbarTextSize * fontScale);
+
+        volumeSeekBar = findViewById(R.id.volumeSeekBar);
+        if (volumeSeekBar != null) {
+            volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                    volumeSeekBar.setProgressAndThumb(i);
+                    float currentVolume = (float)i / (float)maxProgress;
+                    playingParam.setCurrentVolume(currentVolume);
+                    setAudioVolume(currentVolume);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+            volumeSeekBar.setMax(maxProgress);
+            int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+            volumeSeekBar.setProgressAndThumb(currentProgress);
+        }
+
 
         initExoPlayer();
         initMediaSessionCompat();
@@ -197,15 +244,7 @@ public class MainActivity extends AppCompatActivity {
         // use custom toolbar
         final int popupThemeId = supportToolbar.getPopupTheme();
         final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
-
         ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
-
-        // for testing
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, R.style.CustomActionBarTheme);
-        Log.d(TAG,"Text font size for overflow menu = " + defaultTextFontSize);
-        TextView toolbarTitleView = supportToolbar.findViewById(R.id.toolbarTitleTextView);
-        ScreenUtil.resizeTextSize(toolbarTitleView, defaultTextFontSize * fontScale, SmileApplication.FontSize_Scale_Type);
-        //
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
@@ -217,8 +256,7 @@ public class MainActivity extends AppCompatActivity {
         stopMenuItem = menu.findItem(R.id.stop);
         replayMenuItem = menu.findItem(R.id.replay);
         toTvMenuItem = menu.findItem(R.id.toTV);
-        // submenu of volume
-        volumeMenuItem = menu.findItem(R.id.volume);
+
         // submenu of audio
         audioTrackMenuItem = menu.findItem(R.id.audioTrack);
         // submenu of channel
@@ -341,12 +379,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.replay:
                 replayMedia();
-                break;
-            case R.id.volume:
-                if ( (mediaSource != null) && (numberOfAudioRenderers > 0) ) {
-                    // has media that being played or about to play
-                    // activate the volume setting SeekBar
-                }
                 break;
             case R.id.audioTrack:
                 // if there are audio tracks
@@ -819,6 +851,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 stereoVolumeAudioProcessor.setVolume(volume, volume);
             }
+            playingParam.setCurrentVolume(volume);
         }
     }
 
