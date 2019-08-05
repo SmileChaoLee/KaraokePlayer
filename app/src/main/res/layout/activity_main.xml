@@ -22,34 +22,7 @@
             app:layout_constraintTop_toTopOf="parent" >
         </com.google.android.exoplayer2.ui.PlayerView>
 
-        <include layout="@layout/another_useful_toolbar_layout" />
-
-        <!--
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/toolbarLinearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="0dp">
-                <include layout="@layout/toolbar_layout" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/toolbarLinearLayout"
-                android:layout_alignLeft="@+id/toolbarLinearLayout"
-                android:layout_marginLeft="20dp">
-                <include layout="@layout/volume_seekbar_layout" />
-            </LinearLayout>
-        </RelativeLayout>
-        -->
+        <include layout="@layout/custom_toolbar_layout" />
 
     </FrameLayout>
 

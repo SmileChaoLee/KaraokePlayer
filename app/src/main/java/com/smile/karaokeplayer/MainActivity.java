@@ -20,9 +20,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -197,38 +194,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        volumeSeekBar = findViewById(R.id.volumeSeekBar);
+        // float standardSeekBarHeight = 160.0f * 3.0f;    // height in pixels on Nexus 5
+        // 160dp for volumeSeekBar's height on Nexus 5
+        // so appropriate height is (int)(standardSeekBarHeight * fontScale)
+        // volumeSeekBar.getLayoutParams().height = (int)(standardSeekBarHeight * fontScale);
+        // i.e. volumeSeekBar.getLayoutParams().height = (int)(160.0f*3.0f*fontScale);
+        // or
+        // uses dimens.xml for different devices' sizes
+        volumeSeekBar.setVisibility(View.GONE); // default is not showing
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                volumeSeekBar.setProgressAndThumb(i);
+                float currentVolume = (float)i / (float)maxProgress;
+                playingParam.setCurrentVolume(currentVolume);
+                setAudioVolume(currentVolume);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        volumeSeekBar.setMax(maxProgress);
+        int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+        volumeSeekBar.setProgressAndThumb(currentProgress);
+
         TextView dummyTitleTextView = supportToolbar.findViewById(R.id.dummyTitleTextView);
         float toolbarTextSize = dummyTitleTextView.getTextSize();
         Log.d(TAG, "dummyTitleTextView's text size = " + toolbarTextSize);
         volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
         volumeImageButton.getLayoutParams().height = (int)(toolbarTextSize * fontScale);
-
-        volumeSeekBar = findViewById(R.id.volumeSeekBar);
-        if (volumeSeekBar != null) {
-            volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                    volumeSeekBar.setProgressAndThumb(i);
-                    float currentVolume = (float)i / (float)maxProgress;
-                    playingParam.setCurrentVolume(currentVolume);
-                    setAudioVolume(currentVolume);
+        volumeImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int visibility = volumeSeekBar.getVisibility();
+                if ( (visibility == View.GONE) || (visibility == View.INVISIBLE) ) {
+                    volumeSeekBar.setVisibility(View.VISIBLE);
+                } else {
+                    volumeSeekBar.setVisibility(View.GONE);
                 }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
-            volumeSeekBar.setMax(maxProgress);
-            int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
-            volumeSeekBar.setProgressAndThumb(currentProgress);
-        }
-
+            }
+        });
 
         initExoPlayer();
         initMediaSessionCompat();
@@ -695,6 +708,7 @@ public class MainActivity extends AppCompatActivity {
                     supportToolbar.setVisibility(View.GONE);
                     mainMenu.close();
                 }
+                volumeSeekBar.setVisibility(View.GONE);
             }
         });
 

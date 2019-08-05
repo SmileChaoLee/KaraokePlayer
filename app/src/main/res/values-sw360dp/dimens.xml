@@ -2,4 +2,9 @@
 <resources>
     <!-- for Nexus 5 API 23 -->
     <dimen name="textFontSize">24dp</dimen>
+    <dimen name="seekbar_thumb_size">24dp</dimen>
+    <dimen name="pressed_seekbar_thumb_size">19dp</dimen>
+    <dimen name="volume_seekbar_height">160dp</dimen>
+    <dimen name="volume_progress_width">8dp</dimen>
+    <dimen name="volume_progress_background_width">5dp</dimen>
 </resources>

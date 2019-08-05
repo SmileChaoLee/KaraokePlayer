@@ -14,5 +14,7 @@
     <color name="yellow3">#d4d28f</color>
     <color name="green">#00ff00</color>
     <color name="white">#FFFFFF</color>
-    <color name="transparentWhite">#80F5F3EB</color>
+    <color name="lightGray">#DBD5D5</color>
+    <color name="darkerGray">#807D7D</color>
+    <color name="transparentDarkerGray">#4D807D7D</color>
 </resources>
