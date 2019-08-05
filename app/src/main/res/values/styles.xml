@@ -30,6 +30,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:itemBackground">@drawable/menuitem_background_color</item>
         <item name="android:itemPadding">0dp</item>
+        <item name="android:layout_margin">2dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="textAllCaps">false</item>
         <item name="android:listPreferredItemHeightSmall">?android:layout_height</item>

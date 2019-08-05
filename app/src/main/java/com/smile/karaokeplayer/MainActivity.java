@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.Button;
@@ -185,6 +186,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(supportToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         supportToolbar.setVisibility(View.VISIBLE);
+        supportToolbar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int visibility = view.getVisibility();
+                if (visibility == View.VISIBLE) {
+                    videoPlayerView.hideController();
+                }
+                return false;
+            }
+        });
+
         TextView dummyTitleTextView = supportToolbar.findViewById(R.id.dummyTitleTextView);
         float toolbarTextSize = dummyTitleTextView.getTextSize();
         Log.d(TAG, "dummyTitleTextView's text size = " + toolbarTextSize);
