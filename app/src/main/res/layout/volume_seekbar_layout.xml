@@ -9,7 +9,7 @@
     android:indeterminateOnly="false"
     android:thumb="@drawable/seekbar_thumb"
     android:progressDrawable="@drawable/custom_progressdrawable"
-    android:background="@color/transparentDarkerGray"
+    android:background="@color/transparentLightGray"
     android:maxWidth="1000dp"
     android:maxHeight="1000dp"
     android:layout_centerHorizontal="true"

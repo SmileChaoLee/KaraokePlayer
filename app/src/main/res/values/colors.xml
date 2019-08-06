@@ -17,4 +17,5 @@
     <color name="lightGray">#DBD5D5</color>
     <color name="darkerGray">#807D7D</color>
     <color name="transparentDarkerGray">#4D807D7D</color>
+    <color name="transparentLightGray">#4DDBD5D5</color>
 </resources>
