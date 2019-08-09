@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -31,7 +30,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
@@ -133,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
+    private Uri mediaUri;
     private MediaSource mediaSource;
     private AudioAttributes.Builder audioAttributesBuilder;
 
@@ -145,10 +144,6 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayingParameters playingParam;
 
-    private int colorRed;
-    private int colorBlue;
-    private int colorWhite;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -159,10 +154,6 @@ public class MainActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.8f * textFontSize;
-
-        colorRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.red);
-        colorBlue = ContextCompat.getColor(SmileApplication.AppContext, R.color.blue);
-        colorWhite = ContextCompat.getColor(SmileApplication.AppContext, R.color.white);
 
         accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
         noReadableExternalStorageString = getString(R.string.noReadableExternalStorageString);
@@ -230,7 +221,8 @@ public class MainActivity extends AppCompatActivity {
         float toolbarTextSize = dummyTitleTextView.getTextSize();
         Log.d(TAG, "dummyTitleTextView's text size = " + toolbarTextSize);
         volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
-        volumeImageButton.getLayoutParams().height = (int)(toolbarTextSize * fontScale);
+        // volumeImageButton.getLayoutParams().height = (int)(toolbarTextSize * fontScale);
+        volumeImageButton.getLayoutParams().height = (int)(textFontSize);
         volumeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +235,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
+        Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
+
         initExoPlayer();
         initMediaSessionCompat();
 
@@ -253,6 +248,11 @@ public class MainActivity extends AppCompatActivity {
                 String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
             }
+        }
+
+        if (mediaUri != null) {
+            mediaTransportControls.prepareFromUri(mediaUri, null);
+            // mediaTransportControls.playFromUri(mediaUri, null);
         }
     }
 
@@ -525,6 +525,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable("MediaUri", mediaUri);
+        playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
         outState.putParcelable("PlayingParameters", playingParam);
         super.onSaveInstanceState(outState);
     }
@@ -542,13 +544,25 @@ public class MainActivity extends AppCompatActivity {
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            Uri mediaUri = null;
+            mediaUri = null;
             if (data != null) {
                 mediaUri = data.getData();
                 Log.i(TAG, "Uri: " + mediaUri.toString());
 
-                playingParam.setMusicAudioRenderer(0);
+                playingParam.setCurrentVideoRendererPlayed(0);
+
+                int currentAudioRederer = 0;
+                playingParam.setMusicAudioRenderer(currentAudioRederer);
+                playingParam.setVocalAudioRenderer(currentAudioRederer);
+                playingParam.setCurrentAudioRendererPlayed(currentAudioRederer);
+
                 playingParam.setMusicAudioChannel(leftChannel);
+                playingParam.setVocalAudioChannel(stereoChannel);
+                playingParam.setCurrentChannelPlayed(stereoChannel);
+
+                playingParam.setCurrentAudioPosition(0);
+                playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+                playingParam.setMediaSourcePrepared(false);
 
                 mediaTransportControls.prepareFromUri(mediaUri, null);
             }
@@ -606,8 +620,10 @@ public class MainActivity extends AppCompatActivity {
         publicSongList.add(songInfo);
 
         if (savedInstanceState == null) {
+            mediaUri = null;
             initializePlayingParam();
         } else {
+            mediaUri = savedInstanceState.getParcelable("MediaUri");
             playingParam = savedInstanceState.getParcelable("PlayingParameters");
             if (playingParam == null) {
                 initializePlayingParam();
@@ -766,7 +782,7 @@ public class MainActivity extends AppCompatActivity {
 
         // activity is not being destroyed then check
         // if there are still songs to be play
-
+        SongInfo songInfo = null;
         if (playingParam.isPlayingPublic()) {
             // no next song to be played
             int publicSongListSize = publicSongList.size();
@@ -776,18 +792,29 @@ public class MainActivity extends AppCompatActivity {
                 if (publicSongIndex >= publicSongListSize) {
                     publicSongIndex = 0;
                 }
-                SongInfo songInfo = publicSongList.get(publicSongIndex);
-                playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
-                playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
-                playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
-                playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-
-                String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
-                Uri mediaUri = Uri.parse("file://" + filePath);
-                mediaTransportControls.prepareFromUri(mediaUri, null);
+                songInfo = publicSongList.get(publicSongIndex);
 
                 publicSongIndex++;  // next index that will be played
                 playingParam.setPublicSongIndex(publicSongIndex);
+
+                playingParam.setCurrentVideoRendererPlayed(0);
+
+                playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+                playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
+                playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
+
+                playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+                playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+                playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
+
+                playingParam.setCurrentAudioPosition(0);
+                playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+                playingParam.setMediaSourcePrepared(false);
+
+                String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
+                mediaUri = Uri.parse("file://" + filePath);
+                mediaTransportControls.prepareFromUri(mediaUri, null);
+
             }
         } else {
             // play next song that user has ordered
@@ -821,7 +848,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void replayMedia() {
-        if (mediaSource != null) {
+        if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
             if (playingParam.isMediaSourcePrepared()) {
                 // song is playing, paused, or finished playing
                 exoPlayer.setPlayWhenReady(false);
@@ -882,17 +909,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setProperAudioTrackAndChannel() {
-        if (numberOfAudioRenderers > 0) {
-            if (playingParam.isAutoPlay()) {
-                if (playingParam.isPlayingPublic()) {
-                    switchAudioToVocal();
-                } else {
-                    switchAudioToMusic();
-                }
+        if (playingParam.isAutoPlay()) {
+            if (playingParam.isPlayingPublic()) {
+                switchAudioToVocal();
             } else {
-                // not auto playing media, means using open menu to open a media
-                switchAudioToVocal();   // music and vocal are the same in this case
+                switchAudioToMusic();
             }
+        } else {
+            // not auto playing media, means using open menu to open a media
+            switchAudioToVocal();   // music and vocal are the same in this case
         }
     }
 
@@ -924,10 +949,6 @@ public class MainActivity extends AppCompatActivity {
             if (playbackState == Player.STATE_READY) {
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
-
-                    int musicAudioRenderer = playingParam.getMusicAudioRenderer();
-                    int musicAudioChannel = playingParam.getMusicAudioChannel();
-                    setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
 
                     DefaultTrackSelector.Parameters parameters = trackSelector.getParameters();
                     DefaultTrackSelector.ParametersBuilder parametersBuilder = parameters.buildUpon();
@@ -1011,11 +1032,9 @@ public class MainActivity extends AppCompatActivity {
                         playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
                         playingParam.setCurrentChannelPlayed(noAudioChannel);
                     } else {
-                        playingParam.setMusicAudioRenderer(0);
-                        playingParam.setVocalAudioRenderer(playingParam.getMusicAudioRenderer());
-                        playingParam.setMusicAudioChannel(stereoChannel);
-                        playingParam.setVocalAudioChannel(playingParam.getMusicAudioChannel());
-                        setProperAudioTrackAndChannel();
+                        int audioRenderer = playingParam.getCurrentAudioRendererPlayed();
+                        int audioChannel = playingParam.getCurrentChannelPlayed();
+                        setAudioTrackAndChannel(audioRenderer, audioChannel);
                     }
                 }
 
@@ -1092,12 +1111,23 @@ public class MainActivity extends AppCompatActivity {
             // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
             // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             playingParam.setMediaSourcePrepared(false);
-            playingParam.setCurrentAudioPosition(0);
             mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
-            exoPlayer.setPlayWhenReady(true);  // start playing when ready
+            exoPlayer.seekTo(playingParam.getCurrentAudioPosition());
+            int playbackState = playingParam.getCurrentPlaybackState();
+            switch (playbackState) {
+                case PlaybackStateCompat.STATE_PAUSED:
+                    exoPlayer.setPlayWhenReady(false);
+                    break;
+                case PlaybackStateCompat.STATE_STOPPED:
+                    exoPlayer.setPlayWhenReady(false);
+                    break;
+                default:
+                    exoPlayer.setPlayWhenReady(true);  // start playing when ready
+                    break;
+            }
 
-            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromUri() is called.");
+            Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromUri() is called--> " + playbackState);
         }
 
         @Override
