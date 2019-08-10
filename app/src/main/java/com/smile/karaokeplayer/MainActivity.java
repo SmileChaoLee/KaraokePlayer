@@ -64,6 +64,7 @@ import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcess
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -252,7 +253,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (mediaUri != null) {
             mediaTransportControls.prepareFromUri(mediaUri, null);
-            // mediaTransportControls.playFromUri(mediaUri, null);
         }
     }
 
@@ -358,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.action:
                 if (mediaSource != null) {
+                    Log.d(TAG, "R.id.action --> mediaSource is not null.");
                     playMenuItem.setEnabled(true);
                     pauseMenuItem.setEnabled(true);
                     stopMenuItem.setEnabled(true);
@@ -384,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     // toTvMenuItem
                 } else {
+                    Log.d(TAG, "R.id.action --> mediaSource is null.");
                     playMenuItem.setEnabled(false);
                     pauseMenuItem.setEnabled(false);
                     stopMenuItem.setEnabled(false);
@@ -548,6 +550,10 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) {
                 mediaUri = data.getData();
                 Log.i(TAG, "Uri: " + mediaUri.toString());
+
+                if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) ) {
+                    return;
+                }
 
                 playingParam.setCurrentVideoRendererPlayed(0);
 
@@ -812,8 +818,12 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setMediaSourcePrepared(false);
 
                 String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
-                mediaUri = Uri.parse("file://" + filePath);
-                mediaTransportControls.prepareFromUri(mediaUri, null);
+                File songFile = new File(filePath);
+                if (songFile.exists()) {
+                    mediaUri = Uri.fromFile(new File(filePath));
+                    // mediaUri = Uri.parse("file://" + filePath);
+                    mediaTransportControls.prepareFromUri(mediaUri, null);
+                }
 
             }
         } else {
@@ -1106,7 +1116,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPrepareFromUri(Uri uri, Bundle extras) {
-
+            Log.d(TAG, "Uri = " + uri);
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
             // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
