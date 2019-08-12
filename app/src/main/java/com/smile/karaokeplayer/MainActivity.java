@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
@@ -491,17 +492,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        Log.d(TAG,"MainActivity-->onStart() is called.");
+        super.onStart();
+    }
+    @Override
     protected void onResume() {
+        Log.d(TAG,"MainActivity-->onResume() is called.");
         super.onResume();
     }
     @Override
     protected void onPause() {
+        Log.d(TAG,"MainActivity-->onPause() is called.");
         super.onPause();
     }
-
     @Override
     protected void onStop() {
+        Log.d(TAG,"MainActivity-->onStop() is called.");
         super.onStop();
+    }
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        Log.d(TAG,"MainActivity-->onConfigurationChanged() is called.");
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -520,13 +533,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        Log.d(TAG,"MainActivity-->onDestroy() is called.");
         releaseMediaSessionCompat();
         releaseExoPlayer();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG,"MainActivity-->onSaveInstanceState() is called.");
         outState.putParcelable("MediaUri", mediaUri);
         playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
         outState.putParcelable("PlayingParameters", playingParam);
