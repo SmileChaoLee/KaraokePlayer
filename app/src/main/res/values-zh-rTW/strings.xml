@@ -23,4 +23,5 @@
     <string name="leftChannelString">左聲道</string>
     <string name="rightChannelString">右聲道</string>
     <string name="stereoChannelString">立體聲</string>
+    <string name="formatNotSupportedString">沒有支援此媒體格式</string>
 </resources>

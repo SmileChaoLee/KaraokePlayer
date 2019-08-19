@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action:
-                if (mediaSource != null) {
+                if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
                     Log.d(TAG, "R.id.action --> mediaSource is not null.");
                     playMenuItem.setEnabled(true);
                     pauseMenuItem.setEnabled(true);
@@ -433,11 +433,7 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.channel:
-                if ( (mediaSource == null) || (numberOfAudioRenderers == 0) ) {
-                    leftChannelMenuItem.setEnabled(false);
-                    rightChannelMenuItem.setEnabled(false);
-                    stereoChannelMenuItem.setEnabled(false);
-                } else {
+                if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
                     leftChannelMenuItem.setEnabled(true);
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
@@ -472,7 +468,12 @@ public class MainActivity extends AppCompatActivity {
                         stereoChannelMenuItem.setCheckable(false);
                         stereoChannelMenuItem.setChecked(false);
                     }
+                } else {
+                    leftChannelMenuItem.setEnabled(false);
+                    rightChannelMenuItem.setEnabled(false);
+                    stereoChannelMenuItem.setEnabled(false);
                 }
+
                 break;
             case R.id.leftChannel:
                 playingParam.setCurrentChannelPlayed(leftChannel);
@@ -1070,7 +1071,23 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
+            switch (error.type) {
+                case ExoPlaybackException.TYPE_SOURCE:
+                    Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
+                    break;
 
+                case ExoPlaybackException.TYPE_RENDERER:
+                    Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
+                    break;
+
+                case ExoPlaybackException.TYPE_UNEXPECTED:
+                    Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                    break;
+            }
+            Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
+
+            String formatNotSupportedString = getString(R.string.formatNotSupportedString);
+            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_LONG);
         }
     }
 

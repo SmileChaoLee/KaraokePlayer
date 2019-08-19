@@ -22,4 +22,5 @@
     <string name="leftChannelString">Left</string>
     <string name="rightChannelString">Right</string>
     <string name="stereoChannelString">Stereo</string>
+    <string name="formatNotSupportedString">Format Not Supported.</string>
 </resources>
