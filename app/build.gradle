@@ -7,8 +7,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 102
-        versionName "1.02"
+        versionCode 103
+        versionName "1.03"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
