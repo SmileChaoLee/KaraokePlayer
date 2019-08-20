@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">KaraokePlayer</string>
+    <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
+
     <string name="fileString">File</string>
     <string name="accessExternalStoragePermissionDeniedString"></string>
     <string name="noReadableExternalStorageString">No readable external storage</string>

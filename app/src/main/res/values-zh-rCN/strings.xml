@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">卡拉OK播放器</string>
+    <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
+
     <string name="fileString">档案</string>
     <string name="accessExternalStoragePermissionDeniedString">存取外部储存装置被拒绝</string>
     <string name="noReadableExternalStorageString">没有外部存取装置</string>
