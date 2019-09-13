@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 0x11;
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
+    private static final int PLAY_LIST_ACTIVITY_CODE = 2;
 
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
@@ -335,6 +336,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     autoStartPlay();
                 }
+                break;
+            case R.id.playList:
+                Intent playListIntent = new Intent(this, PlayListActivity.class);
+                startActivityForResult(playListIntent, PLAY_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
@@ -649,14 +654,13 @@ public class MainActivity extends AppCompatActivity {
 
         publicSongList = new ArrayList<>();
         String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filePath = externalPath + "/Song";
+        String filePath = externalPath + "/Song/perfume_h264.mp4";
 
-        String fileName = "perfume_h264.mp4";
-        SongInfo songInfo = new SongInfo("000001", "香水", filePath, fileName, 0, 0, leftChannel, rightChannel);
+        SongInfo songInfo = new SongInfo("000001", "香水", filePath, 0, 0, leftChannel, rightChannel);
         publicSongList.add(songInfo);
 
-        fileName = "saving_all_my_love_for_you.flv";
-        songInfo = new SongInfo("000002", "Saving All My Love For You", filePath, fileName, 0, 0, leftChannel, rightChannel);
+        filePath = externalPath + "/Song/saving_all_my_love_for_you.flv";
+        songInfo = new SongInfo("000002", "Saving All My Love For You", filePath, 0, 0, leftChannel, rightChannel);
         publicSongList.add(songInfo);
 
         if (savedInstanceState == null) {
@@ -851,7 +855,7 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
                 playingParam.setMediaSourcePrepared(false);
 
-                String filePath = songInfo.getPath() + "/" + songInfo.getFileName();
+                String filePath = songInfo.getFilePath();
                 File songFile = new File(filePath);
                 if (songFile.exists()) {
                     mediaUri = Uri.fromFile(new File(filePath));

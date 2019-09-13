@@ -26,4 +26,11 @@
     <string name="rightChannelString">右声道</string>
     <string name="stereoChannelString">立体声</string>
     <string name="formatNotSupportedString">没有支援此媒体格式</string>
+    <string name="playListString">播放清单</string>
+    <string name="titleWithColonString">抬头:</string>
+    <string name="filePathWithColonString">路径:</string>
+    <string name="musicTrackWithColonString">音乐音轨:</string>
+    <string name="vocalTrackWithColonString">人声音轨:</string>
+    <string name="musicChannelWithColonString">音乐声道:</string>
+    <string name="vocalChannelWithColonString">人声声道:</string>
 </resources>

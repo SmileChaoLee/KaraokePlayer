@@ -6,18 +6,16 @@ import android.os.Parcelable;
 public class SongInfo implements Parcelable {
     private String songNo;
     private String songName;
-    private String path;
-    private String fileName;
+    private String filePath;
     private int musicTrackNo;
     private int vocalTrackNo;
     private int musicChannel;
     private int vocalChannel;
 
-    public SongInfo(String songNo, String songName, String path, String fileName, int musicTrackNo, int vocalTrackNo, int musicChannel, int vocalChannel) {
+    public SongInfo(String songNo, String songName, String filePath, int musicTrackNo, int vocalTrackNo, int musicChannel, int vocalChannel) {
         this.songNo = songNo;
         this.songName = songName;
-        this.path = path;
-        this.fileName = fileName;
+        this.filePath = filePath;
         this.musicTrackNo = musicTrackNo;
         this.vocalTrackNo = vocalTrackNo;
         this.musicChannel = musicChannel;
@@ -40,20 +38,12 @@ public class SongInfo implements Parcelable {
         this.songName = songName;
     }
 
-    public String getPath() {
-        return path;
+    public String getFilePath() {
+        return filePath;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public int getMusicTrackNo() {
@@ -93,8 +83,7 @@ public class SongInfo implements Parcelable {
         return "SongInfo{" +
                 "songNo='" + songNo + '\'' +
                 ", songName='" + songName + '\'' +
-                ", path='" + path + '\'' +
-                ", fileName='" + fileName + '\'' +
+                ", filePath='" + filePath + '\'' +
                 ", musicTrackNo=" + musicTrackNo +
                 ", vocalTrackNo=" + vocalTrackNo +
                 ", musicChannel=" + musicChannel +
@@ -111,8 +100,7 @@ public class SongInfo implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.songNo);
         dest.writeString(this.songName);
-        dest.writeString(this.path);
-        dest.writeString(this.fileName);
+        dest.writeString(this.filePath);
         dest.writeInt(this.musicTrackNo);
         dest.writeInt(this.vocalTrackNo);
         dest.writeInt(this.musicChannel);
@@ -122,8 +110,7 @@ public class SongInfo implements Parcelable {
     protected SongInfo(Parcel in) {
         this.songNo = in.readString();
         this.songName = in.readString();
-        this.path = in.readString();
-        this.fileName = in.readString();
+        this.filePath = in.readString();
         this.musicTrackNo = in.readInt();
         this.vocalTrackNo = in.readInt();
         this.musicChannel = in.readInt();

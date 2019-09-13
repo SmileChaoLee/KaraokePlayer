@@ -25,4 +25,11 @@
     <string name="rightChannelString">Right</string>
     <string name="stereoChannelString">Stereo</string>
     <string name="formatNotSupportedString">Format Not Supported.</string>
+    <string name="playListString">Play List</string>
+    <string name="titleWithColonString">Title:</string>
+    <string name="filePathWithColonString">Path:</string>
+    <string name="musicTrackWithColonString">Music Track:</string>
+    <string name="vocalTrackWithColonString">vocal Track:</string>
+    <string name="musicChannelWithColonString">Music Channel:</string>
+    <string name="vocalChannelWithColonString">vocal Channel:</string>
 </resources>
