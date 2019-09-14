@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.Models.PlayListSQLite;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -109,15 +110,21 @@ public class PlayListActivity extends AppCompatActivity {
 
     private class myListAdapter extends ArrayAdapter {  // changed name to MyListAdapter from myListAdapter
 
+        private Context context;
         private int layoutId;
         private ArrayList<SongInfo> mSongList;
         private float listViewTextSize = textFontSize * 0.5f;
+        private int yellow2Color;
+        private int yellow3Color;
 
         @SuppressWarnings("unchecked")
         myListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
             super(context, layoutId, _songList);
+            this.context = context;
             this.layoutId = layoutId;
             this.mSongList = _songList;
+            yellow2Color = ContextCompat.getColor(this.context, R.color.yellow2);
+            yellow3Color = ContextCompat.getColor(this.context, R.color.yellow3);
         }
 
         @Nullable
@@ -153,9 +160,9 @@ public class PlayListActivity extends AppCompatActivity {
             // view.setLayoutParams(layoutParams);  // no needed
 
             if ( (position % 2) == 0) {
-                view.setBackgroundColor(Color.GREEN);
+                view.setBackgroundColor(yellow2Color);
             } else {
-                view.setBackgroundColor(Color.YELLOW);
+                view.setBackgroundColor(yellow3Color);
             }
             TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
             ScreenUtil.resizeTextSize(titleStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);

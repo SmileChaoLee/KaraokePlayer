@@ -6,156 +6,206 @@
     android:orientation="vertical"
     android:weightSum="5">
 
-    <LinearLayout
-        android:id="@+id/titleLinearLayout"
-        android:orientation="horizontal"
+    <RelativeLayout
+        android:id="@+id/titleLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:weightSum="10">
+        android:layout_weight="1" >
         <TextView android:id="@+id/titleStringTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold"
             android:text="@string/titleWithColonString"
-            android:layout_weight="2" >
+            android:gravity="left|center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true">
         </TextView>
         <TextView android:id="@+id/titleNameTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/blue"
+            android:textColor="@color/darkRed"
             android:textStyle="normal"
-            android:layout_weight="8" >
+            android:layout_marginLeft="5dp"
+            android:gravity="left|center_vertical"
+            android:layout_toRightOf="@+id/titleStringTextView"
+            android:layout_alignTop="@+id/titleStringTextView">
         </TextView>
-    </LinearLayout>
+    </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/filePathLinearLayout"
-        android:orientation="horizontal"
+    <RelativeLayout
+        android:id="@+id/filePathLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:weightSum="10">
+        android:layout_weight="2" >
         <TextView android:id="@+id/filePathStringTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/background_dark"
             android:textStyle="bold"
             android:text="@string/filePathWithColonString"
-            android:layout_weight="2" >
+            android:gravity="left|center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true">
         </TextView>
         <TextView android:id="@+id/filePathTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:maxLines="2"
             android:textColor="@color/blue"
             android:textStyle="normal"
-            android:layout_weight="8" >
+            android:layout_marginLeft="5dp"
+            android:gravity="left|center_vertical"
+            android:layout_toRightOf="@+id/filePathStringTextView"
+            android:layout_alignTop="@+id/filePathStringTextView">
         </TextView>
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/audioTrackLinearLayout"
+        android:id="@+id/audioMusicLinearLayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:weightSum="10">
-        <TextView android:id="@+id/musicTrackStringTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            android:text="@string/musicTrackWithColonString"
-            android:layout_weight="4" >
-        </TextView>
-        <TextView android:id="@+id/musicTrackTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:textStyle="normal"
+        android:weightSum="2" >
+        <RelativeLayout
+            android:id="@+id/audioMusicTrackLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1" >
-        </TextView>
-        <TextView android:id="@+id/musicChannelStringTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            android:text="@string/musicChannelWithColonString"
-            android:layout_weight="4" >
-        </TextView>
-        <TextView android:id="@+id/musicChannelTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:textStyle="normal"
+            <TextView android:id="@+id/musicTrackStringTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold"
+                android:text="@string/musicTrackWithColonString"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true">
+            </TextView>
+            <TextView android:id="@+id/musicTrackTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:textStyle="normal"
+                android:layout_marginLeft="5dp"
+                android:gravity="left|center_vertical"
+                android:layout_toRightOf="@+id/musicTrackStringTextView"
+                android:layout_alignTop="@+id/musicTrackStringTextView">
+            </TextView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/audioMusicChannelLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1" >
-        </TextView>
+            <TextView android:id="@+id/musicChannelStringTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold"
+                android:text="@string/musicChannelWithColonString"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true">
+            </TextView>
+            <TextView android:id="@+id/musicChannelTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:textStyle="normal"
+                android:layout_marginLeft="5dp"
+                android:gravity="left|center_vertical"
+                android:layout_toRightOf="@+id/musicChannelStringTextView"
+                android:layout_alignTop="@+id/musicChannelStringTextView">
+            </TextView>
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/audioChannelLinearLayout"
+        android:id="@+id/audioVocalLinearLayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:weightSum="10">
-        <TextView android:id="@+id/vocalTrackStringTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            android:text="@string/vocalTrackWithColonString"
-            android:layout_weight="4" >
-        </TextView>
-        <TextView android:id="@+id/vocalTrackTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:textStyle="normal"
+        android:weightSum="2">
+        <RelativeLayout
+            android:id="@+id/audioVocalTrackLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1" >
-        </TextView>
-        <TextView android:id="@+id/vocalChannelStringTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/background_dark"
-            android:textStyle="bold"
-            android:text="@string/vocalChannelWithColonString"
-            android:layout_weight="4" >
-        </TextView>
-        <TextView android:id="@+id/vocalChannelTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/blue"
-            android:textStyle="normal"
+            <TextView android:id="@+id/vocalTrackStringTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold"
+                android:text="@string/vocalTrackWithColonString"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true">
+            </TextView>
+            <TextView android:id="@+id/vocalTrackTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:textStyle="normal"
+                android:layout_marginLeft="5dp"
+                android:gravity="left|center_vertical"
+                android:layout_toRightOf="@+id/vocalTrackStringTextView"
+                android:layout_alignTop="@+id/vocalTrackStringTextView">
+            </TextView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/audioVocalChannelLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1" >
-        </TextView>
+            <TextView android:id="@+id/vocalChannelStringTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/background_dark"
+                android:textStyle="bold"
+                android:text="@string/vocalChannelWithColonString"
+                android:gravity="left|center_vertical"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true">
+            </TextView>
+            <TextView android:id="@+id/vocalChannelTextView"
+                android:textScaleX="1.0"
+                android:typeface="monospace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/blue"
+                android:textStyle="normal"
+                android:layout_marginLeft="5dp"
+                android:gravity="left|center_vertical"
+                android:layout_toRightOf="@+id/vocalChannelStringTextView"
+                android:layout_alignTop="@+id/vocalChannelStringTextView">
+            </TextView>
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>
