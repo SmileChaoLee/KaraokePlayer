@@ -32,4 +32,5 @@
     <string name="vocalTrackWithColonString">vocal Track:</string>
     <string name="musicChannelWithColonString">Music Channel:</string>
     <string name="vocalChannelWithColonString">vocal Channel:</string>
+    <string name="okString">Ok</string>
 </resources>

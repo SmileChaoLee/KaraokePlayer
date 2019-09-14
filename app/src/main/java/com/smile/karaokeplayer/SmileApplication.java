@@ -16,6 +16,9 @@ public class SmileApplication extends MultiDexApplication {
 
     public static final String PrivacyPolicyUrl = "http://ec2-13-59-195-3.us-east-2.compute.amazonaws.com/PrivacyPolicy";
     public static final int FontSize_Scale_Type = ScreenUtil.FontSize_Pixel_Type;
+    public static final int leftChannel = 0;
+    public static final int rightChannel = 1;
+    public static final int stereoChannel = 2;
 
     public static Resources AppResources;
     public static Context AppContext;

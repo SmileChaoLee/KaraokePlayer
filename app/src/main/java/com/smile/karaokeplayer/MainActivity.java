@@ -57,6 +57,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.smile.karaokeplayer.Models.PlayListSQLite;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
@@ -84,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
-    private static final int leftChannel = 0;
-    private static final int rightChannel = 1;
-    private static final int stereoChannel = 2;
 
     private static final int maxProgress = 100;
 
@@ -334,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
 
                     }
-                    autoStartPlay();
+                    startAutoPlay();
                 }
                 break;
             case R.id.playList:
@@ -444,21 +442,21 @@ public class MainActivity extends AppCompatActivity {
                     stereoChannelMenuItem.setEnabled(true);
                     if (playingParam.isMediaSourcePrepared()) {
                         currentChannelPlayed = playingParam.getCurrentChannelPlayed();
-                        if (currentChannelPlayed == leftChannel) {
+                        if (currentChannelPlayed == SmileApplication.leftChannel) {
                             leftChannelMenuItem.setCheckable(true);
                             leftChannelMenuItem.setChecked(true);
                         } else {
                             leftChannelMenuItem.setCheckable(false);
                             leftChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == rightChannel) {
+                        if (currentChannelPlayed == SmileApplication.rightChannel) {
                             rightChannelMenuItem.setCheckable(true);
                             rightChannelMenuItem.setChecked(true);
                         } else {
                             rightChannelMenuItem.setCheckable(false);
                             rightChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == stereoChannel) {
+                        if (currentChannelPlayed == SmileApplication.stereoChannel) {
                             stereoChannelMenuItem.setCheckable(true);
                             stereoChannelMenuItem.setChecked(true);
                         } else {
@@ -481,15 +479,15 @@ public class MainActivity extends AppCompatActivity {
 
                 break;
             case R.id.leftChannel:
-                playingParam.setCurrentChannelPlayed(leftChannel);
+                playingParam.setCurrentChannelPlayed(SmileApplication.leftChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.rightChannel:
-                playingParam.setCurrentChannelPlayed(rightChannel);
+                playingParam.setCurrentChannelPlayed(SmileApplication.rightChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.stereoChannel:
-                playingParam.setCurrentChannelPlayed(stereoChannel);
+                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
         }
@@ -582,9 +580,9 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setVocalAudioRenderer(currentAudioRederer);
                 playingParam.setCurrentAudioRendererPlayed(currentAudioRederer);
 
-                playingParam.setMusicAudioChannel(leftChannel);
-                playingParam.setVocalAudioChannel(stereoChannel);
-                playingParam.setCurrentChannelPlayed(stereoChannel);
+                playingParam.setMusicAudioChannel(SmileApplication.leftChannel);
+                playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
+                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
 
                 playingParam.setCurrentAudioPosition(0);
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
@@ -635,8 +633,8 @@ public class MainActivity extends AppCompatActivity {
         playingParam.setMusicAudioRenderer(0);
         playingParam.setVocalAudioRenderer(0);
         playingParam.setCurrentAudioRendererPlayed(playingParam.getMusicAudioRenderer());
-        playingParam.setMusicAudioChannel(leftChannel);     // default
-        playingParam.setVocalAudioChannel(stereoChannel);   // default
+        playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
+        playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
         playingParam.setCurrentChannelPlayed(playingParam.getMusicAudioChannel());
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentVolume(1.0f);
@@ -652,16 +650,14 @@ public class MainActivity extends AppCompatActivity {
         videoRendererIndexMap = new TreeMap<>();
         audioRendererIndexMap = new TreeMap<>();
 
-        publicSongList = new ArrayList<>();
-        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String filePath = externalPath + "/Song/perfume_h264.mp4";
-
-        SongInfo songInfo = new SongInfo("000001", "香水", filePath, 0, 0, leftChannel, rightChannel);
-        publicSongList.add(songInfo);
-
-        filePath = externalPath + "/Song/saving_all_my_love_for_you.flv";
-        songInfo = new SongInfo("000002", "Saving All My Love For You", filePath, 0, 0, leftChannel, rightChannel);
-        publicSongList.add(songInfo);
+        PlayListSQLite playListSQLite = new PlayListSQLite(this);
+        if (playListSQLite != null) {
+            publicSongList = playListSQLite.readPlayList();
+            playListSQLite.closeDatabase();
+            playListSQLite = null;
+        } else {
+            publicSongList = new ArrayList<>();
+        }
 
         if (savedInstanceState == null) {
             mediaUri = null;
@@ -817,7 +813,7 @@ public class MainActivity extends AppCompatActivity {
         mediaSessionConnector = null;
     }
 
-    private void autoStartPlay() {
+    private void startAutoPlay() {
 
         if (isFinishing()) {
             // activity is being destroyed
@@ -844,10 +840,10 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setCurrentVideoRendererPlayed(0);
 
                 playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+                playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+
                 playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
                 playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
-
-                playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
                 playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
                 playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
 
@@ -886,7 +882,7 @@ public class MainActivity extends AppCompatActivity {
     private void stopPlay() {
         if (playingParam.isAutoPlay()) {
             // auto play
-            autoStartPlay();
+            startAutoPlay();
         } else {
             if ( (mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) ) {
                 // no media file opened or playing has been stopped
@@ -945,9 +941,9 @@ public class MainActivity extends AppCompatActivity {
             // get current channel
             int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
             //
-            if (currentChannelPlayed == leftChannel) {
+            if (currentChannelPlayed == SmileApplication.leftChannel) {
                 stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-            } else if (currentChannelPlayed == rightChannel) {
+            } else if (currentChannelPlayed == SmileApplication.rightChannel) {
                 stereoVolumeAudioProcessor.setVolume(0.0f, volume);
             } else {
                 stereoVolumeAudioProcessor.setVolume(volume, volume);
@@ -979,7 +975,7 @@ public class MainActivity extends AppCompatActivity {
             if (playbackState == Player.STATE_ENDED) {
                 if (playingParam.isAutoPlay()) {
                     // start playing next video from list
-                    autoStartPlay();
+                    startAutoPlay();
                 }
                 return;
             }
@@ -987,7 +983,7 @@ public class MainActivity extends AppCompatActivity {
                 // There is bug here
                 // The listener will get twice of (Player.STATE_IDLE)
                 // when user stop playing using ExoPlayer.stop()
-                // so do not put autoStartPlay() inside this event
+                // so do not put startAutoPlay() inside this event
                 if (mediaSource != null) {
                     playingParam.setMediaSourcePrepared(false);
                     Log.d(TAG, "Song was stopped by user.");

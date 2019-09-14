@@ -8,17 +8,17 @@ public class SongInfo implements Parcelable {
     private String songName;
     private String filePath;
     private int musicTrackNo;
-    private int vocalTrackNo;
     private int musicChannel;
+    private int vocalTrackNo;
     private int vocalChannel;
 
-    public SongInfo(String songNo, String songName, String filePath, int musicTrackNo, int vocalTrackNo, int musicChannel, int vocalChannel) {
+    public SongInfo(String songNo, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel) {
         this.songNo = songNo;
         this.songName = songName;
         this.filePath = filePath;
         this.musicTrackNo = musicTrackNo;
-        this.vocalTrackNo = vocalTrackNo;
         this.musicChannel = musicChannel;
+        this.vocalTrackNo = vocalTrackNo;
         this.vocalChannel = vocalChannel;
     }
 
@@ -54,6 +54,10 @@ public class SongInfo implements Parcelable {
         this.musicTrackNo = musicTrackNo;
     }
 
+    public void setMusicChannel(int musicChannel) {
+        this.musicChannel = musicChannel;
+    }
+
     public int getVocalTrackNo() {
         return vocalTrackNo;
     }
@@ -64,10 +68,6 @@ public class SongInfo implements Parcelable {
 
     public int getMusicChannel() {
         return musicChannel;
-    }
-
-    public void setMusicChannel(int musicChannel) {
-        this.musicChannel = musicChannel;
     }
 
     public int getVocalChannel() {
@@ -85,8 +85,8 @@ public class SongInfo implements Parcelable {
                 ", songName='" + songName + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", musicTrackNo=" + musicTrackNo +
-                ", vocalTrackNo=" + vocalTrackNo +
                 ", musicChannel=" + musicChannel +
+                ", vocalTrackNo=" + vocalTrackNo +
                 ", vocalChannel=" + vocalChannel +
                 '}';
     }
@@ -102,8 +102,8 @@ public class SongInfo implements Parcelable {
         dest.writeString(this.songName);
         dest.writeString(this.filePath);
         dest.writeInt(this.musicTrackNo);
-        dest.writeInt(this.vocalTrackNo);
         dest.writeInt(this.musicChannel);
+        dest.writeInt(this.vocalTrackNo);
         dest.writeInt(this.vocalChannel);
     }
 
@@ -112,8 +112,8 @@ public class SongInfo implements Parcelable {
         this.songName = in.readString();
         this.filePath = in.readString();
         this.musicTrackNo = in.readInt();
-        this.vocalTrackNo = in.readInt();
         this.musicChannel = in.readInt();
+        this.vocalTrackNo = in.readInt();
         this.vocalChannel = in.readInt();
     }
 
