@@ -50,7 +50,7 @@
                 android:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
-                android:textColor="@android:color/background_dark" >
+                android:textColor="@color/blue" >
             </Button>
         </LinearLayout>
         <LinearLayout
@@ -60,14 +60,14 @@
             android:gravity="center"
             android:layout_weight="1">
             <Button
-                android:id="@+id/playListExitButton"
+                android:id="@+id/exitPlayListButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/exitString"
                 android:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
-                android:textColor="@android:color/background_dark" >
+                android:textColor="@android:color/holo_red_dark" >
             </Button>
         </LinearLayout>
     </LinearLayout>

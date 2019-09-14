@@ -34,4 +34,6 @@
     <string name="musicChannelWithColonString">音樂聲道:</string>
     <string name="vocalChannelWithColonString">人聲聲道:</string>
     <string name="addString">增加</string>
+    <string name="editString">修改</string>
+    <string name="deleteString">刪除</string>
 </resources>

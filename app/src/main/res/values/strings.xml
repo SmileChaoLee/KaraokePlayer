@@ -33,4 +33,6 @@
     <string name="musicChannelWithColonString">Music Channel:</string>
     <string name="vocalChannelWithColonString">vocal Channel:</string>
     <string name="addString">Add</string>
+    <string name="editString">Edit</string>
+    <string name="deleteString">Delete</string>
 </resources>

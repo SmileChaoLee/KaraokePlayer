@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="vertical"
-    android:weightSum="5">
+    android:weightSum="8">
 
     <RelativeLayout
         android:id="@+id/titleLayout"
@@ -207,5 +207,50 @@
             </TextView>
         </RelativeLayout>
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3">
+        <LinearLayout
+            android:id="@+id/editButtonLinearLayout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true">
+            <Button
+                android:id="@+id/editPlayListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/editString"
+                android:textAllCaps="false"
+                android:textStyle="normal"
+                android:background="@android:drawable/btn_default"
+                android:textColor="@android:color/background_dark">
+            </Button>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/deleteButtonLinearLayout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/editButtonLinearLayout"
+            android:layout_alignTop="@+id/editButtonLinearLayout">
+            <Button
+                android:id="@+id/deletePlayListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deleteString"
+                android:textAllCaps="false"
+                android:textStyle="normal"
+                android:background="@android:drawable/btn_default"
+                android:textColor="@android:color/background_dark">
+            </Button>
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -75,9 +75,9 @@ public class PlayListActivity extends AppCompatActivity {
             }
         });
 
-        Button exitButton = (Button)findViewById(R.id.playListExitButton);
-        ScreenUtil.resizeTextSize(exitButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        exitButton.setOnClickListener(new View.OnClickListener() {
+        Button exitPlayListButton = (Button)findViewById(R.id.exitPlayListButton);
+        ScreenUtil.resizeTextSize(exitPlayListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        exitPlayListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 returnToPrevious();
@@ -122,7 +122,8 @@ public class PlayListActivity extends AppCompatActivity {
         private Context context;
         private int layoutId;
         private ArrayList<SongInfo> mSongList;
-        private float listViewTextSize = textFontSize * 0.5f;
+        private float itemTextSize = textFontSize * 0.5f;
+        private float buttonTextSize = textFontSize * 0.8f;
         private int yellow2Color;
         private int yellow3Color;
 
@@ -159,9 +160,9 @@ public class PlayListActivity extends AppCompatActivity {
             }
 
             int listViewHeight = parent.getHeight();
-            int itemNum = 5;
+            int itemNum = 4;
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                itemNum = 3;
+                itemNum = 2;
             }
             int itemHeight = listViewHeight / itemNum;    // items for one screen
             ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
@@ -174,34 +175,40 @@ public class PlayListActivity extends AppCompatActivity {
                 view.setBackgroundColor(yellow3Color);
             }
             TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
-            ScreenUtil.resizeTextSize(titleStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(titleStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView titleNameTextView = view.findViewById(R.id.titleNameTextView);
-            ScreenUtil.resizeTextSize(titleNameTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(titleNameTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
             TextView filePathStringTextView = view.findViewById(R.id.filePathStringTextView);
-            ScreenUtil.resizeTextSize(filePathStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(filePathStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView filePathTextView = view.findViewById(R.id.filePathTextView);
-            ScreenUtil.resizeTextSize(filePathTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(filePathTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
             TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
-            ScreenUtil.resizeTextSize(musicTrackStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(musicTrackStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView musicTrackTextView = view.findViewById(R.id.musicTrackTextView);
-            ScreenUtil.resizeTextSize(musicTrackTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(musicTrackTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
             TextView musicChannelStringTextView = view.findViewById(R.id.musicChannelStringTextView);
-            ScreenUtil.resizeTextSize(musicChannelStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(musicChannelStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
-            ScreenUtil.resizeTextSize(musicChannelTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(musicChannelTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
             TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
-            ScreenUtil.resizeTextSize(vocalTrackStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(vocalTrackStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView vocalTrackTextView = view.findViewById(R.id.vocalTrackTextView);
-            ScreenUtil.resizeTextSize(vocalTrackTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(vocalTrackTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
             TextView vocalChannelStringTextView = view.findViewById(R.id.vocalChannelStringTextView);
-            ScreenUtil.resizeTextSize(vocalChannelStringTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(vocalChannelStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
-            ScreenUtil.resizeTextSize(vocalChannelTextView, listViewTextSize, SmileApplication.FontSize_Scale_Type);
+            ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
+
+            Button editPlayListButton = view.findViewById(R.id.editPlayListButton);
+            ScreenUtil.resizeTextSize(editPlayListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+
+            Button deletePlayListButton = view.findViewById(R.id.deletePlayListButton);
+            ScreenUtil.resizeTextSize(deletePlayListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
 
             int songListSize = 0;
             if (mSongList != null) {
