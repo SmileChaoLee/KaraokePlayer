@@ -66,9 +66,9 @@ public class PlayListActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(playListStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         playListStringTextView.setText(getString(R.string.playListString));
 
-        Button addButton = (Button)findViewById(R.id.addListButton);
-        ScreenUtil.resizeTextSize(addButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        addButton.setOnClickListener(new View.OnClickListener() {
+        Button addPlaiListButton = (Button)findViewById(R.id.addPlayListButton);
+        ScreenUtil.resizeTextSize(addPlaiListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        addPlaiListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
