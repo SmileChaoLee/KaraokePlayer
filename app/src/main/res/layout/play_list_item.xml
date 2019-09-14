@@ -28,7 +28,7 @@
             android:typeface="monospace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/darkRed"
+            android:textColor="@color/red"
             android:textStyle="normal"
             android:layout_marginLeft="5dp"
             android:gravity="left|center_vertical"
