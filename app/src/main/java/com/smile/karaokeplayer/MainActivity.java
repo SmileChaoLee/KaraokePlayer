@@ -332,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
 
                     }
+                    readPublicSongList();
                     startAutoPlay();
                 }
                 break;
@@ -650,15 +651,6 @@ public class MainActivity extends AppCompatActivity {
         videoRendererIndexMap = new TreeMap<>();
         audioRendererIndexMap = new TreeMap<>();
 
-        PlayListSQLite playListSQLite = new PlayListSQLite(this);
-        if (playListSQLite != null) {
-            publicSongList = playListSQLite.readPlayList();
-            playListSQLite.closeDatabase();
-            playListSQLite = null;
-        } else {
-            publicSongList = new ArrayList<>();
-        }
-
         if (savedInstanceState == null) {
             mediaUri = null;
             initializePlayingParam();
@@ -811,6 +803,19 @@ public class MainActivity extends AppCompatActivity {
         }
         mediaControllerCompat = null;
         mediaSessionConnector = null;
+    }
+
+    private void readPublicSongList() {
+        PlayListSQLite playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
+        if (playListSQLite != null) {
+            publicSongList = playListSQLite.readPlayList();
+            playListSQLite.closeDatabase();
+            playListSQLite = null;
+            Log.d(TAG, "Read database successfully --> " + publicSongList.size());
+        } else {
+            publicSongList = new ArrayList<>();
+            Log.d(TAG, "Read database unsuccessfully --> " + publicSongList.size());
+        }
     }
 
     private void startAutoPlay() {

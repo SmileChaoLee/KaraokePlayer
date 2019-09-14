@@ -45,7 +45,7 @@ public class PlayListActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
-        playListSQLite = new PlayListSQLite(this);
+        playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
         playListSQLite.deleteAllPlayList();
 
         String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
