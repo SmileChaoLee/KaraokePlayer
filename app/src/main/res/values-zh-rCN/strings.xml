@@ -27,7 +27,7 @@
     <string name="stereoChannelString">立体声</string>
     <string name="formatNotSupportedString">没有支援此媒体格式</string>
     <string name="playListString">播放清单</string>
-    <string name="titleWithColonString">抬头:</string>
+    <string name="titleWithColonString">名称:</string>
     <string name="filePathWithColonString">路径:</string>
     <string name="musicTrackWithColonString">音乐音轨:</string>
     <string name="vocalTrackWithColonString">人声音轨:</string>
@@ -36,4 +36,5 @@
     <string name="addString">增加</string>
     <string name="editString">修改</string>
     <string name="deleteString">删除</string>
+    <string name="noPlayListString">没有播放清单</string>
 </resources>

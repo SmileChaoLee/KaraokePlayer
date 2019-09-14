@@ -27,7 +27,7 @@
     <string name="stereoChannelString">立體聲</string>
     <string name="formatNotSupportedString">沒有支援此媒體格式</string>
     <string name="playListString">播放清單</string>
-    <string name="titleWithColonString">抬頭:</string>
+    <string name="titleWithColonString">名稱:</string>
     <string name="filePathWithColonString">路徑:</string>
     <string name="musicTrackWithColonString">音樂音軌:</string>
     <string name="vocalTrackWithColonString">人聲音軌:</string>
@@ -36,4 +36,5 @@
     <string name="addString">增加</string>
     <string name="editString">修改</string>
     <string name="deleteString">刪除</string>
+    <string name="noPlayListString">沒有播放清單</string>
 </resources>

@@ -35,4 +35,5 @@
     <string name="addString">Add</string>
     <string name="editString">Edit</string>
     <string name="deleteString">Delete</string>
+    <string name="noPlayListString">No Play List</string>
 </resources>

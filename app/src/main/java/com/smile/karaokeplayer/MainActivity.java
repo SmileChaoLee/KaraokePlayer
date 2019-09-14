@@ -811,10 +811,11 @@ public class MainActivity extends AppCompatActivity {
             publicSongList = playListSQLite.readPlayList();
             playListSQLite.closeDatabase();
             playListSQLite = null;
-            Log.d(TAG, "Read database successfully --> " + publicSongList.size());
         } else {
             publicSongList = new ArrayList<>();
             Log.d(TAG, "Read database unsuccessfully --> " + publicSongList.size());
+            String msg = getString(R.string.noPlayListString);
+            ScreenUtil.showToast(this, msg, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
         }
     }
 
