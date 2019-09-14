@@ -33,5 +33,5 @@
     <string name="vocalTrackWithColonString">人聲音軌:</string>
     <string name="musicChannelWithColonString">音樂聲道:</string>
     <string name="vocalChannelWithColonString">人聲聲道:</string>
-    <string name="okString">確定</string>
+    <string name="addString">增加</string>
 </resources>
