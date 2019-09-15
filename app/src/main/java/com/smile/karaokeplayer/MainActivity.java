@@ -322,18 +322,20 @@ public class MainActivity extends AppCompatActivity {
             case R.id.autoPlay:
                 // item.isChecked() return the previous value
                 isAutoPlay = !playingParam.isAutoPlay();
-                playingParam.setAutoPlay(isAutoPlay);
                 if (isAutoPlay) {
-                    // start playing video from list
-                    // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
-                    if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
-                        // media is playing or prepared
-                        // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
-                        Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
-
-                    }
                     readPublicSongList();
-                    startAutoPlay();
+                    if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
+                        playingParam.setAutoPlay(isAutoPlay);
+                        // start playing video from list
+                        // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
+                        if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
+                            // media is playing or prepared
+                            // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
+                            Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
+
+                        }
+                        startAutoPlay();
+                    }
                 }
                 break;
             case R.id.playList:
