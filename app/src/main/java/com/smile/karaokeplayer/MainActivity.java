@@ -335,6 +335,9 @@ public class MainActivity extends AppCompatActivity {
 
                         }
                         startAutoPlay();
+                    } else {
+                        String msg = getString(R.string.noPlayListString);
+                        ScreenUtil.showToast(this, msg, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                     }
                 }
                 break;
@@ -816,8 +819,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             publicSongList = new ArrayList<>();
             Log.d(TAG, "Read database unsuccessfully --> " + publicSongList.size());
-            String msg = getString(R.string.noPlayListString);
-            ScreenUtil.showToast(this, msg, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
         }
     }
 
