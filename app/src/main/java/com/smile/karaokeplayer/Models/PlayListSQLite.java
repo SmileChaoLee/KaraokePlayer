@@ -16,7 +16,6 @@ public class PlayListSQLite extends SQLiteOpenHelper {
 
     private static final String TAG = new String(".PlayListSQLite");
     private static final String _id = new String("id");
-    private static final String songNo = new String("songNo");
     private static final String songName = new String("songName");
     private static final String filePath = new String("filePath");
     private static final String musicTrackNo = new String("musicTrackNo");
@@ -28,7 +27,6 @@ public class PlayListSQLite extends SQLiteOpenHelper {
     private static final String tableName = new String("playList");
     private static final String createTable = "create table if not exists " + tableName + " ("
             + _id + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + songNo + " TEXT NOT NULL ,  "
             + songName + " TEXT NOT NULL ,  "
             + filePath + " TEXT NOT NULL ,  "
             + musicTrackNo + " INTEGER , "
@@ -80,14 +78,13 @@ public class PlayListSQLite extends SQLiteOpenHelper {
                 if (cur.moveToFirst()) {
                     do {
                         Integer id = cur.getInt(0);
-                        String songNo = cur.getString(1);
-                        String songName = cur.getString(2);
-                        String filePath = cur.getString(3);
-                        int musicTrackNo = cur.getInt(4);
-                        int musicChannel = cur.getInt(5);
-                        int vocalTrackNo = cur.getInt(6);
-                        int vocalChannel = cur.getInt(7);
-                        SongInfo songInfo = new SongInfo(songNo, songName, filePath, musicTrackNo, musicChannel, vocalTrackNo, vocalChannel);
+                        String songName = cur.getString(1);
+                        String filePath = cur.getString(2);
+                        int musicTrackNo = cur.getInt(3);
+                        int musicChannel = cur.getInt(4);
+                        int vocalTrackNo = cur.getInt(5);
+                        int vocalChannel = cur.getInt(6);
+                        SongInfo songInfo = new SongInfo(id, songName, filePath, musicTrackNo, musicChannel, vocalTrackNo, vocalChannel);
                         playList.add(songInfo);
                     } while (cur.moveToNext());
                 }
@@ -114,12 +111,11 @@ public class PlayListSQLite extends SQLiteOpenHelper {
                 Cursor cur = songDatabase.rawQuery(sql, new String[]{});
 
                 //  insert one record into table
-                String columnList = songNo + "," + songName +"," + filePath + ","
+                String columnList = songName +"," + filePath + ","
                         + musicTrackNo + "," + musicChannel +"," + vocalTrackNo + "," + vocalChannel;
                 columnList = "( " + columnList +" )";
                 Log.d(TAG, "columnList = " + columnList);
-                String valueList = "'" + songInfo.getSongNo() + "'"
-                        + ", '" + songInfo.getSongName() +"'"
+                String valueList = "'" + songInfo.getSongName() + "'"
                         + ", '" + songInfo.getFilePath() +"'"
                         + ", " + String.valueOf(songInfo.getMusicTrackNo())
                         + ", " + String.valueOf(songInfo.getMusicChannel())

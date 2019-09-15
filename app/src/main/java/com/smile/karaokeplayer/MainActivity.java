@@ -357,6 +357,8 @@ public class MainActivity extends AppCompatActivity {
                         String msg = getString(R.string.noPlayListString);
                         ScreenUtil.showToast(this, msg, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                     }
+                } else {
+                    playingParam.setAutoPlay(isAutoPlay);
                 }
                 break;
             case R.id.playList:

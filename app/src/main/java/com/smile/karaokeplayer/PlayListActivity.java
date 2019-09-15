@@ -51,11 +51,11 @@ public class PlayListActivity extends AppCompatActivity {
         String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         String filePath = externalPath + "/Song/perfume_h264.mp4";
-        SongInfo songInfo = new SongInfo("000001", "香水", filePath, 0, SmileApplication.leftChannel, 0, SmileApplication.rightChannel);
+        SongInfo songInfo = new SongInfo(1, "香水", filePath, 0, SmileApplication.leftChannel, 0, SmileApplication.rightChannel);
         playListSQLite.addSongToPlayList(songInfo);
 
         filePath = externalPath + "/Song/saving_all_my_love_for_you.flv";
-        songInfo = new SongInfo("000002", "Saving All My Love For You", filePath, 0, SmileApplication.leftChannel, 0, SmileApplication.rightChannel);
+        songInfo = new SongInfo(2, "Saving All My Love For You", filePath, 0, SmileApplication.leftChannel, 0, SmileApplication.rightChannel);
         playListSQLite.addSongToPlayList(songInfo);
 
         super.onCreate(savedInstanceState);

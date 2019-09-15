@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class SongInfo implements Parcelable {
-    private String songNo;
+    private int id;
     private String songName;
     private String filePath;
     private int musicTrackNo;
@@ -12,8 +12,8 @@ public class SongInfo implements Parcelable {
     private int vocalTrackNo;
     private int vocalChannel;
 
-    public SongInfo(String songNo, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel) {
-        this.songNo = songNo;
+    public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel) {
+        this.id = id;
         this.songName = songName;
         this.filePath = filePath;
         this.musicTrackNo = musicTrackNo;
@@ -22,12 +22,12 @@ public class SongInfo implements Parcelable {
         this.vocalChannel = vocalChannel;
     }
 
-    public String getSongNo() {
-        return songNo;
+    public int getId() {
+        return id;
     }
 
-    public void setSongNo(String songNo) {
-        this.songNo = songNo;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getSongName() {
@@ -81,7 +81,7 @@ public class SongInfo implements Parcelable {
     @Override
     public String toString() {
         return "SongInfo{" +
-                "songNo='" + songNo + '\'' +
+                "id='" + id + '\'' +
                 ", songName='" + songName + '\'' +
                 ", filePath='" + filePath + '\'' +
                 ", musicTrackNo=" + musicTrackNo +
@@ -98,7 +98,7 @@ public class SongInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.songNo);
+        dest.writeInt(this.id);
         dest.writeString(this.songName);
         dest.writeString(this.filePath);
         dest.writeInt(this.musicTrackNo);
@@ -108,7 +108,7 @@ public class SongInfo implements Parcelable {
     }
 
     protected SongInfo(Parcel in) {
-        this.songNo = in.readString();
+        this.id = in.readInt();
         this.songName = in.readString();
         this.filePath = in.readString();
         this.musicTrackNo = in.readInt();
