@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -20,7 +19,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.SubMenu;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -145,6 +147,10 @@ public class MainActivity extends AppCompatActivity {
 
     private PlayingParameters playingParam;
 
+    private LinearLayout messageLinearLayout;
+    private TextView bufferingStringTextView;
+    private Animation animationText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -238,6 +244,18 @@ public class MainActivity extends AppCompatActivity {
 
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
+
+        // message area
+        messageLinearLayout = findViewById(R.id.messageLinearLayout);
+        messageLinearLayout.setVisibility(View.GONE);
+        bufferingStringTextView = findViewById(R.id.bufferingStringTextView);
+        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        animationText = new AlphaAnimation(0.0f,1.0f);
+        animationText.setDuration(500);
+        animationText.setStartOffset(0);
+        animationText.setRepeatMode(Animation.REVERSE);
+        animationText.setRepeatCount(Animation.INFINITE);
+        //
 
         initExoPlayer();
         initMediaSessionCompat();
@@ -688,6 +706,15 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
 
+    private void showBufferingMessage() {
+        messageLinearLayout.setVisibility(View.VISIBLE);
+        bufferingStringTextView.startAnimation(animationText);
+    }
+    private void dismissBufferingMessage() {
+        messageLinearLayout.setVisibility(View.GONE);
+        animationText.cancel();
+    }
+
     private void initExoPlayer() {
 
         dataSourceFactory = new DefaultDataSourceFactory(this, Util.getUserAgent(this, getPackageName()));
@@ -980,6 +1007,12 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
             Log.d(TAG, "Playback state = " + playbackState);
+
+            if (playbackState == Player.STATE_BUFFERING) {
+                showBufferingMessage();
+                return;
+            }
+            dismissBufferingMessage();
 
             if (playbackState == Player.STATE_ENDED) {
                 if (playingParam.isAutoPlay()) {

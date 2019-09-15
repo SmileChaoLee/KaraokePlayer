@@ -37,4 +37,5 @@
     <string name="editString">修改</string>
     <string name="deleteString">删除</string>
     <string name="noPlayListString">没有播放清单</string>
+    <string name="bufferingString">缓衝中 .....</string>
 </resources>
