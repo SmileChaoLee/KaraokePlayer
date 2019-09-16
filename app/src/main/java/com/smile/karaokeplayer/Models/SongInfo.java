@@ -12,6 +12,9 @@ public class SongInfo implements Parcelable {
     private int vocalTrackNo;
     private int vocalChannel;
 
+    public SongInfo() {
+    }
+
     public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel) {
         this.id = id;
         this.songName = songName;

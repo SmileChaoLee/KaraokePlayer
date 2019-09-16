@@ -30,6 +30,10 @@ import java.util.ArrayList;
 public class PlayListActivity extends AppCompatActivity {
 
     private static final String TAG = ".PlayListActivity";
+    private static final int ADD_ONE_SONG_TO_PLAY_LIST = 1;
+    private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
+    private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
+
     private PlayListSQLite playListSQLite;
     private float textFontSize;
     private float fontScale;
@@ -71,7 +75,9 @@ public class PlayListActivity extends AppCompatActivity {
         addPlaiListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent addIntent = new Intent(PlayListActivity.this, SongDataActivity.class);
+                addIntent.putExtra("Action", "ADD");
+                startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
             }
         });
 
@@ -215,7 +221,7 @@ public class PlayListActivity extends AppCompatActivity {
                 songListSize = mSongList.size();
             }
             if (songListSize > 0) {
-                SongInfo songInfo = mSongList.get(position);
+                final SongInfo songInfo = mSongList.get(position);
 
                 titleStringTextView.setText(getString(R.string.titleWithColonString));
                 titleNameTextView.setText(songInfo.getSongName());
@@ -234,6 +240,26 @@ public class PlayListActivity extends AppCompatActivity {
 
                 vocalChannelStringTextView.setText(getString(R.string.vocalChannelWithColonString));
                 vocalChannelTextView.setText(String.valueOf(songInfo.getVocalChannel()));
+
+                editPlayListButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent editIntent = new Intent(context, SongDataActivity.class);
+                        editIntent.putExtra("Action", "EDIT");
+                        editIntent.putExtra("SongInfo", songInfo);
+                        startActivityForResult(editIntent, EDIT_ONE_SONG_TO_PLAY_LIST);
+                    }
+                });
+
+                deletePlayListButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent deleteIntent = new Intent(context, SongDataActivity.class);
+                        deleteIntent.putExtra("Action", "DELETE");
+                        deleteIntent.putExtra("SongInfo", songInfo);
+                        startActivityForResult(deleteIntent, DELETE_ONE_SONG_TO_PLAY_LIST);
+                    }
+                });
             }
 
             return view;

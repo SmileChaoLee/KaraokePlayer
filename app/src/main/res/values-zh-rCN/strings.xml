@@ -38,4 +38,5 @@
     <string name="deleteString">删除</string>
     <string name="noPlayListString">没有播放清单</string>
     <string name="bufferingString">缓衝中 .....</string>
+    <string name="saveString">储存</string>
 </resources>
