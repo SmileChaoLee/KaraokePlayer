@@ -19,7 +19,7 @@
     <string name="rewindString">Rewind</string>
     <string name="toTVString">To TV</string>
     <string name="volumeString">Volume</string>
-    <string name="audioTrackString">Audio</string>
+    <string name="audioTrackString">Track</string>
     <string name="channelString">Channel</string>
     <string name="leftChannelString">Left</string>
     <string name="rightChannelString">Right</string>
