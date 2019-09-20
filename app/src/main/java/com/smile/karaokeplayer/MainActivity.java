@@ -1080,7 +1080,7 @@ public class MainActivity extends AppCompatActivity {
                                                     break;
                                                 case C.TRACK_TYPE_VIDEO:
                                                     Log.d(TAG, "The video renderer index = " + rendererIndex);
-                                                    rendererName = "Video_" + numVideoRenderer;
+                                                    rendererName = getString(R.string.videoTrackString) + " " + (numVideoRenderer + 1);
                                                     videoRendererIndexMap.put(rendererName, rendererIndex);
                                                     // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
                                                     numVideoRenderer++;
