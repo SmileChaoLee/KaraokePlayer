@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_exitEditSongButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/exitString"
+    android:textAllCaps="false"
+    android:textStyle="normal"
+    android:background="@android:drawable/btn_default"
+    android:textColor="@android:color/holo_red_dark"
+    android:layout_marginLeft="5dp"
+    android:gravity="center"
+    android:layout_toRightOf="@+id/edit_saveOneSongButton"
+    android:layout_alignTop="@+id/edit_saveOneSongButton">
+</Button>

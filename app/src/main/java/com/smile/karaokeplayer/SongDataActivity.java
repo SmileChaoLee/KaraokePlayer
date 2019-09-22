@@ -8,12 +8,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
+
+import java.util.ArrayList;
 
 public class SongDataActivity extends AppCompatActivity {
 
@@ -22,12 +28,17 @@ public class SongDataActivity extends AppCompatActivity {
     private float fontScale;
     private float toastTextSize;
 
+    private ArrayAdapter<String> audioMusicTrackAdapter;
+    private ArrayAdapter<String> audioMusicChannelAdapter;
+    private ArrayAdapter<String> audioVocalTrackAdapter;
+    private ArrayAdapter<String> audioVocalChannelAdapter;
+
     private EditText edit_titleNameEditText;
     private EditText edit_filePathEditText;
-    private EditText edit_musicTrackEditText;
-    private EditText edit_musicChannelEditText;
-    private EditText edit_vocalTrackEditText;
-    private EditText vocalChannelEditText;
+    private Spinner edit_musicTrackSpinner;
+    private Spinner edit_musicChannelSpinner;
+    private Spinner edit_vocalTrackSpinner;
+    private Spinner edit_vocalChannelSpinner;
 
     private String actionStrong;
     private String action;;
@@ -97,6 +108,23 @@ public class SongDataActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_song_data);
 
+        // ArrayAdapters for spinners
+        ArrayList<String> numList = new ArrayList<>();
+        numList.add("1");
+        numList.add("2");
+        numList.add("3");
+        numList.add("4");
+        numList.add("5");
+        numList.add("6");
+        numList.add("7");
+        numList.add("8");
+        audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ArrayList<String> aList = new ArrayList<>(SmileApplication.audioChannelMap.values());
+        audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        // audioVocalChannelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
+
         TextView edit_titleStringTextView = findViewById(R.id.edit_titleStringTextView);
         ScreenUtil.resizeTextSize(edit_titleStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_titleNameEditText = findViewById(R.id.edit_titleNameEditText);
@@ -111,35 +139,53 @@ public class SongDataActivity extends AppCompatActivity {
 
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_musicTrackEditText = findViewById(R.id.edit_musicTrackEditText);
-        ScreenUtil.resizeTextSize(edit_musicTrackEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_musicTrackEditText.setText(String.valueOf(songInfo.getMusicTrackNo()));
+        edit_musicTrackSpinner = findViewById(R.id.edit_musicTrackSpinner);
+        edit_musicTrackSpinner.setAdapter(audioMusicTrackAdapter);
+        edit_musicTrackSpinner.setSelection(songInfo.getMusicTrackNo() - 1);
 
         TextView edit_musicChannelStringTextView = findViewById(R.id.edit_musicChannelStringTextView);
         ScreenUtil.resizeTextSize(edit_musicChannelStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_musicChannelEditText = findViewById(R.id.edit_musicChannelEditText);
-        ScreenUtil.resizeTextSize(edit_musicChannelEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_musicChannelEditText.setText(String.valueOf(songInfo.getMusicChannel()));
+        edit_musicChannelSpinner = findViewById(R.id.edit_musicChannelSpinner);
+        edit_musicChannelSpinner.setAdapter(audioMusicChannelAdapter);
+        edit_musicChannelSpinner.setSelection(songInfo.getMusicChannel());
 
         TextView edit_vocalTrackStringTextView = findViewById(R.id.edit_vocalTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_vocalTrackStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_vocalTrackEditText = findViewById(R.id.edit_vocalTrackEditText);
-        ScreenUtil.resizeTextSize(edit_vocalTrackEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
-        edit_vocalTrackEditText.setText(String.valueOf(songInfo.getVocalTrackNo()));
+        edit_vocalTrackSpinner = findViewById(R.id.edit_vocalTrackSpinner);
+        edit_vocalTrackSpinner.setAdapter(audioVocalTrackAdapter);
+        edit_vocalTrackSpinner.setSelection(songInfo.getVocalTrackNo() - 1);
 
         TextView edit_vocalChannelStringTextView = findViewById(R.id.edit_vocalChannelStringTextView);
         ScreenUtil.resizeTextSize(edit_vocalChannelStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        vocalChannelEditText = findViewById(R.id.vocalChannelEditText);
-        ScreenUtil.resizeTextSize(vocalChannelEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
-        vocalChannelEditText.setText(String.valueOf(songInfo.getVocalChannel()));
+        edit_vocalChannelSpinner = findViewById(R.id.edit_vocalChannelSpinner);
+        edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
+        edit_vocalChannelSpinner.setSelection(songInfo.getVocalChannel());
 
-        final Button saveOneSongButton = findViewById(R.id.saveOneSongButton);
-        ScreenUtil.resizeTextSize(saveOneSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        saveOneSongButton.setText(actionStrong);
+        final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
+        ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        edit_saveOneSongButton.setText(actionStrong);
+        edit_saveOneSongButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String musicTrack = edit_musicTrackSpinner.getSelectedItem().toString();
+                Log.d(TAG, "musicTrack string from Spinner = " + musicTrack);
 
-        final Button exitEditSongButton = findViewById(R.id.exitEditSongButton);
-        ScreenUtil.resizeTextSize(exitEditSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        exitEditSongButton.setOnClickListener(new View.OnClickListener() {
+                String musicChannel = edit_musicChannelSpinner.getSelectedItem().toString();
+                Log.d(TAG, "musicChannel string from Spinner = " + musicChannel);
+                Log.d(TAG, "music channel = " + SmileApplication.audioChannelReverseMap.get(musicChannel));
+
+                String vocalTrack = edit_vocalTrackSpinner.getSelectedItem().toString();
+                Log.d(TAG, "vocalTrack string from Spinner = " + vocalTrack);
+
+                String vocalChannel = edit_vocalChannelSpinner.getSelectedItem().toString();
+                Log.d(TAG, "vocalChannel string from Spinner = " + vocalChannel);
+                Log.d(TAG, "vocal channel = " + SmileApplication.audioChannelReverseMap.get(vocalChannel));
+            }
+        });
+
+        final Button edit_exitEditSongButton = findViewById(R.id.edit_exitEditSongButton);
+        ScreenUtil.resizeTextSize(edit_exitEditSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        edit_exitEditSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 returnToPrevious();
@@ -163,18 +209,18 @@ public class SongDataActivity extends AppCompatActivity {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         String title = edit_titleNameEditText.getText().toString();
         String filePath = edit_filePathEditText.getText().toString();
-        String musicTrack = edit_musicTrackEditText.getText().toString();
-        String musicChannel = edit_musicChannelEditText.getText().toString();
-        String vocalTrack = edit_vocalTrackEditText.getText().toString();
-        String vocalChannel = vocalChannelEditText.getText().toString();
+        String musicTrack = edit_musicTrackSpinner.getSelectedItem().toString();
+        String musicChannel = edit_musicChannelSpinner.getSelectedItem().toString();
+        String vocalTrack = edit_vocalTrackSpinner.getSelectedItem().toString();
+        String vocalChannel = edit_vocalChannelSpinner.getSelectedItem().toString();
         songInfo.setSongName(title);
         songInfo.setFilePath(filePath);
         songInfo.setMusicTrackNo(Integer.valueOf(musicTrack));
-        songInfo.setMusicChannel(Integer.valueOf(musicChannel));
+        songInfo.setMusicChannel(SmileApplication.audioChannelReverseMap.get(musicChannel));
         songInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
-        songInfo.setVocalChannel(Integer.valueOf(vocalChannel));
-        outState.putParcelable("SongInfo", songInfo);
+        songInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
 
+        outState.putParcelable("SongInfo", songInfo);
         outState.putString("Action", action);
 
         super.onSaveInstanceState(outState);

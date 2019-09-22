@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<EditText xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_titleNameEditText"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:textColor="@color/darkRed"
+    android:textStyle="normal"
+    android:layout_marginLeft="5dp"
+    android:background="@null"
+    android:gravity="left|center_vertical"
+    android:layout_toRightOf="@+id/edit_titleStringTextView"
+    android:layout_alignTop="@+id/edit_titleStringTextView">
+</EditText>

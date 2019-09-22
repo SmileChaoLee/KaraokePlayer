@@ -1,8 +1,13 @@
 package com.smile.karaokeplayer;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
+import android.database.DataSetObserver;
+import android.util.Pair;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 
 import androidx.multidex.MultiDexApplication;
 
@@ -12,6 +17,9 @@ import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
 public class SmileApplication extends MultiDexApplication {
 
     public static final String PrivacyPolicyUrl = "http://ec2-13-59-195-3.us-east-2.compute.amazonaws.com/PrivacyPolicy";
@@ -19,6 +27,11 @@ public class SmileApplication extends MultiDexApplication {
     public static final int leftChannel = 0;
     public static final int rightChannel = 1;
     public static final int stereoChannel = 2;
+    public static String leftChannelString;
+    public static String rightChannelString;
+    public static String stereoChannelString;
+    public static LinkedHashMap<Integer, String> audioChannelMap;
+    public static LinkedHashMap<String, Integer> audioChannelReverseMap;
 
     public static Resources AppResources;
     public static Context AppContext;
@@ -33,6 +46,20 @@ public class SmileApplication extends MultiDexApplication {
 
         AppResources = getResources();
         AppContext = getApplicationContext();
+
+        leftChannelString = getString(R.string.leftChannelString);
+        rightChannelString = getString(R.string.rightChannelString);
+        stereoChannelString = getString(R.string.stereoChannelString);
+
+        audioChannelMap = new LinkedHashMap<>();
+        audioChannelMap.put(leftChannel, leftChannelString);
+        audioChannelMap.put(rightChannel, rightChannelString);
+        audioChannelMap.put(stereoChannel, stereoChannelString);
+
+        audioChannelReverseMap = new LinkedHashMap<>();
+        audioChannelReverseMap.put(leftChannelString, leftChannel);
+        audioChannelReverseMap.put(rightChannelString, rightChannel);
+        audioChannelReverseMap.put(stereoChannelString, stereoChannel);
 
         String facebookPlacementID = new String("1712962715503258_1712963252169871");
         facebookAds = new FacebookInterstitialAds(AppContext, facebookPlacementID);

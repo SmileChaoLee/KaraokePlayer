@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_saveOneSongButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/saveString"
+    android:textAllCaps="false"
+    android:textStyle="normal"
+    android:background="@android:drawable/btn_default"
+    android:textColor="@color/blue"
+    android:gravity="center"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true">
+</Button>

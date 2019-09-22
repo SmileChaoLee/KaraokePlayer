@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/customSpinnerTextView"
+    android:singleLine="true"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textStyle="normal"
+    android:textAllCaps="false"
+    android:textColor="@color/darkRed"
+    android:background="@color/yellow3"
+    android:ellipsize="marquee">
+</TextView>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.widget.Spinner
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_musicChannelSpinner"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:drawable/spinner_background"
+    android:spinnerMode="dropdown"
+    android:overlapAnchor="false"
+    android:dropDownVerticalOffset="0dp"
+    android:layout_margin="5dp"
+    android:layout_toRightOf="@+id/edit_musicChannelStringTextView"
+    android:layout_alignTop="@+id/edit_musicChannelStringTextView">
+</android.widget.Spinner>

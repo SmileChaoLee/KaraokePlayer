@@ -166,7 +166,7 @@ public class PlayListActivity extends AppCompatActivity {
             }
 
             int listViewHeight = parent.getHeight();
-            int itemNum = 4;
+            int itemNum = 3;
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 itemNum = 2;
             }
@@ -233,13 +233,13 @@ public class PlayListActivity extends AppCompatActivity {
                 musicTrackTextView.setText(String.valueOf(songInfo.getMusicTrackNo()));
 
                 musicChannelStringTextView.setText(getString(R.string.musicChannelWithColonString));
-                musicChannelTextView.setText(String.valueOf(songInfo.getMusicChannel()));
+                musicChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getMusicChannel()));
 
                 vocalTrackStringTextView.setText(getString(R.string.vocalTrackWithColonString));
                 vocalTrackTextView.setText(String.valueOf(songInfo.getVocalTrackNo()));
 
                 vocalChannelStringTextView.setText(getString(R.string.vocalChannelWithColonString));
-                vocalChannelTextView.setText(String.valueOf(songInfo.getVocalChannel()));
+                vocalChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getVocalChannel()));
 
                 editPlayListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
