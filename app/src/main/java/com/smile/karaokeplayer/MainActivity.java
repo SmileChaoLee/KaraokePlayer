@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                     // isMediaSourcePrepared = false;
                     if (isExternalStorageReadable()) {
                         // has readable external storage
-                        selectFileToOpen();
+                        selectOneFileToOpen();
                     } else {
                         ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                         Log.d(TAG, noReadableExternalStorageString);
@@ -689,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void selectFileToOpen() {
+    private void selectOneFileToOpen() {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);

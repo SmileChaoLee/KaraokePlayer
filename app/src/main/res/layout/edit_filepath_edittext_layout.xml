@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<EditText xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/edit_filePathEditText"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_filePathEditTextLinearLayout"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:textColor="@color/darkRed"
-    android:textStyle="normal"
-    android:layout_marginLeft="5dp"
-    android:background="@null"
+    android:layout_marginLeft="0dp"
     android:gravity="left|center_vertical"
-    android:layout_toRightOf="@+id/edit_filePathStringTextView"
-    android:layout_alignTop="@+id/edit_filePathStringTextView">
-</EditText>
+    android:layout_toRightOf="@+id/edit_filePathStringTextViewLinearLayout"
+    android:layout_alignTop="@+id/edit_filePathStringTextViewLinearLayout">
+    <EditText
+        android:id="@+id/edit_filePathEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/darkRed"
+        android:textStyle="normal"
+        android:background="@android:drawable/editbox_background">
+    </EditText>
+</LinearLayout>

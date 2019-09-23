@@ -1,12 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/edit_filePathStringTextView"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/edit_filePathStringTextViewLinearLayout"
+    android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:textColor="@android:color/background_dark"
-    android:textStyle="normal"
-    android:text="@string/filePathWithColonString"
     android:gravity="left|center_vertical"
+    android:weightSum="2"
     android:layout_alignParentTop="true"
     android:layout_alignParentLeft="true">
-</TextView>
+    <TextView
+        android:id="@+id/edit_filePathStringTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textColor="@android:color/background_dark"
+        android:textStyle="normal"
+        android:text="@string/filePathWithColonString"
+        android:gravity="bottom"
+        android:layout_marginBottom="0dp"
+        android:layout_weight="1">
+    </TextView>
+    <ImageButton
+        android:id="@+id/edit_selectFilePathButton"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:scaleType="fitStart"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/folder_open_icon"
+        android:layout_gravity="top|left"
+        android:layout_marginTop="0dp"
+        android:layout_weight="1">
+    </ImageButton>
+</LinearLayout>

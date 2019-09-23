@@ -1,22 +1,27 @@
 package com.smile.karaokeplayer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -24,6 +29,8 @@ import java.util.ArrayList;
 public class SongDataActivity extends AppCompatActivity {
 
     private static final String TAG = new String(".SongDataActivity");
+    private static final int SELECT_ONE_ONE_FILE_PATH = 1;
+
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
@@ -35,6 +42,7 @@ public class SongDataActivity extends AppCompatActivity {
 
     private EditText edit_titleNameEditText;
     private EditText edit_filePathEditText;
+    private ImageButton edit_selectFilePathButton;
     private Spinner edit_musicTrackSpinner;
     private Spinner edit_musicChannelSpinner;
     private Spinner edit_vocalTrackSpinner;
@@ -137,6 +145,14 @@ public class SongDataActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_filePathEditText.setText(songInfo.getFilePath());
 
+        edit_selectFilePathButton = findViewById(R.id.edit_selectFilePathButton);
+        edit_selectFilePathButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectOneFilePath();
+            }
+        });
+
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_musicTrackSpinner = findViewById(R.id.edit_musicTrackSpinner);
@@ -237,6 +253,34 @@ public class SongDataActivity extends AppCompatActivity {
         returnToPrevious();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
+        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
+        // response to some other intent, and the code below shouldn't run at all.
+
+        if (requestCode == SELECT_ONE_ONE_FILE_PATH && resultCode == Activity.RESULT_OK) {
+            // The document selected by the user won't be returned in the intent.
+            // Instead, a URI to that document will be contained in the return intent
+            // provided to this method as a parameter.
+            // Pull that URI using resultData.getData().
+            Uri filePathUri = null;
+            if (data != null) {
+                filePathUri = data.getData();
+                Log.i(TAG, "Filepath Uri: " + filePathUri.toString());
+
+                if ( (filePathUri == null) || (Uri.EMPTY.equals(filePathUri)) ) {
+                    return;
+                }
+                String filePathString = ExternalStorageUtil.getUriRealPath(getApplicationContext(), filePathUri); // temporary
+                edit_filePathEditText.setText(filePathString);
+            }
+            return;
+        }
+    }
+
     private void returnToPrevious() {
 
         Intent returnIntent = new Intent();
@@ -248,5 +292,15 @@ public class SongDataActivity extends AppCompatActivity {
         setResult(resultYn, returnIntent);    // can bundle some data to previous activity
 
         finish();
+    }
+
+    private void selectOneFilePath() {
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+        // browser.
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+
+        startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
     }
 }

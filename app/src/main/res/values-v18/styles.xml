@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CustomActionButtonTheme" parent="@style/Widget.AppCompat.ActionButton">
+        <!-- Required for API greater than and equal to 18 -->
+        <item name="android:textSize">60px</item>
+        <item name="android:textStyle">normal</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@drawable/main_menuitem_background_color</item>
+    </style>
+</resources>
