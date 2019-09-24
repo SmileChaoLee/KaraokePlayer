@@ -35,17 +35,16 @@ public class PlayListSQLite extends SQLiteOpenHelper {
             + musicChannel + " INTEGER , "
             + vocalTrackNo + " INTEGER , "
             + vocalChannel + " INTEGER );";
-    private static final String columnList;
+
     private static final int dbVersion = 1;
+
+    private static final int createAction = 0;
+    private static final int readAction = 1;
+    private static final int updateAction = 2;
+    private static final int deleteAction = 3;
 
     private Context myContext;
     private SQLiteDatabase songDatabase;
-
-    static {
-        columnList = "( " + songName +"," + filePath + ","
-                + musicTrackNo + "," + musicChannel +"," + vocalTrackNo + "," + vocalChannel + " )";
-        Log.d(TAG, "columnList = " + columnList);
-    }
 
     public PlayListSQLite(Context context) {
         super(context, dbName,null,dbVersion);
@@ -74,26 +73,15 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         }
     }
 
-    private String getValueList(SongInfo songInfo) {
-
-        String valueList = "'" + songInfo.getSongName() + "'"
-                + ", '" + songInfo.getFilePath() +"'"
-                + ", " + String.valueOf(songInfo.getMusicTrackNo())
-                + ", " + String.valueOf(songInfo.getMusicChannel())
-                + ", " + String.valueOf(songInfo.getVocalTrackNo())
-                + ", " + String.valueOf(songInfo.getVocalChannel());
-        valueList = "( " + valueList + " )";
-
-        return valueList;
-    }
-
-    private ContentValues getContentValues(SongInfo songInfo) {
+    private ContentValues getContentValues(SongInfo songInfo, int crudAction) {
         if (songInfo == null) {
             return null;
         }
 
         ContentValues contentValues = new ContentValues();
-        contentValues.put(_id, songInfo.getId());
+        if (crudAction != createAction) {
+            contentValues.put(_id, songInfo.getId());
+        }
         contentValues.put(songName, songInfo.getSongName());
         contentValues.put(filePath, songInfo.getFilePath());
         contentValues.put(musicTrackNo, songInfo.getMusicTrackNo());
@@ -137,34 +125,32 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         return playList;
     }
 
-    public void addSongToPlayList(final SongInfo songInfo) {
+    public long addSongToPlayList(final SongInfo songInfo) {
+
+        long result = -1;
 
         if (songInfo == null) {
-            return;
+            return result;
         }
 
+        ContentValues contentValues = getContentValues(songInfo, updateAction);
+        String whereClause = _id + " = " + songInfo.getId();
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                //  insert one record into table
-                String valueList = getValueList(songInfo);
-                Log.d(TAG, "valueList = " + valueList);
-                String sql = "insert into " + tableName + " "
-                        + columnList
-                        + " values "
-                        + valueList + ";";
-
-                songDatabase.execSQL(sql);
+                result = songDatabase.insert(tableName, null, contentValues);
             } catch (SQLException ex) {
                 Log.d("TAG", "addSongToPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
         }
+
+        return result;
     }
 
     public void updateOneSongFromPlayList(SongInfo songInfo) {
-        ContentValues contentValues = getContentValues(songInfo);
+        ContentValues contentValues = getContentValues(songInfo, updateAction);
         String whereClause = _id + " = " + songInfo.getId();
         openScoreDatabase();
         if (songDatabase != null) {
