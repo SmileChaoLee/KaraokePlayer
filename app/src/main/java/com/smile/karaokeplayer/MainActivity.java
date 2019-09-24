@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -59,6 +61,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.smile.karaokeplayer.Models.ExitAppTimer;
 import com.smile.karaokeplayer.Models.PlayListSQLite;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -150,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
+
+    private ExitAppTimer exitAppTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -623,7 +628,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        showAdAndExitApplication();
+        if (exitAppTimer.canExit()) {
+            showAdAndExitApplication();
+        } else {
+            exitAppTimer.start();
+            ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+        }
+        Log.d(TAG, "onBackPressed() is called");
     }
 
     private void showAdAndExitApplication() {
@@ -687,6 +698,8 @@ public class MainActivity extends AppCompatActivity {
                 initializePlayingParam();
             }
         }
+
+        exitAppTimer = new ExitAppTimer(1000);
     }
 
     private void selectFileToOpen() {
