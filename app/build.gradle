@@ -7,13 +7,13 @@ android {
         applicationId "com.smile.karaokeplayer"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 103
-        versionName "1.03"
+        versionCode 104
+        versionName "1.04"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -34,7 +34,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core:1.2.0-alpha04'
-    implementation 'androidx.media:media:1.1.0'
+    // implementation 'androidx.media:media:1.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.10.1'
     implementation 'com.google.android.exoplayer:extension-mediasession:2.10.1'
 
@@ -54,8 +54,6 @@ dependencies {
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
-
-    implementation 'de.mrmaffen:vlc-android-sdk:3.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

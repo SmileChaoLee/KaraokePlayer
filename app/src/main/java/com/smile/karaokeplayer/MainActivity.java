@@ -8,8 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -71,7 +69,6 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -166,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "textFontSize = " + textFontSize);
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         Log.d(TAG, "fontScale = " + fontScale);
-        toastTextSize = 0.8f * textFontSize;
+        toastTextSize = 0.7f * textFontSize;
 
         accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
         noReadableExternalStorageString = getString(R.string.noReadableExternalStorageString);
