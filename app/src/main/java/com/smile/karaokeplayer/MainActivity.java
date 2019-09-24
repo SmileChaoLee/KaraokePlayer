@@ -1155,7 +1155,10 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
-            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_LONG);
+            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+
+            // go to next one in the list
+            startAutoPlay();
         }
     }
 
