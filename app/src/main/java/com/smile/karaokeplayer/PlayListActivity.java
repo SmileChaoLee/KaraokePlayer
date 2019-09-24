@@ -156,7 +156,7 @@ public class PlayListActivity extends AppCompatActivity {
         private Context context;
         private int layoutId;
         private ArrayList<SongInfo> mPlayListInAdapter;
-        private float itemTextSize = textFontSize * 0.5f;
+        private float itemTextSize = textFontSize * 0.6f;
         private float buttonTextSize = textFontSize * 0.8f;
         private int yellow2Color;
         private int yellow3Color;
@@ -192,16 +192,6 @@ public class PlayListActivity extends AppCompatActivity {
             if (getCount() == 0) {
                 return view;
             }
-
-            int listViewHeight = parent.getHeight();
-            int itemNum = 3;
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                itemNum = 2;
-            }
-            int itemHeight = listViewHeight / itemNum;    // items for one screen
-            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-            layoutParams.height = itemHeight;
-            // view.setLayoutParams(layoutParams);  // no needed
 
             if ( (position % 2) == 0) {
                 view.setBackgroundColor(yellow2Color);

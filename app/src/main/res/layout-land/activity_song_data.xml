@@ -99,6 +99,7 @@
         </LinearLayout>
 
         <RelativeLayout
+            android:id="@+id/edit_buttonsLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center_vertical"
