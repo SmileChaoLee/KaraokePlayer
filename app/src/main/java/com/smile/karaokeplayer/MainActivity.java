@@ -892,14 +892,14 @@ public class MainActivity extends AppCompatActivity {
 
                 String filePath = songInfo.getFilePath();
                 Log.i(TAG, "filePath : " + filePath);
-                File songFile = new File(filePath);
-                if (songFile.exists()) {
+                // File songFile = new File(filePath);
+                // if (songFile.exists()) {
                     // mediaUri = Uri.fromFile(new File(filePath));
                     // mediaUri = Uri.parse("file://" + filePath);
                     mediaUri = Uri.parse(filePath);
                     Log.i(TAG, "mediaUri from filePath : " + mediaUri);
                     mediaTransportControls.prepareFromUri(mediaUri, null);
-                }
+                // }
 
             }
         } else {

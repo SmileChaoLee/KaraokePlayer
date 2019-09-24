@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,6 +23,7 @@ import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class PlayListActivity extends AppCompatActivity {
@@ -33,13 +32,15 @@ public class PlayListActivity extends AppCompatActivity {
     private static final int ADD_ONE_SONG_TO_PLAY_LIST = 1;
     private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
     private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
+    private static final int PLAY_ONE_SONG_IN_PLAY_LIST = 4;
 
     private PlayListSQLite playListSQLite;
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
-    private ArrayList<SongInfo> songList = new ArrayList<>();
-    private ListView listView = null;
+    private ArrayList<SongInfo> mPlayList = new ArrayList<>();
+    private ListView playListView = null;
+    private MyPlayListAdapter myPlayListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,8 @@ public class PlayListActivity extends AppCompatActivity {
         toastTextSize = 0.8f * textFontSize;
 
         playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
+
+        /*
         playListSQLite.deleteAllPlayList();
 
         String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -61,6 +64,7 @@ public class PlayListActivity extends AppCompatActivity {
         filePath = externalPath + "/Song/saving_all_my_love_for_you.flv";
         songInfo = new SongInfo(2, "Saving All My Love For You", filePath, 1, SmileApplication.leftChannel, 1, SmileApplication.rightChannel);
         playListSQLite.addSongToPlayList(songInfo);
+        */
 
         super.onCreate(savedInstanceState);
 
@@ -76,7 +80,7 @@ public class PlayListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(PlayListActivity.this, SongDataActivity.class);
-                addIntent.putExtra("Action", "ADD");
+                addIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.AddActionString);
                 startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
             }
         });
@@ -90,11 +94,14 @@ public class PlayListActivity extends AppCompatActivity {
             }
         });
 
-        songList = playListSQLite.readPlayList();
+        mPlayList = playListSQLite.readPlayList();
 
-        listView = findViewById(R.id.playListListView);
-        listView.setAdapter(new myListAdapter(this, R.layout.play_list_item, songList));
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        myPlayListAdapter = new MyPlayListAdapter(this, R.layout.play_list_item, mPlayList);
+        myPlayListAdapter.setNotifyOnChange(false);
+
+        playListView = findViewById(R.id.playListListView);
+        playListView.setAdapter(myPlayListAdapter);
+        playListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
 
@@ -112,6 +119,27 @@ public class PlayListActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case ADD_ONE_SONG_TO_PLAY_LIST:
+                    break;
+                case EDIT_ONE_SONG_TO_PLAY_LIST:
+                    break;
+                case DELETE_ONE_SONG_TO_PLAY_LIST:
+                    break;
+                case PLAY_ONE_SONG_IN_PLAY_LIST:
+                    break;
+            }
+        }
+        mPlayList = playListSQLite.readPlayList();
+        myPlayListAdapter.updateData(mPlayList);    // update the UI
+    }
+
+
+    @Override
     public void onBackPressed() {
         returnToPrevious();
     }
@@ -123,22 +151,22 @@ public class PlayListActivity extends AppCompatActivity {
         finish();
     }
 
-    private class myListAdapter extends ArrayAdapter {  // changed name to MyListAdapter from myListAdapter
+    private class MyPlayListAdapter extends ArrayAdapter {
 
         private Context context;
         private int layoutId;
-        private ArrayList<SongInfo> mSongList;
+        private ArrayList<SongInfo> mPlayListInAdapter;
         private float itemTextSize = textFontSize * 0.5f;
         private float buttonTextSize = textFontSize * 0.8f;
         private int yellow2Color;
         private int yellow3Color;
 
         @SuppressWarnings("unchecked")
-        myListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
-            super(context, layoutId, _songList);
+        MyPlayListAdapter(Context context, int layoutId, ArrayList<SongInfo> _playList) {
+            super(context, layoutId, _playList);
             this.context = context;
             this.layoutId = layoutId;
-            this.mSongList = _songList;
+            this.mPlayListInAdapter = _playList;
             yellow2Color = ContextCompat.getColor(this.context, R.color.yellow2);
             yellow3Color = ContextCompat.getColor(this.context, R.color.yellow3);
         }
@@ -217,11 +245,11 @@ public class PlayListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(deletePlayListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
 
             int songListSize = 0;
-            if (mSongList != null) {
-                songListSize = mSongList.size();
+            if (mPlayListInAdapter != null) {
+                songListSize = mPlayListInAdapter.size();
             }
             if (songListSize > 0) {
-                final SongInfo songInfo = mSongList.get(position);
+                final SongInfo songInfo = mPlayListInAdapter.get(position);
 
                 titleStringTextView.setText(getString(R.string.titleWithColonString));
                 titleNameTextView.setText(songInfo.getSongName());
@@ -245,7 +273,7 @@ public class PlayListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent editIntent = new Intent(context, SongDataActivity.class);
-                        editIntent.putExtra("Action", "EDIT");
+                        editIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.EditActionString);
                         editIntent.putExtra("SongInfo", songInfo);
                         startActivityForResult(editIntent, EDIT_ONE_SONG_TO_PLAY_LIST);
                     }
@@ -255,7 +283,7 @@ public class PlayListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent deleteIntent = new Intent(context, SongDataActivity.class);
-                        deleteIntent.putExtra("Action", "DELETE");
+                        deleteIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.DeleteActionString);
                         deleteIntent.putExtra("SongInfo", songInfo);
                         startActivityForResult(deleteIntent, DELETE_ONE_SONG_TO_PLAY_LIST);
                     }
@@ -263,6 +291,12 @@ public class PlayListActivity extends AppCompatActivity {
             }
 
             return view;
+        }
+
+        public void updateData(List newData) {
+            clear();
+            addAll(newData);
+            notifyDataSetChanged();
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.smile.karaokeplayer.Models;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 public class PlayListSQLite extends SQLiteOpenHelper {
 
     private static final String TAG = new String(".PlayListSQLite");
+
     private static final String _id = new String("id");
     private static final String songName = new String("songName");
     private static final String filePath = new String("filePath");
@@ -33,12 +35,17 @@ public class PlayListSQLite extends SQLiteOpenHelper {
             + musicChannel + " INTEGER , "
             + vocalTrackNo + " INTEGER , "
             + vocalChannel + " INTEGER );";
-    private static final String upDateTable = new String("update");
-
+    private static final String columnList;
     private static final int dbVersion = 1;
 
     private Context myContext;
     private SQLiteDatabase songDatabase;
+
+    static {
+        columnList = "( " + songName +"," + filePath + ","
+                + musicTrackNo + "," + musicChannel +"," + vocalTrackNo + "," + vocalChannel + " )";
+        Log.d(TAG, "columnList = " + columnList);
+    }
 
     public PlayListSQLite(Context context) {
         super(context, dbName,null,dbVersion);
@@ -62,8 +69,39 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         try {
             songDatabase = getWritableDatabase();
         } catch (SQLException ex) {
+            Log.d("TAG", "Open database exception.");
             ex.printStackTrace();
         }
+    }
+
+    private String getValueList(SongInfo songInfo) {
+
+        String valueList = "'" + songInfo.getSongName() + "'"
+                + ", '" + songInfo.getFilePath() +"'"
+                + ", " + String.valueOf(songInfo.getMusicTrackNo())
+                + ", " + String.valueOf(songInfo.getMusicChannel())
+                + ", " + String.valueOf(songInfo.getVocalTrackNo())
+                + ", " + String.valueOf(songInfo.getVocalChannel());
+        valueList = "( " + valueList + " )";
+
+        return valueList;
+    }
+
+    private ContentValues getContentValues(SongInfo songInfo) {
+        if (songInfo == null) {
+            return null;
+        }
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(_id, songInfo.getId());
+        contentValues.put(songName, songInfo.getSongName());
+        contentValues.put(filePath, songInfo.getFilePath());
+        contentValues.put(musicTrackNo, songInfo.getMusicTrackNo());
+        contentValues.put(musicChannel, songInfo.getMusicChannel());
+        contentValues.put(vocalTrackNo, songInfo.getVocalTrackNo());
+        contentValues.put(vocalChannel, songInfo.getVocalChannel());
+
+        return contentValues;
     }
 
     public ArrayList<SongInfo> readPlayList() {
@@ -90,6 +128,7 @@ public class PlayListSQLite extends SQLiteOpenHelper {
                 }
                 cur.close();
             } catch (SQLException ex) {
+                Log.d("TAG", "readPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -107,29 +146,32 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                String sql = "select count(*) as totalRec from " + tableName + ";";
-                Cursor cur = songDatabase.rawQuery(sql, new String[]{});
-
                 //  insert one record into table
-                String columnList = songName +"," + filePath + ","
-                        + musicTrackNo + "," + musicChannel +"," + vocalTrackNo + "," + vocalChannel;
-                columnList = "( " + columnList +" )";
-                Log.d(TAG, "columnList = " + columnList);
-                String valueList = "'" + songInfo.getSongName() + "'"
-                        + ", '" + songInfo.getFilePath() +"'"
-                        + ", " + String.valueOf(songInfo.getMusicTrackNo())
-                        + ", " + String.valueOf(songInfo.getMusicChannel())
-                        + ", " + String.valueOf(songInfo.getVocalTrackNo())
-                        + ", " + String.valueOf(songInfo.getVocalChannel());
-                valueList = "( " + valueList + " )";
+                String valueList = getValueList(songInfo);
                 Log.d(TAG, "valueList = " + valueList);
-                sql = "insert into " + tableName + " "
+                String sql = "insert into " + tableName + " "
                         + columnList
                         + " values "
                         + valueList + ";";
 
                 songDatabase.execSQL(sql);
             } catch (SQLException ex) {
+                Log.d("TAG", "addSongToPlayList() exception.");
+                ex.printStackTrace();
+            }
+            closeDatabase();
+        }
+    }
+
+    public void updateOneSongFromPlayList(SongInfo songInfo) {
+        ContentValues contentValues = getContentValues(songInfo);
+        String whereClause = _id + " = " + songInfo.getId();
+        openScoreDatabase();
+        if (songDatabase != null) {
+            try {
+                songDatabase.update(tableName, contentValues, whereClause, null);
+            } catch (SQLException ex) {
+                Log.d("TAG", "updateOneSongFromPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -141,8 +183,10 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                songDatabase.delete(tableName, _id + "=" + id,null);
+                String whereClause = _id + " = " + id;
+                songDatabase.delete(tableName, whereClause,null);
             } catch (SQLException ex) {
+                Log.d("TAG", "deleteOneSongFromPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -155,6 +199,7 @@ public class PlayListSQLite extends SQLiteOpenHelper {
                 try {
                     songDatabase.delete(tableName, null,null);
                 } catch (SQLException ex) {
+                    Log.d("TAG", "deleteAllPlayList() exception.");
                     ex.printStackTrace();
                 }
                 closeDatabase();
@@ -167,6 +212,7 @@ public class PlayListSQLite extends SQLiteOpenHelper {
                 songDatabase.close();
                 songDatabase = null;
             } catch (SQLException ex) {
+                Log.d("TAG", "closeDatabase() exception.");
                 ex.printStackTrace();
             }
         }

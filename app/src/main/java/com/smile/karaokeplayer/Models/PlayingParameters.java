@@ -17,64 +17,28 @@ public class PlayingParameters implements Parcelable {
     private int currentAudioRendererPlayed;
     private long currentAudioPosition;
     private float currentVolume;
-
     private int publicSongIndex;
     private boolean isPlayingPublic;
 
+    public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared, int currentVideoRendererPlayed, int musicAudioChannel, int vocalAudioChannel, int currentChannelPlayed, int musicAudioRenderer, int vocalAudioRenderer, int currentAudioRendererPlayed, long currentAudioPosition, float currentVolume, int publicSongIndex, boolean isPlayingPublic) {
+        this.currentPlaybackState = currentPlaybackState;
+        this.isAutoPlay = isAutoPlay;
+        this.isMediaSourcePrepared = isMediaSourcePrepared;
+        this.currentVideoRendererPlayed = currentVideoRendererPlayed;
+        this.musicAudioChannel = musicAudioChannel;
+        this.vocalAudioChannel = vocalAudioChannel;
+        this.currentChannelPlayed = currentChannelPlayed;
+        this.musicAudioRenderer = musicAudioRenderer;
+        this.vocalAudioRenderer = vocalAudioRenderer;
+        this.currentAudioRendererPlayed = currentAudioRendererPlayed;
+        this.currentAudioPosition = currentAudioPosition;
+        this.currentVolume = currentVolume;
+        this.publicSongIndex = publicSongIndex;
+        this.isPlayingPublic = isPlayingPublic;
+    }
+
     public PlayingParameters() {
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.currentPlaybackState);
-        dest.writeByte(this.isAutoPlay ? (byte) 1 : (byte) 0);
-        dest.writeByte(this.isMediaSourcePrepared ? (byte) 1 : (byte) 0);
-        dest.writeInt(this.currentVideoRendererPlayed);
-        dest.writeInt(this.musicAudioChannel);
-        dest.writeInt(this.vocalAudioChannel);
-        dest.writeInt(this.currentChannelPlayed);
-        dest.writeInt(this.musicAudioRenderer);
-        dest.writeInt(this.vocalAudioRenderer);
-        dest.writeInt(this.currentAudioRendererPlayed);
-        dest.writeLong(this.currentAudioPosition);
-        dest.writeFloat(this.currentVolume);
-        dest.writeInt(this.publicSongIndex);
-        dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
-    }
-
-    protected PlayingParameters(Parcel in) {
-        this.currentPlaybackState = in.readInt();
-        this.isAutoPlay = in.readByte() != 0;
-        this.isMediaSourcePrepared = in.readByte() != 0;
-        this.currentVideoRendererPlayed = in.readInt();
-        this.musicAudioChannel = in.readInt();
-        this.vocalAudioChannel = in.readInt();
-        this.currentChannelPlayed = in.readInt();
-        this.musicAudioRenderer = in.readInt();
-        this.vocalAudioRenderer = in.readInt();
-        this.currentAudioRendererPlayed = in.readInt();
-        this.currentAudioPosition = in.readInt();
-        this.currentVolume = in.readFloat();
-        this.publicSongIndex = in.readInt();
-        this.isPlayingPublic = in.readByte() != 0;
-    }
-
-    public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {
-        @Override
-        public PlayingParameters createFromParcel(Parcel source) {
-            return new PlayingParameters(source);
-        }
-
-        @Override
-        public PlayingParameters[] newArray(int size) {
-            return new PlayingParameters[size];
-        }
-    };
 
     public int getCurrentPlaybackState() {
         return currentPlaybackState;
@@ -189,22 +153,54 @@ public class PlayingParameters implements Parcelable {
     }
 
     @Override
-    public String toString() {
-        return "PlayingParameters{" +
-                "currentPlaybackState=" + currentPlaybackState +
-                ", isAutoPlay=" + isAutoPlay +
-                ", isMediaSourcePrepared=" + isMediaSourcePrepared +
-                ", currentVideoRendererPlayed=" + currentVideoRendererPlayed +
-                ", musicAudioChannel=" + musicAudioChannel +
-                ", vocalAudioChannel=" + vocalAudioChannel +
-                ", currentChannelPlayed=" + currentChannelPlayed +
-                ", musicAudioRenderer=" + musicAudioRenderer +
-                ", vocalAudioRenderer=" + vocalAudioRenderer +
-                ", currentAudioRendererPlayed=" + currentAudioRendererPlayed +
-                ", currentAudioPosition=" + currentAudioPosition +
-                ", currentVolume=" + currentVolume +
-                ", publicSongIndex=" + publicSongIndex +
-                ", isPlayingPublic=" + isPlayingPublic +
-                '}';
+    public int describeContents() {
+        return 0;
     }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.currentPlaybackState);
+        dest.writeByte(this.isAutoPlay ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isMediaSourcePrepared ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.currentVideoRendererPlayed);
+        dest.writeInt(this.musicAudioChannel);
+        dest.writeInt(this.vocalAudioChannel);
+        dest.writeInt(this.currentChannelPlayed);
+        dest.writeInt(this.musicAudioRenderer);
+        dest.writeInt(this.vocalAudioRenderer);
+        dest.writeInt(this.currentAudioRendererPlayed);
+        dest.writeLong(this.currentAudioPosition);
+        dest.writeFloat(this.currentVolume);
+        dest.writeInt(this.publicSongIndex);
+        dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
+    }
+
+    protected PlayingParameters(Parcel in) {
+        this.currentPlaybackState = in.readInt();
+        this.isAutoPlay = in.readByte() != 0;
+        this.isMediaSourcePrepared = in.readByte() != 0;
+        this.currentVideoRendererPlayed = in.readInt();
+        this.musicAudioChannel = in.readInt();
+        this.vocalAudioChannel = in.readInt();
+        this.currentChannelPlayed = in.readInt();
+        this.musicAudioRenderer = in.readInt();
+        this.vocalAudioRenderer = in.readInt();
+        this.currentAudioRendererPlayed = in.readInt();
+        this.currentAudioPosition = in.readLong();
+        this.currentVolume = in.readFloat();
+        this.publicSongIndex = in.readInt();
+        this.isPlayingPublic = in.readByte() != 0;
+    }
+
+    public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {
+        @Override
+        public PlayingParameters createFromParcel(Parcel source) {
+            return new PlayingParameters(source);
+        }
+
+        @Override
+        public PlayingParameters[] newArray(int size) {
+            return new PlayingParameters[size];
+        }
+    };
 }
