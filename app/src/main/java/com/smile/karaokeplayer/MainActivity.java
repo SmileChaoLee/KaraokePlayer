@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity {
                     // isMediaSourcePrepared = false;
                     if (isExternalStorageReadable()) {
                         // has readable external storage
-                        selectOneFileToOpen();
+                        selectFileToOpen();
                     } else {
                         ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                         Log.d(TAG, noReadableExternalStorageString);
@@ -689,7 +689,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void selectOneFileToOpen() {
+    private void selectFileToOpen() {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -891,10 +891,13 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setMediaSourcePrepared(false);
 
                 String filePath = songInfo.getFilePath();
+                Log.i(TAG, "filePath : " + filePath);
                 File songFile = new File(filePath);
                 if (songFile.exists()) {
-                    mediaUri = Uri.fromFile(new File(filePath));
+                    // mediaUri = Uri.fromFile(new File(filePath));
                     // mediaUri = Uri.parse("file://" + filePath);
+                    mediaUri = Uri.parse(filePath);
+                    Log.i(TAG, "mediaUri from filePath : " + mediaUri);
                     mediaTransportControls.prepareFromUri(mediaUri, null);
                 }
 

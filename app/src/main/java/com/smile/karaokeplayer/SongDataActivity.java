@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -149,7 +148,7 @@ public class SongDataActivity extends AppCompatActivity {
         edit_selectFilePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectOneFilePath();
+                selectFilePath();
             }
         });
 
@@ -274,7 +273,11 @@ public class SongDataActivity extends AppCompatActivity {
                 if ( (filePathUri == null) || (Uri.EMPTY.equals(filePathUri)) ) {
                     return;
                 }
-                String filePathString = ExternalStorageUtil.getUriRealPath(getApplicationContext(), filePathUri); // temporary
+                // String filePathString = ExternalStorageUtil.getUriRealPath(getApplicationContext(), filePathUri); // temporary
+                String filePathString = filePathUri.toString();
+                Uri uri = Uri.parse(filePathString);
+                Log.i(TAG, "Uri from filePathString: " + uri.toString());
+
                 edit_filePathEditText.setText(filePathString);
             }
             return;
@@ -294,7 +297,7 @@ public class SongDataActivity extends AppCompatActivity {
         finish();
     }
 
-    private void selectOneFilePath() {
+    private void selectFilePath() {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
