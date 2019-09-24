@@ -133,8 +133,7 @@ public class PlayListSQLite extends SQLiteOpenHelper {
             return result;
         }
 
-        ContentValues contentValues = getContentValues(songInfo, updateAction);
-        String whereClause = _id + " = " + songInfo.getId();
+        ContentValues contentValues = getContentValues(songInfo, createAction);
         openScoreDatabase();
         if (songDatabase != null) {
             try {
@@ -149,34 +148,52 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         return result;
     }
 
-    public void updateOneSongFromPlayList(SongInfo songInfo) {
+    public long updateOneSongFromPlayList(final SongInfo songInfo) {
+
+        long result = -1;
+
+        if (songInfo == null) {
+            return result;
+        }
+
         ContentValues contentValues = getContentValues(songInfo, updateAction);
         String whereClause = _id + " = " + songInfo.getId();
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                songDatabase.update(tableName, contentValues, whereClause, null);
+                result = songDatabase.update(tableName, contentValues, whereClause, null);
             } catch (SQLException ex) {
                 Log.d("TAG", "updateOneSongFromPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
         }
+
+        return result;
     }
 
-    public void deleteOneSongFromPlayList(final int id) {
+    public long deleteOneSongFromPlayList(final SongInfo songInfo) {
+
+        long result = -1;
+
+        if (songInfo == null) {
+            return result;
+        }
 
         openScoreDatabase();
         if (songDatabase != null) {
             try {
+                int id = songInfo.getId();
                 String whereClause = _id + " = " + id;
-                songDatabase.delete(tableName, whereClause,null);
+                result = songDatabase.delete(tableName, whereClause,null);
             } catch (SQLException ex) {
                 Log.d("TAG", "deleteOneSongFromPlayList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
         }
+
+        return result;
     }
 
     public void deleteAllPlayList() {

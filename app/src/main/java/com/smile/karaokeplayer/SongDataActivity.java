@@ -174,18 +174,19 @@ public class SongDataActivity extends AppCompatActivity {
             public void onClick(View view) {
                 setSongInfoFromInput();
                 PlayListSQLite playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
+                long databaseResult;
                 switch (crudAction.toUpperCase()) {
                     case SmileApplication.AddActionString:
                         // add one record
-                        playListSQLite.addSongToPlayList(mSongInfo);
+                        databaseResult = playListSQLite.addSongToPlayList(mSongInfo);
                         break;
                     case SmileApplication.EditActionString:
                         // = "EDIT". Edit one record
-                        playListSQLite.updateOneSongFromPlayList(mSongInfo);
+                        databaseResult = playListSQLite.updateOneSongFromPlayList(mSongInfo);
                         break;
                     case SmileApplication.DeleteActionString:
                         // = "DELETE". Delete one record
-                        playListSQLite.deleteOneSongFromPlayList(mSongInfo.getId());
+                        databaseResult = playListSQLite.deleteOneSongFromPlayList(mSongInfo);
                         break;
                 }
                 playListSQLite.closeDatabase();
