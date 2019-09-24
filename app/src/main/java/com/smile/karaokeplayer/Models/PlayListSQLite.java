@@ -99,8 +99,9 @@ public class PlayListSQLite extends SQLiteOpenHelper {
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                String sql = "select * from " + tableName;
-                Cursor cur = songDatabase.rawQuery(sql, new String[]{});
+                // String sql = "select * from " + tableName + " order by " + _id + " asc";
+                // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
+                Cursor cur = songDatabase.query(tableName, null, null, null, null, null, _id+" asc");
                 if (cur.moveToFirst()) {
                     do {
                         Integer id = cur.getInt(0);
