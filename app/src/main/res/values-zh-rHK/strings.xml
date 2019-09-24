@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">卡拉OK播放器</string>
+    <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
+
+    <string name="fileString">檔案</string>
+    <string name="accessExternalStoragePermissionDeniedString">存取外部儲存裝置被拒絕</string>
+    <string name="noReadableExternalStorageString">沒有外部存取裝置</string>
+    <string name="autoPlayString">自動播放</string>
+    <string name="openString">開啟</string>
+    <string name="closeString">關閉</string>
+    <string name="privacyPolicyString">隐私政策</string>
+    <string name="exitString">離開</string>
+    <string name="actionString">動作</string>
+    <string name="playString">播放</string>
+    <string name="pauseString">暫停</string>
+    <string name="stopString">切歌</string>
+    <string name="replayString">重播</string>
+    <string name="fforwardString">快轉</string>
+    <string name="rewindString">倒轉</string>
+    <string name="toTVString">電視播放</string>
+    <string name="volumeString">音量</string>
+    <string name="audioTrackString">音軌</string>
+    <string name="videoTrackString">影像軌</string>
+    <string name="channelString">聲道</string>
+    <string name="leftChannelString">左聲道</string>
+    <string name="rightChannelString">右聲道</string>
+    <string name="stereoChannelString">立體聲</string>
+    <string name="formatNotSupportedString">沒有支援此媒體格式</string>
+    <string name="playListString">播放清單</string>
+    <string name="titleWithColonString">名稱:</string>
+    <string name="filePathWithColonString">路徑:</string>
+    <string name="musicTrackWithColonString">音樂音軌:</string>
+    <string name="vocalTrackWithColonString">人聲音軌:</string>
+    <string name="musicChannelWithColonString">音樂聲道:</string>
+    <string name="vocalChannelWithColonString">人聲聲道:</string>
+    <string name="addString">增加</string>
+    <string name="editString">修改</string>
+    <string name="deleteString">刪除</string>
+    <string name="noPlayListString">沒有播放清單</string>
+    <string name="bufferingString">緩衝中 .....</string>
+    <string name="saveString">儲存</string>
+    <string name="backKeyToExitApp">再按一次倒退鍵離開程式</string>
+</resources>
