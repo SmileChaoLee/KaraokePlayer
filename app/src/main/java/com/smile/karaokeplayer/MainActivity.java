@@ -59,12 +59,12 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import com.smile.karaokeplayer.Models.ExitAppTimer;
 import com.smile.karaokeplayer.Models.PlayListSQLite;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
+import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -150,8 +150,6 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
-
-    private ExitAppTimer exitAppTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -625,6 +623,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        ExitAppTimer exitAppTimer = ExitAppTimer.getInstance(1000); // singleton class
         if (exitAppTimer.canExit()) {
             showAdAndExitApplication();
         } else {
@@ -695,8 +694,6 @@ public class MainActivity extends AppCompatActivity {
                 initializePlayingParam();
             }
         }
-
-        exitAppTimer = new ExitAppTimer(1000);
     }
 
     private void selectFileToOpen() {
