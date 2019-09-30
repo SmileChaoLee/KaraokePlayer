@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
                         startAutoPlay();
                     } else {
                         String msg = getString(R.string.noPlayListString);
-                        ScreenUtil.showToast(this, msg, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        ScreenUtil.showToast(this, msg, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                     }
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
@@ -868,11 +868,25 @@ public class MainActivity extends AppCompatActivity {
 
         // activity is not being destroyed then check
         // if there are still songs to be play
+        boolean hasSongs = false;   // no more songs to play
+        if (hasSongs) {
+            playingParam.setPlayingPublic(false);   // playing next ordered song
+        } else {
+            playingParam.setPlayingPublic(true);   // playing next public song on list
+        }
+
+
         SongInfo songInfo = null;
-        if (playingParam.isPlayingPublic()) {
-            // no next song to be played
-            int publicSongListSize = publicSongList.size();
-            if (publicSongListSize > 0) {
+        if (playingParam.isPlayingPublic())  {
+            int publicSongListSize = 0;
+            if (publicSongList != null) {
+                publicSongListSize = publicSongList.size();
+            }
+            if (publicSongListSize <= 0) {
+                // no public songs
+                ScreenUtil.showToast(this, getString(R.string.noPlayListString), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                playingParam.setAutoPlay(false);    // cancel auto play
+            } else {
                 // There are public songs to be played
                 int publicSongIndex = playingParam.getPublicSongIndex();
                 if (publicSongIndex >= publicSongListSize) {
@@ -901,13 +915,12 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "filePath : " + filePath);
                 // File songFile = new File(filePath);
                 // if (songFile.exists()) {
-                    // mediaUri = Uri.fromFile(new File(filePath));
-                    // mediaUri = Uri.parse("file://" + filePath);
-                    mediaUri = Uri.parse(filePath);
-                    Log.i(TAG, "mediaUri from filePath : " + mediaUri);
-                    mediaTransportControls.prepareFromUri(mediaUri, null);
+                // mediaUri = Uri.fromFile(new File(filePath));
+                // mediaUri = Uri.parse("file://" + filePath);
+                mediaUri = Uri.parse(filePath);
+                Log.i(TAG, "mediaUri from filePath : " + mediaUri);
+                mediaTransportControls.prepareFromUri(mediaUri, null);
                 // }
-
             }
         } else {
             // play next song that user has ordered
@@ -1162,10 +1175,12 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
-            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, textFontSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
 
-            // go to next one in the list
-            startAutoPlay();
+            if (playingParam.isAutoPlay()) {
+                // go to next one in the list
+                startAutoPlay();
+            }
         }
     }
 
