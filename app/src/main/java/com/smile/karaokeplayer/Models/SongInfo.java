@@ -11,11 +11,13 @@ public class SongInfo implements Parcelable {
     private int musicChannel;
     private int vocalTrackNo;
     private int vocalChannel;
+    public String included;   // is included in playlist
 
     public SongInfo() {
+        included = "1"; // default is included in playlist
     }
 
-    public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel) {
+    public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel, String included) {
         this.id = id;
         this.songName = songName;
         this.filePath = filePath;
@@ -23,6 +25,7 @@ public class SongInfo implements Parcelable {
         this.musicChannel = musicChannel;
         this.vocalTrackNo = vocalTrackNo;
         this.vocalChannel = vocalChannel;
+        this.included = included;
     }
 
     public int getId() {
@@ -81,6 +84,14 @@ public class SongInfo implements Parcelable {
         this.vocalChannel = vocalChannel;
     }
 
+    public String getIncluded() {
+        return included;
+    }
+
+    public void setIncluded(String included) {
+        this.included = included;
+    }
+
     @Override
     public String toString() {
         return "SongInfo{" +
@@ -91,6 +102,7 @@ public class SongInfo implements Parcelable {
                 ", musicChannel=" + musicChannel +
                 ", vocalTrackNo=" + vocalTrackNo +
                 ", vocalChannel=" + vocalChannel +
+                ", included=" + included +
                 '}';
     }
 
@@ -108,6 +120,7 @@ public class SongInfo implements Parcelable {
         dest.writeInt(this.musicChannel);
         dest.writeInt(this.vocalTrackNo);
         dest.writeInt(this.vocalChannel);
+        dest.writeString(this.included);
     }
 
     protected SongInfo(Parcel in) {
@@ -118,6 +131,7 @@ public class SongInfo implements Parcelable {
         this.musicChannel = in.readInt();
         this.vocalTrackNo = in.readInt();
         this.vocalChannel = in.readInt();
+        this.included = in.readString();
     }
 
     public static final Creator<SongInfo> CREATOR = new Creator<SongInfo>() {
