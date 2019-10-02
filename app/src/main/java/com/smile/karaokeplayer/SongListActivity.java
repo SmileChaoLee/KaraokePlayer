@@ -186,48 +186,48 @@ public class SongListActivity extends AppCompatActivity {
             } else {
                 view.setBackgroundColor(yellow3Color);
             }
-            TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
+            final TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
             ScreenUtil.resizeTextSize(titleStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView titleNameTextView = view.findViewById(R.id.titleNameTextView);
+            final TextView titleNameTextView = view.findViewById(R.id.titleNameTextView);
             ScreenUtil.resizeTextSize(titleNameTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView filePathStringTextView = view.findViewById(R.id.filePathStringTextView);
+            final TextView filePathStringTextView = view.findViewById(R.id.filePathStringTextView);
             ScreenUtil.resizeTextSize(filePathStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView filePathTextView = view.findViewById(R.id.filePathTextView);
+            final TextView filePathTextView = view.findViewById(R.id.filePathTextView);
             ScreenUtil.resizeTextSize(filePathTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
+            final TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
             ScreenUtil.resizeTextSize(musicTrackStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView musicTrackTextView = view.findViewById(R.id.musicTrackTextView);
+            final TextView musicTrackTextView = view.findViewById(R.id.musicTrackTextView);
             ScreenUtil.resizeTextSize(musicTrackTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView musicChannelStringTextView = view.findViewById(R.id.musicChannelStringTextView);
+            final TextView musicChannelStringTextView = view.findViewById(R.id.musicChannelStringTextView);
             ScreenUtil.resizeTextSize(musicChannelStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
+            final TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
             ScreenUtil.resizeTextSize(musicChannelTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
+            final TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
             ScreenUtil.resizeTextSize(vocalTrackStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView vocalTrackTextView = view.findViewById(R.id.vocalTrackTextView);
+            final TextView vocalTrackTextView = view.findViewById(R.id.vocalTrackTextView);
             ScreenUtil.resizeTextSize(vocalTrackTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView vocalChannelStringTextView = view.findViewById(R.id.vocalChannelStringTextView);
+            final TextView vocalChannelStringTextView = view.findViewById(R.id.vocalChannelStringTextView);
             ScreenUtil.resizeTextSize(vocalChannelStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
+            final TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
             ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
+            final TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
             ScreenUtil.resizeTextSize(includedPlaylistStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
-            CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);
+            final CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);
             ScreenUtil.resizeTextSize(includedPlaylistCheckBox, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            Button editSongListButton = view.findViewById(R.id.editSongListButton);
+            final Button editSongListButton = view.findViewById(R.id.editSongListButton);
             ScreenUtil.resizeTextSize(editSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
 
-            Button deleteSongListButton = view.findViewById(R.id.deleteSongListButton);
+            final Button deleteSongListButton = view.findViewById(R.id.deleteSongListButton);
             ScreenUtil.resizeTextSize(deleteSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
 
-            Button playSongListButton = view.findViewById(R.id.playSongListButton);
+            final Button playSongListButton = view.findViewById(R.id.playSongListButton);
             ScreenUtil.resizeTextSize(playSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
             if (!BuildConfig.DEBUG) {
                 playSongListButton.setVisibility(View.INVISIBLE);
@@ -252,6 +252,8 @@ public class SongListActivity extends AppCompatActivity {
                 includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        includedPlaylistCheckBox.setChecked(isChecked);
+                        includedPlaylistCheckBox.jumpDrawablesToCurrentState();
                         String included = isChecked ? "1" : "0";
                         songInfo.setIncluded(included);
                         songListSQLite.updateOneSongFromSongList(songInfo);

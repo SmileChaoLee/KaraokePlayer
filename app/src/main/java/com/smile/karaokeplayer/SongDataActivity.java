@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import android.widget.ImageButton;
@@ -175,6 +176,13 @@ public class SongDataActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, SmileApplication.FontSize_Scale_Type);
         boolean isChecked = (mSongInfo.getIncluded().equals("1")) ? true : false;
         edit_includedPlaylistCheckBox.setChecked(isChecked);
+        edit_includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                edit_includedPlaylistCheckBox.setChecked(isChecked);
+                edit_includedPlaylistCheckBox.jumpDrawablesToCurrentState();
+            }
+        });
 
         final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
         ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
