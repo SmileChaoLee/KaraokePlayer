@@ -286,9 +286,26 @@ public class MainActivity extends AppCompatActivity {
         // final Context wrapper = supportToolbar.getThemedContext();
         // or use
         // use custom toolbar
+        /*
         final int popupThemeId = supportToolbar.getPopupTheme();
         final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
         ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
+        */
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            // API >= 18 works on SpannableString on Main menu items
+            ScreenUtil.resizeMenuTextSize(menu, fontScale);
+        } else {
+            // API < 18 does not work on SpannableString on Main menu
+            // only sub menu works on SpannableString
+            // Text size of Main menu items use dimens
+            int menuSize = menu.size();
+            Menu subMenu;
+            for (int i=0; i<menuSize; i++) {
+                subMenu = menu.getItem(i).getSubMenu();
+                ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
+            }
+        }
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
