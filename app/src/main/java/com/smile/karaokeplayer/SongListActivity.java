@@ -140,13 +140,14 @@ public class SongListActivity extends AppCompatActivity {
 
     private class MySongListAdapter extends ArrayAdapter {
 
-        private Context context;
-        private int layoutId;
+        private final float itemTextSize = textFontSize * 0.6f;
+        private final float buttonTextSize = textFontSize * 0.8f;
+        private final int yellow2Color;
+        private final int yellow3Color;
+
+        private final Context context;
+        private final int layoutId;
         private ArrayList<SongInfo> mSongListInAdapter;
-        private float itemTextSize = textFontSize * 0.6f;
-        private float buttonTextSize = textFontSize * 0.8f;
-        private int yellow2Color;
-        private int yellow3Color;
 
         @SuppressWarnings("unchecked")
         MySongListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
