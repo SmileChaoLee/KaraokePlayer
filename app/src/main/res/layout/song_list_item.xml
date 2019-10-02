@@ -206,6 +206,32 @@
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/includedPlaylistLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView android:id="@+id/includedPlaylistStringTextView"
+            android:textScaleX="1.0"
+            android:typeface="monospace"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@android:color/background_dark"
+            android:textStyle="bold"
+            android:text="@string/includedPlaylistColonString"
+            android:gravity="left|center_vertical"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true">
+        </TextView>
+        <CheckBox android:id="@+id/includedPlaylistCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:gravity="left|center_vertical"
+            android:layout_toRightOf="@+id/includedPlaylistStringTextView"
+            android:layout_alignTop="@+id/includedPlaylistStringTextView">
+        </CheckBox>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
@@ -217,7 +243,7 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true">
             <Button
-                android:id="@+id/editPlayListButton"
+                android:id="@+id/editSongListButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/editString"
@@ -237,10 +263,30 @@
             android:layout_toRightOf="@+id/editButtonLinearLayout"
             android:layout_alignTop="@+id/editButtonLinearLayout">
             <Button
-                android:id="@+id/deletePlayListButton"
+                android:id="@+id/deleteSongListButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/deleteString"
+                android:textAllCaps="false"
+                android:textStyle="normal"
+                android:background="@android:drawable/btn_default"
+                android:textColor="@android:color/background_dark">
+            </Button>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/playButtonLinearLayout"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:gravity="center"
+            android:layout_toRightOf="@+id/deleteButtonLinearLayout"
+            android:layout_alignTop="@+id/deleteButtonLinearLayout">
+            <Button
+                android:id="@+id/playSongListButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/playString"
                 android:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"

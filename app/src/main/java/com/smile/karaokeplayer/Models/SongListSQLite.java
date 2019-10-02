@@ -13,9 +13,9 @@ import java.util.ArrayList;
 /**
  * Created by lee on 09/13/2019.
  */
-public class PlaylistSQLite extends SQLiteOpenHelper {
+public class SongListSQLite extends SQLiteOpenHelper {
 
-    private static final String TAG = new String(".PlaylistSQLite");
+    private static final String TAG = new String(".SongListSQLite");
 
     private static final String _id = new String("id");
     private static final String songName = new String("songName");
@@ -27,7 +27,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
     private static final String included = new String("included");
 
     private static final String dbName = new String("songDatabase.db");
-    private static final String tableName = new String("playlist");
+    private static final String tableName = new String("songList");
     private static final String createTable = "create table if not exists " + tableName + " ("
             + _id + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + songName + " TEXT NOT NULL , "
@@ -39,7 +39,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
             + included + " TEXT NOT NULL "
             + ");";
 
-    private static final int dbVersion = 2;
+    private static final int dbVersion = 4;
 
     private static final int createAction = 0;
     private static final int readAction = 1;
@@ -49,7 +49,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
     private Context myContext;
     private SQLiteDatabase songDatabase;
 
-    public PlaylistSQLite(Context context) {
+    public SongListSQLite(Context context) {
         super(context, dbName,null,dbVersion);
         myContext = context;
         // the following statements is to create or update the database
@@ -69,13 +69,22 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
 
         Log.d("TAG", "onUpgrade() is called.");
 
-        if (isColumnExist(database, included)) {
-            Log.d(TAG, "included exists");
-        } else {
-            Log.d(TAG, "included does not exist");
-
-            String sqlString = "ALTER TABLE " + tableName + " ADD COLUMN " + included + " TEXT DEFAULT '1' NOT NULL ";
+        try {
+            String oldTableName = "playList";
+            String sqlString = "ALTER TABLE " + oldTableName + " RENAME TO " + tableName;
             database.execSQL(sqlString);
+
+            if (isColumnExist(database, included)) {
+                Log.d(TAG, "included exists");
+            } else {
+                Log.d(TAG, "included does not exist");
+
+                sqlString = "ALTER TABLE " + tableName + " ADD COLUMN " + included + " TEXT DEFAULT '1' NOT NULL ";
+                database.execSQL(sqlString);
+            }
+        } catch (Exception ex) {
+            Log.d("TAG", "Exception in onUpgrade().");
+            ex.printStackTrace();
         }
     }
 
@@ -113,7 +122,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return contentValues;
     }
 
-    public boolean isColumnExist(SQLiteDatabase database, String columnName) {
+    private boolean isColumnExist(SQLiteDatabase database, String columnName) {
         boolean isExist = false;
         if (database != null) {
             try {
@@ -135,18 +144,10 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return isExist;
     }
 
-    public ArrayList<SongInfo> readPlaylist() {
-
-        Log.d("TAG", "readPlaylist() is called.");
-
-        ArrayList<SongInfo> playlist = new ArrayList<>();
-
-        openScoreDatabase();
-        if (songDatabase != null) {
+    private ArrayList<SongInfo> getSongInfoFromCursor(Cursor cur) {
+        ArrayList<SongInfo> songList = new ArrayList<>();
+        if (cur != null) {
             try {
-                // String sql = "select * from " + tableName + " order by " + _id + " asc";
-                // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
-                Cursor cur = songDatabase.query(tableName, null, null, null, null, null, _id+" asc");
                 if (cur.moveToFirst()) {
                     do {
                         Integer id = cur.getInt(0);
@@ -158,10 +159,55 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
                         int vocalChannel = cur.getInt(6);
                         String included = cur.getString(7);
                         SongInfo songInfo = new SongInfo(id, songName, filePath, musicTrackNo, musicChannel, vocalTrackNo, vocalChannel, included);
-                        playlist.add(songInfo);
+                        songList.add(songInfo);
                     } while (cur.moveToNext());
                 }
                 cur.close();
+            } catch (SQLException ex) {
+                Log.d("TAG", "getSongInfoFromCursor() exception.");
+                ex.printStackTrace();
+            }
+        }
+
+        return songList;
+    }
+
+    public ArrayList<SongInfo> readSongList() {
+
+        Log.d("TAG", "readSongList() is called.");
+
+        ArrayList<SongInfo> songList = new ArrayList<>();
+
+        openScoreDatabase();
+        if (songDatabase != null) {
+            try {
+                // String sql = "select * from " + tableName + " order by " + _id + " asc";
+                // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
+                Cursor cur = songDatabase.query(tableName, null, null, null, null, null, _id+" asc");
+                songList = getSongInfoFromCursor(cur);
+            } catch (SQLException ex) {
+                Log.d("TAG", "readSongList() exception.");
+                ex.printStackTrace();
+            }
+            closeDatabase();
+        }
+
+        return songList;
+    }
+
+    public ArrayList<SongInfo> readPlaylist() {
+
+        Log.d("TAG", "readPlaylist() is called.");
+
+        ArrayList<SongInfo> playlist = new ArrayList<>();
+
+        openScoreDatabase();
+        if (songDatabase != null) {
+            try {
+                // String sql = "select * from " + tableName + " order by " + _id + " asc";
+                // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
+                Cursor cur = songDatabase.query(tableName, null, included + " = ?", new String[] {"1"}, null, null, _id+" asc");
+                playlist = getSongInfoFromCursor(cur);
             } catch (SQLException ex) {
                 Log.d("TAG", "readPlaylist() exception.");
                 ex.printStackTrace();
@@ -172,7 +218,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return playlist;
     }
 
-    public long addSongToPlaylist(final SongInfo songInfo) {
+    public long addSongToSongList(final SongInfo songInfo) {
 
         long result = -1;
 
@@ -186,7 +232,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
             try {
                 result = songDatabase.insert(tableName, null, contentValues);
             } catch (SQLException ex) {
-                Log.d("TAG", "addSongToPlaylist() exception.");
+                Log.d("TAG", "addSongToSongList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -195,7 +241,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return result;
     }
 
-    public long updateOneSongFromPlaylist(final SongInfo songInfo) {
+    public long updateOneSongFromSongList(final SongInfo songInfo) {
 
         long result = -1;
 
@@ -210,7 +256,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
             try {
                 result = songDatabase.update(tableName, contentValues, whereClause, null);
             } catch (SQLException ex) {
-                Log.d("TAG", "updateOneSongFromPlaylist() exception.");
+                Log.d("TAG", "updateOneSongFromSongList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -219,7 +265,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return result;
     }
 
-    public long deleteOneSongFromPlaylist(final SongInfo songInfo) {
+    public long deleteOneSongFromSongList(final SongInfo songInfo) {
 
         long result = -1;
 
@@ -234,7 +280,7 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
                 String whereClause = _id + " = " + id;
                 result = songDatabase.delete(tableName, whereClause,null);
             } catch (SQLException ex) {
-                Log.d("TAG", "deleteOneSongFromPlaylist() exception.");
+                Log.d("TAG", "deleteOneSongFromSongList() exception.");
                 ex.printStackTrace();
             }
             closeDatabase();
@@ -243,13 +289,13 @@ public class PlaylistSQLite extends SQLiteOpenHelper {
         return result;
     }
 
-    public void deleteAllPlaylist() {
+    public void deleteAllSongList() {
             openScoreDatabase();
             if (songDatabase != null) {
                 try {
                     songDatabase.delete(tableName, null,null);
                 } catch (SQLException ex) {
-                    Log.d("TAG", "deleteAllPlaylist() exception.");
+                    Log.d("TAG", "deleteAllSongList() exception.");
                     ex.printStackTrace();
                 }
                 closeDatabase();

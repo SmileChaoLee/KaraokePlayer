@@ -11,7 +11,7 @@ public class SongInfo implements Parcelable {
     private int musicChannel;
     private int vocalTrackNo;
     private int vocalChannel;
-    public String included;   // is included in playlist
+    private String included;   // is included in playlist
 
     public SongInfo() {
         included = "1"; // default is included in playlist

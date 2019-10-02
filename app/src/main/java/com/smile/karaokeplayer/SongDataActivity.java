@@ -7,11 +7,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import android.widget.ImageButton;
@@ -19,7 +21,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
-import com.smile.karaokeplayer.Models.PlayListSQLite;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -46,6 +48,7 @@ public class SongDataActivity extends AppCompatActivity {
     private Spinner edit_musicChannelSpinner;
     private Spinner edit_vocalTrackSpinner;
     private Spinner edit_vocalChannelSpinner;
+    private CheckBox edit_includedPlaylistCheckBox;
 
     private String actionButtonString;
     private String crudAction;;
@@ -166,6 +169,13 @@ public class SongDataActivity extends AppCompatActivity {
         edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
         edit_vocalChannelSpinner.setSelection(mSongInfo.getVocalChannel());
 
+        TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
+        ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        edit_includedPlaylistCheckBox = findViewById(R.id.edit_includedPlaylistCheckBox);
+        ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, SmileApplication.FontSize_Scale_Type);
+        boolean isChecked = (mSongInfo.getIncluded().equals("1")) ? true : false;
+        edit_includedPlaylistCheckBox.setChecked(isChecked);
+
         final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
         ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_saveOneSongButton.setText(actionButtonString);
@@ -173,23 +183,23 @@ public class SongDataActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setSongInfoFromInput();
-                PlayListSQLite playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
+                SongListSQLite songListSQLite = new SongListSQLite(SmileApplication.AppContext);
                 long databaseResult;
                 switch (crudAction.toUpperCase()) {
                     case SmileApplication.AddActionString:
                         // add one record
-                        databaseResult = playListSQLite.addSongToPlayList(mSongInfo);
+                        databaseResult = songListSQLite.addSongToSongList(mSongInfo);
                         break;
                     case SmileApplication.EditActionString:
                         // = "EDIT". Edit one record
-                        databaseResult = playListSQLite.updateOneSongFromPlayList(mSongInfo);
+                        databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
                         break;
                     case SmileApplication.DeleteActionString:
                         // = "DELETE". Delete one record
-                        databaseResult = playListSQLite.deleteOneSongFromPlayList(mSongInfo);
+                        databaseResult = songListSQLite.deleteOneSongFromSongList(mSongInfo);
                         break;
                 }
-                playListSQLite.closeDatabase();
+                songListSQLite.closeDatabase();
 
                 returnToPrevious();
             }
@@ -288,7 +298,12 @@ public class SongDataActivity extends AppCompatActivity {
     private void selectFilePath() {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        } else {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
@@ -303,6 +318,7 @@ public class SongDataActivity extends AppCompatActivity {
         String musicChannel = edit_musicChannelSpinner.getSelectedItem().toString();
         String vocalTrack = edit_vocalTrackSpinner.getSelectedItem().toString();
         String vocalChannel = edit_vocalChannelSpinner.getSelectedItem().toString();
+        String included = edit_includedPlaylistCheckBox.isChecked() ? "1" : "0";
 
         mSongInfo.setSongName(title);
         mSongInfo.setFilePath(filePath);
@@ -310,5 +326,6 @@ public class SongDataActivity extends AppCompatActivity {
         mSongInfo.setMusicChannel(SmileApplication.audioChannelReverseMap.get(musicChannel));
         mSongInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
         mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
+        mSongInfo.setIncluded(included);
     }
 }

@@ -3,13 +3,14 @@ package com.smile.karaokeplayer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -18,7 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.smile.karaokeplayer.Models.PlayListSQLite;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -26,21 +27,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PlayListActivity extends AppCompatActivity {
+public class SongListActivity extends AppCompatActivity {
 
-    private static final String TAG = ".PlayListActivity";
+    private static final String TAG = ".SongListActivity";
     private static final int ADD_ONE_SONG_TO_PLAY_LIST = 1;
     private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
     private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
     private static final int PLAY_ONE_SONG_IN_PLAY_LIST = 4;
 
-    private PlayListSQLite playListSQLite;
+    private SongListSQLite songListSQLite;
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
-    private ArrayList<SongInfo> mPlayList = new ArrayList<>();
-    private ListView playListView = null;
-    private MyPlayListAdapter myPlayListAdapter;
+    private ArrayList<SongInfo> mSongList = new ArrayList<>();
+    private ListView songListView = null;
+    private MySongListAdapter mySongListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,58 +51,43 @@ public class PlayListActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
-        playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
-
-        /*
-        playListSQLite.deleteAllPlayList();
-
-        String externalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-
-        String filePath = externalPath + "/Song/perfume_h264.mp4";
-        SongInfo songInfo = new SongInfo(1, "香水", filePath, 1, SmileApplication.leftChannel, 1, SmileApplication.rightChannel);
-        playListSQLite.addSongToPlayList(songInfo);
-
-        filePath = externalPath + "/Song/saving_all_my_love_for_you.flv";
-        songInfo = new SongInfo(2, "Saving All My Love For You", filePath, 1, SmileApplication.leftChannel, 1, SmileApplication.rightChannel);
-        playListSQLite.addSongToPlayList(songInfo);
-        */
+        songListSQLite = new SongListSQLite(SmileApplication.AppContext);
 
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_play_list);
+        setContentView(R.layout.activity_song_list);
 
-        TextView playListStringTextView = findViewById(R.id.playListStringTextView);
-        ScreenUtil.resizeTextSize(playListStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        playListStringTextView.setText(getString(R.string.playListString));
+        TextView songListStringTextView = findViewById(R.id.songListStringTextView);
+        ScreenUtil.resizeTextSize(songListStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
 
-        Button addPlaiListButton = (Button)findViewById(R.id.addPlayListButton);
-        ScreenUtil.resizeTextSize(addPlaiListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        addPlaiListButton.setOnClickListener(new View.OnClickListener() {
+        Button addSongListButton = (Button)findViewById(R.id.addSongListButton);
+        ScreenUtil.resizeTextSize(addSongListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        addSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addIntent = new Intent(PlayListActivity.this, SongDataActivity.class);
+                Intent addIntent = new Intent(SongListActivity.this, SongDataActivity.class);
                 addIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.AddActionString);
                 startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
             }
         });
 
-        Button exitPlayListButton = (Button)findViewById(R.id.exitPlayListButton);
-        ScreenUtil.resizeTextSize(exitPlayListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
-        exitPlayListButton.setOnClickListener(new View.OnClickListener() {
+        Button exitSongListButton = (Button)findViewById(R.id.exitSongListButton);
+        ScreenUtil.resizeTextSize(exitSongListButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        exitSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 returnToPrevious();
             }
         });
 
-        mPlayList = playListSQLite.readPlayList();
+        mSongList = songListSQLite.readSongList();
 
-        myPlayListAdapter = new MyPlayListAdapter(this, R.layout.play_list_item, mPlayList);
-        myPlayListAdapter.setNotifyOnChange(false);
+        mySongListAdapter = new MySongListAdapter(this, R.layout.song_list_item, mSongList);
+        mySongListAdapter.setNotifyOnChange(false);
 
-        playListView = findViewById(R.id.playListListView);
-        playListView.setAdapter(myPlayListAdapter);
-        playListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        songListView = findViewById(R.id.songListListView);
+        songListView.setAdapter(mySongListAdapter);
+        songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
 
@@ -112,9 +98,9 @@ public class PlayListActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (playListSQLite != null) {
-            playListSQLite.closeDatabase();
-            playListSQLite = null;
+        if (songListSQLite != null) {
+            songListSQLite.closeDatabase();
+            songListSQLite = null;
         }
     }
 
@@ -122,6 +108,7 @@ public class PlayListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // final SongInfo songInfo = data.getParcelableExtra("SongInfo");
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case ADD_ONE_SONG_TO_PLAY_LIST:
@@ -134,8 +121,8 @@ public class PlayListActivity extends AppCompatActivity {
                     break;
             }
         }
-        mPlayList = playListSQLite.readPlayList();
-        myPlayListAdapter.updateData(mPlayList);    // update the UI
+        mSongList = songListSQLite.readSongList();
+        mySongListAdapter.updateData(mSongList);    // update the UI
     }
 
 
@@ -151,22 +138,22 @@ public class PlayListActivity extends AppCompatActivity {
         finish();
     }
 
-    private class MyPlayListAdapter extends ArrayAdapter {
+    private class MySongListAdapter extends ArrayAdapter {
 
         private Context context;
         private int layoutId;
-        private ArrayList<SongInfo> mPlayListInAdapter;
+        private ArrayList<SongInfo> mSongListInAdapter;
         private float itemTextSize = textFontSize * 0.6f;
         private float buttonTextSize = textFontSize * 0.8f;
         private int yellow2Color;
         private int yellow3Color;
 
         @SuppressWarnings("unchecked")
-        MyPlayListAdapter(Context context, int layoutId, ArrayList<SongInfo> _playList) {
-            super(context, layoutId, _playList);
+        MySongListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
+            super(context, layoutId, _songList);
             this.context = context;
             this.layoutId = layoutId;
-            this.mPlayListInAdapter = _playList;
+            this.mSongListInAdapter = _songList;
             yellow2Color = ContextCompat.getColor(this.context, R.color.yellow2);
             yellow3Color = ContextCompat.getColor(this.context, R.color.yellow3);
         }
@@ -228,38 +215,49 @@ public class PlayListActivity extends AppCompatActivity {
             TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
             ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            Button editPlayListButton = view.findViewById(R.id.editPlayListButton);
-            ScreenUtil.resizeTextSize(editPlayListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+            TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
+            ScreenUtil.resizeTextSize(includedPlaylistStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
+            CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);
+            ScreenUtil.resizeTextSize(includedPlaylistCheckBox, itemTextSize, SmileApplication.FontSize_Scale_Type);
 
-            Button deletePlayListButton = view.findViewById(R.id.deletePlayListButton);
-            ScreenUtil.resizeTextSize(deletePlayListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+            Button editSongListButton = view.findViewById(R.id.editSongListButton);
+            ScreenUtil.resizeTextSize(editSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+
+            Button deleteSongListButton = view.findViewById(R.id.deleteSongListButton);
+            ScreenUtil.resizeTextSize(deleteSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+
+            Button playSongListButton = view.findViewById(R.id.playSongListButton);
+            ScreenUtil.resizeTextSize(playSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
+            if (!BuildConfig.DEBUG) {
+                playSongListButton.setVisibility(View.INVISIBLE);
+            }
 
             int songListSize = 0;
-            if (mPlayListInAdapter != null) {
-                songListSize = mPlayListInAdapter.size();
+            if (mSongListInAdapter != null) {
+                songListSize = mSongListInAdapter.size();
             }
             if (songListSize > 0) {
-                final SongInfo songInfo = mPlayListInAdapter.get(position);
+                final SongInfo songInfo = mSongListInAdapter.get(position);
 
-                titleStringTextView.setText(getString(R.string.titleWithColonString));
                 titleNameTextView.setText(songInfo.getSongName());
-
-                filePathStringTextView.setText(getString(R.string.filePathWithColonString));
                 filePathTextView.setText(songInfo.getFilePath());
-
-                musicTrackStringTextView.setText(getString(R.string.musicTrackWithColonString));
                 musicTrackTextView.setText(String.valueOf(songInfo.getMusicTrackNo()));
-
-                musicChannelStringTextView.setText(getString(R.string.musicChannelWithColonString));
                 musicChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getMusicChannel()));
-
-                vocalTrackStringTextView.setText(getString(R.string.vocalTrackWithColonString));
                 vocalTrackTextView.setText(String.valueOf(songInfo.getVocalTrackNo()));
-
-                vocalChannelStringTextView.setText(getString(R.string.vocalChannelWithColonString));
                 vocalChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getVocalChannel()));
 
-                editPlayListButton.setOnClickListener(new View.OnClickListener() {
+                boolean inPlaylist = (songInfo.getIncluded().equals("1"));
+                includedPlaylistCheckBox.setChecked(inPlaylist);
+                includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        String included = isChecked ? "1" : "0";
+                        songInfo.setIncluded(included);
+                        songListSQLite.updateOneSongFromSongList(songInfo);
+                    }
+                });
+
+                editSongListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent editIntent = new Intent(context, SongDataActivity.class);
@@ -269,13 +267,21 @@ public class PlayListActivity extends AppCompatActivity {
                     }
                 });
 
-                deletePlayListButton.setOnClickListener(new View.OnClickListener() {
+                deleteSongListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent deleteIntent = new Intent(context, SongDataActivity.class);
                         deleteIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.DeleteActionString);
                         deleteIntent.putExtra("SongInfo", songInfo);
                         startActivityForResult(deleteIntent, DELETE_ONE_SONG_TO_PLAY_LIST);
+                    }
+                });
+
+                playSongListButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // play this item (media file)
+                        // has not been implemented yet
                     }
                 });
             }

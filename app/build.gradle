@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Users/chaolee/AndroidStudio/keystore/new_key.jks')
+            storePassword '86637971'
+            keyAlias = 'chaolee1959'
+            keyPassword '86637971'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion '29.0.2'
     defaultConfig {
@@ -10,6 +18,7 @@ android {
         versionCode 105
         versionName "1.05"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
     buildTypes {
         release {

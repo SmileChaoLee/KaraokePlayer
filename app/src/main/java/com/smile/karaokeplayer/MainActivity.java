@@ -59,7 +59,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import com.smile.karaokeplayer.Models.PlayListSQLite;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 0x11;
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
-    private static final int PLAY_LIST_ACTIVITY_CODE = 2;
+    private static final int SONG_LIST_ACTIVITY_CODE = 2;
 
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
@@ -345,6 +345,7 @@ public class MainActivity extends AppCompatActivity {
                     readPublicSongList();
                     if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
                         playingParam.setAutoPlay(isAutoPlay);
+                        playingParam.setPublicSongIndex(0);
                         // start playing video from list
                         // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
                         if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
@@ -355,16 +356,16 @@ public class MainActivity extends AppCompatActivity {
                         }
                         startAutoPlay();
                     } else {
-                        String msg = getString(R.string.noPlayListString);
+                        String msg = getString(R.string.noPlaylistString);
                         ScreenUtil.showToast(this, msg, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                     }
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
                 }
                 break;
-            case R.id.playList:
-                Intent playListIntent = new Intent(this, PlayListActivity.class);
-                startActivityForResult(playListIntent, PLAY_LIST_ACTIVITY_CODE);
+            case R.id.songList:
+                Intent songListIntent = new Intent(this, SongListActivity.class);
+                startActivityForResult(songListIntent, SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
@@ -699,19 +700,15 @@ public class MainActivity extends AppCompatActivity {
     private void selectFileToOpen() {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-
-        // Filter to only show results that can be "opened", such as a
-        // file (as opposed to a list of contacts or timezones)
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        } else {
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+        }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-
-        // Filter to show only videos, using the image MIME data type.
-        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
-        // To search for all documents available via installed storage providers,
-        // it would be "*/*".
-        // intent.setType("video/*");
-        // or
         intent.setType("*/*");
+        // intent.setType("video/*");
 
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
@@ -848,11 +845,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void readPublicSongList() {
-        PlayListSQLite playListSQLite = new PlayListSQLite(SmileApplication.AppContext);
-        if (playListSQLite != null) {
-            publicSongList = playListSQLite.readPlayList();
-            playListSQLite.closeDatabase();
-            playListSQLite = null;
+        SongListSQLite songListSQLite = new SongListSQLite(SmileApplication.AppContext);
+        if (songListSQLite != null) {
+            publicSongList = songListSQLite.readPlaylist();
+            songListSQLite.closeDatabase();
+            songListSQLite = null;
         } else {
             publicSongList = new ArrayList<>();
             Log.d(TAG, "Read database unsuccessfully --> " + publicSongList.size());
@@ -875,7 +872,6 @@ public class MainActivity extends AppCompatActivity {
             playingParam.setPlayingPublic(true);   // playing next public song on list
         }
 
-
         SongInfo songInfo = null;
         if (playingParam.isPlayingPublic())  {
             int publicSongListSize = 0;
@@ -884,7 +880,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if (publicSongListSize <= 0) {
                 // no public songs
-                ScreenUtil.showToast(this, getString(R.string.noPlayListString), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                ScreenUtil.showToast(this, getString(R.string.noPlaylistString), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                 playingParam.setAutoPlay(false);    // cancel auto play
             } else {
                 // There are public songs to be played
