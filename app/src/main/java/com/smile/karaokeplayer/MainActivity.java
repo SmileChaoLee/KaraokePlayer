@@ -87,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
-
     private static final int maxProgress = 100;
+    private static final float timesOfVolumeBarForPortrait = 1.5f;
 
     private float textFontSize;
     private float fontScale;
@@ -97,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     // private ActionBar supportToolbar;   // use default ActionBar
     private ImageButton volumeImageButton;
     private VerticalSeekBar volumeSeekBar;
+    private int volumeSeekBarHeightForLandscape;
 
     private String accessExternalStoragePermissionDeniedString;
     private String noReadableExternalStorageString;
@@ -178,7 +179,6 @@ public class MainActivity extends AppCompatActivity {
 
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
-        // supportToolbar.bringToFront();
         setSupportActionBar(supportToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         supportToolbar.setVisibility(View.VISIBLE);
@@ -194,12 +194,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         volumeSeekBar = findViewById(R.id.volumeSeekBar);
-        // float standardSeekBarHeight = 160.0f * 3.0f;    // height in pixels on Nexus 5
-        // 160dp for volumeSeekBar's height on Nexus 5
-        // so appropriate height is (int)(standardSeekBarHeight * fontScale)
-        // volumeSeekBar.getLayoutParams().height = (int)(standardSeekBarHeight * fontScale);
-        // i.e. volumeSeekBar.getLayoutParams().height = (int)(160.0f*3.0f*fontScale);
-        // or
+        // get default height of volumeBar from dimen.xml
+        volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // if orientation is portrait, then double the height of volumeBar
+            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
+        }
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.GONE); // default is not showing
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -225,12 +225,9 @@ public class MainActivity extends AppCompatActivity {
         int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
-        TextView dummyTitleTextView = supportToolbar.findViewById(R.id.dummyTitleTextView);
-        float toolbarTextSize = dummyTitleTextView.getTextSize();
-        Log.d(TAG, "dummyTitleTextView's text size = " + toolbarTextSize);
         volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
-        // volumeImageButton.getLayoutParams().height = (int)(toolbarTextSize * fontScale);
-        volumeImageButton.getLayoutParams().height = (int)(textFontSize);
+        volumeImageButton.getLayoutParams().height = (int)(textFontSize) * 2;
+        volumeImageButton.getLayoutParams().width = (int)(textFontSize) * 2;
         volumeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        volumeSeekBar.getLayoutParams().width = volumeImageButton.getLayoutParams().width;
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
@@ -565,6 +563,15 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG,"MainActivity-->onConfigurationChanged() is called.");
         super.onConfigurationChanged(newConfig);
         mainMenu.close();
+
+        // reset the heights of volumeBar and supportToolbar
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // if orientation is portrait, then double the height of volumeBar
+            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
+        } else {
+            volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
+        }
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
     }
 
     @Override
