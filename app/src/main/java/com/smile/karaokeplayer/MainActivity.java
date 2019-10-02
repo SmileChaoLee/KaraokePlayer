@@ -547,6 +547,7 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         Log.d(TAG,"MainActivity-->onConfigurationChanged() is called.");
         super.onConfigurationChanged(newConfig);
+        mainMenu.close();
     }
 
     @Override
