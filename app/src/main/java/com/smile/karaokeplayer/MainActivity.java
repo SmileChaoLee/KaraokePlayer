@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int noAudioChannel = -1;
     private static final int maxProgress = 100;
     private static final float timesOfVolumeBarForPortrait = 1.5f;
+    private static final int MusicOrVocalUnknown = 0;
+    private static final int PlayingMusic = 1;
+    private static final int PlayingVocal = 2;
 
     private float textFontSize;
     private float fontScale;
@@ -113,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem pauseMenuItem;
     private MenuItem stopMenuItem;
     private MenuItem replayMenuItem;
+    private MenuItem musicMenuItem;
+    private MenuItem vocalMenuItem;
     private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
@@ -151,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
+
+    private boolean canShowNotSupportedFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -314,6 +321,8 @@ public class MainActivity extends AppCompatActivity {
         pauseMenuItem = menu.findItem(R.id.pause);
         stopMenuItem = menu.findItem(R.id.stop);
         replayMenuItem = menu.findItem(R.id.replay);
+        musicMenuItem = menu.findItem(R.id.music);
+        vocalMenuItem = menu.findItem(R.id.vocal);
         toTvMenuItem = menu.findItem(R.id.toTV);
 
         // submenu of audio
@@ -356,6 +365,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.autoPlay:
                 // item.isChecked() return the previous value
                 isAutoPlay = !playingParam.isAutoPlay();
+                canShowNotSupportedFormat = true;
                 if (isAutoPlay) {
                     readPublicSongList();
                     if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
@@ -410,6 +420,14 @@ public class MainActivity extends AppCompatActivity {
                     pauseMenuItem.setEnabled(true);
                     stopMenuItem.setEnabled(true);
                     replayMenuItem.setEnabled(true);
+                    // if (playingParam.isAutoPlay()) {
+                    if (playingParam.getMusicOrVocalOrNoSetting() != 0) {
+                        musicMenuItem.setEnabled(true);
+                        vocalMenuItem.setEnabled(true);
+                    } else {
+                        musicMenuItem.setEnabled(false);
+                        vocalMenuItem.setEnabled(false);
+                    }
                     toTvMenuItem.setEnabled(true);
                     mCurrentState = playingParam.getCurrentPlaybackState();
                     if (mCurrentState == PlaybackStateCompat.STATE_PLAYING) {
@@ -437,6 +455,8 @@ public class MainActivity extends AppCompatActivity {
                     pauseMenuItem.setEnabled(false);
                     stopMenuItem.setEnabled(false);
                     replayMenuItem.setEnabled(false);
+                    musicMenuItem.setEnabled(false);
+                    vocalMenuItem.setEnabled(false);
                     toTvMenuItem.setEnabled(false);
                 }
                 break;
@@ -453,6 +473,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.replay:
                 replayMedia();
+                break;
+            case R.id.music:
+                switchAudioToMusic();
+                break;
+            case R.id.vocal:
+                switchAudioToVocal();
+                break;
+            case R.id.toTV:
                 break;
             case R.id.audioTrack:
                 // if there are audio tracks
@@ -601,6 +629,7 @@ public class MainActivity extends AppCompatActivity {
         outState.putParcelable("MediaUri", mediaUri);
         playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
         outState.putParcelable("PlayingParameters", playingParam);
+        outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
         super.onSaveInstanceState(outState);
     }
 
@@ -640,6 +669,9 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setCurrentAudioPosition(0);
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
                 playingParam.setMediaSourcePrepared(false);
+
+                // music or vocal is unknown
+                playingParam.setMusicOrVocalOrNoSetting(MusicOrVocalUnknown);
 
                 mediaTransportControls.prepareFromUri(mediaUri, null);
             }
@@ -701,6 +733,8 @@ public class MainActivity extends AppCompatActivity {
 
         playingParam.setPublicSongIndex(0);
         playingParam.setPlayingPublic(true);
+
+        playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
     }
 
     private void initializeVariables(Bundle savedInstanceState) {
@@ -713,9 +747,11 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             mediaUri = null;
             initializePlayingParam();
+            canShowNotSupportedFormat = false;
         } else {
             mediaUri = savedInstanceState.getParcelable("MediaUri");
             playingParam = savedInstanceState.getParcelable("PlayingParameters");
+            canShowNotSupportedFormat = savedInstanceState.getBoolean("CanShowNotSupportedFormat");
             if (playingParam == null) {
                 initializePlayingParam();
             }
@@ -909,6 +945,7 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setAutoPlay(false);    // cancel auto play
             } else {
                 // There are public songs to be played
+                playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
                 int publicSongIndex = playingParam.getPublicSongIndex();
                 if (publicSongIndex >= publicSongListSize) {
                     publicSongIndex = 0;
@@ -945,6 +982,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             // play next song that user has ordered
+            playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
         }
     }
 
@@ -1010,12 +1048,14 @@ public class MainActivity extends AppCompatActivity {
     private void switchAudioToVocal() {
         int vocalAudioRenderer = playingParam.getVocalAudioRenderer();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
+        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);
         setAudioTrackAndChannel(vocalAudioRenderer, vocalAudioChannel);
     }
 
     private void switchAudioToMusic() {
         int musicAudioRenderer = playingParam.getMusicAudioRenderer();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
+        playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);
         setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
     }
 
@@ -1196,11 +1236,16 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
-            ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
-
             if (playingParam.isAutoPlay()) {
                 // go to next one in the list
+                if (canShowNotSupportedFormat) {
+                    // only show once
+                    ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                    canShowNotSupportedFormat = false;
+                }
                 startAutoPlay();
+            } else {
+                ScreenUtil.showToast(getApplicationContext(), formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
             }
         }
     }

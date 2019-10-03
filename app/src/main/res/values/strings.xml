@@ -42,4 +42,6 @@
     <string name="bufferingString">Buffering .....</string>
     <string name="saveString">Save</string>
     <string name="backKeyToExitApp">Press the back key again to exit.</string>
+    <string name="musicString">Music</string>
+    <string name="vocalString">Vocal</string>
 </resources>

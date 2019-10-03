@@ -19,8 +19,13 @@ public class PlayingParameters implements Parcelable {
     private float currentVolume;
     private int publicSongIndex;
     private boolean isPlayingPublic;
+    private int musicOrVocalOrNoSetting;
 
-    public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared, int currentVideoRendererPlayed, int musicAudioChannel, int vocalAudioChannel, int currentChannelPlayed, int musicAudioRenderer, int vocalAudioRenderer, int currentAudioRendererPlayed, long currentAudioPosition, float currentVolume, int publicSongIndex, boolean isPlayingPublic) {
+    public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared,
+                             int currentVideoRendererPlayed, int musicAudioChannel, int vocalAudioChannel,
+                             int currentChannelPlayed, int musicAudioRenderer, int vocalAudioRenderer,
+                             int currentAudioRendererPlayed, long currentAudioPosition, float currentVolume,
+                             int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaSourcePrepared = isMediaSourcePrepared;
@@ -35,6 +40,7 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = currentVolume;
         this.publicSongIndex = publicSongIndex;
         this.isPlayingPublic = isPlayingPublic;
+        this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
     }
 
     public PlayingParameters() {
@@ -152,6 +158,14 @@ public class PlayingParameters implements Parcelable {
         isPlayingPublic = playingPublic;
     }
 
+    public int getMusicOrVocalOrNoSetting() {
+        return musicOrVocalOrNoSetting;
+    }
+
+    public void setMusicOrVocalOrNoSetting(int musicOrVocalOrNoSetting) {
+        this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -173,6 +187,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeFloat(this.currentVolume);
         dest.writeInt(this.publicSongIndex);
         dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.musicOrVocalOrNoSetting);
     }
 
     protected PlayingParameters(Parcel in) {
@@ -190,6 +205,7 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = in.readFloat();
         this.publicSongIndex = in.readInt();
         this.isPlayingPublic = in.readByte() != 0;
+        this.musicOrVocalOrNoSetting = in.readInt();
     }
 
     public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {

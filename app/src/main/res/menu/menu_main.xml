@@ -71,9 +71,19 @@
                 android:orderInCategory="4"
                 app:showAsAction="never">
             </item>
+            <item android:id="@+id/music"
+                android:title="@string/musicString"
+                android:orderInCategory="5"
+                app:showAsAction="never">
+            </item>
+            <item android:id="@+id/vocal"
+                android:title="@string/vocalString"
+                android:orderInCategory="6"
+                app:showAsAction="never">
+            </item>
             <item android:id="@+id/toTV"
                 android:title="@string/toTVString"
-                android:orderInCategory="5"
+                android:orderInCategory="7"
                 android:visible="false"
                 app:showAsAction="never">
             </item>

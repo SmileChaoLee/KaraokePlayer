@@ -43,4 +43,6 @@
     <string name="bufferingString">緩衝中 .....</string>
     <string name="saveString">儲存</string>
     <string name="backKeyToExitApp">再按一次倒退鍵離開程式</string>
+    <string name="musicString">音樂</string>
+    <string name="vocalString">伴唱</string>
 </resources>
