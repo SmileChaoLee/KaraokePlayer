@@ -194,6 +194,8 @@ public class MainActivity extends AppCompatActivity {
         videoPlayerView = findViewById(R.id.videoPlayerView);
         videoPlayerView.setVisibility(View.VISIBLE);
         //
+        initExoPlayer();
+        initMediaSessionCompat();
 
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
@@ -220,11 +222,16 @@ public class MainActivity extends AppCompatActivity {
         }
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
+        volumeSeekBar.setMax(maxProgress);
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 volumeSeekBar.setProgressAndThumb(i);
-                float currentVolume = (float)i / (float)maxProgress;
+                // float currentVolume = (float)i / (float)maxProgress;
+                float currentVolume = 1.0f;
+                if (i < maxProgress) {
+                    currentVolume = (float)(1.0f - (Math.log(maxProgress - i) / Math.log(maxProgress)));
+                }
                 playingParam.setCurrentVolume(currentVolume);
                 setAudioVolume(currentVolume);
             }
@@ -239,7 +246,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        volumeSeekBar.setMax(maxProgress);
         int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
@@ -327,8 +333,8 @@ public class MainActivity extends AppCompatActivity {
         animationText.setRepeatCount(Animation.INFINITE);
         //
 
-        initExoPlayer();
-        initMediaSessionCompat();
+        // initExoPlayer();
+        // initMediaSessionCompat();
 
         hasPermissionForExternalStorage = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
