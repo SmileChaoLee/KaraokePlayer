@@ -426,8 +426,11 @@ public class MainActivity extends AppCompatActivity {
         int currentChannelPlayed;
         int mCurrentState;
 
+        if (item.hasSubMenu()) {
+            SubMenu subMenu = item.getSubMenu();
+            subMenu.clearHeader();
+        }
         int id = item.getItemId();
-
         switch (id) {
             case R.id.file:
                 autoPlayMenuItem.setCheckable(true);
