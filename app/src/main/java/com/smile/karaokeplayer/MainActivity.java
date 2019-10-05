@@ -74,8 +74,6 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
-
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = new String(".MainActivity");
@@ -480,6 +478,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
                     // isMediaSourcePrepared = false;
+                    /*
                     if (ExternalStorageUtil.isExternalStorageReadable()) {
                         // has readable external storage
                         selectFileToOpen();
@@ -487,6 +486,8 @@ public class MainActivity extends AppCompatActivity {
                         ScreenUtil.showToast(this, noReadableExternalStorageString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
                         Log.d(TAG, noReadableExternalStorageString);
                     }
+                    */
+                    selectFileToOpen();
                 }
                 break;
             case R.id.close:
@@ -781,10 +782,14 @@ public class MainActivity extends AppCompatActivity {
     private void setImageButtonEnabledStatus(boolean isAutoPlay) {
         if (isAutoPlay) {
             switchToMusicImageButton.setEnabled(true);
+            switchToMusicImageButton.setVisibility(View.VISIBLE);
             switchToVocalImageButton.setEnabled(true);
+            switchToVocalImageButton.setVisibility(View.VISIBLE);
         } else {
             switchToMusicImageButton.setEnabled(false);
+            switchToMusicImageButton.setVisibility(View.GONE);
             switchToVocalImageButton.setEnabled(false);
+            switchToVocalImageButton.setVisibility(View.GONE);
         }
     }
 

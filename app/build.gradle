@@ -15,14 +15,23 @@ android {
         applicationId "com.smile.karaokeplayer"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 106
-        versionName "1.06"
+        versionCode 107
+        versionName "1.07"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
+    }
+    sourceSets {
+        main {
+            java {
+                exclude '**/ExternalStorageUtil.java'
+                exclude '**/NotUsedClassesOrMethods.java'
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
