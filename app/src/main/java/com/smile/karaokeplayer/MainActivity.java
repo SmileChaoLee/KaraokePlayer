@@ -66,7 +66,6 @@ import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.Models.ExitAppTimer;
-import com.smile.smilelibraries.customized_button.SmileImageButton;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -103,11 +102,11 @@ public class MainActivity extends AppCompatActivity {
     private float toastTextSize;
     private Toolbar supportToolbar;  // use customized ToolBar
     // private ActionBar supportToolbar;   // use default ActionBar
-    private SmileImageButton volumeImageButton;
+    private ImageButton volumeImageButton;
     private VerticalSeekBar volumeSeekBar;
-    private SmileImageButton switchToMusicImageButton;
-    private SmileImageButton switchToVocalImageButton;
-    private SmileImageButton repeatImageButton;
+    private ImageButton switchToMusicImageButton;
+    private ImageButton switchToVocalImageButton;
+    private ImageButton repeatImageButton;
     private int volumeSeekBarHeightForLandscape;
 
     private String accessExternalStoragePermissionDeniedString;

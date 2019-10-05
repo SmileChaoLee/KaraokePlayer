@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="left|top">
-            <com.smile.smilelibraries.customized_button.SmileImageButton
+            <ImageButton
                 android:id="@+id/volumeImageButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -31,12 +31,12 @@
                 android:scaleType="centerInside"
                 android:adjustViewBounds="true"
                 android:src="@drawable/volume"
-                android:background="@android:color/transparent">
-            </com.smile.smilelibraries.customized_button.SmileImageButton>
+                android:background="@drawable/main_menuitem_background_color">
+            </ImageButton>
 
             <include layout="@layout/volume_seekbar_layout" />
         </LinearLayout>
-        <com.smile.smilelibraries.customized_button.SmileImageButton
+        <ImageButton
             android:id="@+id/switchToMusicImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,10 +45,10 @@
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:src="@drawable/music"
-            android:background="@android:color/transparent"
+            android:background="@drawable/main_menuitem_background_color"
             android:layout_gravity="top">
-        </com.smile.smilelibraries.customized_button.SmileImageButton>
-        <com.smile.smilelibraries.customized_button.SmileImageButton
+        </ImageButton>
+        <ImageButton
             android:id="@+id/switchToVocalImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,10 +57,10 @@
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:src="@drawable/vocal"
-            android:background="@android:color/transparent"
+            android:background="@drawable/main_menuitem_background_color"
             android:layout_gravity="top">
-        </com.smile.smilelibraries.customized_button.SmileImageButton>
-        <com.smile.smilelibraries.customized_button.SmileImageButton
+        </ImageButton>
+        <ImageButton
             android:id="@+id/repeatImageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
             android:src="@drawable/repeat_all_white"
             android:background="@android:color/transparent"
             android:layout_gravity="top">
-        </com.smile.smilelibraries.customized_button.SmileImageButton>
+        </ImageButton>
     </LinearLayout>
 
 </androidx.appcompat.widget.Toolbar>
