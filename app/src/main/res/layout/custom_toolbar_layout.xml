@@ -44,7 +44,7 @@
             android:padding="0dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:src="@drawable/music"
+            android:src="@drawable/music_imagebutton_source"
             android:background="@drawable/main_menuitem_background_color"
             android:layout_gravity="top">
         </ImageButton>
@@ -56,7 +56,7 @@
             android:padding="0dp"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:src="@drawable/vocal"
+            android:src="@drawable/vocal_imagebutton_source"
             android:background="@drawable/main_menuitem_background_color"
             android:layout_gravity="top">
         </ImageButton>

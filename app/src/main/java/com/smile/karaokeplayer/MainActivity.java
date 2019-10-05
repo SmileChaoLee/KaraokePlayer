@@ -283,6 +283,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        setImageButtonEnabledStatus(playingParam.isAutoPlay());
+
         repeatImageButton = findViewById(R.id.repeatImageButton);
         repeatImageButton.getLayoutParams().height = imageButtonHeight;
         repeatImageButton.getLayoutParams().width = imageButtonHeight;
@@ -332,6 +334,7 @@ public class MainActivity extends AppCompatActivity {
         animationText.setRepeatCount(Animation.INFINITE);
         //
 
+        // the original places for the two following statements
         // initExoPlayer();
         // initMediaSessionCompat();
 
@@ -450,7 +453,7 @@ public class MainActivity extends AppCompatActivity {
                 if (isAutoPlay) {
                     readPublicSongList();
                     if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
-                        playingParam.setAutoPlay(isAutoPlay);
+                        playingParam.setAutoPlay(true);
                         playingParam.setPublicSongIndex(0);
                         // start playing video from list
                         // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
@@ -468,6 +471,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
                 }
+                setImageButtonEnabledStatus(playingParam.isAutoPlay());
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(this, SongListActivity.class);
@@ -774,6 +778,16 @@ public class MainActivity extends AppCompatActivity {
         menu.close();
     }
 
+    private void setImageButtonEnabledStatus(boolean isAutoPlay) {
+        if (isAutoPlay) {
+            switchToMusicImageButton.setEnabled(true);
+            switchToVocalImageButton.setEnabled(true);
+        } else {
+            switchToMusicImageButton.setEnabled(false);
+            switchToVocalImageButton.setEnabled(false);
+        }
+    }
+
     private void showAdAndExitApplication() {
         if (SmileApplication.InterstitialAd != null) {
             // free version
@@ -1030,6 +1044,7 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setAutoPlay(false);    // cancel auto play
             } else {
                 // There are public songs to be played
+                boolean stillPlayNext = true;
                 int repeatStatus = playingParam.getRepeatStatus();
                 int publicSongIndex = playingParam.getPublicSongIndex();
                 switch (repeatStatus) {
@@ -1039,7 +1054,7 @@ public class MainActivity extends AppCompatActivity {
                             // stop playing
                             playingParam.setAutoPlay(false);
                             stopPlay();
-                            return;
+                            stillPlayNext = false;  // stop here and do not go to next
                         }
                         break;
                     case RepeatOneSong:
@@ -1056,36 +1071,37 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-                songInfo = publicSongList.get(publicSongIndex);
+                if (stillPlayNext) {    // still play the next song
+                    songInfo = publicSongList.get(publicSongIndex);
 
-                playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
-                playingParam.setCurrentVideoRendererPlayed(0);
+                    playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
+                    playingParam.setCurrentVideoRendererPlayed(0);
 
-                playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
-                playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+                    playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+                    playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
 
-                playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
-                playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
-                playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-                playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
+                    playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
+                    playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
+                    playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+                    playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
 
-                playingParam.setCurrentAudioPosition(0);
-                playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-                playingParam.setMediaSourcePrepared(false);
+                    playingParam.setCurrentAudioPosition(0);
+                    playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+                    playingParam.setMediaSourcePrepared(false);
 
-                publicSongIndex++;  // set next index of playlist that will be played
-                playingParam.setPublicSongIndex(publicSongIndex);
+                    publicSongIndex++;  // set next index of playlist that will be played
+                    playingParam.setPublicSongIndex(publicSongIndex);
 
-                String filePath = songInfo.getFilePath();
-                Log.i(TAG, "filePath : " + filePath);
-                // File songFile = new File(filePath);
-                // if (songFile.exists()) {
-                // mediaUri = Uri.fromFile(new File(filePath));
-                // mediaUri = Uri.parse("file://" + filePath);
-                mediaUri = Uri.parse(filePath);
-                Log.i(TAG, "mediaUri from filePath : " + mediaUri);
-                mediaTransportControls.prepareFromUri(mediaUri, null);
-
+                    String filePath = songInfo.getFilePath();
+                    Log.i(TAG, "filePath : " + filePath);
+                    // File songFile = new File(filePath);
+                    // if (songFile.exists()) {
+                    // mediaUri = Uri.fromFile(new File(filePath));
+                    // mediaUri = Uri.parse("file://" + filePath);
+                    mediaUri = Uri.parse(filePath);
+                    Log.i(TAG, "mediaUri from filePath : " + mediaUri);
+                    mediaTransportControls.prepareFromUri(mediaUri, null);
+                }
                 Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
                 // }
             }
@@ -1101,6 +1117,7 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
+        setImageButtonEnabledStatus(playingParam.isAutoPlay());
     }
 
     private void startPlay() {
