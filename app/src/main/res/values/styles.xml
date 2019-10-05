@@ -11,8 +11,6 @@
         <item name="android:textSize">72px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
-        <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
-        <item name="android:listPreferredItemHeightSmall">10dp</item>
     </style>
 
     <style name="menu_text_style" parent="@android:style/Theme.Translucent" >
@@ -25,9 +23,9 @@
         <item name="android:textStyle">normal</item>
         <item name="android:itemBackground">@drawable/main_menuitem_background_color</item>
         <item name="android:layout_marginLeft">1dp</item>
-        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginTop">1dp</item>
         <item name="android:layout_marginRight">0dp</item>
-        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
         <item name="android:itemPadding">0dp</item>
         <item name="android:textAllCaps">false</item>
         <item name="textAllCaps">false</item>
@@ -46,16 +44,19 @@
     <style name="CustomToolbarTheme" parent="@android:style/Theme.Translucent">
         <item name="actionMenuTextColor">@drawable/main_menuitem_color</item>
         <item name="android:padding">0dp</item>
+        <item name="android:actionButtonStyle">@style/CustomActionButtonStyle</item>
+        <item name="actionButtonStyle">@style/CustomActionButtonStyle</item>
         <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
     </style>
 
-    <style name="CustomActionButtonTheme" parent="@style/Widget.AppCompat.ActionButton">
+    <style name="CustomActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
         <!-- makes MenuItems in ActionBar, Toolbar, and Button not be capitalized automatically.
         this style can be put in main AppThem or the themes of ActionBar or Toolbar
         using item of <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
         -->
         <item name="android:textSize">@dimen/actionButtonTextSize</item>
         <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
         <item name="textAllCaps">false</item>
         <item name="android:background">@drawable/main_menuitem_background_color</item>
     </style>

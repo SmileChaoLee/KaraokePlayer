@@ -33,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
@@ -65,6 +66,7 @@ import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.Models.ExitAppTimer;
+import com.smile.smilelibraries.customized_button.SmileImageButton;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -73,7 +75,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static com.smile.karaokeplayer.Utilities.ExternalStorageUtil.isExternalStorageReadable;
+import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,14 +94,20 @@ public class MainActivity extends AppCompatActivity {
     private static final int MusicOrVocalUnknown = 0;
     private static final int PlayingMusic = 1;
     private static final int PlayingVocal = 2;
+    private static final int NoRepeatPlaying = 0;
+    private static final int RepeatOneSong = 1;
+    private static final int RepeatAllSongs = 2;
 
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
     private Toolbar supportToolbar;  // use customized ToolBar
     // private ActionBar supportToolbar;   // use default ActionBar
-    private ImageButton volumeImageButton;
+    private SmileImageButton volumeImageButton;
     private VerticalSeekBar volumeSeekBar;
+    private SmileImageButton switchToMusicImageButton;
+    private SmileImageButton switchToVocalImageButton;
+    private SmileImageButton repeatImageButton;
     private int volumeSeekBarHeightForLandscape;
 
     private String accessExternalStoragePermissionDeniedString;
@@ -116,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem pauseMenuItem;
     private MenuItem stopMenuItem;
     private MenuItem replayMenuItem;
-    private MenuItem musicMenuItem;
-    private MenuItem vocalMenuItem;
     private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
@@ -158,6 +164,8 @@ public class MainActivity extends AppCompatActivity {
     private Animation animationText;
 
     private boolean canShowNotSupportedFormat;
+    private int colorRed;
+    private int colorTransparent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
 
         accessExternalStoragePermissionDeniedString = getString(R.string.accessExternalStoragePermissionDeniedString);
         noReadableExternalStorageString = getString(R.string.noReadableExternalStorageString);
+
+        colorRed = ContextCompat.getColor(SmileApplication.AppContext, R.color.red);
+        colorTransparent = ContextCompat.getColor(SmileApplication.AppContext, android.R.color.transparent);
 
         initializeVariables(savedInstanceState);
 
@@ -208,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
         }
         // uses dimens.xml for different devices' sizes
-        volumeSeekBar.setVisibility(View.GONE); // default is not showing
+        volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -232,9 +243,10 @@ public class MainActivity extends AppCompatActivity {
         int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
+        int imageButtonHeight = (int)(textFontSize * 1.5f);
         volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
-        volumeImageButton.getLayoutParams().height = (int)(textFontSize) * 2;
-        volumeImageButton.getLayoutParams().width = (int)(textFontSize) * 2;
+        volumeImageButton.getLayoutParams().height = imageButtonHeight;
+        volumeImageButton.getLayoutParams().width = imageButtonHeight;
         volumeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -242,12 +254,64 @@ public class MainActivity extends AppCompatActivity {
                 if ( (visibility == View.GONE) || (visibility == View.INVISIBLE) ) {
                     volumeSeekBar.setVisibility(View.VISIBLE);
                 } else {
-                    volumeSeekBar.setVisibility(View.GONE);
+                    volumeSeekBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+        switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
+        switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
+        switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
+        switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
+        switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToVocal();
+            }
+        });
+
+        repeatImageButton = findViewById(R.id.repeatImageButton);
+        repeatImageButton.getLayoutParams().height = imageButtonHeight;
+        repeatImageButton.getLayoutParams().width = imageButtonHeight;
+        repeatImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            int repeatStatus = playingParam.getRepeatStatus();
+                switch (repeatStatus) {
+                    case NoRepeatPlaying:
+                        // switch to repeat all
+                        repeatImageButton.setImageResource(R.drawable.repeat_all_white);
+                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        break;
+                    case RepeatAllSongs:
+                        // switch to repeat on song
+                        repeatImageButton.setImageResource(R.drawable.repeat_one_white);
+                        playingParam.setRepeatStatus(RepeatOneSong);
+                        break;
+                    case RepeatOneSong:
+                        // switch to no repeat but show symbol of repeat all song with transparent background
+                        repeatImageButton.setImageResource(R.drawable.repeat_all_white);
+                        playingParam.setRepeatStatus(NoRepeatPlaying);
+                        break;
+                }
+                if (playingParam.getRepeatStatus() == NoRepeatPlaying) {
+                    repeatImageButton.setBackgroundColor(colorTransparent);
+                } else {
+                    repeatImageButton.setBackgroundColor(colorRed);
                 }
             }
         });
 
-        volumeSeekBar.getLayoutParams().width = volumeImageButton.getLayoutParams().width;
+        int volumeSeekBarHeight = (int)(textFontSize * 2.0f);
+        volumeSeekBar.getLayoutParams().width = volumeSeekBarHeight;
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
@@ -297,20 +361,29 @@ public class MainActivity extends AppCompatActivity {
         ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
         */
 
+        /**
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            // API >= 18 works on SpannableString on Main menu items
+            // API >= 18 works on SpannableString on MenuItems with app:showAsAction="always"
+            // and MenuItems with app:showAsAction="never"
             ScreenUtil.resizeMenuTextSize(menu, fontScale);
         } else {
-            // API < 18 does not work on SpannableString on Main menu
-            // only sub menu works on SpannableString
-            // Text size of Main menu items use dimens
+            // API < 18 does not work on SpannableString on MenuItems with app:showAsAction="always"
+            // only MenuItems with app:showAsAction="never" works on SpannableString
+            // MenuItems with app:showAsAction="never" use menu_text_style (in style.xml)
+            // MenuItems with app:showAsAction="always" use dimens
             int menuSize = menu.size();
+            MenuItem mItem;
             Menu subMenu;
             for (int i=0; i<menuSize; i++) {
-                subMenu = menu.getItem(i).getSubMenu();
+                mItem = menu.getItem(i);
+                subMenu = mItem.getSubMenu();
                 ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
             }
         }
+         */
+
+        // according to the above explanations, the following statement will fit every situation
+        ScreenUtil.resizeMenuTextSize(menu, fontScale);
 
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
@@ -321,8 +394,6 @@ public class MainActivity extends AppCompatActivity {
         pauseMenuItem = menu.findItem(R.id.pause);
         stopMenuItem = menu.findItem(R.id.stop);
         replayMenuItem = menu.findItem(R.id.replay);
-        musicMenuItem = menu.findItem(R.id.music);
-        vocalMenuItem = menu.findItem(R.id.vocal);
         toTvMenuItem = menu.findItem(R.id.toTV);
 
         // submenu of audio
@@ -395,7 +466,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
                     // isMediaSourcePrepared = false;
-                    if (isExternalStorageReadable()) {
+                    if (ExternalStorageUtil.isExternalStorageReadable()) {
                         // has readable external storage
                         selectFileToOpen();
                     } else {
@@ -420,14 +491,6 @@ public class MainActivity extends AppCompatActivity {
                     pauseMenuItem.setEnabled(true);
                     stopMenuItem.setEnabled(true);
                     replayMenuItem.setEnabled(true);
-                    // if (playingParam.isAutoPlay()) {
-                    if (playingParam.getMusicOrVocalOrNoSetting() != 0) {
-                        musicMenuItem.setEnabled(true);
-                        vocalMenuItem.setEnabled(true);
-                    } else {
-                        musicMenuItem.setEnabled(false);
-                        vocalMenuItem.setEnabled(false);
-                    }
                     toTvMenuItem.setEnabled(true);
                     mCurrentState = playingParam.getCurrentPlaybackState();
                     if (mCurrentState == PlaybackStateCompat.STATE_PLAYING) {
@@ -455,8 +518,6 @@ public class MainActivity extends AppCompatActivity {
                     pauseMenuItem.setEnabled(false);
                     stopMenuItem.setEnabled(false);
                     replayMenuItem.setEnabled(false);
-                    musicMenuItem.setEnabled(false);
-                    vocalMenuItem.setEnabled(false);
                     toTvMenuItem.setEnabled(false);
                 }
                 break;
@@ -473,12 +534,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.replay:
                 replayMedia();
-                break;
-            case R.id.music:
-                switchAudioToMusic();
-                break;
-            case R.id.vocal:
-                switchAudioToVocal();
                 break;
             case R.id.toTV:
                 break;
@@ -590,7 +645,8 @@ public class MainActivity extends AppCompatActivity {
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         Log.d(TAG,"MainActivity-->onConfigurationChanged() is called.");
         super.onConfigurationChanged(newConfig);
-        mainMenu.close();
+        // mainMenu.close();
+        closeMenu(mainMenu);
 
         // reset the heights of volumeBar and supportToolbar
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -691,6 +747,21 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, "onBackPressed() is called");
     }
 
+    private void closeMenu(Menu menu) {
+        if (menu == null) {
+            return;
+        }
+        MenuItem menuItem;
+        Menu subMenu;
+        int mSize = menu.size();
+        for (int i=0; i<mSize; i++) {
+            menuItem = menu.getItem(i);
+            subMenu = menuItem.getSubMenu();
+            closeMenu(subMenu);
+        }
+        menu.close();
+    }
+
     private void showAdAndExitApplication() {
         if (SmileApplication.InterstitialAd != null) {
             // free version
@@ -735,6 +806,7 @@ public class MainActivity extends AppCompatActivity {
         playingParam.setPlayingPublic(true);
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
+        playingParam.setRepeatStatus(NoRepeatPlaying);    // no repeat playing songs
     }
 
     private void initializeVariables(Bundle savedInstanceState) {
@@ -854,9 +926,10 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.GONE);
-                    mainMenu.close();
+                    // mainMenu.close();
+                    closeMenu(mainMenu);
                 }
-                volumeSeekBar.setVisibility(View.GONE);
+                volumeSeekBar.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -945,16 +1018,35 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setAutoPlay(false);    // cancel auto play
             } else {
                 // There are public songs to be played
-                playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
+                int repeatStatus = playingParam.getRepeatStatus();
                 int publicSongIndex = playingParam.getPublicSongIndex();
-                if (publicSongIndex >= publicSongListSize) {
-                    publicSongIndex = 0;
+                switch (repeatStatus) {
+                    case NoRepeatPlaying:
+                        // no repeat
+                        if (publicSongIndex >= publicSongListSize) {
+                            // stop playing
+                            playingParam.setAutoPlay(false);
+                            stopPlay();
+                            return;
+                        }
+                        break;
+                    case RepeatOneSong:
+                        // repeat one song
+                        if ( (publicSongIndex > 0) && (publicSongIndex <= publicSongListSize) ) {
+                            publicSongIndex--;
+                        }
+                        break;
+                    case RepeatAllSongs:
+                        // repeat all songs
+                        if (publicSongIndex >= publicSongListSize) {
+                            publicSongIndex = 0;
+                        }
+                        break;
                 }
+
                 songInfo = publicSongList.get(publicSongIndex);
 
-                publicSongIndex++;  // next index that will be played
-                playingParam.setPublicSongIndex(publicSongIndex);
-
+                playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
                 playingParam.setCurrentVideoRendererPlayed(0);
 
                 playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
@@ -969,6 +1061,9 @@ public class MainActivity extends AppCompatActivity {
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
                 playingParam.setMediaSourcePrepared(false);
 
+                publicSongIndex++;  // set next index of playlist that will be played
+                playingParam.setPublicSongIndex(publicSongIndex);
+
                 String filePath = songInfo.getFilePath();
                 Log.i(TAG, "filePath : " + filePath);
                 // File songFile = new File(filePath);
@@ -978,11 +1073,21 @@ public class MainActivity extends AppCompatActivity {
                 mediaUri = Uri.parse(filePath);
                 Log.i(TAG, "mediaUri from filePath : " + mediaUri);
                 mediaTransportControls.prepareFromUri(mediaUri, null);
+
+                Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
                 // }
             }
         } else {
             // play next song that user has ordered
             playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
+            if (mediaSource != null) {
+                if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                    // repeat playing this mediaSource
+                } else {
+                    // next song that user ordered
+                }
+            }
+            Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
     }
 
@@ -1005,9 +1110,14 @@ public class MainActivity extends AppCompatActivity {
             // auto play
             startAutoPlay();
         } else {
-            if ( (mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) ) {
-                // no media file opened or playing has been stopped
-                mediaTransportControls.stop();
+            if (playingParam.getRepeatStatus() == NoRepeatPlaying) {
+                // no repeat playing
+                if ((mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
+                    // media file opened or playing has been stopped
+                    mediaTransportControls.stop();
+                }
+            } else {
+                replayMedia();
             }
         }
     }
@@ -1016,7 +1126,11 @@ public class MainActivity extends AppCompatActivity {
         if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
             if (playingParam.isMediaSourcePrepared()) {
                 // song is playing, paused, or finished playing
-                exoPlayer.setPlayWhenReady(false);
+                // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
+                // because it will send Play.STATE_ENDED event after the playing has finished
+                // but the playing was stopped in the middle of playing then wo'nt send
+                // Play.STATE_ENDED event
+                // exoPlayer.setPlayWhenReady(false);
                 long currentAudioPosition = 0;
                 playingParam.setCurrentAudioPosition(currentAudioPosition);
                 exoPlayer.seekTo(currentAudioPosition);
@@ -1105,7 +1219,13 @@ public class MainActivity extends AppCompatActivity {
                 if (playingParam.isAutoPlay()) {
                     // start playing next video from list
                     startAutoPlay();
+                } else {
+                    // stop or end of playing
+                    if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                        replayMedia();
+                    }
                 }
+                Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
                 return;
             }
             if (playbackState == Player.STATE_IDLE) {
@@ -1191,6 +1311,8 @@ public class MainActivity extends AppCompatActivity {
                         for (String audioTrackString : audioRendererIndexMap.keySet()) {
                             subMenu.add(audioTrackString);
                         }
+                    } else {
+                        ((Menu)audioTrackMenuItem).addSubMenu("Text title");
                     }
 
                     Log.d(TAG, "audioRenderer = " + numAudioRenderer);

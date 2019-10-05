@@ -20,12 +20,14 @@ public class PlayingParameters implements Parcelable {
     private int publicSongIndex;
     private boolean isPlayingPublic;
     private int musicOrVocalOrNoSetting;
+    private int repeatStatus;
 
     public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared,
                              int currentVideoRendererPlayed, int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioRenderer, int vocalAudioRenderer,
                              int currentAudioRendererPlayed, long currentAudioPosition, float currentVolume,
-                             int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting) {
+                             int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting,
+                             int repeatStatus) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaSourcePrepared = isMediaSourcePrepared;
@@ -41,6 +43,7 @@ public class PlayingParameters implements Parcelable {
         this.publicSongIndex = publicSongIndex;
         this.isPlayingPublic = isPlayingPublic;
         this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
+        this.repeatStatus = repeatStatus;
     }
 
     public PlayingParameters() {
@@ -166,6 +169,14 @@ public class PlayingParameters implements Parcelable {
         this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
     }
 
+    public int getRepeatStatus() {
+        return repeatStatus;
+    }
+
+    public void setRepeatStatus(int repeatStatus) {
+        this.repeatStatus = repeatStatus;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -188,6 +199,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.publicSongIndex);
         dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
         dest.writeInt(this.musicOrVocalOrNoSetting);
+        dest.writeInt(this.repeatStatus);
     }
 
     protected PlayingParameters(Parcel in) {
@@ -206,6 +218,7 @@ public class PlayingParameters implements Parcelable {
         this.publicSongIndex = in.readInt();
         this.isPlayingPublic = in.readByte() != 0;
         this.musicOrVocalOrNoSetting = in.readInt();
+        this.repeatStatus = in.readInt();
     }
 
     public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {

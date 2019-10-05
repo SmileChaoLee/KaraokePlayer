@@ -24,6 +24,7 @@ import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -290,6 +291,12 @@ public class SongListActivity extends AppCompatActivity {
             }
 
             return view;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void addAll(@NonNull Collection collection) {
+            super.addAll(collection);
         }
 
         public void updateData(List newData) {

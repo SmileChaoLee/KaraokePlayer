@@ -7,7 +7,7 @@
     <item android:id="@+id/file"
         android:title="@string/fileString"
         android:orderInCategory="1"
-        app:showAsAction="always">
+        app:showAsAction="never">
         <menu>
             <item android:id="@+id/autoPlay"
                 android:title="@string/autoPlayString"
@@ -49,7 +49,7 @@
     <item android:id="@+id/action"
         android:title="@string/actionString"
         android:orderInCategory="2"
-        app:showAsAction="always">
+        app:showAsAction="never">
         <menu>
             <item android:id="@+id/play"
                 android:title="@string/playString"
@@ -71,19 +71,9 @@
                 android:orderInCategory="4"
                 app:showAsAction="never">
             </item>
-            <item android:id="@+id/music"
-                android:title="@string/musicString"
-                android:orderInCategory="5"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/vocal"
-                android:title="@string/vocalString"
-                android:orderInCategory="6"
-                app:showAsAction="never">
-            </item>
             <item android:id="@+id/toTV"
                 android:title="@string/toTVString"
-                android:orderInCategory="7"
+                android:orderInCategory="5"
                 android:visible="false"
                 app:showAsAction="never">
             </item>
@@ -91,19 +81,17 @@
     </item>
 
     <item android:id="@+id/audioTrack"
-        android:title=""
-        android:icon="@drawable/audio"
+        android:title="@string/audioTrackString"
         android:orderInCategory="3"
-        app:showAsAction="always">
+        app:showAsAction="never">
         <menu>
-
         </menu>
     </item>
 
     <item android:id="@+id/channel"
         android:title="@string/channelString"
         android:orderInCategory="4"
-        app:showAsAction="always">
+        app:showAsAction="never">
         <menu>
             <item android:id="@+id/leftChannel"
                 android:title="@string/leftChannelString"

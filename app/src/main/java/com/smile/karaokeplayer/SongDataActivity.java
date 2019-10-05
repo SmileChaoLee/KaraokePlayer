@@ -37,10 +37,10 @@ public class SongDataActivity extends AppCompatActivity {
     private float fontScale;
     private float toastTextSize;
 
-    private ArrayAdapter<String> audioMusicTrackAdapter;
-    private ArrayAdapter<String> audioMusicChannelAdapter;
-    private ArrayAdapter<String> audioVocalTrackAdapter;
-    private ArrayAdapter<String> audioVocalChannelAdapter;
+    private SpinnerAdapter audioMusicTrackAdapter;
+    private SpinnerAdapter audioMusicChannelAdapter;
+    private SpinnerAdapter audioVocalTrackAdapter;
+    private SpinnerAdapter audioVocalChannelAdapter;
 
     private EditText edit_titleNameEditText;
     private EditText edit_filePathEditText;

@@ -28,6 +28,7 @@ public class SpinnerAdapter extends ArrayAdapter {
     private final float mTextFontSize;
     private final int mScaleType;
 
+    @SuppressWarnings("unchecked")
     public SpinnerAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List objects, float textSize, int scaleType) {
         super(context, resource, textViewResourceId, objects);
         mContext = context;
