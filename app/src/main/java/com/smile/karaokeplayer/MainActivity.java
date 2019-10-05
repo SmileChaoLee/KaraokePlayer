@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
     private static final int SONG_LIST_ACTIVITY_CODE = 2;
-
+    private static final int PlayerView_Timeout = 10000;  //  10 seconds
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
@@ -414,6 +414,8 @@ public class MainActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
         }
 
+        videoPlayerView.setControllerShowTimeoutMs(-1); // cancel the time out
+
         boolean isAutoPlay;
         int currentChannelPlayed;
         int mCurrentState;
@@ -617,6 +619,8 @@ public class MainActivity extends AppCompatActivity {
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
         }
+
+        videoPlayerView.setControllerShowTimeoutMs(PlayerView_Timeout); // cancel the time out
 
         return super.onOptionsItemSelected(item);
     }
@@ -916,7 +920,7 @@ public class MainActivity extends AppCompatActivity {
         videoPlayerView.setPlayer(exoPlayer);
         videoPlayerView.requestFocus();
 
-        videoPlayerView.setControllerShowTimeoutMs(10000);  //  10 seconds
+        videoPlayerView.setControllerShowTimeoutMs(PlayerView_Timeout);
         videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
