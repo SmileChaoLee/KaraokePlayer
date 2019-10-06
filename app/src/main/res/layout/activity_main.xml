@@ -43,6 +43,15 @@
             </TextView>
         </LinearLayout>
 
+        <!-- the banner ads showing area -->
+        <LinearLayout
+            android:id="@+id/linearLayout_for_ads"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="top">
+        </LinearLayout>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,12 +8,15 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,6 +32,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.Toolbar;
@@ -60,6 +64,9 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -164,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
     private int colorRed;
     private int colorTransparent;
 
+    private LinearLayout linearLayout_for_ads;
+    private AdView bannerAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -197,8 +207,14 @@ public class MainActivity extends AppCompatActivity {
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
         setSupportActionBar(supportToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
         supportToolbar.setVisibility(View.VISIBLE);
+
+        /*
         supportToolbar.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -207,6 +223,17 @@ public class MainActivity extends AppCompatActivity {
                     videoPlayerView.hideController();
                 }
                 return false;
+            }
+        });
+        */
+
+        supportToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int visibility = v.getVisibility();
+                if (visibility == View.VISIBLE) {
+                    videoPlayerView.hideController();
+                }
             }
         });
 
@@ -348,6 +375,24 @@ public class MainActivity extends AppCompatActivity {
         if (mediaUri != null) {
             mediaTransportControls.prepareFromUri(mediaUri, null);
         }
+
+        linearLayout_for_ads = findViewById(R.id.linearLayout_for_ads);
+        if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
+            try {
+                bannerAdView = new AdView(this);
+                bannerAdView.setAdSize(AdSize.BANNER);
+                bannerAdView.setAdUnitId(SmileApplication.googleAdMobBannerID);
+                linearLayout_for_ads.addView(bannerAdView);
+                AdRequest adRequest = new AdRequest.Builder().build();
+                bannerAdView.loadAd(adRequest);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            linearLayout_for_ads.setVisibility(View.GONE);
+        }
+        hideBannerAds();
+        showNativeAds();
     }
 
     @Override
@@ -793,6 +838,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void showBannerAds() {
+        linearLayout_for_ads.setGravity(Gravity.TOP);
+        linearLayout_for_ads.setVisibility(View.VISIBLE);
+    }
+    private void hideBannerAds() {
+        linearLayout_for_ads.setVisibility(View.GONE);
+    }
+    private void showNativeAds() {
+        // simulate showing native ad
+        messageLinearLayout.setVisibility(View.VISIBLE);
+    }
+    private void hideNativeAds() {
+        // simulate hide native ad
+        messageLinearLayout.setVisibility(View.GONE);
+    }
+
     private void showAdAndExitApplication() {
         if (SmileApplication.InterstitialAd != null) {
             // free version
@@ -954,11 +1015,13 @@ public class MainActivity extends AppCompatActivity {
                 if (visibility == View.VISIBLE) {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.VISIBLE);
+                    hideBannerAds();
                 } else {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.GONE);
                     // mainMenu.close();
                     closeMenu(mainMenu);
+                    showBannerAds();
                 }
                 volumeSeekBar.setVisibility(View.INVISIBLE);
             }
@@ -1208,19 +1271,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAudioVolume(float volume) {
-        if (numberOfAudioRenderers > 0) {
-            // get current channel
-            int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
-            //
-            if (currentChannelPlayed == SmileApplication.leftChannel) {
-                stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-            } else if (currentChannelPlayed == SmileApplication.rightChannel) {
-                stereoVolumeAudioProcessor.setVolume(0.0f, volume);
-            } else {
-                stereoVolumeAudioProcessor.setVolume(volume, volume);
-            }
-            playingParam.setCurrentVolume(volume);
+        // get current channel
+        int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
+        //
+        if (currentChannelPlayed == SmileApplication.leftChannel) {
+            stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
+        } else if (currentChannelPlayed == SmileApplication.rightChannel) {
+            stereoVolumeAudioProcessor.setVolume(0.0f, volume);
+        } else {
+            stereoVolumeAudioProcessor.setVolume(volume, volume);
         }
+        playingParam.setCurrentVolume(volume);
     }
 
     private void setProperAudioTrackAndChannel() {
@@ -1254,9 +1315,11 @@ public class MainActivity extends AppCompatActivity {
                     // start playing next video from list
                     startAutoPlay();
                 } else {
-                    // stop or end of playing
+                    // end of playing
                     if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
                         replayMedia();
+                    } else {
+                        showNativeAds();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
@@ -1270,6 +1333,10 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaSource != null) {
                     playingParam.setMediaSourcePrepared(false);
                     Log.d(TAG, "Song was stopped by user.");
+                }
+                if (!playingParam.isAutoPlay()) {
+                    // not auto play
+                    showNativeAds();
                 }
                 return;
             }
@@ -1369,6 +1436,14 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 playingParam.setMediaSourcePrepared(true);
+
+                if (numberOfVideoRenderers == 0) {
+                    // no video is being played, show native ads
+                    showNativeAds();
+                } else {
+                    // video is being played, hide native ads
+                    hideNativeAds();
+                }
 
                 return;
             }

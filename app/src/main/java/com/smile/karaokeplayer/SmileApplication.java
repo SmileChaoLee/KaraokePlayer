@@ -45,6 +45,7 @@ public class SmileApplication extends MultiDexApplication {
     public static ShowingInterstitialAdsUtil InterstitialAd;
     private static FacebookInterstitialAds facebookAds;
     private static GoogleAdMobInterstitial googleInterstitialAd;
+    public static String googleAdMobBannerID = "";
 
     @Override
     public void onCreate() {
@@ -74,6 +75,7 @@ public class SmileApplication extends MultiDexApplication {
         // Google AdMob
         String googleAdMobAppID = getString(R.string.google_AdMobAppID);
         String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
+        googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
         MobileAds.initialize(AppContext, googleAdMobAppID);
         googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
         googleInterstitialAd.loadAd(); // load first ad
