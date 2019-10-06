@@ -288,35 +288,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
-        switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToMusic();
-            }
-        });
-
-        switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
-        switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToVocal();
-            }
-        });
-
-        setImageButtonEnabledStatus(playingParam.isAutoPlay());
-
+        
         repeatImageButton = findViewById(R.id.repeatImageButton);
         repeatImageButton.getLayoutParams().height = imageButtonHeight;
         repeatImageButton.getLayoutParams().width = imageButtonHeight;
         repeatImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            int repeatStatus = playingParam.getRepeatStatus();
+                int repeatStatus = playingParam.getRepeatStatus();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
                         // switch to repeat all
@@ -341,6 +320,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
+        switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
+        switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
+        switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
+        switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToVocal();
+            }
+        });
+
+        setImageButtonEnabledStatus(playingParam.isAutoPlay());
 
         int volumeSeekBarHeight = (int)(textFontSize * 2.0f);
         volumeSeekBar.getLayoutParams().width = volumeSeekBarHeight;
@@ -847,11 +848,15 @@ public class MainActivity extends AppCompatActivity {
     }
     private void showNativeAds() {
         // simulate showing native ad
-        messageLinearLayout.setVisibility(View.VISIBLE);
+        if (BuildConfig.DEBUG) {
+            messageLinearLayout.setVisibility(View.VISIBLE);
+        }
     }
     private void hideNativeAds() {
         // simulate hide native ad
-        messageLinearLayout.setVisibility(View.GONE);
+        if (BuildConfig.DEBUG) {
+            messageLinearLayout.setVisibility(View.GONE);
+        }
     }
 
     private void showAdAndExitApplication() {
