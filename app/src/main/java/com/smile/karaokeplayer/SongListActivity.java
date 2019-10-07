@@ -231,9 +231,6 @@ public class SongListActivity extends AppCompatActivity {
 
             final Button playSongListButton = view.findViewById(R.id.playSongListButton);
             ScreenUtil.resizeTextSize(playSongListButton, buttonTextSize, SmileApplication.FontSize_Scale_Type);
-            if (!BuildConfig.DEBUG) {
-                playSongListButton.setVisibility(View.INVISIBLE);
-            }
 
             int songListSize = 0;
             if (mSongListInAdapter != null) {
