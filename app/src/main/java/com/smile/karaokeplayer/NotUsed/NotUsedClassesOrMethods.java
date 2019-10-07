@@ -162,4 +162,35 @@ public class NotUsedClassesOrMethods {
     }
     //
     */
+
+    // use default ActionBar
+    // final Context wrapper = supportToolbar.getThemedContext();
+    // or use
+    // use custom toolbar
+        /*
+        final int popupThemeId = supportToolbar.getPopupTheme();
+        final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
+        ScreenUtil.buildActionViewClassMenu(this, wrapper, menu, fontScale, SmileApplication.FontSize_Scale_Type);
+        */
+
+    /**
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+     // API >= 18 works on SpannableString on MenuItems with app:showAsAction="always"
+     // and MenuItems with app:showAsAction="never"
+     ScreenUtil.resizeMenuTextSize(menu, fontScale);
+     } else {
+     // API < 18 does not work on SpannableString on MenuItems with app:showAsAction="always"
+     // only MenuItems with app:showAsAction="never" works on SpannableString
+     // MenuItems with app:showAsAction="never" use menu_text_style (in style.xml)
+     // MenuItems with app:showAsAction="always" use dimens
+     int menuSize = menu.size();
+     MenuItem mItem;
+     Menu subMenu;
+     for (int i=0; i<menuSize; i++) {
+     mItem = menu.getItem(i);
+     subMenu = mItem.getSubMenu();
+     ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
+     }
+     }
+     */
 }

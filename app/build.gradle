@@ -15,6 +15,7 @@ android {
         applicationId "com.smile.karaokeplayer"
         minSdkVersion 16
         targetSdkVersion 29
+        multiDexEnabled true
         versionCode 108
         versionName "1.08"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,6 +26,8 @@ android {
             java {
                 exclude '**/ExternalStorageUtil.java'
                 exclude '**/NotUsedClassesOrMethods.java'
+                exclude '**/MainActivity_old_works.java'
+                exclude '**/MainActivity_with_fragment.java'
             }
         }
     }
@@ -52,7 +55,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core:1.2.0-alpha04'
-    // implementation 'androidx.media:media:1.1.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.10.1'
     implementation 'com.google.android.exoplayer:extension-mediasession:2.10.1'
 
@@ -64,6 +66,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-measurement:17.2.0'
     implementation 'com.google.android.gms:play-services-measurement-sdk:17.2.0'
 
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     testImplementation 'junit:junit:4.13-beta-3'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha02'
     androidTestImplementation 'androidx.test:rules:1.3.0-alpha02'

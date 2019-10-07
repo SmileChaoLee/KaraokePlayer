@@ -10,9 +10,7 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -23,7 +21,7 @@ import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class MainActivity extends AppCompatActivity implements PlayerFragment.OnFragmentInteractionListener {
+public class MainActivity_with_fragment extends AppCompatActivity implements PlayerFragment.OnFragmentInteractionListener {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
         playerFragment = fmManager.findFragmentByTag(PlayerFragment.PlayerFragmentTag);
         if (playerFragment == null) {
-            playerFragment = PlayerFragment.newInstance(true, null);
+            playerFragment = PlayerFragment.newInstance(null, null);
             ft.add(playerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
         } else {
             ft.replace(playerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
@@ -169,15 +167,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     }
 
     @Override
-    public void setSupportActionBarForFragment(Toolbar toolbar) {
-        setSupportActionBar(toolbar);
-    }
-    @Override
-    public ActionBar getSupportActionBarForFragment() {
-        return getSupportActionBar();
-    }
-    @Override
-    public void onExitFragment() {
-        showAdAndExitApplication();
+    public void onFragmentInteraction(String msgString) {
+        Log.d(TAG,"must implement OnFragmentInteractionListener --> msgString = " + msgString);
     }
 }

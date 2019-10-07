@@ -187,6 +187,7 @@ public class SongListActivity extends AppCompatActivity {
             } else {
                 view.setBackgroundColor(yellow3Color);
             }
+
             final TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
             ScreenUtil.resizeTextSize(titleStringTextView, itemTextSize, SmileApplication.FontSize_Scale_Type);
             final TextView titleNameTextView = view.findViewById(R.id.titleNameTextView);
@@ -285,7 +286,11 @@ public class SongListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // play this item (media file)
-                        // has not been implemented yet
+                        Intent playOneSongIntent = new Intent(getApplicationContext(), PlayOneSongActivity.class);
+                        Bundle extras = new Bundle();
+                        extras.putParcelable("SongInfo", songInfo);
+                        playOneSongIntent.putExtras(extras);
+                        startActivityForResult(playOneSongIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
                     }
                 });
             }

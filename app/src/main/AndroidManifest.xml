@@ -40,13 +40,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".SongListActivity"></activity>
+        <activity android:name=".SongDataActivity"></activity>
+        <activity android:name=".PlayOneSongActivity">
 
-        <activity android:name=".SongListActivity">
         </activity>
-
-        <activity android:name=".SongDataActivity">
-        </activity>
-
     </application>
 
 </manifest>

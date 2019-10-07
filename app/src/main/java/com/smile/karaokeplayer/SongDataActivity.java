@@ -279,7 +279,6 @@ public class SongDataActivity extends AppCompatActivity {
                 if ( (filePathUri == null) || (Uri.EMPTY.equals(filePathUri)) ) {
                     return;
                 }
-                // String filePathString = ExternalStorageUtil.getUriRealPath(getApplicationContext(), filePathUri); // temporary
                 String filePathString = filePathUri.toString();
                 Uri uri = Uri.parse(filePathString);
                 Log.i(TAG, "Uri from filePathString: " + uri.toString());
