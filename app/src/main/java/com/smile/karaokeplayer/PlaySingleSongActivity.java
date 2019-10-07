@@ -16,7 +16,7 @@ import android.util.Log;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class PlayOneSongActivity extends AppCompatActivity implements PlayerFragment.OnFragmentInteractionListener{
+public class PlaySingleSongActivity extends AppCompatActivity implements PlayerFragment.OnFragmentInteractionListener{
 
     private static final String TAG = new String(".PlayOneSongActivity");
 
@@ -54,7 +54,7 @@ public class PlayOneSongActivity extends AppCompatActivity implements PlayerFrag
         }
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play_one_song);
+        setContentView(R.layout.activity_play_single_song);
 
         int oneSongPlayerFragmentLayoutId = R.id.oneSongPlayerFragmentLayout;
 

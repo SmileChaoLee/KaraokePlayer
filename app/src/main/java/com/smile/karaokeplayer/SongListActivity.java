@@ -283,7 +283,7 @@ public class SongListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // play this item (media file)
-                        Intent playOneSongIntent = new Intent(getApplicationContext(), PlayOneSongActivity.class);
+                        Intent playOneSongIntent = new Intent(getApplicationContext(), PlaySingleSongActivity.class);
                         Bundle extras = new Bundle();
                         extras.putParcelable("SongInfo", songInfo);
                         playOneSongIntent.putExtras(extras);

@@ -42,7 +42,7 @@
         </activity>
         <activity android:name=".SongListActivity"></activity>
         <activity android:name=".SongDataActivity"></activity>
-        <activity android:name=".PlayOneSongActivity">
+        <activity android:name=".PlaySingleSongActivity">
 
         </activity>
     </application>
