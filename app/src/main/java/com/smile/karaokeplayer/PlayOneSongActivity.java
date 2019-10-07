@@ -24,6 +24,7 @@ public class PlayOneSongActivity extends AppCompatActivity implements PlayerFrag
     private float fontScale;
     private float toastTextSize;
 
+    private boolean isPlayingSingleSong;
     private SongInfo songInfo;
     private Fragment playerFragment;
 
@@ -35,15 +36,21 @@ public class PlayOneSongActivity extends AppCompatActivity implements PlayerFrag
         fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
 
+        isPlayingSingleSong = true;
         songInfo = null;
         if (savedInstanceState == null) {
             Intent callingIntent = getIntent();
             if (callingIntent != null) {
-                songInfo = callingIntent.getParcelableExtra("SongInfo");
+                Bundle extras = callingIntent.getExtras();
+                if (extras != null) {
+                    isPlayingSingleSong = extras.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+                    songInfo = extras.getParcelable(PlayerFragment.SongInfoPara);
+                }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            songInfo = savedInstanceState.getParcelable("SongInfo");
+            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+            songInfo = savedInstanceState.getParcelable(PlayerFragment.SongInfoPara);
         }
 
         super.onCreate(savedInstanceState);
@@ -56,7 +63,7 @@ public class PlayOneSongActivity extends AppCompatActivity implements PlayerFrag
 
         playerFragment = fmManager.findFragmentByTag(PlayerFragment.PlayerFragmentTag);
         if (playerFragment == null) {
-            playerFragment = PlayerFragment.newInstance(false, songInfo);
+            playerFragment = PlayerFragment.newInstance(isPlayingSingleSong, songInfo);
             ft.add(oneSongPlayerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
         } else {
             ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
@@ -72,7 +79,8 @@ public class PlayOneSongActivity extends AppCompatActivity implements PlayerFrag
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
-        outState.putParcelable("SongInfo", songInfo);
+        outState.putBoolean(PlayerFragment.IsPlaySingleSongPara, isPlayingSingleSong);
+        outState.putParcelable(PlayerFragment.SongInfoPara, songInfo);
         super.onSaveInstanceState(outState);
     }
 

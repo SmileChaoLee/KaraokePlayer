@@ -174,14 +174,13 @@ public class PlayerFragment extends Fragment {
     private ArrayList<SongInfo> publicSongList;
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
-    private boolean isPlaySingleSong;
     private SongInfo songInfo;
     //
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String IsPlaySingleSongPara = "HasMenu";
-    private static final String SongInfoPara = "SongInfo";
+    public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
+    public static final String SongInfoPara = "SongInfo";
 
     private OnFragmentInteractionListener mListener;
 
@@ -210,15 +209,15 @@ public class PlayerFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param isPlaySingleSongPara Parameter 1.
+     * @param isPlaySingleSong Parameter 1.
      * @param songInfo Parameter 2.
      * @return A new instance of fragment PlayerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PlayerFragment newInstance(boolean isPlaySingleSongPara, SongInfo songInfo) {
+    public static PlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         PlayerFragment fragment = new PlayerFragment();
         Bundle args = new Bundle();
-        args.putBoolean(IsPlaySingleSongPara, isPlaySingleSongPara);
+        args.putBoolean(IsPlaySingleSongPara, isPlaySingleSong);
         args.putParcelable(SongInfoPara, songInfo);
         fragment.setArguments(args);
         return fragment;
@@ -456,12 +455,11 @@ public class PlayerFragment extends Fragment {
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
             }
         } else {
-            if (songInfo != null) {
-                // auto play this song
-                publicSongList = new ArrayList<>();
-                publicSongList.add(songInfo);
-                playingParam.setAutoPlay(true);
-                startAutoPlay();
+            if (playingParam.isPlaySingleSong()) {
+                if (songInfo != null) {
+                    playingParam.setAutoPlay(false);
+                    playSingleSong(songInfo);
+                }
             }
         }
     }
@@ -502,7 +500,7 @@ public class PlayerFragment extends Fragment {
         rightChannelMenuItem = menu.findItem(R.id.rightChannel);
         stereoChannelMenuItem = menu.findItem(R.id.stereoChannel);
 
-        if (!isPlaySingleSong) {
+        if (playingParam.isPlaySingleSong()) {
             MenuItem fileMenuItem = menu.findItem(R.id.file);
             fileMenuItem.setVisible(false);
             MenuItem actionMenuItem = menu.findItem(R.id.action);
@@ -758,7 +756,6 @@ public class PlayerFragment extends Fragment {
         playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
         outState.putParcelable("PlayingParameters", playingParam);
         outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
-        outState.putBoolean(IsPlaySingleSongPara, isPlaySingleSong);
         outState.putParcelable(SongInfoPara, songInfo);
         super.onSaveInstanceState(outState);
     }
@@ -842,7 +839,8 @@ public class PlayerFragment extends Fragment {
 
     private void setImageButtonStatus() {
         boolean isAutoPlay = playingParam.isAutoPlay();
-        if (isAutoPlay) {
+        boolean isPlayingSingleSong = playingParam.isPlaySingleSong();
+        if ( isAutoPlay || isPlayingSingleSong ) {
             switchToMusicImageButton.setEnabled(true);
             switchToMusicImageButton.setVisibility(View.VISIBLE);
             switchToVocalImageButton.setEnabled(true);
@@ -919,6 +917,7 @@ public class PlayerFragment extends Fragment {
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
         playingParam.setRepeatStatus(NoRepeatPlaying);    // no repeat playing songs
+        playingParam.setPlaySingleSong(true);     // default
     }
 
     private void initializeVariables(Bundle savedInstanceState) {
@@ -936,11 +935,10 @@ public class PlayerFragment extends Fragment {
             mediaUri = null;
             initializePlayingParam();
             canShowNotSupportedFormat = false;
-            isPlaySingleSong = true;     // default
             songInfo = null;    // default
             Bundle arguments = getArguments();
             if (arguments != null) {
-                isPlaySingleSong = arguments.getBoolean(IsPlaySingleSongPara);
+                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongPara));
                 songInfo = arguments.getParcelable(SongInfoPara);
             }
         } else {
@@ -961,7 +959,6 @@ public class PlayerFragment extends Fragment {
             if (playingParam == null) {
                 initializePlayingParam();
             }
-            isPlaySingleSong = savedInstanceState.getBoolean(IsPlaySingleSongPara);
             songInfo = savedInstanceState.getParcelable(SongInfoPara);
         }
     }
@@ -1188,39 +1185,9 @@ public class PlayerFragment extends Fragment {
 
                 if (stillPlayNext) {    // still play the next song
                     songInfo = publicSongList.get(publicSongIndex);
-
-                    playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
-                    playingParam.setCurrentVideoRendererPlayed(0);
-
-                    playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
-                    playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
-
-                    playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
-                    playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
-                    playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-                    playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
-
-                    playingParam.setCurrentAudioPosition(0);
-                    playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-                    playingParam.setMediaSourcePrepared(false);
-
+                    playSingleSong(songInfo);
                     publicSongIndex++;  // set next index of playlist that will be played
                     playingParam.setPublicSongIndex(publicSongIndex);
-
-                    String filePath = songInfo.getFilePath();
-                    Log.i(TAG, "filePath : " + filePath);
-                    // File songFile = new File(filePath);
-                    // if (songFile.exists()) {
-                    // mediaUri = Uri.fromFile(new File(filePath));
-                    // mediaUri = Uri.parse("file://" + filePath);
-                    mediaUri = Uri.parse(filePath);
-                    Log.i(TAG, "mediaUri from filePath : " + mediaUri);
-                    // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-                    // pass the saved instance of playingParam to
-                    // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-                    Bundle playingParamOriginExtras = new Bundle();
-                    playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
-                    mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
                 }
                 Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
                 // }
@@ -1239,6 +1206,38 @@ public class PlayerFragment extends Fragment {
             Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
         setImageButtonStatus();
+    }
+
+    private void playSingleSong(SongInfo songInfo) {
+        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
+        playingParam.setCurrentVideoRendererPlayed(0);
+
+        playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+        playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+
+        playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
+        playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
+        playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+        playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
+
+        playingParam.setCurrentAudioPosition(0);
+        playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+        playingParam.setMediaSourcePrepared(false);
+
+        String filePath = songInfo.getFilePath();
+        Log.i(TAG, "filePath : " + filePath);
+        // File songFile = new File(filePath);
+        // if (songFile.exists()) {
+        // mediaUri = Uri.fromFile(new File(filePath));
+        // mediaUri = Uri.parse("file://" + filePath);
+        mediaUri = Uri.parse(filePath);
+        Log.i(TAG, "mediaUri from filePath : " + mediaUri);
+        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
+        // pass the saved instance of playingParam to
+        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
+        Bundle playingParamOriginExtras = new Bundle();
+        playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+        mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
     }
 
     private void startPlay() {

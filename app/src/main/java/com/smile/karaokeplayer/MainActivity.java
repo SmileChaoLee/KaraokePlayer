@@ -1,6 +1,8 @@
 package com.smile.karaokeplayer;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -33,7 +36,9 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     private float toastTextSize;
     private String accessExternalStoragePermissionDeniedString;
     private boolean hasPermissionForExternalStorage;
+    private boolean isPlayingSingleSong;
 
+    private SongInfo songInfo;
     private Fragment playerFragment;
 
     @Override
@@ -48,6 +53,23 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.7f * textFontSize;
 
+        isPlayingSingleSong = false;    // first entry of main activity
+        songInfo = null;
+        if (savedInstanceState == null) {
+            Intent callingIntent = getIntent();
+            if (callingIntent != null) {
+                Bundle extras = callingIntent.getExtras();
+                if (extras != null) {
+                    isPlayingSingleSong = extras.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+                    songInfo = extras.getParcelable(PlayerFragment.SongInfoPara);
+                }
+            }
+        } else {
+            Log.d(TAG, "savedInstanceState is not null.");
+            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+            songInfo = savedInstanceState.getParcelable(PlayerFragment.SongInfoPara);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -59,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
 
         playerFragment = fmManager.findFragmentByTag(PlayerFragment.PlayerFragmentTag);
         if (playerFragment == null) {
-            playerFragment = PlayerFragment.newInstance(true, null);
+            playerFragment = PlayerFragment.newInstance(isPlayingSingleSong, songInfo);
             ft.add(playerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
         } else {
             ft.replace(playerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
@@ -127,6 +149,14 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
+        outState.putBoolean(PlayerFragment.IsPlaySingleSongPara, isPlayingSingleSong);
+        outState.putParcelable(PlayerFragment.SongInfoPara, songInfo);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"MainActivity-->onDestroy() is called.");
@@ -145,7 +175,14 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
         Log.d(TAG, "onBackPressed() is called");
     }
 
-    public void showAdAndExitApplication() {
+    private void returnToPrevious() {
+        Intent returnIntent = new Intent();
+        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
+        // setResult(Activity.RESULT_OK);   // no bundle data
+        finish();
+    }
+
+    private void showAdAndExitApplication() {
         if (SmileApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
@@ -178,6 +215,12 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
     }
     @Override
     public void onExitFragment() {
-        showAdAndExitApplication();
+        if (!isPlayingSingleSong) {
+            // not only play one single song
+            // so not android.intent.category.LAUNCHER
+            showAdAndExitApplication();
+        } else {
+            returnToPrevious();
+        }
     }
 }
