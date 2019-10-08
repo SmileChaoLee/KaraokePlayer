@@ -60,13 +60,14 @@ public class MainActivity extends AppCompatActivity implements PlayerFragment.On
             if (callingIntent != null) {
                 Bundle extras = callingIntent.getExtras();
                 if (extras != null) {
-                    isPlayingSingleSong = extras.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+                    Log.d(TAG, "extras is not null.");
+                    isPlayingSingleSong = extras.getBoolean(PlayerFragment.IsPlaySingleSongPara, false);
                     songInfo = extras.getParcelable(PlayerFragment.SongInfoPara);
                 }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
+            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerFragment.IsPlaySingleSongPara, false);
             songInfo = savedInstanceState.getParcelable(PlayerFragment.SongInfoPara);
         }
 
