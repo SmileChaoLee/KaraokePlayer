@@ -42,8 +42,8 @@
         </activity>
         <activity android:name=".SongListActivity"></activity>
         <activity android:name=".SongDataActivity"></activity>
-        <activity android:name=".PlaySingleSongActivity">
-
+        <activity android:name=".PlaySingleSongActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
     </application>
 

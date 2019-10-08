@@ -332,7 +332,15 @@ public class PlayerFragment extends Fragment {
 
             }
         });
-        int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+        // int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+        int currentProgress;
+        float currentVolume = playingParam.getCurrentVolume();
+        if ( currentVolume >= 1.0f) {
+            currentProgress = maxProgress;
+        } else {
+            currentProgress = maxProgress - (int)Math.pow(maxProgress, (1-currentVolume));
+            currentProgress = Math.max(0, currentProgress);
+        }
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
         int imageButtonHeight = (int)(textFontSize * 1.5f);
@@ -1626,7 +1634,8 @@ public class PlayerFragment extends Fragment {
             playingParam.setMediaSourcePrepared(false);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
-            long currentAudioPosition = playingParam.getCurrentAudioPosition();;
+            long currentAudioPosition = playingParam.getCurrentAudioPosition();
+            float currentVolume = playingParam.getCurrentVolume();
             int playbackState = playbackState = playingParam.getCurrentPlaybackState();
             if (extras != null) {
                 Log.d(TAG, "extras is not null.");
@@ -1635,8 +1644,10 @@ public class PlayerFragment extends Fragment {
                     Log.d(TAG, "playingParamOrigin is not null.");
                     playbackState = playingParamOrigin.getCurrentPlaybackState();
                     currentAudioPosition = playingParamOrigin.getCurrentAudioPosition();
+                    currentVolume = playingParamOrigin.getCurrentVolume();
                 }
             }
+            // setAudioVolume(currentVolume);
             exoPlayer.seekTo(currentAudioPosition);
             switch (playbackState) {
                 case PlaybackStateCompat.STATE_PAUSED:
