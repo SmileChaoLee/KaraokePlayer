@@ -1614,22 +1614,22 @@ public class PlayerFragment extends Fragment {
         }
 
         @Override
-        public void onPrepare() {
+        public void onPrepare(boolean playWhenReady) {
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepare() is called.");
         }
 
         @Override
-        public void onPrepareFromMediaId(String mediaId, Bundle extras) {
+        public void onPrepareFromMediaId(String mediaId, boolean playWhenReady, Bundle extras) {
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromMediaId() is called.");
         }
 
         @Override
-        public void onPrepareFromSearch(String query, Bundle extras) {
+        public void onPrepareFromSearch(String query, boolean playWhenReady, Bundle extras) {
             Log.d(TAG, "MediaSessionConnector.PlaybackPreparer.onPrepareFromSearch() is called.");
         }
 
         @Override
-        public void onPrepareFromUri(Uri uri, Bundle extras) {
+        public void onPrepareFromUri(Uri uri, boolean playWhenReady, Bundle extras) {
             Log.d(TAG, "Uri = " + uri);
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
