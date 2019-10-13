@@ -194,7 +194,7 @@ public class MainActivity_old_works extends AppCompatActivity {
         setContentView(R.layout.activity_main_old_works);
 
         // Video player view
-        videoPlayerView = findViewById(R.id.videoPlayerView);
+        videoPlayerView = findViewById(R.id.videoExoPlayerView);
         videoPlayerView.setVisibility(View.VISIBLE);
         //
         initExoPlayer();

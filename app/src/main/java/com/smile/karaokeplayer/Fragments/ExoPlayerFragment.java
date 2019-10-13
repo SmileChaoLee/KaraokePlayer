@@ -85,22 +85,22 @@ import java.util.TreeMap;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PlayerFragment.OnFragmentInteractionListener} interface
+ * {@link ExoPlayerFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PlayerFragment#newInstance} factory method to
+ * Use the {@link ExoPlayerFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlayerFragment extends Fragment {
+public class ExoPlayerFragment extends Fragment {
 
-    public static final String PlayerFragmentTag = "PlayerFragmentTag";
+    public static final String ExoPlayerFragmentTag = "ExoPlayerFragmentTag";
 
-    private static final String TAG = new String(".PlayerFragment");
+    private static final String TAG = new String(".ExoPlayerFragment");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final String PlayingParamOrigin = "PlayingParamOrigin";
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
     private static final int SONG_LIST_ACTIVITY_CODE = 2;
-    private static final int PlayerView_Timeout = 10000;  //  10 seconds
+    private static final int ExoPlayerView_Timeout = 10000;  //  10 seconds
     private static final int noVideoRenderer = -1;
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
@@ -118,7 +118,7 @@ public class PlayerFragment extends Fragment {
     private float toastTextSize;
 
     private Context callingContext;
-    private View fragmentView;
+    private View exoPlayerFragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
     private ImageButton volumeImageButton;
@@ -152,7 +152,7 @@ public class PlayerFragment extends Fragment {
     private MediaControllerCompat.TransportControls mediaTransportControls;
     private MediaSessionConnector mediaSessionConnector;
 
-    private PlayerView videoPlayerView;
+    private PlayerView videoExoPlayerView;
     private DataSource.Factory dataSourceFactory;
     private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
     private RenderersFactory renderersFactory;
@@ -206,7 +206,7 @@ public class PlayerFragment extends Fragment {
         void onExitFragment();
     }
 
-    public PlayerFragment() {
+    public ExoPlayerFragment() {
         // Required empty public constructor
     }
 
@@ -216,11 +216,11 @@ public class PlayerFragment extends Fragment {
      *
      * @param isPlaySingleSong Parameter 1.
      * @param songInfo Parameter 2.
-     * @return A new instance of fragment PlayerFragment.
+     * @return A new instance of fragment ExoPlayerFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
-        PlayerFragment fragment = new PlayerFragment();
+    public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
+        ExoPlayerFragment fragment = new ExoPlayerFragment();
         Bundle args = new Bundle();
         args.putBoolean(IsPlaySingleSongPara, isPlaySingleSong);
         args.putParcelable(SongInfoPara, songInfo);
@@ -266,9 +266,9 @@ public class PlayerFragment extends Fragment {
         toastTextSize = 0.7f * textFontSize;
 
         // Inflate the layout for this fragment
-        fragmentView = inflater.inflate(R.layout.fragment_player, container, false);
+        exoPlayerFragmentView = inflater.inflate(R.layout.fragment_exoplayer, container, false);
 
-        return fragmentView;
+        return exoPlayerFragmentView;
     }
 
     @Override
@@ -281,13 +281,13 @@ public class PlayerFragment extends Fragment {
 
         initializeVariables(savedInstanceState);
         // Video player view
-        videoPlayerView = fragmentView.findViewById(R.id.videoPlayerView);
-        videoPlayerView.setVisibility(View.VISIBLE);
+        videoExoPlayerView = exoPlayerFragmentView.findViewById(R.id.videoExoPlayerView);
+        videoExoPlayerView.setVisibility(View.VISIBLE);
         //
         initExoPlayer();
         initMediaSessionCompat();
         // use custom toolbar
-        supportToolbar = fragmentView.findViewById(R.id.custom_toolbar);
+        supportToolbar = exoPlayerFragmentView.findViewById(R.id.custom_toolbar);
         mListener.setSupportActionBarForFragment(supportToolbar);
         ActionBar actionBar = mListener.getSupportActionBarForFragment();
         if (actionBar != null) {
@@ -299,12 +299,12 @@ public class PlayerFragment extends Fragment {
             public void onClick(View v) {
                 int visibility = v.getVisibility();
                 if (visibility == View.VISIBLE) {
-                    videoPlayerView.hideController();
+                    videoExoPlayerView.hideController();
                 }
             }
         });
 
-        volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
+        volumeSeekBar = exoPlayerFragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
         volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -364,7 +364,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-        repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
+        repeatImageButton = exoPlayerFragmentView.findViewById(R.id.repeatImageButton);
         repeatImageButton.getLayoutParams().height = imageButtonHeight;
         repeatImageButton.getLayoutParams().width = imageButtonHeight;
         repeatImageButton.setOnClickListener(new View.OnClickListener() {
@@ -389,7 +389,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-        switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
+        switchToMusicImageButton = exoPlayerFragmentView.findViewById(R.id.switchToMusicImageButton);
         switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
         switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
         switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
@@ -399,7 +399,7 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-        switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
+        switchToVocalImageButton = exoPlayerFragmentView.findViewById(R.id.switchToVocalImageButton);
         switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
         switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
         switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
@@ -417,9 +417,9 @@ public class PlayerFragment extends Fragment {
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
         // message area
-        messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
+        messageLinearLayout = exoPlayerFragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.GONE);
-        bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
+        bufferingStringTextView = exoPlayerFragmentView.findViewById(R.id.bufferingStringTextView);
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
@@ -432,7 +432,7 @@ public class PlayerFragment extends Fragment {
         // initExoPlayer();
         // initMediaSessionCompat();
 
-        linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
+        linearLayout_for_ads = exoPlayerFragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
                 bannerAdView = new AdView(callingContext);
@@ -528,7 +528,7 @@ public class PlayerFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        videoPlayerView.setControllerShowTimeoutMs(-1); // cancel the time out
+        videoExoPlayerView.setControllerShowTimeoutMs(-1); // cancel the time out
 
         boolean isAutoPlay;
         int currentChannelPlayed;
@@ -732,14 +732,14 @@ public class PlayerFragment extends Fragment {
                 break;
         }
 
-        videoPlayerView.setControllerShowTimeoutMs(PlayerView_Timeout); // cancel the time out
+        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout); // cancel the time out
 
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        Log.d(TAG,"PlayerFragment-->onConfigurationChanged() is called.");
+        Log.d(TAG,"ExoPlayerFragment-->onConfigurationChanged() is called.");
         super.onConfigurationChanged(newConfig);
         // mainMenu.close();
         closeMenu(mainMenu);
@@ -756,7 +756,7 @@ public class PlayerFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.d(TAG,"PlayerFragment-->onSaveInstanceState() is called.");
+        Log.d(TAG,"ExoPlayerFragment-->onSaveInstanceState() is called.");
 
         outState.putInt("NumberOfVideoRenderers",numberOfVideoRenderers);
         outState.putInt("NumberOfAudioRenderers", numberOfAudioRenderers);
@@ -776,7 +776,7 @@ public class PlayerFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG,"PlayerFragment-->onDestroy() is called.");
+        Log.d(TAG,"ExoPlayerFragment-->onDestroy() is called.");
         releaseMediaSessionCompat();
         releaseExoPlayer();
     }
@@ -1058,11 +1058,11 @@ public class PlayerFragment extends Fragment {
         audioAttributesBuilder.setUsage(C.USAGE_MEDIA).setContentType(C.CONTENT_TYPE_MOVIE);
         exoPlayer.setAudioAttributes(audioAttributesBuilder.build(), true);
 
-        videoPlayerView.setPlayer(exoPlayer);
-        videoPlayerView.requestFocus();
+        videoExoPlayerView.setPlayer(exoPlayer);
+        videoExoPlayerView.requestFocus();
 
-        videoPlayerView.setControllerShowTimeoutMs(PlayerView_Timeout);
-        videoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout);
+        videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
                 if (visibility == View.VISIBLE) {

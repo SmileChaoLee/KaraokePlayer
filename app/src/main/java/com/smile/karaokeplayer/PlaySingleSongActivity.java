@@ -13,11 +13,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.smile.karaokeplayer.Fragments.PlayerFragment;
+import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class PlaySingleSongActivity extends AppCompatActivity implements PlayerFragment.OnFragmentInteractionListener{
+public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener{
 
     private static final String TAG = new String(".PlayOneSongActivity");
 
@@ -44,14 +44,14 @@ public class PlaySingleSongActivity extends AppCompatActivity implements PlayerF
             if (callingIntent != null) {
                 Bundle extras = callingIntent.getExtras();
                 if (extras != null) {
-                    isPlayingSingleSong = extras.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
-                    songInfo = extras.getParcelable(PlayerFragment.SongInfoPara);
+                    isPlayingSingleSong = extras.getBoolean(ExoPlayerFragment.IsPlaySingleSongPara, true);
+                    songInfo = extras.getParcelable(ExoPlayerFragment.SongInfoPara);
                 }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerFragment.IsPlaySingleSongPara, true);
-            songInfo = savedInstanceState.getParcelable(PlayerFragment.SongInfoPara);
+            isPlayingSingleSong = savedInstanceState.getBoolean(ExoPlayerFragment.IsPlaySingleSongPara, true);
+            songInfo = savedInstanceState.getParcelable(ExoPlayerFragment.SongInfoPara);
         }
 
         super.onCreate(savedInstanceState);
@@ -62,14 +62,14 @@ public class PlaySingleSongActivity extends AppCompatActivity implements PlayerF
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        playerFragment = fmManager.findFragmentByTag(PlayerFragment.PlayerFragmentTag);
+        playerFragment = fmManager.findFragmentByTag(ExoPlayerFragment.ExoPlayerFragmentTag);
         if (playerFragment == null) {
-            playerFragment = PlayerFragment.newInstance(isPlayingSingleSong, songInfo);
-            ft.add(oneSongPlayerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
+            playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            ft.add(oneSongPlayerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
         } else {
-            ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, PlayerFragment.PlayerFragmentTag);
+            ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
         }
-        ft.addToBackStack(PlayerFragment.PlayerFragmentTag);
+        ft.addToBackStack(ExoPlayerFragment.ExoPlayerFragmentTag);
         if (playerFragment.isStateSaved()) {
             ft.commitAllowingStateLoss();
         } else {
@@ -80,8 +80,8 @@ public class PlaySingleSongActivity extends AppCompatActivity implements PlayerF
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
-        outState.putBoolean(PlayerFragment.IsPlaySingleSongPara, isPlayingSingleSong);
-        outState.putParcelable(PlayerFragment.SongInfoPara, songInfo);
+        outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongPara, isPlayingSingleSong);
+        outState.putParcelable(ExoPlayerFragment.SongInfoPara, songInfo);
         super.onSaveInstanceState(outState);
     }
 

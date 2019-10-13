@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <com.google.android.exoplayer2.ui.PlayerView
-            android:id="@+id/videoPlayerView"
+            android:id="@+id/videoExoPlayerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/black"
