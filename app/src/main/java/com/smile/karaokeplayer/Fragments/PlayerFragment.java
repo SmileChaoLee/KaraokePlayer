@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer;
+package com.smile.karaokeplayer.Fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -66,10 +66,14 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
+import com.smile.karaokeplayer.BuildConfig;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
+import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.SmileApplication;
+import com.smile.karaokeplayer.SongListActivity;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 

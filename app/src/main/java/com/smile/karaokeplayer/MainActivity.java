@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.smile.karaokeplayer.Fragments.PlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
