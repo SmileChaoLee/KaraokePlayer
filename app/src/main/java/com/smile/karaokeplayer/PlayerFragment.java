@@ -49,6 +49,8 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -68,7 +70,7 @@ import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
-import com.smile.karaokeplayer.audioprocessor_implement.StereoVolumeAudioProcessor;
+import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -928,6 +930,7 @@ public class PlayerFragment extends Fragment {
         playingParam.setPlaySingleSong(true);     // default
     }
 
+    @SuppressWarnings("unchecked")
     private void initializeVariables(Bundle savedInstanceState) {
 
         // private MediaSource mediaSource;
@@ -1629,10 +1632,10 @@ public class PlayerFragment extends Fragment {
         public void onPrepareFromUri(Uri uri, Bundle extras) {
             Log.d(TAG, "Uri = " + uri);
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-            // DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setMp4ExtractorFlags ( Mp4Extractor.FLAG_WORKAROUND_IGNORE_EDIT_LISTS);
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             playingParam.setMediaSourcePrepared(false);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             long currentAudioPosition = playingParam.getCurrentAudioPosition();
             float currentVolume = playingParam.getCurrentVolume();

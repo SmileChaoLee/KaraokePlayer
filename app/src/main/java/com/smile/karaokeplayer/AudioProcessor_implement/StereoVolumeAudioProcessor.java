@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.audioprocessor_implement;
+package com.smile.karaokeplayer.AudioProcessor_implement;
 
 /*
  * Copyright (C) 2017 The Android Open Source Project

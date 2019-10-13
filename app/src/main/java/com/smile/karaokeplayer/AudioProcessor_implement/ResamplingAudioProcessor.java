@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.smile.karaokeplayer.audioprocessor_implement;
+package com.smile.karaokeplayer.AudioProcessor_implement;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;

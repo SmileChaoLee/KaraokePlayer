@@ -2,12 +2,6 @@ package com.smile.karaokeplayer;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.database.DataSetObserver;
-import android.util.Pair;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.ArrayAdapter;
 
 import androidx.multidex.MultiDexApplication;
 
@@ -17,7 +11,6 @@ import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 public class SmileApplication extends MultiDexApplication {
