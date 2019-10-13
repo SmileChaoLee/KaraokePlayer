@@ -1,9 +1,5 @@
 package com.smile.karaokeplayer;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
@@ -15,14 +11,17 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
-import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;

@@ -19,8 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
