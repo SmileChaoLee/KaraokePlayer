@@ -1468,7 +1468,7 @@ public class ExoPlayerFragment extends Fragment {
                                             switch (rendererType) {
                                                 case C.TRACK_TYPE_AUDIO:
                                                     Log.d(TAG, "The audio renderer index = " + rendererIndex);
-                                                    // track starts from 1
+                                                    // track starts from 1 for user interface
                                                     rendererName = getString(R.string.audioTrackString) + " " + (numAudioRenderer + 1);
                                                     audioRendererIndexMap.put(rendererName, rendererIndex);
                                                     int stereoMode = format.stereoMode;

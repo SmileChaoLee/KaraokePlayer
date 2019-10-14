@@ -35,10 +35,16 @@ public class SmileApplication extends MultiDexApplication {
     public static Resources AppResources;
     public static Context AppContext;
 
+    public static String googleAdMobBannerID = "";
     public static ShowingInterstitialAdsUtil InterstitialAd;
+
     private static FacebookInterstitialAds facebookAds;
     private static GoogleAdMobInterstitial googleInterstitialAd;
-    public static String googleAdMobBannerID = "";
+
+    // temporary settings
+    public static final boolean IsPlayingExoPlayer = false;
+    public static final boolean UseAdityaFileBrowser = true;
+    //
 
     @Override
     public void onCreate() {

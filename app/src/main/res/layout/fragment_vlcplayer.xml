@@ -7,7 +7,7 @@
     tools:context=".Fragments.VLCPlayerFragment">
 
     <org.videolan.libvlc.util.VLCVideoLayout
-        android:id="@+id/videoPlayerView"
+        android:id="@+id/videoVLCPlayerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black"

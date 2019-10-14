@@ -22,12 +22,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
+import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener
+                                                    , VLCPlayerFragment.OnFragmentInteractionListener {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -81,14 +83,28 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        playerFragment = fmManager.findFragmentByTag(ExoPlayerFragment.ExoPlayerFragmentTag);
-        if (playerFragment == null) {
-            playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
-            ft.add(playerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
+        String fragmentTag;
+        if (SmileApplication.IsPlayingExoPlayer) {
+            fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
+            playerFragment = fmManager.findFragmentByTag(fragmentTag);
+            if (playerFragment == null) {
+                playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+                ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
+            } else {
+                ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
+            }
         } else {
-            ft.replace(playerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
+            // Use LibVLC to play video
+            fragmentTag = VLCPlayerFragment.VLCPlayerFragmentTag;
+            playerFragment = fmManager.findFragmentByTag(fragmentTag);
+            if (playerFragment == null) {
+                playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+                ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
+            } else {
+                ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
+            }
         }
-        ft.addToBackStack(ExoPlayerFragment.ExoPlayerFragmentTag);
+        ft.addToBackStack(fragmentTag);
         if (playerFragment.isStateSaved()) {
             ft.commitAllowingStateLoss();
         } else {
