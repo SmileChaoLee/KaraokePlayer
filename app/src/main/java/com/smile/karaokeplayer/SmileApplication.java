@@ -41,11 +41,6 @@ public class SmileApplication extends MultiDexApplication {
     private static FacebookInterstitialAds facebookAds;
     private static GoogleAdMobInterstitial googleInterstitialAd;
 
-    // temporary settings
-    public static final boolean IsPlayingExoPlayer = false;
-    public static final boolean UseAdityaFileBrowser = true;
-    //
-
     @Override
     public void onCreate() {
         super.onCreate();

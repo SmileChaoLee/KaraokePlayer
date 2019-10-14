@@ -123,6 +123,7 @@ public class VLCPlayerFragment extends Fragment {
     private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
+    private boolean isAudioTrackMenuItemPressed;
     // submenu of channel
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
@@ -162,6 +163,10 @@ public class VLCPlayerFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
     public static final String SongInfoPara = "SongInfo";
+
+    // temporary settings
+    private static final boolean UseAdityaFileBrowser = true;
+    //
 
     private OnFragmentInteractionListener mListener;
 
@@ -421,10 +426,6 @@ public class VLCPlayerFragment extends Fragment {
         animationText.setRepeatCount(Animation.INFINITE);
         //
 
-        // the original places for the two following statements
-        // initVLCPlayer();
-        // initMediaSessionCompat();
-
         linearLayout_for_ads = vlcPlayerFragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
@@ -469,7 +470,7 @@ public class VLCPlayerFragment extends Fragment {
             }
         }
     }
-    
+
     public void onInteractionProcessed(String msgString) {
         if (mListener != null) {
         }
@@ -518,6 +519,13 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        isAudioTrackMenuItemPressed = false;
+        Log.d(TAG, "onPrepareOptionsMenu() is called.");
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         boolean isAutoPlay;
@@ -553,7 +561,6 @@ public class VLCPlayerFragment extends Fragment {
                         playingParam.setAutoPlay(true);
                         playingParam.setPublicSongIndex(0);
                         // start playing video from list
-                        // if (vlcPlayer.getPlaybackState() != Player.STATE_IDLE) {
                         if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
                             // media is playing or prepared
                             // vlcPlayer.stop();// no need   // will go to onPlayerStateChanged()
@@ -649,6 +656,7 @@ public class VLCPlayerFragment extends Fragment {
             case R.id.toTV:
                 break;
             case R.id.audioTrack:
+                isAudioTrackMenuItemPressed = true;
                 // if there are audio tracks
                 SubMenu subMenu = item.getSubMenu();
                 ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
@@ -709,36 +717,40 @@ public class VLCPlayerFragment extends Fragment {
 
                 break;
             case R.id.leftChannel:
-                setAudioTrackAndChannel(playingParam.getCurrentAudioRendererPlayed(), SmileApplication.leftChannel);
                 playingParam.setCurrentChannelPlayed(SmileApplication.leftChannel);
+                setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.rightChannel:
-                setAudioTrackAndChannel(playingParam.getCurrentAudioRendererPlayed(), SmileApplication.rightChannel);
                 playingParam.setCurrentChannelPlayed(SmileApplication.rightChannel);
+                setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.stereoChannel:
-                setAudioTrackAndChannel(playingParam.getCurrentAudioRendererPlayed(), SmileApplication.stereoChannel);
                 playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
+                setAudioVolume(playingParam.getCurrentVolume());
                 break;
         }
 
         // deal with switching audio track
-        if ( (mediaUri != null) && (numberOfAudioRenderers>0) ) {
-            if (item.getTitle() != null) {
-                String itemTitle = item.getTitle().toString();
-                Log.d(TAG, "itemTitle = " + itemTitle);
-                if (audioTrackMenuItem.hasSubMenu()) {
-                    SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                    int menuSize = subMenu.size();
-                    for (int index=0; index<menuSize; index++) {
-                        if (itemTitle.equals(subMenu.getItem(index).getTitle().toString())) {
-                            setAudioTrackAndChannel(index + 1, currentChannelPlayed);
-                            break;
+        if (isAudioTrackMenuItemPressed) {
+            if ((mediaUri != null) && (numberOfAudioRenderers > 0)) {
+                if (item.getTitle() != null) {
+                    String itemTitle = item.getTitle().toString();
+                    Log.d(TAG, "itemTitle = " + itemTitle);
+                    if (audioTrackMenuItem.hasSubMenu()) {
+                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                        int menuSize = subMenu.size();
+                        for (int index = 0; index < menuSize; index++) {
+                            if (itemTitle.equals(subMenu.getItem(index).getTitle().toString())) {
+                                setAudioTrackAndChannel(index + 1, currentChannelPlayed);
+                                break;
+                            }
                         }
                     }
                 }
             }
+            isAudioTrackMenuItemPressed = false;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -791,8 +803,7 @@ public class VLCPlayerFragment extends Fragment {
 
         outState.putParcelable("MediaUri", mediaUri);
         Log.d(TAG, "onSaveInstanceState() --> playingParam.getCurrentPlaybackState() = " + playingParam.getCurrentPlaybackState());
-        // ?????????
-        playingParam.setCurrentAudioPosition((long)vlcPlayer.getPosition());
+        playingParam.setCurrentAudioPosition(vlcPlayer.getTime());
 
         outState.putParcelable("PlayingParameters", playingParam);
         outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
@@ -854,7 +865,7 @@ public class VLCPlayerFragment extends Fragment {
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
 
-                if (!SmileApplication.UseAdityaFileBrowser) {
+                if (!UseAdityaFileBrowser) {
                     // not useFileChooser.class in com.adityak:browsemyfiles:1.9
                     String filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
                     if (filePath != null) {
@@ -1020,7 +1031,7 @@ public class VLCPlayerFragment extends Fragment {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent;
-        if (!SmileApplication.UseAdityaFileBrowser) {
+        if (!UseAdityaFileBrowser) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             } else {
@@ -1048,6 +1059,7 @@ public class VLCPlayerFragment extends Fragment {
         final ArrayList<String> args = new ArrayList<>();
         args.add("-vvv");
         mLibVLC = new LibVLC(callingContext, args);
+        mLibVLC = new LibVLC(callingContext);
         vlcPlayer = new MediaPlayer(mLibVLC);
         vlcPlayer.setEventListener(new VLCPlayerEventListener());
     }
@@ -1055,7 +1067,7 @@ public class VLCPlayerFragment extends Fragment {
     private void releaseVLCPlayer() {
         if (vlcPlayer != null) {
             vlcPlayer.stop();
-            vlcPlayer.detachViews();
+            // vlcPlayer.detachViews();
             vlcPlayer.release();
             vlcPlayer = null;
         }
@@ -1073,7 +1085,7 @@ public class VLCPlayerFragment extends Fragment {
             playbackStateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PLAY);
         }
         playbackStateBuilder.setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 0);
-        // playbackStateBuilder.setState(state, exoPlayer.getContentPosition(), 1f);
+        // playbackStateBuilder.setState(state, vlcPlayer.getTime(), 1f);
         mediaSessionCompat.setPlaybackState(playbackStateBuilder.build());
     }
 
@@ -1287,7 +1299,7 @@ public class VLCPlayerFragment extends Fragment {
             long currentAudioPosition = 0;
             playingParam.setCurrentAudioPosition(currentAudioPosition);
             if (playingParam.isMediaSourcePrepared()) {
-                vlcPlayer.setPosition(currentAudioPosition);
+                vlcPlayer.setTime(currentAudioPosition); // use time to set position
                 setProperAudioTrackAndChannel();
                 if (!vlcPlayer.isPlaying()) {
                     vlcPlayer.play();
@@ -1307,6 +1319,7 @@ public class VLCPlayerFragment extends Fragment {
     private void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
         if (numberOfAudioRenderers > 0) {
             // select audio track
+            Log.d(TAG, "setAudioTrackAndChannel()-->audioTrackIndex = " + audioTrackIndex);
             int audioTrackId = audioTrackIndexList.get(audioTrackIndex - 1);
             vlcPlayer.setAudioTrack(audioTrackId);
             playingParam.setCurrentAudioRendererPlayed(audioTrackIndex);
@@ -1334,9 +1347,22 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void setAudioVolume(float volume) {
-        //
-        // vlcPlayer.setVolume((int)volume);
-        //
+        int audioChannel = playingParam.getCurrentChannelPlayed();
+        float leftVolume = volume;
+        float rightVolume = volume;
+        switch (audioChannel) {
+            case SmileApplication.leftChannel:
+                rightVolume = 0;
+                break;
+            case SmileApplication.rightChannel:
+                leftVolume = 0;
+                break;
+            case SmileApplication.stereoChannel:
+                // leftVolume = rightVolume
+                break;
+        }
+        int vlcMaxVolume = 100;
+        vlcPlayer.setVolume((int)(volume * vlcMaxVolume));
         playingParam.setCurrentVolume(volume);
     }
 
@@ -1350,6 +1376,78 @@ public class VLCPlayerFragment extends Fragment {
         } else {
             // not auto playing media, means using open menu to open a media
             switchAudioToVocal();   // music and vocal are the same in this case
+        }
+    }
+
+    private void getPlayingMediaInfoAndSetAudioActionSubMenu() {
+        numberOfVideoRenderers = vlcPlayer.getVideoTracksCount();
+        Log.d(TAG, "numberOfVideoRenderers = " + numberOfVideoRenderers);
+        if (numberOfVideoRenderers == 0) {
+            playingParam.setCurrentVideoRendererPlayed(noVideoRenderer);
+        } else {
+            // set which video track to be played
+            int videoTrack = playingParam.getCurrentVideoRendererPlayed();
+            playingParam.setCurrentVideoRendererPlayed(videoTrack);
+        }
+        numberOfAudioRenderers = 0;
+        MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();
+        int audioTrackId;
+        String audioTrackName;
+        audioTrackIndexList.clear();
+        if (audioDis != null) {
+            // because it is null sometimes
+            for (int i = 0; i < audioDis.length; i++) {
+                audioTrackId = audioDis[i].id;
+                audioTrackName = audioDis[i].name;
+                Log.d(TAG, "audioDis[i].id = " + audioTrackId);
+                Log.d(TAG, "audioDis[i].name = " + audioDis[i].name);
+                // including disabled and enabled audio track
+                numberOfAudioRenderers++;
+                audioTrackIndexList.add(audioTrackId);
+            }
+        }
+        Log.d(TAG, "numberOfAudioRenderers = " + numberOfAudioRenderers);
+        if (numberOfAudioRenderers == 0) {
+            playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
+            playingParam.setCurrentChannelPlayed(noAudioChannel);
+        } else {
+            audioTrackId = vlcPlayer.getAudioTrack();
+            int audioTrackIndex = 1;    // default audio track index
+            int audioChannel = SmileApplication.stereoChannel;
+            Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackId);
+            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+                audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
+                audioChannel = playingParam.getCurrentChannelPlayed();
+            } else {
+                for (int index = 0; index< audioTrackIndexList.size(); index++) {
+                    int audioId = audioTrackIndexList.get(index);
+                    if (audioId == audioTrackId) {
+                        audioTrackIndex = index + 1;
+                        break;
+                    }
+                }
+                // for open media. do not know the music track and vocal track
+                playingParam.setMusicAudioRenderer(audioTrackIndex);
+                playingParam.setMusicAudioChannel(SmileApplication.stereoChannel);
+                playingParam.setVocalAudioRenderer(audioTrackIndex);
+                playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
+            }
+            setAudioTrackAndChannel(audioTrackIndex, audioChannel);
+
+            // build R.id.audioTrack submenu
+            if (audioTrackMenuItem != null) {
+                if (!audioTrackMenuItem.hasSubMenu()) {
+                    // no sub menu
+                    ((Menu) audioTrackMenuItem).addSubMenu("Text title");
+                }
+                SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                subMenu.clear();
+                for (int index=0; index<audioTrackIndexList.size(); index++) {
+                    // audio track index start from 1 for user interface
+                    audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
+                    subMenu.add(audioTrackName);
+                }
+            }
         }
     }
 
@@ -1390,7 +1488,7 @@ public class VLCPlayerFragment extends Fragment {
                 }
             }
             setAudioVolume(currentVolume);
-            vlcPlayer.setPosition((float) currentAudioPosition);
+            vlcPlayer.setTime(currentAudioPosition); // use time to set position
             try {
                 switch (playbackState) {
                     case PlaybackStateCompat.STATE_PAUSED:
@@ -1533,75 +1631,7 @@ public class VLCPlayerFragment extends Fragment {
                 case MediaPlayer.Event.Playing:
                     Log.d(TAG, "vlcPlayer is being played.");
                     playingParam.setMediaSourcePrepared(true);  // has been prepared
-                    numberOfVideoRenderers = vlcPlayer.getVideoTracksCount();
-                    Log.d(TAG, "numberOfVideoRenderers = " + numberOfVideoRenderers);
-                    if (numberOfVideoRenderers == 0) {
-                        playingParam.setCurrentVideoRendererPlayed(noVideoRenderer);
-                    } else {
-                        // set which video track to be played
-                        int videoTrack = playingParam.getCurrentVideoRendererPlayed();
-                        playingParam.setCurrentVideoRendererPlayed(videoTrack);
-                    }
-
-                    // for testing
-                    numberOfAudioRenderers = vlcPlayer.getAudioTracksCount();
-                    Log.d(TAG, "numberOfAudioRenderers = " + numberOfAudioRenderers);
-
-                    numberOfAudioRenderers = 0;
-                    MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();
-                    int audioTrackId;
-                    String audioTrackName;
-                    if (audioDis != null) {
-                        // because it is null sometimes
-                        for (int i = 0; i < audioDis.length; i++) {
-                            audioTrackId = audioDis[i].id;
-                            audioTrackName = audioDis[i].name;
-                            Log.d(TAG, "audioDis[i].id = " + audioTrackId);
-                            Log.d(TAG, "audioDis[i].name = " + audioDis[i].name);
-                            if (audioTrackId >= 0) {
-                                // enabled audio track
-                                numberOfAudioRenderers++;
-                                audioTrackIndexList.add(audioTrackId);
-                            }
-                        }
-                    }
-                    if (numberOfAudioRenderers == 0) {
-                        playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
-                        playingParam.setCurrentChannelPlayed(noAudioChannel);
-                    } else {
-                        audioTrackId = vlcPlayer.getAudioTrack();
-                        int audioTrackIndex = 1;    // default audio track index
-                        int audioChannel = SmileApplication.stereoChannel;
-                        Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackId);
-                        if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-                            audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
-                            audioChannel = playingParam.getCurrentChannelPlayed();
-                        } else {
-                            for (int index = 0; index< audioTrackIndexList.size(); index++) {
-                                int audioId = audioTrackIndexList.get(index);
-                                if (audioId == audioTrackId) {
-                                    audioTrackIndex = index + 1;
-                                    break;
-                                }
-                            }
-                        }
-                        setAudioTrackAndChannel(audioTrackIndex, audioChannel);
-
-                        // build R.id.audioTrack submenu
-                        if (audioTrackMenuItem != null) {
-                            if (!audioTrackMenuItem.hasSubMenu()) {
-                                // no sub menu
-                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
-                            }
-                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                            subMenu.clear();
-                            for (int index=0; index<audioTrackIndexList.size(); index++) {
-                                // audio track index start from 1 for user interface
-                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
-                                subMenu.add(audioTrackName);
-                            }
-                        }
-                    }
+                    getPlayingMediaInfoAndSetAudioActionSubMenu();
                     dismissBufferingMessage();
                     hideNativeAds();
                     break;
@@ -1623,6 +1653,8 @@ public class VLCPlayerFragment extends Fragment {
                     Log.d(TAG, "vlcPlayer is Opening media.");
                     break;
                 case MediaPlayer.Event.PositionChanged:
+                    break;
+                case MediaPlayer.Event.TimeChanged:
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     Log.d(TAG, "vlcPlayer is EncounteredError event");

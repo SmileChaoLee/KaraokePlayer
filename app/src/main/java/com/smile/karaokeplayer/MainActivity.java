@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     private SongInfo songInfo;
     private Fragment playerFragment;
 
+    // temporary settings
+    private static final boolean IsPlayingExoPlayer = false;
+    //
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         FragmentTransaction ft = fmManager.beginTransaction();
 
         String fragmentTag;
-        if (SmileApplication.IsPlayingExoPlayer) {
+        if (IsPlayingExoPlayer) {
             fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
             playerFragment = fmManager.findFragmentByTag(fragmentTag);
             if (playerFragment == null) {
