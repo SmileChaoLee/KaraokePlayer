@@ -158,9 +158,7 @@ public class VLCPlayerFragment extends Fragment {
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
     private SongInfo songInfo;
-    //
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
     public static final String SongInfoPara = "SongInfo";
@@ -178,7 +176,6 @@ public class VLCPlayerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void setSupportActionBarForFragment(Toolbar toolbar);
         ActionBar getSupportActionBarForFragment();
         void onExitFragment();
@@ -196,7 +193,6 @@ public class VLCPlayerFragment extends Fragment {
      * @param songInfo Parameter 2.
      * @return A new instance of fragment VLCPlayerFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static VLCPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         VLCPlayerFragment fragment = new VLCPlayerFragment();
         Bundle args = new Bundle();
@@ -473,8 +469,7 @@ public class VLCPlayerFragment extends Fragment {
             }
         }
     }
-
-    // TODO: Rename method, update argument and hook method into UI event
+    
     public void onInteractionProcessed(String msgString) {
         if (mListener != null) {
         }

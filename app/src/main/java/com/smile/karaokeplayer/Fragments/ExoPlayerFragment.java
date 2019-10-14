@@ -180,9 +180,7 @@ public class ExoPlayerFragment extends Fragment {
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
     private SongInfo songInfo;
-    //
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
     public static final String SongInfoPara = "SongInfo";
@@ -200,7 +198,6 @@ public class ExoPlayerFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void setSupportActionBarForFragment(Toolbar toolbar);
         ActionBar getSupportActionBarForFragment();
         void onExitFragment();
@@ -218,7 +215,6 @@ public class ExoPlayerFragment extends Fragment {
      * @param songInfo Parameter 2.
      * @return A new instance of fragment ExoPlayerFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         ExoPlayerFragment fragment = new ExoPlayerFragment();
         Bundle args = new Bundle();
@@ -477,7 +473,6 @@ public class ExoPlayerFragment extends Fragment {
         }
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onInteractionProcessed(String msgString) {
         if (mListener != null) {
         }
@@ -916,8 +911,8 @@ public class ExoPlayerFragment extends Fragment {
 
         playingParam.setCurrentVideoRendererPlayed(0);
 
-        playingParam.setMusicAudioRenderer(0);
-        playingParam.setVocalAudioRenderer(0);
+        playingParam.setMusicAudioRenderer(1);
+        playingParam.setVocalAudioRenderer(1);
         playingParam.setCurrentAudioRendererPlayed(playingParam.getMusicAudioRenderer());
         playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
         playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
