@@ -58,9 +58,6 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,7 +80,7 @@ public class VLCPlayerFragment extends Fragment {
     private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean ENABLE_SUBTITLES = true;
     private static final int VLCPlayerView_Timeout = 10000;  //  10 seconds
-    private static final int noVideoRenderer = -1;
+    private static final int noVideoTrack = -1;
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
     private static final int maxProgress = 100;
@@ -149,11 +146,9 @@ public class VLCPlayerFragment extends Fragment {
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
     // private MediaSource mediaSource;
-    private int numberOfVideoRenderers;
-    private int numberOfAudioRenderers;
-    // private SortedMap<String, Integer> videoRendererIndexMap;
-    // private SortedMap<String, Integer> audioRendererIndexMap;
-    private SortedMap<String, Integer> videoRendererIndexMap;
+    private int numberOfVideoTracks;
+    private int numberOfAudioTracks;
+    private ArrayList<Integer> videoTrackIndexList;
     private ArrayList<Integer> audioTrackIndexList;
     private ArrayList<SongInfo> publicSongList;
     private PlayingParameters playingParam;
@@ -600,9 +595,9 @@ public class VLCPlayerFragment extends Fragment {
                 break;
             case R.id.action:
                 Log.d(TAG, "R.id.action --> mediaUri = " + mediaUri);
-                Log.d(TAG, "R.id.action --> numberOfAudioRenderers = " + numberOfAudioRenderers);
-                // if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
-                if ( (mediaUri != null) && (numberOfAudioRenderers>0) ) {
+                Log.d(TAG, "R.id.action --> numberOfAudioTracks = " + numberOfAudioTracks);
+                // if ( (mediaSource != null) && (numberOfAudioTracks>0) ) {
+                if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
                     Log.d(TAG, "R.id.action --> mediaUri is not null.");
                     playMenuItem.setEnabled(true);
                     pauseMenuItem.setEnabled(true);
@@ -631,7 +626,7 @@ public class VLCPlayerFragment extends Fragment {
                     }
                     // toTvMenuItem
                 } else {
-                    Log.d(TAG, "R.id.action --> mediaUri is null or numberOfAudioRenderers = 0.");
+                    Log.d(TAG, "R.id.action --> mediaUri is null or numberOfAudioTracks = 0.");
                     playMenuItem.setEnabled(false);
                     pauseMenuItem.setEnabled(false);
                     stopMenuItem.setEnabled(false);
@@ -674,8 +669,8 @@ public class VLCPlayerFragment extends Fragment {
                 //
                 break;
             case R.id.channel:
-                // if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
-                if ( (mediaUri != null) && (numberOfAudioRenderers>0) ) {
+                // if ( (mediaSource != null) && (numberOfAudioTracks>0) ) {
+                if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
                     leftChannelMenuItem.setEnabled(true);
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
@@ -731,8 +726,8 @@ public class VLCPlayerFragment extends Fragment {
         }
 
         // deal with switching audio track
-        if (isAudioTrackMenuItemPressed) {
-            if ((mediaUri != null) && (numberOfAudioRenderers > 0)) {
+        if ( (isAudioTrackMenuItemPressed) && (id != audioTrackMenuItem.getItemId()) ) {
+            if ((mediaUri != null) && (numberOfAudioTracks > 0)) {
                 if (item.getTitle() != null) {
                     String itemTitle = item.getTitle().toString();
                     Log.d(TAG, "itemTitle = " + itemTitle);
@@ -795,9 +790,9 @@ public class VLCPlayerFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"ExoVLCPlayerFragment-->onSaveInstanceState() is called.");
 
-        outState.putInt("NumberOfVideoRenderers",numberOfVideoRenderers);
-        outState.putInt("NumberOfAudioRenderers", numberOfAudioRenderers);
-        outState.putSerializable("VideoRendererIndexMap", new HashMap<String, Integer>(videoRendererIndexMap));
+        outState.putInt("NumberOfVideoTracks", numberOfVideoTracks);
+        outState.putInt("NumberOfAudioTracks", numberOfAudioTracks);
+        outState.putIntegerArrayList("VideoTrackIndexList", videoTrackIndexList);
         outState.putIntegerArrayList("AudioTrackIndexList", audioTrackIndexList);
         outState.putParcelableArrayList("PublicSongList", publicSongList);
 
@@ -987,14 +982,12 @@ public class VLCPlayerFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private void initializeVariables(Bundle savedInstanceState) {
 
-        // private MediaSource mediaSource;
-
         if (savedInstanceState == null) {
             // new fragment is being created
 
-            numberOfVideoRenderers = 0;
-            numberOfAudioRenderers = 0;
-            videoRendererIndexMap = new TreeMap<>();
+            numberOfVideoTracks = 0;
+            numberOfAudioTracks = 0;
+            videoTrackIndexList = new ArrayList<>();
             audioTrackIndexList = new ArrayList<>();
 
             mediaUri = null;
@@ -1008,12 +1001,9 @@ public class VLCPlayerFragment extends Fragment {
             }
         } else {
             // needed to be set
-            numberOfVideoRenderers = savedInstanceState.getInt("NumberOfVideoRenderers",0);
-            numberOfAudioRenderers = savedInstanceState.getInt("NumberOfAudioRenderers");
-            HashMap<String, Integer> videoHashMap = (HashMap)savedInstanceState.get("VideoRendererIndexMap");
-            videoRendererIndexMap = new TreeMap<>();
-            videoRendererIndexMap.putAll(videoHashMap);
-            HashMap<String, Integer> audioHashMap = (HashMap)savedInstanceState.get("AudioRendererIndexMap");
+            numberOfVideoTracks = savedInstanceState.getInt("NumberOfVideoTracks",0);
+            numberOfAudioTracks = savedInstanceState.getInt("NumberOfAudioTracks");
+            videoTrackIndexList = savedInstanceState.getIntegerArrayList("VideoTrackIndexList");
             audioTrackIndexList = savedInstanceState.getIntegerArrayList("AudioTrackIndexList");
             publicSongList = savedInstanceState.getParcelableArrayList("PublicSongList");
 
@@ -1067,7 +1057,7 @@ public class VLCPlayerFragment extends Fragment {
     private void releaseVLCPlayer() {
         if (vlcPlayer != null) {
             vlcPlayer.stop();
-            // vlcPlayer.detachViews();
+            vlcPlayer.detachViews();
             vlcPlayer.release();
             vlcPlayer = null;
         }
@@ -1294,8 +1284,8 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void replayMedia() {
-        // if ( (mediaSource != null) && (numberOfAudioRenderers>0) ) {
-        if ( (mediaUri != null) && (numberOfAudioRenderers>0) ) {
+        // if ( (mediaSource != null) && (numberOfAudioTracks>0) ) {
+        if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
             long currentAudioPosition = 0;
             playingParam.setCurrentAudioPosition(currentAudioPosition);
             if (playingParam.isMediaSourcePrepared()) {
@@ -1317,7 +1307,7 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
-        if (numberOfAudioRenderers > 0) {
+        if (numberOfAudioTracks > 0) {
             // select audio track
             Log.d(TAG, "setAudioTrackAndChannel()-->audioTrackIndex = " + audioTrackIndex);
             int audioTrackId = audioTrackIndexList.get(audioTrackIndex - 1);
@@ -1380,16 +1370,36 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void getPlayingMediaInfoAndSetAudioActionSubMenu() {
-        numberOfVideoRenderers = vlcPlayer.getVideoTracksCount();
-        Log.d(TAG, "numberOfVideoRenderers = " + numberOfVideoRenderers);
-        if (numberOfVideoRenderers == 0) {
-            playingParam.setCurrentVideoRendererPlayed(noVideoRenderer);
+        numberOfVideoTracks = vlcPlayer.getVideoTracksCount();
+        MediaPlayer.TrackDescription videoDis[] = vlcPlayer.getVideoTracks();
+        int videoTrackId;
+        String videoTrackName;
+        videoTrackIndexList.clear();
+        if (videoDis != null) {
+            // because it is null sometimes
+            for (int i = 0; i < videoDis.length; i++) {
+                videoTrackId = videoDis[i].id;
+                videoTrackName = videoDis[i].name;
+                Log.d(TAG, "videoDis[i].id = " + videoTrackId);
+                Log.d(TAG, "videoDis[i].name = " + videoTrackName);
+                // exclude disabled
+                if (videoTrackId >=0 ) {
+                    // enabled audio track
+                    videoTrackIndexList.add(videoTrackId);
+                }
+            }
+        }
+        numberOfVideoTracks = videoTrackIndexList.size();
+        Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
+        if (numberOfVideoTracks == 0) {
+            playingParam.setCurrentVideoRendererPlayed(noVideoTrack);
         } else {
             // set which video track to be played
-            int videoTrack = playingParam.getCurrentVideoRendererPlayed();
-            playingParam.setCurrentVideoRendererPlayed(videoTrack);
+            int videoTrackIdPlayed = vlcPlayer.getVideoTrack();
+            playingParam.setCurrentVideoRendererPlayed(videoTrackIdPlayed);
         }
-        numberOfAudioRenderers = 0;
+
+        //
         MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();
         int audioTrackId;
         String audioTrackName;
@@ -1400,37 +1410,40 @@ public class VLCPlayerFragment extends Fragment {
                 audioTrackId = audioDis[i].id;
                 audioTrackName = audioDis[i].name;
                 Log.d(TAG, "audioDis[i].id = " + audioTrackId);
-                Log.d(TAG, "audioDis[i].name = " + audioDis[i].name);
-                // including disabled and enabled audio track
-                numberOfAudioRenderers++;
-                audioTrackIndexList.add(audioTrackId);
+                Log.d(TAG, "audioDis[i].name = " + audioTrackName);
+                // exclude disabled
+                if (audioTrackId >=0 ) {
+                    // enabled audio track
+                    audioTrackIndexList.add(audioTrackId);
+                }
             }
         }
-        Log.d(TAG, "numberOfAudioRenderers = " + numberOfAudioRenderers);
-        if (numberOfAudioRenderers == 0) {
+        numberOfAudioTracks = audioTrackIndexList.size();
+        Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
+        if (numberOfAudioTracks == 0) {
             playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
             playingParam.setCurrentChannelPlayed(noAudioChannel);
         } else {
-            audioTrackId = vlcPlayer.getAudioTrack();
+            int audioTrackIdPlayed = vlcPlayer.getAudioTrack();
             int audioTrackIndex = 1;    // default audio track index
             int audioChannel = SmileApplication.stereoChannel;
-            Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackId);
+            Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
                 audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
             } else {
                 for (int index = 0; index< audioTrackIndexList.size(); index++) {
                     int audioId = audioTrackIndexList.get(index);
-                    if (audioId == audioTrackId) {
+                    if (audioId == audioTrackIdPlayed) {
                         audioTrackIndex = index + 1;
                         break;
                     }
                 }
                 // for open media. do not know the music track and vocal track
                 playingParam.setMusicAudioRenderer(audioTrackIndex);
-                playingParam.setMusicAudioChannel(SmileApplication.stereoChannel);
+                playingParam.setMusicAudioChannel(audioChannel);
                 playingParam.setVocalAudioRenderer(audioTrackIndex);
-                playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
+                playingParam.setVocalAudioChannel(audioChannel);
             }
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);
 

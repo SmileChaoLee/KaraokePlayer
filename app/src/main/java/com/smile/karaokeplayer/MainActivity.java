@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     private Fragment playerFragment;
 
     // temporary settings
-    private static final boolean IsPlayingExoPlayer = false;
+    private static final boolean IsPlayingExoPlayer = true;
     //
 
     @Override
