@@ -47,6 +47,9 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioProcessor;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -57,6 +60,8 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -77,7 +82,11 @@ import com.smile.karaokeplayer.SongListActivity;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import org.videolan.libvlc.Media;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -1016,7 +1025,7 @@ public class ExoPlayerFragment extends Fragment {
     }
 
     private void initExoPlayer() {
-        dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
+
         // trackSelector = new DefaultTrackSelector();
         // trackSelector = new DefaultTrackSelector(new RandomTrackSelection.Factory());
         trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
@@ -1454,178 +1463,24 @@ public class ExoPlayerFragment extends Fragment {
                     // trackSelector.setParameters(parametersBuilder.build());  // for the testing
                     // or trackSelector.setParameters(parametersBuilder);  // for the testing
 
-                    int numVideoRenderer = 0;
-                    int numAudioRenderer = 0;
-                    int numTextRenderer = 0;
-                    int numUnknownRenderer = 0;
-
-                    videoTrackIndexList.clear();
-                    audioTrackIndexList.clear();
-
-                    int videoTrackIdPlayed = -1;
-                    int audioTrackIdPlayed = -1;
-                    Format videoPlayedFormat = exoPlayer.getVideoFormat();
-                    if (videoPlayedFormat != null) {
-                        Log.d(TAG, "videoPlayedFormat.id = " + videoPlayedFormat.id);
-                    } else {
-                        Log.d(TAG, "videoPlayedFormat is null.");
-                    }
-                    Format audioPlayedFormat = exoPlayer.getAudioFormat();
-                    if (audioPlayedFormat != null) {
-                        Log.d(TAG, "audioPlayedFormat.id = " + audioPlayedFormat.id);
-                    } else {
-                        Log.d(TAG, "audioPlayedFormat is null.");
-                    }
-                    boolean playedAudioGroupFound = false;
-                    boolean playedVideoGroupFound = false;
-
-                    MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-                    if (mappedTrackInfo != null) {
-                        int rendererCount = mappedTrackInfo.getRendererCount();
-                        Log.d(TAG, "mappedTrackInfo.getRendererCount() = " + rendererCount);
-                        //
-                        for (int rendererIndex = 0; rendererIndex < rendererCount; rendererIndex++) {
-                            Log.d(TAG, "rendererIndex = " + rendererIndex);
-                            // if (playedVideoGroupFound && playedAudioGroupFound) {
-                            //     // end of searching
-                            //     break;
-                            // }
-                            int rendererType = mappedTrackInfo.getRendererType(rendererIndex);
-                            TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
-                            Log.d(TAG, "mappedTrackInfo.getTrackGroups(rendererIndex) = " + trackGroupArray);
-                            if (trackGroupArray != null) {
-                                int arraySize = trackGroupArray.length;
-                                Log.d(TAG, "trackGroupArray.length = " + arraySize);
-                                for (int groupIndex = 0; groupIndex < arraySize; groupIndex++) {
-                                    TrackGroup trackGroup = trackGroupArray.get(groupIndex);
-                                    Log.d(TAG, "trackGroup = " + trackGroup);
-                                    if (trackGroup != null) {
-                                        int groupSize = trackGroup.length;
-                                        Log.d(TAG, "trackGroup.length = " + groupSize);
-                                        for (int trackIndex = 0; trackIndex < groupSize; trackIndex++) {
-                                            Format tempFormat = trackGroup.getFormat(trackIndex);
-                                            switch (rendererType) {
-                                                case C.TRACK_TYPE_VIDEO:
-                                                    Log.d(TAG, "The video track index = " + trackIndex);
-                                                    numVideoRenderer++;
-                                                    if (!playedVideoGroupFound) {
-                                                        videoTrackIndexList.add(trackIndex);
-                                                    }
-                                                    // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
-                                                    break;
-                                                case C.TRACK_TYPE_AUDIO:
-                                                    Log.d(TAG, "The audio track index = " + trackIndex);
-                                                    numAudioRenderer++;
-                                                    if (!playedAudioGroupFound) {
-                                                        audioTrackIndexList.add(trackIndex);
-                                                    }
-                                                    // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
-                                                    break;
-                                                case C.TRACK_TYPE_TEXT:
-                                                    numTextRenderer++;
-                                                    break;
-                                                default:
-                                                    numUnknownRenderer++;
-                                                    break;
-                                            }
-                                            //
-                                            Log.d(TAG, "tempFormat = " + tempFormat);
-                                            Log.d(TAG, "tempFormat.id = " + tempFormat.id);
-                                            Log.d(TAG, "tempFormat.sampleMimeType = " + tempFormat.sampleMimeType);
-                                        }
-
-                                        // check video format
-                                        if (!playedVideoGroupFound) {
-                                            Integer checkPlayedVideoTrackIndex = trackGroup.indexOf(videoPlayedFormat);
-                                            if (videoTrackIndexList.contains(checkPlayedVideoTrackIndex)) {
-                                                // played audio format is in the track group
-                                                videoTrackIdPlayed = checkPlayedVideoTrackIndex;
-                                                playedVideoGroupFound = true;
-                                            } else {
-                                                // not found
-                                                videoTrackIndexList.clear();
-                                            }
-                                        }
-
-                                        // check audio format
-                                        if (!playedAudioGroupFound) {
-                                            Integer checkPlayedAudioTrackIndex = trackGroup.indexOf(audioPlayedFormat);
-                                            if (audioTrackIndexList.contains(checkPlayedAudioTrackIndex)) {
-                                                // played audio format is in the track group
-                                                audioTrackIdPlayed = checkPlayedAudioTrackIndex;
-                                                playedAudioGroupFound = true;
-                                            } else {
-                                                // not found
-                                                audioTrackIndexList.clear();
-                                            }
-                                        }
-                                        //
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-                        Log.d(TAG, "mappedTrackInfo is null.");
-                    }
+                    // findTracksForVideoAudio_1();
+                    findTracksForVideoAudio_2();
 
                     trackSelector.setParameters(parametersBuilder.build());
 
-                    Log.d(TAG, "numVideoRenderer = " + numVideoRenderer);
-                    Log.d(TAG, "numAudioRenderer = " + numAudioRenderer);
-                    Log.d(TAG, "numTextRenderer = " + numTextRenderer);
-                    Log.d(TAG, "numUnknownRenderer = " + numUnknownRenderer);
-
-                    numberOfVideoTracks = videoTrackIndexList.size();
-                    Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
-                    if (numberOfVideoTracks == 0) {
-                        playingParam.setCurrentVideoRendererPlayed(noVideoTrack);
-                    } else {
-                        playingParam.setCurrentVideoRendererPlayed(videoTrackIdPlayed);
-                    }
-
-                    numberOfAudioTracks = audioTrackIndexList.size();
-                    Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
-                    if (numberOfAudioTracks == 0) {
-                        playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
-                        playingParam.setCurrentChannelPlayed(noAudioChannel);
-                    } else {
-                        int audioTrackIndex = 1;
-                        int audioChannel = SmileApplication.stereoChannel;  // default channel
-                        Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
-                        if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-                            audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
-                            audioChannel = playingParam.getCurrentChannelPlayed();
-                        } else {
-                            for (int index = 0; index< audioTrackIndexList.size(); index++) {
-                                int audioId = audioTrackIndexList.get(index);
-                                if (audioId == audioTrackIdPlayed) {
-                                    audioTrackIndex = index + 1;
-                                    break;
-                                }
-                            }
-                            // for open media. do not know the music track and vocal track
-                            playingParam.setMusicAudioRenderer(audioTrackIndex);
-                            playingParam.setMusicAudioChannel(audioChannel);
-                            playingParam.setVocalAudioRenderer(audioTrackIndex);
-                            playingParam.setVocalAudioChannel(audioChannel);
+                    // build R.id.audioTrack submenu
+                    if (audioTrackMenuItem != null) {
+                        if (!audioTrackMenuItem.hasSubMenu()) {
+                            // no sub menu
+                            ((Menu) audioTrackMenuItem).addSubMenu("Text title");
                         }
-
-                        setAudioTrackAndChannel(audioTrackIndex, audioChannel);
-
-                        // build R.id.audioTrack submenu
-                        if (audioTrackMenuItem != null) {
-                            if (!audioTrackMenuItem.hasSubMenu()) {
-                                // no sub menu
-                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
-                            }
-                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                            subMenu.clear();
-                            String audioTrackName;
-                            for (int index=0; index<audioTrackIndexList.size(); index++) {
-                                // audio track index start from 1 for user interface
-                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
-                                subMenu.add(audioTrackName);
-                            }
+                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                        subMenu.clear();
+                        String audioTrackName;
+                        for (int index=0; index<audioTrackIndexList.size(); index++) {
+                            // audio track index start from 1 for user interface
+                            audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
+                            subMenu.add(audioTrackName);
                         }
                     }
                 }
@@ -1736,6 +1591,7 @@ public class ExoPlayerFragment extends Fragment {
             Log.d(TAG, "Uri = " + uri);
             ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
             playingParam.setMediaSourcePrepared(false);
+            dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
@@ -1780,6 +1636,312 @@ public class ExoPlayerFragment extends Fragment {
         @Override
         public boolean onCommand(Player player, ControlDispatcher controlDispatcher, String command, Bundle extras, ResultReceiver cb) {
             return false;
+        }
+    }
+
+    // method 1
+    private void findTracksForVideoAudio_1() {
+        int numVideoRenderer = 0;
+        int numAudioRenderer = 0;
+        int numTextRenderer = 0;
+        int numUnknownRenderer = 0;
+
+        videoTrackIndexList.clear();
+        audioTrackIndexList.clear();
+
+        int videoTrackIdPlayed = -1;
+        int audioTrackIdPlayed = -1;
+        Format videoPlayedFormat = exoPlayer.getVideoFormat();
+        if (videoPlayedFormat != null) {
+            Log.d(TAG, "videoPlayedFormat.id = " + videoPlayedFormat.id);
+        } else {
+            Log.d(TAG, "videoPlayedFormat is null.");
+        }
+        Format audioPlayedFormat = exoPlayer.getAudioFormat();
+        if (audioPlayedFormat != null) {
+            Log.d(TAG, "audioPlayedFormat.id = " + audioPlayedFormat.id);
+        } else {
+            Log.d(TAG, "audioPlayedFormat is null.");
+        }
+        boolean playedAudioGroupFound = false;
+        boolean playedVideoGroupFound = false;
+
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (mappedTrackInfo != null) {
+            int rendererCount = mappedTrackInfo.getRendererCount();
+            Log.d(TAG, "mappedTrackInfo.getRendererCount() = " + rendererCount);
+            //
+            for (int rendererIndex = 0; rendererIndex < rendererCount; rendererIndex++) {
+                Log.d(TAG, "rendererIndex = " + rendererIndex);
+                // if (playedVideoGroupFound && playedAudioGroupFound) {
+                //     // end of searching
+                //     break;
+                // }
+                int rendererType = mappedTrackInfo.getRendererType(rendererIndex);
+                TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
+                Log.d(TAG, "mappedTrackInfo.getTrackGroups(rendererIndex) = " + trackGroupArray);
+                if (trackGroupArray != null) {
+                    int arraySize = trackGroupArray.length;
+                    Log.d(TAG, "trackGroupArray.length = " + arraySize);
+                    for (int groupIndex = 0; groupIndex < arraySize; groupIndex++) {
+                        TrackGroup trackGroup = trackGroupArray.get(groupIndex);
+                        Log.d(TAG, "trackGroup = " + trackGroup);
+                        if (trackGroup != null) {
+                            int groupSize = trackGroup.length;
+                            Log.d(TAG, "trackGroup.length = " + groupSize);
+                            for (int trackIndex = 0; trackIndex < groupSize; trackIndex++) {
+                                Format tempFormat = trackGroup.getFormat(trackIndex);
+                                switch (rendererType) {
+                                    case C.TRACK_TYPE_VIDEO:
+                                        Log.d(TAG, "The video track index = " + trackIndex);
+                                        numVideoRenderer++;
+                                        if (!playedVideoGroupFound) {
+                                            videoTrackIndexList.add(trackIndex);
+                                        }
+                                        // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
+                                        break;
+                                    case C.TRACK_TYPE_AUDIO:
+                                        Log.d(TAG, "The audio track index = " + trackIndex);
+                                        numAudioRenderer++;
+                                        if (!playedAudioGroupFound) {
+                                            audioTrackIndexList.add(trackIndex);
+                                        }
+                                        // parametersBuilder.setRendererDisabled(rendererIndex, true); // for testing
+                                        break;
+                                    case C.TRACK_TYPE_TEXT:
+                                        numTextRenderer++;
+                                        break;
+                                    default:
+                                        numUnknownRenderer++;
+                                        break;
+                                }
+                                //
+                                Log.d(TAG, "tempFormat = " + tempFormat);
+                                Log.d(TAG, "tempFormat.id = " + tempFormat.id);
+                                Log.d(TAG, "tempFormat.sampleMimeType = " + tempFormat.sampleMimeType);
+                            }
+
+                            // check video format
+                            if (!playedVideoGroupFound) {
+                                Integer checkPlayedVideoTrackIndex = trackGroup.indexOf(videoPlayedFormat);
+                                if (videoTrackIndexList.contains(checkPlayedVideoTrackIndex)) {
+                                    // played audio format is in the track group
+                                    videoTrackIdPlayed = checkPlayedVideoTrackIndex;
+                                    playedVideoGroupFound = true;
+                                } else {
+                                    // not found
+                                    videoTrackIndexList.clear();
+                                }
+                            }
+
+                            // check audio format
+                            if (!playedAudioGroupFound) {
+                                Integer checkPlayedAudioTrackIndex = trackGroup.indexOf(audioPlayedFormat);
+                                if (audioTrackIndexList.contains(checkPlayedAudioTrackIndex)) {
+                                    // played audio format is in the track group
+                                    audioTrackIdPlayed = checkPlayedAudioTrackIndex;
+                                    playedAudioGroupFound = true;
+                                } else {
+                                    // not found
+                                    audioTrackIndexList.clear();
+                                }
+                            }
+                            //
+                        }
+                    }
+                }
+            }
+        } else {
+            Log.d(TAG, "mappedTrackInfo is null.");
+        }
+
+        Log.d(TAG, "numVideoRenderer = " + numVideoRenderer);
+        Log.d(TAG, "numAudioRenderer = " + numAudioRenderer);
+        Log.d(TAG, "numTextRenderer = " + numTextRenderer);
+        Log.d(TAG, "numUnknownRenderer = " + numUnknownRenderer);
+
+        numberOfVideoTracks = videoTrackIndexList.size();
+        Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
+        if (numberOfVideoTracks == 0) {
+            playingParam.setCurrentVideoRendererPlayed(noVideoTrack);
+        } else {
+            playingParam.setCurrentVideoRendererPlayed(videoTrackIdPlayed);
+        }
+
+        numberOfAudioTracks = audioTrackIndexList.size();
+        Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
+        if (numberOfAudioTracks == 0) {
+            playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
+            playingParam.setCurrentChannelPlayed(noAudioChannel);
+        } else {
+            int audioTrackIndex = 1;
+            int audioChannel = SmileApplication.stereoChannel;  // default channel
+            Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
+            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+                audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
+                audioChannel = playingParam.getCurrentChannelPlayed();
+            } else {
+                for (int index = 0; index< audioTrackIndexList.size(); index++) {
+                    int audioId = audioTrackIndexList.get(index);
+                    if (audioId == audioTrackIdPlayed) {
+                        audioTrackIndex = index + 1;
+                        break;
+                    }
+                }
+                // for open media. do not know the music track and vocal track
+                playingParam.setMusicAudioRenderer(audioTrackIndex);
+                playingParam.setMusicAudioChannel(audioChannel);
+                playingParam.setVocalAudioRenderer(audioTrackIndex);
+                playingParam.setVocalAudioChannel(audioChannel);
+            }
+
+            setAudioTrackAndChannel(audioTrackIndex, audioChannel);
+
+            // build R.id.audioTrack submenu
+                        /*
+                        if (audioTrackMenuItem != null) {
+                            if (!audioTrackMenuItem.hasSubMenu()) {
+                                // no sub menu
+                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
+                            }
+                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                            subMenu.clear();
+                            String audioTrackName;
+                            for (int index=0; index<audioTrackIndexList.size(); index++) {
+                                // audio track index start from 1 for user interface
+                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
+                                subMenu.add(audioTrackName);
+                            }
+                        }
+                        */
+        }
+    }
+
+    // method 2
+    private void findTracksForVideoAudio_2() {
+        // no needed to be used for this purpose
+        /*
+        int rendererCount = exoPlayer.getRendererCount();
+        Log.d(TAG, "findTracksForVideoAudio() --> rendererCount = " + rendererCount);
+        */
+        //
+
+        // no needed to be used for this purpose
+        /*
+        TrackGroupArray trackGroupArray = exoPlayer.getCurrentTrackGroups();
+        int trackGroupArraySize = trackGroupArray.length;
+        Log.d(TAG, "findTracksForVideoAudio() --> trackGroupArray.length = " + trackGroupArraySize);
+        */
+        //
+
+        TrackSelectionArray trackSelectionArray = exoPlayer.getCurrentTrackSelections();
+        int trackSelectionArraySize = trackSelectionArray.length;   // equals to exoPlayer.getRendererCount()
+        Log.d(TAG, "findTracksForVideoAudio() --> trackSelectionArray.length = " + trackSelectionArraySize);
+
+        HashMap<TrackGroup, Integer> selectedTrackGroupSelectedTrackIndexMap = new HashMap<>();
+        int i=0;
+        for (i=0; i<trackSelectionArraySize; i++) {
+            Log.d(TAG, "findTracksForVideoAudio() --> Which renderer = " + i);
+            TrackSelection  trackSelection = trackSelectionArray.get(i);
+            if (trackSelection == null) {
+                continue;   // skip this one and go to next one
+            }
+            TrackGroup selectedTrackGroup = trackSelection.getTrackGroup();
+            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackGroup = " + selectedTrackGroup);
+            if (selectedTrackGroup == null) {
+                continue;   // skip to next one
+            }
+            // getSelectedIndexInTrackGroup() or getIndexInTrackGroup(i)
+            int selectedTrackIndex = trackSelection.getSelectedIndex();
+            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackIndex = " + selectedTrackIndex);
+            if (!selectedTrackGroupSelectedTrackIndexMap.containsKey(selectedTrackGroup)) {
+                // not contain than add
+                selectedTrackGroupSelectedTrackIndexMap.put(selectedTrackGroup, selectedTrackIndex);
+            }
+        }
+        int numSelectedTrackGroups = selectedTrackGroupSelectedTrackIndexMap.size();
+        Log.d(TAG, "findTracksForVideoAudio() --> Number of selected TrackGroups = " + numSelectedTrackGroups);
+
+        // no needed to be used for this purpose
+        /*
+        HashMap<TrackGroup, ArrayList<Integer>> selectedTrackGroupNotSelectedTrackIndexListMap = new HashMap<>();
+        for (TrackGroup selectedTrackGroup : selectedTrackGroupMapSelectedTrackIndexMap.keySet()) {
+            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackGroup = " + selectedTrackGroup);
+
+            ArrayList<Integer> notSelectedTrackIndexList = new ArrayList<>();
+            int thisTrackGroupSize = selectedTrackGroup.length;
+            for (int trackIndex=0; trackIndex<thisTrackGroupSize; trackIndex++) {
+                if (trackIndex != selectedTrackGroupMapSelectedTrackIndexMap.get(selectedTrackGroup)) {
+                    notSelectedTrackIndexList.add(trackIndex);
+                    Log.d(TAG, "findTracksForVideoAudio() --> Index of unselected Tracks in selected TrackGroup = " + trackIndex);
+                }
+            }
+            Log.d(TAG, "findTracksForVideoAudio() --> Number of unselected Tracks in selected TrackGroup = " + notSelectedTrackIndexList.size());
+            selectedTrackGroupNotSelectedTrackIndexListMap.put(selectedTrackGroup, notSelectedTrackIndexList);
+        }
+        */
+        //
+
+        // Choose only two track group: Video and Audio
+        int maxTrackGroups = 2;
+        Format videoPlayedFormat = exoPlayer.getVideoFormat();
+        Format audioPlayedFormat = exoPlayer.getAudioFormat();
+        int qualifiedTrackGroups = 0;
+        for (TrackGroup trackGroup : selectedTrackGroupSelectedTrackIndexMap.keySet()) {
+            int selectedTrackIndex = selectedTrackGroupSelectedTrackIndexMap.get(trackGroup);
+            int index = trackGroup.indexOf(videoPlayedFormat);
+            if (index >= 0 ) {
+                // video track group
+                qualifiedTrackGroups++;
+                videoTrackIndexList.clear();
+                for (int tIndex=0; tIndex<trackGroup.length; tIndex++) {
+                    videoTrackIndexList.add(tIndex);
+                }
+                numberOfVideoTracks = videoTrackIndexList.size();
+                Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
+                if (numberOfVideoTracks == 0) {
+                    playingParam.setCurrentVideoRendererPlayed(noVideoTrack);
+                } else {
+                    // start from 1 in user interface
+                    playingParam.setCurrentVideoRendererPlayed(selectedTrackIndex + 1);
+                }
+            } else {
+                index = trackGroup.indexOf(audioPlayedFormat);
+                if (index >= 0) {
+                    // audio track group
+                    qualifiedTrackGroups++;
+                    audioTrackIndexList.clear();
+                    for (int tIndex=0; tIndex<trackGroup.length; tIndex++) {
+                        audioTrackIndexList.add(tIndex);
+                    }
+                    numberOfAudioTracks = audioTrackIndexList.size();
+                    Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
+                    if (numberOfAudioTracks == 0) {
+                        playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
+                        playingParam.setCurrentChannelPlayed(noAudioChannel);
+                    } else {
+                        int audioTrackIndex = 1;
+                        int audioChannel = SmileApplication.stereoChannel;  // default channel
+                        if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+                            audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
+                            audioChannel = playingParam.getCurrentChannelPlayed();
+                        } else {
+                            // for open media. do not know the music track and vocal track
+                            // start from 1 in user interface
+                            audioTrackIndex = selectedTrackIndex + 1;
+                            playingParam.setMusicAudioRenderer(audioTrackIndex);
+                            playingParam.setMusicAudioChannel(audioChannel);
+                            playingParam.setVocalAudioRenderer(audioTrackIndex);
+                            playingParam.setVocalAudioChannel(audioChannel);
+                        }
+
+                        setAudioTrackAndChannel(audioTrackIndex, audioChannel);
+                    }
+                }
+            }
+            if (qualifiedTrackGroups >= maxTrackGroups) {
+                break;
+            }
         }
     }
 }
