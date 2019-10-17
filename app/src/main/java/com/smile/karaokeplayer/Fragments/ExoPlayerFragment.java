@@ -42,6 +42,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -53,6 +54,7 @@ import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -1026,9 +1028,9 @@ public class ExoPlayerFragment extends Fragment {
 
     private void initExoPlayer() {
 
-        // trackSelector = new DefaultTrackSelector();
+        trackSelector = new DefaultTrackSelector();
         // trackSelector = new DefaultTrackSelector(new RandomTrackSelection.Factory());
-        trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
+        // trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
         trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
         trackSelector.setParameters(trackSelectorParameters);
 
@@ -1463,8 +1465,8 @@ public class ExoPlayerFragment extends Fragment {
                     // trackSelector.setParameters(parametersBuilder.build());  // for the testing
                     // or trackSelector.setParameters(parametersBuilder);  // for the testing
 
-                    // findTracksForVideoAudio_1();
-                    findTracksForVideoAudio_2();
+                    findTracksForVideoAudio_1();
+                    // findTracksForVideoAudio_2();
 
                     trackSelector.setParameters(parametersBuilder.build());
 
@@ -1796,105 +1798,48 @@ public class ExoPlayerFragment extends Fragment {
             }
 
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);
-
-            // build R.id.audioTrack submenu
-                        /*
-                        if (audioTrackMenuItem != null) {
-                            if (!audioTrackMenuItem.hasSubMenu()) {
-                                // no sub menu
-                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
-                            }
-                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                            subMenu.clear();
-                            String audioTrackName;
-                            for (int index=0; index<audioTrackIndexList.size(); index++) {
-                                // audio track index start from 1 for user interface
-                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
-                                subMenu.add(audioTrackName);
-                            }
-                        }
-                        */
         }
     }
 
     // method 2
     private void findTracksForVideoAudio_2() {
-        // no needed to be used for this purpose
-        /*
-        int rendererCount = exoPlayer.getRendererCount();
-        Log.d(TAG, "findTracksForVideoAudio() --> rendererCount = " + rendererCount);
-        */
-        //
-
-        // no needed to be used for this purpose
-        /*
-        TrackGroupArray trackGroupArray = exoPlayer.getCurrentTrackGroups();
-        int trackGroupArraySize = trackGroupArray.length;
-        Log.d(TAG, "findTracksForVideoAudio() --> trackGroupArray.length = " + trackGroupArraySize);
-        */
-        //
 
         TrackSelectionArray trackSelectionArray = exoPlayer.getCurrentTrackSelections();
         int trackSelectionArraySize = trackSelectionArray.length;   // equals to exoPlayer.getRendererCount()
         Log.d(TAG, "findTracksForVideoAudio() --> trackSelectionArray.length = " + trackSelectionArraySize);
-
-        HashMap<TrackGroup, Integer> selectedTrackGroupSelectedTrackIndexMap = new HashMap<>();
-        int i=0;
-        for (i=0; i<trackSelectionArraySize; i++) {
-            Log.d(TAG, "findTracksForVideoAudio() --> Which renderer = " + i);
-            TrackSelection  trackSelection = trackSelectionArray.get(i);
-            if (trackSelection == null) {
-                continue;   // skip this one and go to next one
-            }
-            TrackGroup selectedTrackGroup = trackSelection.getTrackGroup();
-            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackGroup = " + selectedTrackGroup);
-            if (selectedTrackGroup == null) {
-                continue;   // skip to next one
-            }
-            // getSelectedIndexInTrackGroup() or getIndexInTrackGroup(i)
-            int selectedTrackIndex = trackSelection.getSelectedIndex();
-            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackIndex = " + selectedTrackIndex);
-            if (!selectedTrackGroupSelectedTrackIndexMap.containsKey(selectedTrackGroup)) {
-                // not contain than add
-                selectedTrackGroupSelectedTrackIndexMap.put(selectedTrackGroup, selectedTrackIndex);
-            }
-        }
-        int numSelectedTrackGroups = selectedTrackGroupSelectedTrackIndexMap.size();
-        Log.d(TAG, "findTracksForVideoAudio() --> Number of selected TrackGroups = " + numSelectedTrackGroups);
-
-        // no needed to be used for this purpose
-        /*
-        HashMap<TrackGroup, ArrayList<Integer>> selectedTrackGroupNotSelectedTrackIndexListMap = new HashMap<>();
-        for (TrackGroup selectedTrackGroup : selectedTrackGroupMapSelectedTrackIndexMap.keySet()) {
-            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackGroup = " + selectedTrackGroup);
-
-            ArrayList<Integer> notSelectedTrackIndexList = new ArrayList<>();
-            int thisTrackGroupSize = selectedTrackGroup.length;
-            for (int trackIndex=0; trackIndex<thisTrackGroupSize; trackIndex++) {
-                if (trackIndex != selectedTrackGroupMapSelectedTrackIndexMap.get(selectedTrackGroup)) {
-                    notSelectedTrackIndexList.add(trackIndex);
-                    Log.d(TAG, "findTracksForVideoAudio() --> Index of unselected Tracks in selected TrackGroup = " + trackIndex);
-                }
-            }
-            Log.d(TAG, "findTracksForVideoAudio() --> Number of unselected Tracks in selected TrackGroup = " + notSelectedTrackIndexList.size());
-            selectedTrackGroupNotSelectedTrackIndexListMap.put(selectedTrackGroup, notSelectedTrackIndexList);
-        }
-        */
-        //
 
         // Choose only two track group: Video and Audio
         int maxTrackGroups = 2;
         Format videoPlayedFormat = exoPlayer.getVideoFormat();
         Format audioPlayedFormat = exoPlayer.getAudioFormat();
         int qualifiedTrackGroups = 0;
-        for (TrackGroup trackGroup : selectedTrackGroupSelectedTrackIndexMap.keySet()) {
-            int selectedTrackIndex = selectedTrackGroupSelectedTrackIndexMap.get(trackGroup);
-            int index = trackGroup.indexOf(videoPlayedFormat);
-            if (index >= 0 ) {
+        int numSelectedTrackGroups = 0;
+        for (int i=0; i<trackSelectionArraySize; i++) {
+            Log.d(TAG, "findTracksForVideoAudio() --> Which renderer = " + i);
+            TrackSelection  trackSelection = trackSelectionArray.get(i);
+            if (trackSelection == null) {
+                continue;   // skip this one and go to next one
+            }
+            numSelectedTrackGroups++;
+            TrackGroup selectedTrackGroup = trackSelection.getTrackGroup();
+            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackGroup = " + selectedTrackGroup);
+            if (selectedTrackGroup == null) {
+                continue;   // skip to next one
+            }
+            Format selectedFormat = trackSelection.getSelectedFormat();
+            if (selectedFormat == null) {
+                continue;   // if selected format is null then skip to next
+            }
+            // getSelectedIndexInTrackGroup() or getIndexInTrackGroup(i)
+            int selectedTrackIndex = trackSelection.getSelectedIndex();
+            Log.d(TAG, "findTracksForVideoAudio() --> selectedTrackIndex = " + selectedTrackIndex);
+            // int index = selectedTrackGroup.indexOf(videoPlayedFormat);
+            // if (index >= 0 ) {
+            if (selectedFormat.equals(videoPlayedFormat)) {
                 // video track group
                 qualifiedTrackGroups++;
                 videoTrackIndexList.clear();
-                for (int tIndex=0; tIndex<trackGroup.length; tIndex++) {
+                for (int tIndex=0; tIndex<selectedTrackGroup.length; tIndex++) {
                     videoTrackIndexList.add(tIndex);
                 }
                 numberOfVideoTracks = videoTrackIndexList.size();
@@ -1906,12 +1851,13 @@ public class ExoPlayerFragment extends Fragment {
                     playingParam.setCurrentVideoRendererPlayed(selectedTrackIndex + 1);
                 }
             } else {
-                index = trackGroup.indexOf(audioPlayedFormat);
-                if (index >= 0) {
+                // index = selectedTrackGroup.indexOf(audioPlayedFormat);
+                // if (index >= 0) {
+                if (selectedFormat.equals(audioPlayedFormat)) {
                     // audio track group
                     qualifiedTrackGroups++;
                     audioTrackIndexList.clear();
-                    for (int tIndex=0; tIndex<trackGroup.length; tIndex++) {
+                    for (int tIndex=0; tIndex<selectedTrackGroup.length; tIndex++) {
                         audioTrackIndexList.add(tIndex);
                     }
                     numberOfAudioTracks = audioTrackIndexList.size();
@@ -1942,6 +1888,8 @@ public class ExoPlayerFragment extends Fragment {
             if (qualifiedTrackGroups >= maxTrackGroups) {
                 break;
             }
+
         }
+        Log.d(TAG, "findTracksForVideoAudio() --> Number of selected TrackGroups = " + numSelectedTrackGroups);
     }
 }
