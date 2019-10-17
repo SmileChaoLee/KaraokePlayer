@@ -48,20 +48,17 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
-import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaPeriod;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerControlView;
@@ -84,11 +81,8 @@ import com.smile.karaokeplayer.SongListActivity;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import org.videolan.libvlc.Media;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -105,6 +99,8 @@ public class ExoPlayerFragment extends Fragment {
     private static final String TAG = new String(".ExoPlayerFragment");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final String PlayingParamOrigin = "PlayingParamOrigin";
+    private static final String TrackSelectorParametersState = "TrackSelectorParameters";
+
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
     private static final int SONG_LIST_ACTIVITY_CODE = 2;
@@ -167,8 +163,9 @@ public class ExoPlayerFragment extends Fragment {
     private RenderersFactory renderersFactory;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
+    private MediaSource mediaSource;
     private SimpleExoPlayer exoPlayer;
-    private AudioAttributes.Builder audioAttributesBuilder;
+    // private AudioAttributes.Builder audioAttributesBuilder;
 
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
@@ -180,7 +177,6 @@ public class ExoPlayerFragment extends Fragment {
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
-    // private MediaSource mediaSource;
     private int numberOfVideoTracks;
     private int numberOfAudioTracks;
     private ArrayList<Integer> videoTrackIndexList;
@@ -799,6 +795,10 @@ public class ExoPlayerFragment extends Fragment {
         outState.putParcelable("PlayingParameters", playingParam);
         outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
         outState.putParcelable(SongInfoPara, songInfo);
+
+        trackSelectorParameters = trackSelector.getParameters();
+        outState.putParcelable(TrackSelectorParametersState, trackSelectorParameters);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -984,6 +984,9 @@ public class ExoPlayerFragment extends Fragment {
                 playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongPara));
                 songInfo = arguments.getParcelable(SongInfoPara);
             }
+
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+
         } else {
             // needed to be set
             numberOfVideoTracks = savedInstanceState.getInt("NumberOfVideoTracks",0);
@@ -999,6 +1002,8 @@ public class ExoPlayerFragment extends Fragment {
                 initializePlayingParam();
             }
             songInfo = savedInstanceState.getParcelable(SongInfoPara);
+
+            trackSelectorParameters = savedInstanceState.getParcelable(TrackSelectorParametersState);
         }
     }
 
@@ -1028,10 +1033,9 @@ public class ExoPlayerFragment extends Fragment {
 
     private void initExoPlayer() {
 
-        trackSelector = new DefaultTrackSelector();
+        // trackSelector = new DefaultTrackSelector();
         // trackSelector = new DefaultTrackSelector(new RandomTrackSelection.Factory());
-        // trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
-        trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+        trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
         // Tell ExoPlayer to use FfmpegAudioRenderer
@@ -1079,9 +1083,11 @@ public class ExoPlayerFragment extends Fragment {
         });
 
         // removed on 2019-10-14 for testing
+        /*
         audioAttributesBuilder = new AudioAttributes.Builder();
         audioAttributesBuilder.setUsage(C.USAGE_MEDIA).setContentType(C.CONTENT_TYPE_MOVIE);
         exoPlayer.setAudioAttributes(audioAttributesBuilder.build(), true);
+        */
 
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
@@ -1362,6 +1368,7 @@ public class ExoPlayerFragment extends Fragment {
         if (numberOfAudioTracks > 0) {
             // select audio track
             int audioTrackId = audioTrackIndexList.get(audioTrackIndex - 1);
+            selectAudioTrack(audioTrackId);
             playingParam.setCurrentAudioRendererPlayed(audioTrackIndex);
 
             // select audio channel
@@ -1460,15 +1467,8 @@ public class ExoPlayerFragment extends Fragment {
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
 
-                    DefaultTrackSelector.Parameters trackParameters = trackSelector.getParameters();
-                    DefaultTrackSelector.ParametersBuilder parametersBuilder = trackParameters.buildUpon();
-                    // trackSelector.setParameters(parametersBuilder.build());  // for the testing
-                    // or trackSelector.setParameters(parametersBuilder);  // for the testing
-
-                    findTracksForVideoAudio_1();
-                    // findTracksForVideoAudio_2();
-
-                    trackSelector.setParameters(parametersBuilder.build());
+                    // findTracksForVideoAudio_1();
+                    findTracksForVideoAudio_2();
 
                     // build R.id.audioTrack submenu
                     if (audioTrackMenuItem != null) {
@@ -1595,7 +1595,7 @@ public class ExoPlayerFragment extends Fragment {
             playingParam.setMediaSourcePrepared(false);
             dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             long currentAudioPosition = playingParam.getCurrentAudioPosition();
             float currentVolume = playingParam.getCurrentVolume();
@@ -1668,7 +1668,7 @@ public class ExoPlayerFragment extends Fragment {
         boolean playedAudioGroupFound = false;
         boolean playedVideoGroupFound = false;
 
-        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+        MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
         if (mappedTrackInfo != null) {
             int rendererCount = mappedTrackInfo.getRendererCount();
             Log.d(TAG, "mappedTrackInfo.getRendererCount() = " + rendererCount);
@@ -1891,5 +1891,52 @@ public class ExoPlayerFragment extends Fragment {
 
         }
         Log.d(TAG, "findTracksForVideoAudio() --> Number of selected TrackGroups = " + numSelectedTrackGroups);
+    }
+
+    private boolean selectAudioTrack(int targetTrackId) {
+        boolean result = false;
+
+        MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+        if (mappedTrackInfo == null) {
+            return result;
+        }
+
+        int audioRendererIndex = 1;
+        int audioTrackGroupIndex = 0;   // in mappedTrackInfo.getTrackGroups(audioRendererIndex)
+
+        if (mappedTrackInfo.getTrackSupport(audioRendererIndex, audioTrackGroupIndex, targetTrackId)
+                != RendererCapabilities.FORMAT_HANDLED) {
+            return result;
+        }
+
+        DefaultTrackSelector.Parameters trackParameters = trackSelector.getParameters();
+        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackParameters.buildUpon();
+
+        SelectionOverride initialOverride = trackParameters.getSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex));
+
+        /*
+        if (initialOverride == null) {
+            // create a new SelectionOverride
+            Log.d(TAG, "initialOverride is null " );
+            initialOverride = new SelectionOverride(audioTrackGroupIndex, targetTrackId);
+        } else {
+            Log.d(TAG, "initialOverride is not null " );
+            int overrideLength = initialOverride.length;
+            int[] overrideTracks = initialOverride.tracks;
+            // replace with new SelectionOverride
+            initialOverride = new SelectionOverride(audioTrackGroupIndex, targetTrackId);
+        }
+        */
+
+        initialOverride = new SelectionOverride(audioTrackGroupIndex, targetTrackId);
+        // trackSelector.setParameters(parametersBuilder.build());
+        // or
+        parametersBuilder.clearSelectionOverrides()
+                .setSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex), initialOverride);
+
+        trackSelector.setParameters(parametersBuilder);
+        trackSelectorParameters = trackSelector.getParameters();
+
+        return result;
     }
 }
