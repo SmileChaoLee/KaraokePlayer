@@ -1377,6 +1377,7 @@ public class ExoPlayerFragment extends Fragment {
                 //
                 return;
             }
+            
             Integer[] trackIndicesCombination = audioTrackIndicesList.get(indexInArrayList);
             selectAudioTrack(trackIndicesCombination);
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
@@ -1765,6 +1766,10 @@ public class ExoPlayerFragment extends Fragment {
         if (numberOfVideoTracks == 0) {
             playingParam.setCurrentVideoTrackIndexPlayed(noVideoTrack);
         } else {
+            Log.d(TAG, "audioTrackIdPlayed = " + videoTrackIdPlayed);
+            if (videoTrackIdPlayed < 0) {
+                videoTrackIdPlayed = 1;
+            }
             playingParam.setCurrentVideoTrackIndexPlayed(videoTrackIdPlayed);
         }
 
@@ -1788,11 +1793,15 @@ public class ExoPlayerFragment extends Fragment {
                 playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIdPlayed);
             }
 
+            if (audioTrackIdPlayed < 0) {
+                audioTrackIdPlayed = 1;
+            }
             setAudioTrackAndChannel(audioTrackIdPlayed, audioChannel);
         }
     }
 
     private boolean selectAudioTrack(Integer[] trackIndicesCombination) {
+
         boolean result = false;
 
         MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
@@ -1820,7 +1829,7 @@ public class ExoPlayerFragment extends Fragment {
         initialOverride = new SelectionOverride(audioTrackGroupIndex, audioTrackIndex);
         // trackSelector.setParameters(parametersBuilder.build());
         // or
-        parametersBuilder.clearSelectionOverrides()
+        parametersBuilder.clearSelectionOverrides(audioRendererIndex)
                 .setRendererDisabled(audioRendererIndex, false)
                 .setSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex), initialOverride);
         trackSelector.setParameters(parametersBuilder);
