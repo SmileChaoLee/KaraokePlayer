@@ -1377,7 +1377,7 @@ public class ExoPlayerFragment extends Fragment {
                 //
                 return;
             }
-            
+
             Integer[] trackIndicesCombination = audioTrackIndicesList.get(indexInArrayList);
             selectAudioTrack(trackIndicesCombination);
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
