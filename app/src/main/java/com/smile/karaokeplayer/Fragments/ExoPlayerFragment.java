@@ -81,7 +81,6 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -97,7 +96,16 @@ public class ExoPlayerFragment extends Fragment {
     private static final String TAG = new String(".ExoPlayerFragment");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
     private static final String PlayingParamOrigin = "PlayingParamOrigin";
+
+    private static final String PlayingParamState = "PlayingParam";
     private static final String TrackSelectorParametersState = "TrackSelectorParameters";
+    private static final String NumberOfVideoTracksState = "NumberOfVideoTracks";
+    private static final String NumberOfAudioTracksState = "NumberOfAudioTracks";
+    private static final String PublicSongListState = "PublicSongList";
+    private static final String MediaUriState = "MediaUri";
+    private static final String CanShowNotSupportedFormatState = "CanShowNotSupportedFormat";
+    private static final String VideoTrackIndicesListState = "VideoTrackIndicesList";
+    private static final String AudioTrackIndicesListState = "AudioTrackIndicesList";
 
     private static final int PrivacyPolicyActivityRequestCode = 10;
     private static final int FILE_READ_REQUEST_CODE = 1;
@@ -185,8 +193,8 @@ public class ExoPlayerFragment extends Fragment {
     private SongInfo songInfo;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
-    public static final String SongInfoPara = "SongInfo";
+    public static final String IsPlaySingleSongState = "IsPlaySingleSong";
+    public static final String SongInfoState = "SongInfo";
 
     private OnFragmentInteractionListener mListener;
 
@@ -221,8 +229,8 @@ public class ExoPlayerFragment extends Fragment {
     public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         ExoPlayerFragment fragment = new ExoPlayerFragment();
         Bundle args = new Bundle();
-        args.putBoolean(IsPlaySingleSongPara, isPlaySingleSong);
-        args.putParcelable(SongInfoPara, songInfo);
+        args.putBoolean(IsPlaySingleSongState, isPlaySingleSong);
+        args.putParcelable(SongInfoState, songInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -781,18 +789,17 @@ public class ExoPlayerFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"ExoPlayerFragment-->onSaveInstanceState() is called.");
 
-        outState.putInt("NumberOfVideoTracks", numberOfVideoTracks);
-        outState.putInt("NumberOfAudioTracks", numberOfAudioTracks);
-        outState.putSerializable("VideoTrackIndicesList", videoTrackIndicesList);
-        outState.putSerializable("AudioTrackIndicesList", audioTrackIndicesList);
-        outState.putParcelableArrayList("PublicSongList", publicSongList);
+        outState.putInt(NumberOfVideoTracksState, numberOfVideoTracks);
+        outState.putInt(NumberOfAudioTracksState, numberOfAudioTracks);
+        outState.putSerializable(VideoTrackIndicesListState, videoTrackIndicesList);
+        outState.putSerializable(AudioTrackIndicesListState, audioTrackIndicesList);
+        outState.putParcelableArrayList(PublicSongListState, publicSongList);
 
-        outState.putParcelable("MediaUri", mediaUri);
-        Log.d(TAG, "onSaveInstanceState() --> playingParam.getCurrentPlaybackState() = " + playingParam.getCurrentPlaybackState());
+        outState.putParcelable(MediaUriState, mediaUri);
         playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
-        outState.putParcelable("PlayingParameters", playingParam);
-        outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
-        outState.putParcelable(SongInfoPara, songInfo);
+        outState.putParcelable(PlayingParamState, playingParam);
+        outState.putBoolean(CanShowNotSupportedFormatState, canShowNotSupportedFormat);
+        outState.putParcelable(SongInfoState, songInfo);
 
         trackSelectorParameters = trackSelector.getParameters();
         outState.putParcelable(TrackSelectorParametersState, trackSelectorParameters);
@@ -979,27 +986,27 @@ public class ExoPlayerFragment extends Fragment {
             songInfo = null;    // default
             Bundle arguments = getArguments();
             if (arguments != null) {
-                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongPara));
-                songInfo = arguments.getParcelable(SongInfoPara);
+                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongState));
+                songInfo = arguments.getParcelable(SongInfoState);
             }
 
             trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
 
         } else {
             // needed to be set
-            numberOfVideoTracks = savedInstanceState.getInt("NumberOfVideoTracks",0);
-            numberOfAudioTracks = savedInstanceState.getInt("NumberOfAudioTracks");
-            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable("VideoTrackIndicesList");
-            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable("AudioTrackIndicesList");
-            publicSongList = savedInstanceState.getParcelableArrayList("PublicSongList");
+            numberOfVideoTracks = savedInstanceState.getInt(NumberOfVideoTracksState,0);
+            numberOfAudioTracks = savedInstanceState.getInt(NumberOfAudioTracksState);
+            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(VideoTrackIndicesListState);
+            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(AudioTrackIndicesListState);
+            publicSongList = savedInstanceState.getParcelableArrayList(PublicSongListState);
 
-            mediaUri = savedInstanceState.getParcelable("MediaUri");
-            playingParam = savedInstanceState.getParcelable("PlayingParameters");
-            canShowNotSupportedFormat = savedInstanceState.getBoolean("CanShowNotSupportedFormat");
+            mediaUri = savedInstanceState.getParcelable(MediaUriState);
+            playingParam = savedInstanceState.getParcelable(PlayingParamState);
+            canShowNotSupportedFormat = savedInstanceState.getBoolean(CanShowNotSupportedFormatState);
             if (playingParam == null) {
                 initializePlayingParam();
             }
-            songInfo = savedInstanceState.getParcelable(SongInfoPara);
+            songInfo = savedInstanceState.getParcelable(SongInfoState);
 
             trackSelectorParameters = savedInstanceState.getParcelable(TrackSelectorParametersState);
         }

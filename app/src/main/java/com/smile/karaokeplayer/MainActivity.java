@@ -68,14 +68,14 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
                 Bundle extras = callingIntent.getExtras();
                 if (extras != null) {
                     Log.d(TAG, "extras is not null.");
-                    isPlayingSingleSong = extras.getBoolean(ExoPlayerFragment.IsPlaySingleSongPara, false);
-                    songInfo = extras.getParcelable(ExoPlayerFragment.SongInfoPara);
+                    isPlayingSingleSong = extras.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
+                    songInfo = extras.getParcelable(ExoPlayerFragment.SongInfoState);
                 }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(ExoPlayerFragment.IsPlaySingleSongPara, false);
-            songInfo = savedInstanceState.getParcelable(ExoPlayerFragment.SongInfoPara);
+            isPlayingSingleSong = savedInstanceState.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
+            songInfo = savedInstanceState.getParcelable(ExoPlayerFragment.SongInfoState);
         }
 
         super.onCreate(savedInstanceState);
@@ -173,8 +173,8 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
-        outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongPara, isPlayingSingleSong);
-        outState.putParcelable(ExoPlayerFragment.SongInfoPara, songInfo);
+        outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, isPlayingSingleSong);
+        outState.putParcelable(ExoPlayerFragment.SongInfoState, songInfo);
         super.onSaveInstanceState(outState);
     }
 
