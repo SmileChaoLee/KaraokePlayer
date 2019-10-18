@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -47,7 +46,6 @@ import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.SongListActivity;
-import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -56,7 +54,6 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -156,12 +153,8 @@ public class VLCPlayerFragment extends Fragment {
     private SongInfo songInfo;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String IsPlaySingleSongPara = "IsPlaySingleSong";
-    public static final String SongInfoPara = "SongInfo";
-
-    // temporary settings
-    private static final boolean UseAdityaFileBrowser = true;
-    //
+    public static final String IsPlaySingleSongState = "IsPlaySingleSong";
+    public static final String SongInfoState = "SongInfo";
 
     private OnFragmentInteractionListener mListener;
 
@@ -196,8 +189,8 @@ public class VLCPlayerFragment extends Fragment {
     public static VLCPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         VLCPlayerFragment fragment = new VLCPlayerFragment();
         Bundle args = new Bundle();
-        args.putBoolean(IsPlaySingleSongPara, isPlaySingleSong);
-        args.putParcelable(SongInfoPara, songInfo);
+        args.putBoolean(IsPlaySingleSongState, isPlaySingleSong);
+        args.putParcelable(SongInfoState, songInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -802,7 +795,7 @@ public class VLCPlayerFragment extends Fragment {
 
         outState.putParcelable("PlayingParameters", playingParam);
         outState.putBoolean("CanShowNotSupportedFormat", canShowNotSupportedFormat);
-        outState.putParcelable(SongInfoPara, songInfo);
+        outState.putParcelable(SongInfoState, songInfo);
         super.onSaveInstanceState(outState);
     }
 
@@ -859,17 +852,6 @@ public class VLCPlayerFragment extends Fragment {
                 playingParam.setMusicOrVocalOrNoSetting(MusicOrVocalUnknown);
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
-
-                if (!UseAdityaFileBrowser) {
-                    // not useFileChooser.class in com.adityak:browsemyfiles:1.9
-                    String filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
-                    if (filePath != null) {
-                        if (!filePath.isEmpty()) {
-                            File songFile = new File(filePath);
-                            mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
-                        }
-                    }
-                }
 
                 Log.i(TAG, "mediaUri = " + mediaUri.toString());
                 if ((mediaUri != null) && (!Uri.EMPTY.equals(mediaUri))) {
@@ -996,8 +978,8 @@ public class VLCPlayerFragment extends Fragment {
             songInfo = null;    // default
             Bundle arguments = getArguments();
             if (arguments != null) {
-                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongPara));
-                songInfo = arguments.getParcelable(SongInfoPara);
+                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongState));
+                songInfo = arguments.getParcelable(SongInfoState);
             }
         } else {
             // needed to be set
@@ -1013,26 +995,14 @@ public class VLCPlayerFragment extends Fragment {
             if (playingParam == null) {
                 initializePlayingParam();
             }
-            songInfo = savedInstanceState.getParcelable(SongInfoPara);
+            songInfo = savedInstanceState.getParcelable(SongInfoState);
         }
     }
 
     private void selectFileToOpen() {
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
         Intent intent;
-        if (!UseAdityaFileBrowser) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            } else {
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-            }
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-        } else {
-            intent = new Intent(callingContext, FileChooser.class);
-            intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
-        }
+        intent = new Intent(callingContext, FileChooser.class);
+        intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
 

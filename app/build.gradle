@@ -21,19 +21,24 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
-    sourceSets {
-        main {
-            java {
-                exclude '**/MainActivity_old_works.java'
-                exclude '**/MainActivity_with_fragment.java'
-            }
-        }
-    }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main {
+            java {
+                exclude '**/MainActivity_old_works.java'
+                exclude '**/MainActivity_with_fragment.java'
+                exclude '**/ExternalStorageUtil.java'
+            }
+            res {
+                exclude '**/MainActivity_old_works.xml'
+                exclude '**/MainActivity_with_fragment.xml'
+            }
         }
     }
     compileOptions {

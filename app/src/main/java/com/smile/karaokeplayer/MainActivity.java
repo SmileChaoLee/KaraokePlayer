@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
+    private static final String IsPlaySingleSongState = "IsPlaySingleSong";
+    private static final String SongInfoState = "SongInfo";
 
     private float textFontSize;
     private float fontScale;
@@ -45,11 +47,16 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     private Fragment playerFragment;
 
     // temporary settings
-    private static final boolean IsPlayingExoPlayer = true;
+    private boolean IsPlayingExoPlayer = false;
     //
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        if (!BuildConfig.DEBUG) {
+            // use ExoPlayer when release
+            IsPlayingExoPlayer = true;
+        }
 
         Log.d(TAG, "onCreate() is called");
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, null);
@@ -68,14 +75,14 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
                 Bundle extras = callingIntent.getExtras();
                 if (extras != null) {
                     Log.d(TAG, "extras is not null.");
-                    isPlayingSingleSong = extras.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
-                    songInfo = extras.getParcelable(ExoPlayerFragment.SongInfoState);
+                    isPlayingSingleSong = extras.getBoolean(IsPlaySingleSongState, false);
+                    songInfo = extras.getParcelable(SongInfoState);
                 }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
-            songInfo = savedInstanceState.getParcelable(ExoPlayerFragment.SongInfoState);
+            isPlayingSingleSong = savedInstanceState.getBoolean(IsPlaySingleSongState, false);
+            songInfo = savedInstanceState.getParcelable(SongInfoState);
         }
 
         super.onCreate(savedInstanceState);
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        String fragmentTag;
+        String fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
         if (IsPlayingExoPlayer) {
             fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
             playerFragment = fmManager.findFragmentByTag(fragmentTag);
@@ -98,14 +105,17 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
                 ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
             }
         } else {
-            // Use LibVLC to play video
-            fragmentTag = VLCPlayerFragment.VLCPlayerFragmentTag;
-            playerFragment = fmManager.findFragmentByTag(fragmentTag);
-            if (playerFragment == null) {
-                playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
-                ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
-            } else {
-                ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
+            if (BuildConfig.DEBUG) {
+                // only in debug version for testing
+                // Use LibVLC to play video
+                fragmentTag = VLCPlayerFragment.VLCPlayerFragmentTag;
+                playerFragment = fmManager.findFragmentByTag(fragmentTag);
+                if (playerFragment == null) {
+                    playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+                    ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
+                } else {
+                    ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
+                }
             }
         }
         ft.addToBackStack(fragmentTag);
@@ -173,8 +183,8 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
-        outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, isPlayingSingleSong);
-        outState.putParcelable(ExoPlayerFragment.SongInfoState, songInfo);
+        outState.putBoolean(IsPlaySingleSongState, isPlayingSingleSong);
+        outState.putParcelable(SongInfoState, songInfo);
         super.onSaveInstanceState(outState);
     }
 
