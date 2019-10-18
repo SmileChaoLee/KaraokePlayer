@@ -8,13 +8,13 @@ public class PlayingParameters implements Parcelable {
     private int currentPlaybackState;
     private boolean isAutoPlay;
     private boolean isMediaSourcePrepared;
-    private int currentVideoRendererPlayed;
+    private int currentVideoTrackIndexPlayed;
     private int musicAudioChannel;
     private int vocalAudioChannel;
     private int currentChannelPlayed;
-    private int musicAudioRenderer;
-    private int vocalAudioRenderer;
-    private int currentAudioRendererPlayed;
+    private int musicAudioTrackIndex;
+    private int vocalAudioTrackIndex;
+    private int currentAudioTrackIndexPlayed;
     private long currentAudioPosition;
     private float currentVolume;
     private int publicSongIndex;
@@ -24,21 +24,21 @@ public class PlayingParameters implements Parcelable {
     private boolean isPlaySingleSong;
 
     public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared,
-                             int currentVideoRendererPlayed, int musicAudioChannel, int vocalAudioChannel,
-                             int currentChannelPlayed, int musicAudioRenderer, int vocalAudioRenderer,
-                             int currentAudioRendererPlayed, long currentAudioPosition, float currentVolume,
+                             int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
+                             int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
+                             int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
                              int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting,
                              int repeatStatus, boolean isPlaySingleSong) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaSourcePrepared = isMediaSourcePrepared;
-        this.currentVideoRendererPlayed = currentVideoRendererPlayed;
+        this.currentVideoTrackIndexPlayed = currentVideoTrackIndexPlayed;
         this.musicAudioChannel = musicAudioChannel;
         this.vocalAudioChannel = vocalAudioChannel;
         this.currentChannelPlayed = currentChannelPlayed;
-        this.musicAudioRenderer = musicAudioRenderer;
-        this.vocalAudioRenderer = vocalAudioRenderer;
-        this.currentAudioRendererPlayed = currentAudioRendererPlayed;
+        this.musicAudioTrackIndex = musicAudioTrackIndex;
+        this.vocalAudioTrackIndex = vocalAudioTrackIndex;
+        this.currentAudioTrackIndexPlayed = currentAudioTrackIndexPlayed;
         this.currentAudioPosition = currentAudioPosition;
         this.currentVolume = currentVolume;
         this.publicSongIndex = publicSongIndex;
@@ -75,12 +75,12 @@ public class PlayingParameters implements Parcelable {
         isMediaSourcePrepared = mediaSourcePrepared;
     }
 
-    public int getCurrentVideoRendererPlayed() {
-        return currentVideoRendererPlayed;
+    public int getCurrentVideoTrackIndexPlayed() {
+        return currentVideoTrackIndexPlayed;
     }
 
-    public void setCurrentVideoRendererPlayed(int currentVideoRendererPlayed) {
-        this.currentVideoRendererPlayed = currentVideoRendererPlayed;
+    public void setCurrentVideoTrackIndexPlayed(int currentVideoTrackIndexPlayed) {
+        this.currentVideoTrackIndexPlayed = currentVideoTrackIndexPlayed;
     }
 
     public int getMusicAudioChannel() {
@@ -107,28 +107,28 @@ public class PlayingParameters implements Parcelable {
         this.currentChannelPlayed = currentChannelPlayed;
     }
 
-    public int getMusicAudioRenderer() {
-        return musicAudioRenderer;
+    public int getMusicAudioTrackIndex() {
+        return musicAudioTrackIndex;
     }
 
-    public void setMusicAudioRenderer(int musicAudioRenderer) {
-        this.musicAudioRenderer = musicAudioRenderer;
+    public void setMusicAudioTrackIndex(int musicAudioTrackIndex) {
+        this.musicAudioTrackIndex = musicAudioTrackIndex;
     }
 
-    public int getVocalAudioRenderer() {
-        return vocalAudioRenderer;
+    public int getVocalAudioTrackIndex() {
+        return vocalAudioTrackIndex;
     }
 
-    public void setVocalAudioRenderer(int vocalAudioRenderer) {
-        this.vocalAudioRenderer = vocalAudioRenderer;
+    public void setVocalAudioTrackIndex(int vocalAudioTrackIndex) {
+        this.vocalAudioTrackIndex = vocalAudioTrackIndex;
     }
 
-    public int getCurrentAudioRendererPlayed() {
-        return currentAudioRendererPlayed;
+    public int getCurrentAudioTrackIndexPlayed() {
+        return currentAudioTrackIndexPlayed;
     }
 
-    public void setCurrentAudioRendererPlayed(int currentAudioRendererPlayed) {
-        this.currentAudioRendererPlayed = currentAudioRendererPlayed;
+    public void setCurrentAudioTrackIndexPlayed(int currentAudioTrackIndexPlayed) {
+        this.currentAudioTrackIndexPlayed = currentAudioTrackIndexPlayed;
     }
 
     public long getCurrentAudioPosition() {
@@ -197,13 +197,13 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.currentPlaybackState);
         dest.writeByte(this.isAutoPlay ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isMediaSourcePrepared ? (byte) 1 : (byte) 0);
-        dest.writeInt(this.currentVideoRendererPlayed);
+        dest.writeInt(this.currentVideoTrackIndexPlayed);
         dest.writeInt(this.musicAudioChannel);
         dest.writeInt(this.vocalAudioChannel);
         dest.writeInt(this.currentChannelPlayed);
-        dest.writeInt(this.musicAudioRenderer);
-        dest.writeInt(this.vocalAudioRenderer);
-        dest.writeInt(this.currentAudioRendererPlayed);
+        dest.writeInt(this.musicAudioTrackIndex);
+        dest.writeInt(this.vocalAudioTrackIndex);
+        dest.writeInt(this.currentAudioTrackIndexPlayed);
         dest.writeLong(this.currentAudioPosition);
         dest.writeFloat(this.currentVolume);
         dest.writeInt(this.publicSongIndex);
@@ -217,13 +217,13 @@ public class PlayingParameters implements Parcelable {
         this.currentPlaybackState = in.readInt();
         this.isAutoPlay = in.readByte() != 0;
         this.isMediaSourcePrepared = in.readByte() != 0;
-        this.currentVideoRendererPlayed = in.readInt();
+        this.currentVideoTrackIndexPlayed = in.readInt();
         this.musicAudioChannel = in.readInt();
         this.vocalAudioChannel = in.readInt();
         this.currentChannelPlayed = in.readInt();
-        this.musicAudioRenderer = in.readInt();
-        this.vocalAudioRenderer = in.readInt();
-        this.currentAudioRendererPlayed = in.readInt();
+        this.musicAudioTrackIndex = in.readInt();
+        this.vocalAudioTrackIndex = in.readInt();
+        this.currentAudioTrackIndexPlayed = in.readInt();
         this.currentAudioPosition = in.readLong();
         this.currentVolume = in.readFloat();
         this.publicSongIndex = in.readInt();

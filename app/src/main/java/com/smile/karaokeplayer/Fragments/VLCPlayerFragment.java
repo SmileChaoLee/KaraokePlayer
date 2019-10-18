@@ -659,7 +659,7 @@ public class VLCPlayerFragment extends Fragment {
                 for (int i=0; i<subMenu.size(); i++) {
                     MenuItem mItem = subMenu.getItem(i);
                     // audio track index start from 1 for user interface
-                    if ( (i+1) == playingParam.getCurrentAudioRendererPlayed() ) {
+                    if ( (i+1) == playingParam.getCurrentAudioTrackIndexPlayed() ) {
                         mItem.setCheckable(true);
                         mItem.setChecked(true);
                     } else {
@@ -840,12 +840,12 @@ public class VLCPlayerFragment extends Fragment {
                     return;
                 }
 
-                playingParam.setCurrentVideoRendererPlayed(0);
+                playingParam.setCurrentVideoTrackIndexPlayed(0);
 
                 int currentAudioRederer = 0;
-                playingParam.setMusicAudioRenderer(currentAudioRederer);
-                playingParam.setVocalAudioRenderer(currentAudioRederer);
-                playingParam.setCurrentAudioRendererPlayed(currentAudioRederer);
+                playingParam.setMusicAudioTrackIndex(currentAudioRederer);
+                playingParam.setVocalAudioTrackIndex(currentAudioRederer);
+                playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
 
                 playingParam.setMusicAudioChannel(SmileApplication.leftChannel);
                 playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
@@ -960,11 +960,11 @@ public class VLCPlayerFragment extends Fragment {
         playingParam.setMediaSourcePrepared(false);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
 
-        playingParam.setCurrentVideoRendererPlayed(0);
+        playingParam.setCurrentVideoTrackIndexPlayed(0);
 
-        playingParam.setMusicAudioRenderer(1);
-        playingParam.setVocalAudioRenderer(1);
-        playingParam.setCurrentAudioRendererPlayed(playingParam.getMusicAudioRenderer());
+        playingParam.setMusicAudioTrackIndex(1);
+        playingParam.setVocalAudioTrackIndex(1);
+        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getMusicAudioTrackIndex());
         playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
         playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
         playingParam.setCurrentChannelPlayed(playingParam.getMusicAudioChannel());
@@ -1206,13 +1206,13 @@ public class VLCPlayerFragment extends Fragment {
 
     private void playSingleSong(SongInfo songInfo) {
         playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
-        playingParam.setCurrentVideoRendererPlayed(0);
+        playingParam.setCurrentVideoTrackIndexPlayed(0);
 
-        playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+        playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
         playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
 
-        playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
-        playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
+        playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
+        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
         playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
         playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
 
@@ -1312,7 +1312,7 @@ public class VLCPlayerFragment extends Fragment {
             Log.d(TAG, "setAudioTrackAndChannel()-->audioTrackIndex = " + audioTrackIndex);
             int audioTrackId = audioTrackIndexList.get(audioTrackIndex - 1);
             vlcPlayer.setAudioTrack(audioTrackId);
-            playingParam.setCurrentAudioRendererPlayed(audioTrackIndex);
+            playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
 
             // select audio channel
             vlcPlayer.setChapter(audioChannel);
@@ -1323,17 +1323,17 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void switchAudioToVocal() {
-        int vocalAudioRenderer = playingParam.getVocalAudioRenderer();
+        int vocalAudioTrackIndex = playingParam.getVocalAudioTrackIndex();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);
-        setAudioTrackAndChannel(vocalAudioRenderer, vocalAudioChannel);
+        setAudioTrackAndChannel(vocalAudioTrackIndex, vocalAudioChannel);
     }
 
     private void switchAudioToMusic() {
-        int musicAudioRenderer = playingParam.getMusicAudioRenderer();
+        int musicAudioTrackIndex = playingParam.getMusicAudioTrackIndex();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);
-        setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
+        setAudioTrackAndChannel(musicAudioTrackIndex, musicAudioChannel);
     }
 
     private void setAudioVolume(float volume) {
@@ -1392,11 +1392,11 @@ public class VLCPlayerFragment extends Fragment {
         numberOfVideoTracks = videoTrackIndexList.size();
         Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
         if (numberOfVideoTracks == 0) {
-            playingParam.setCurrentVideoRendererPlayed(noVideoTrack);
+            playingParam.setCurrentVideoTrackIndexPlayed(noVideoTrack);
         } else {
             // set which video track to be played
             int videoTrackIdPlayed = vlcPlayer.getVideoTrack();
-            playingParam.setCurrentVideoRendererPlayed(videoTrackIdPlayed);
+            playingParam.setCurrentVideoTrackIndexPlayed(videoTrackIdPlayed);
         }
 
         //
@@ -1421,7 +1421,7 @@ public class VLCPlayerFragment extends Fragment {
         numberOfAudioTracks = audioTrackIndexList.size();
         Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
         if (numberOfAudioTracks == 0) {
-            playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
+            playingParam.setCurrentAudioTrackIndexPlayed(noAudioTrack);
             playingParam.setCurrentChannelPlayed(noAudioChannel);
         } else {
             int audioTrackIdPlayed = vlcPlayer.getAudioTrack();
@@ -1429,7 +1429,7 @@ public class VLCPlayerFragment extends Fragment {
             int audioChannel = SmileApplication.stereoChannel;
             Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-                audioTrackIndex = playingParam.getCurrentAudioRendererPlayed();
+                audioTrackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
             } else {
                 for (int index = 0; index< audioTrackIndexList.size(); index++) {
@@ -1440,9 +1440,9 @@ public class VLCPlayerFragment extends Fragment {
                     }
                 }
                 // for open media. do not know the music track and vocal track
-                playingParam.setMusicAudioRenderer(audioTrackIndex);
+                playingParam.setMusicAudioTrackIndex(audioTrackIndex);
                 playingParam.setMusicAudioChannel(audioChannel);
-                playingParam.setVocalAudioRenderer(audioTrackIndex);
+                playingParam.setVocalAudioTrackIndex(audioTrackIndex);
                 playingParam.setVocalAudioChannel(audioChannel);
             }
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);

@@ -608,7 +608,7 @@ public class MainActivity_old_works extends AppCompatActivity {
                 // check if MenuItems of audioTrack need CheckBox
                 for (int i=0; i<subMenu.size(); i++) {
                     MenuItem mItem = subMenu.getItem(i);
-                    if (i == playingParam.getCurrentAudioRendererPlayed()) {
+                    if (i == playingParam.getCurrentAudioTrackIndexPlayed()) {
                         mItem.setCheckable(true);
                         mItem.setChecked(true);
                     } else {
@@ -770,12 +770,12 @@ public class MainActivity_old_works extends AppCompatActivity {
                     return;
                 }
 
-                playingParam.setCurrentVideoRendererPlayed(0);
+                playingParam.setCurrentVideoTrackIndexPlayed(0);
 
                 int currentAudioRederer = 0;
-                playingParam.setMusicAudioRenderer(currentAudioRederer);
-                playingParam.setVocalAudioRenderer(currentAudioRederer);
-                playingParam.setCurrentAudioRendererPlayed(currentAudioRederer);
+                playingParam.setMusicAudioTrackIndex(currentAudioRederer);
+                playingParam.setVocalAudioTrackIndex(currentAudioRederer);
+                playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
 
                 playingParam.setMusicAudioChannel(SmileApplication.leftChannel);
                 playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
@@ -884,11 +884,11 @@ public class MainActivity_old_works extends AppCompatActivity {
         playingParam.setMediaSourcePrepared(false);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
 
-        playingParam.setCurrentVideoRendererPlayed(0);
+        playingParam.setCurrentVideoTrackIndexPlayed(0);
 
-        playingParam.setMusicAudioRenderer(0);
-        playingParam.setVocalAudioRenderer(0);
-        playingParam.setCurrentAudioRendererPlayed(playingParam.getMusicAudioRenderer());
+        playingParam.setMusicAudioTrackIndex(0);
+        playingParam.setVocalAudioTrackIndex(0);
+        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getMusicAudioTrackIndex());
         playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
         playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
         playingParam.setCurrentChannelPlayed(playingParam.getMusicAudioChannel());
@@ -1144,13 +1144,13 @@ public class MainActivity_old_works extends AppCompatActivity {
                     songInfo = publicSongList.get(publicSongIndex);
 
                     playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
-                    playingParam.setCurrentVideoRendererPlayed(0);
+                    playingParam.setCurrentVideoTrackIndexPlayed(0);
 
-                    playingParam.setMusicAudioRenderer(songInfo.getMusicTrackNo());
+                    playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
                     playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
 
-                    playingParam.setVocalAudioRenderer(songInfo.getVocalTrackNo());
-                    playingParam.setCurrentAudioRendererPlayed(playingParam.getVocalAudioRenderer());
+                    playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
+                    playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
                     playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
                     playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
 
@@ -1249,7 +1249,7 @@ public class MainActivity_old_works extends AppCompatActivity {
     private void setAudioTrackAndChannel(int audioRenderer, int audioChannel) {
         if (numberOfAudioRenderers > 0) {
             // select audio renderer
-            playingParam.setCurrentAudioRendererPlayed(audioRenderer);
+            playingParam.setCurrentAudioTrackIndexPlayed(audioRenderer);
 
             // select audio channel
             playingParam.setCurrentChannelPlayed(audioChannel);
@@ -1258,14 +1258,14 @@ public class MainActivity_old_works extends AppCompatActivity {
     }
 
     private void switchAudioToVocal() {
-        int vocalAudioRenderer = playingParam.getVocalAudioRenderer();
+        int vocalAudioRenderer = playingParam.getVocalAudioTrackIndex();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);
         setAudioTrackAndChannel(vocalAudioRenderer, vocalAudioChannel);
     }
 
     private void switchAudioToMusic() {
-        int musicAudioRenderer = playingParam.getMusicAudioRenderer();
+        int musicAudioRenderer = playingParam.getMusicAudioTrackIndex();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);
         setAudioTrackAndChannel(musicAudioRenderer, musicAudioChannel);
@@ -1423,14 +1423,14 @@ public class MainActivity_old_works extends AppCompatActivity {
 
                     numberOfVideoRenderers = numVideoRenderer;
                     if (numberOfVideoRenderers == 0) {
-                        playingParam.setCurrentVideoRendererPlayed(noVideoRenderer);
+                        playingParam.setCurrentVideoTrackIndexPlayed(noVideoRenderer);
                     }
                     numberOfAudioRenderers = numAudioRenderer;
                     if (numberOfAudioRenderers == 0) {
-                        playingParam.setCurrentAudioRendererPlayed(noAudioTrack);
+                        playingParam.setCurrentAudioTrackIndexPlayed(noAudioTrack);
                         playingParam.setCurrentChannelPlayed(noAudioChannel);
                     } else {
-                        int audioRenderer = playingParam.getCurrentAudioRendererPlayed();
+                        int audioRenderer = playingParam.getCurrentAudioTrackIndexPlayed();
                         int audioChannel = playingParam.getCurrentChannelPlayed();
                         setAudioTrackAndChannel(audioRenderer, audioChannel);
                     }
