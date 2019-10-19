@@ -62,14 +62,15 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        playerFragment = fmManager.findFragmentByTag(ExoPlayerFragment.ExoPlayerFragmentTag);
+        String fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
+        playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
             playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
-            ft.add(oneSongPlayerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
+            ft.add(oneSongPlayerFragmentLayoutId, playerFragment, fragmentTag);
         } else {
-            ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, ExoPlayerFragment.ExoPlayerFragmentTag);
+            ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, fragmentTag);
         }
-        ft.addToBackStack(ExoPlayerFragment.ExoPlayerFragmentTag);
+        ft.addToBackStack(fragmentTag);
         if (playerFragment.isStateSaved()) {
             ft.commitAllowingStateLoss();
         } else {

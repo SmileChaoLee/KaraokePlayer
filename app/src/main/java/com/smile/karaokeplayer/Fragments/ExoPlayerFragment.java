@@ -193,8 +193,8 @@ public class ExoPlayerFragment extends Fragment {
     private SongInfo songInfo;
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String IsPlaySingleSongState = "IsPlaySingleSong";
-    private static final String SongInfoState = "SongInfo";
+    public static final String IsPlaySingleSongState = "IsPlaySingleSong";
+    public static final String SongInfoState = "SongInfo";
 
     private OnFragmentInteractionListener mListener;
 
