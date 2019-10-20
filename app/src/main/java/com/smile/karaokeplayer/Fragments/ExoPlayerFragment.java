@@ -51,6 +51,7 @@ import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -59,6 +60,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -1059,8 +1061,8 @@ public class ExoPlayerFragment extends Fragment {
                 // return super.buildAudioProcessors();
             }
         }
-        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
         // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
+        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
 
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
@@ -1430,6 +1432,7 @@ public class ExoPlayerFragment extends Fragment {
     }
 
     private class ExoPlayerEventListener implements Player.EventListener {
+
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
@@ -1479,7 +1482,6 @@ public class ExoPlayerFragment extends Fragment {
                     // the first time of Player.STATE_READY means prepared
 
                     findTracksForVideoAudio_1();
-                    // findTracksForVideoAudio_2(); // wrong
 
                     // build R.id.audioTrack submenu
                     if (audioTrackMenuItem != null) {
@@ -1510,6 +1512,15 @@ public class ExoPlayerFragment extends Fragment {
 
                 return;
             }
+        }
+
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            Log.d(TAG,"Player.EventListener.onTracksChanged() is called.");
+        }
+        @Override
+        public void onIsPlayingChanged(boolean isPlaying) {
+            Log.d(TAG,"Player.EventListener.onIsPlayingChanged() is called.");
         }
 
         @Override
