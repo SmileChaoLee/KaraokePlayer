@@ -48,10 +48,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioProcessor;
+import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
+import com.google.android.exoplayer2.ext.flac.FlacLibrary;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
+import com.google.android.exoplayer2.ext.opus.OpusLibrary;
+import com.google.android.exoplayer2.ext.vp9.VpxLibrary;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ts.TsExtractor;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -92,8 +95,6 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class ExoPlayerFragment extends Fragment {
-
-    public static final String ExoPlayerFragmentTag = "ExoPlayerFragmentTag";
 
     private static final String TAG = new String(".ExoPlayerFragment");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
@@ -614,7 +615,6 @@ public class ExoPlayerFragment extends Fragment {
             case R.id.action:
                 Log.d(TAG, "R.id.action --> mediaUri = " + mediaUri);
                 Log.d(TAG, "R.id.action --> numberOfAudioTracks = " + numberOfAudioTracks);
-                // if ( (mediaSource != null) && (numberOfAudioTracks>0) ) {
                 if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
                     Log.d(TAG, "R.id.action --> mediaUri is not null.");
                     playMenuItem.setEnabled(true);
@@ -635,7 +635,6 @@ public class ExoPlayerFragment extends Fragment {
                     } else {
                         pauseMenuItem.setCheckable(false);
                     }
-                    // if ((mediaSource != null) && (mCurrentState == PlaybackStateCompat.STATE_NONE)) {
                     if ((mediaUri != null) && (mCurrentState == PlaybackStateCompat.STATE_NONE)) {
                         stopMenuItem.setCheckable(true);
                         stopMenuItem.setChecked(true);
@@ -842,7 +841,6 @@ public class ExoPlayerFragment extends Fragment {
                 if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) ) {
                     return;
                 }
-
                 playingParam.setCurrentVideoTrackIndexPlayed(0);
 
                 int currentAudioRederer = 0;
@@ -866,6 +864,11 @@ public class ExoPlayerFragment extends Fragment {
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
+                /*
+                String BEAR_URI = "asset:///roadtrip-vp92-10bit.webm";
+                mediaUri = Uri.parse(BEAR_URI);
+                mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
+                */
             }
             return;
         }
@@ -1045,9 +1048,6 @@ public class ExoPlayerFragment extends Fragment {
         trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
-        // Tell ExoPlayer to use FfmpegAudioRenderer
-        // renderersFactory = new DefaultRenderersFactory(this).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-
         renderersFactory = new DefaultRenderersFactory(callingContext) {
             @Override
             protected AudioProcessor[] buildAudioProcessors() {
@@ -1055,16 +1055,26 @@ public class ExoPlayerFragment extends Fragment {
 
                 // Customized AudioProcessor
                 stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
-                AudioProcessor[] audioProcessors = new AudioProcessor[] {stereoVolumeAudioProcessor};
+                AudioProcessor[] audioProcessors;
+                if (super.buildAudioProcessors() != null) {
+                    int len = super.buildAudioProcessors().length;
+                    audioProcessors = new AudioProcessor[len + 1];
+                    for (int i=0; i<len; i++) {
+                        audioProcessors[i] = (super.buildAudioProcessors())[i];
+                    }
+                    audioProcessors[len] = stereoVolumeAudioProcessor;
+                } else {
+                    audioProcessors = new AudioProcessor[] {stereoVolumeAudioProcessor};
+                }
 
                 return audioProcessors;
-                // return super.buildAudioProcessors();
             }
         }
         // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
         .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
 
+        // renderersFactory = new DefaultRenderersFactory(callingContext).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
         exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, renderersFactory, trackSelector);
 
@@ -1118,7 +1128,10 @@ public class ExoPlayerFragment extends Fragment {
             }
         });
 
-        // Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
+        Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
+        Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
+        Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
+        Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
 
     }
 
@@ -1408,12 +1421,16 @@ public class ExoPlayerFragment extends Fragment {
         // get current channel
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
         //
-        if (currentChannelPlayed == SmileApplication.leftChannel) {
-            stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-        } else if (currentChannelPlayed == SmileApplication.rightChannel) {
-            stereoVolumeAudioProcessor.setVolume(0.0f, volume);
+        if (stereoVolumeAudioProcessor != null) {
+            if (currentChannelPlayed == SmileApplication.leftChannel) {
+                stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
+            } else if (currentChannelPlayed == SmileApplication.rightChannel) {
+                stereoVolumeAudioProcessor.setVolume(0.0f, volume);
+            } else {
+                stereoVolumeAudioProcessor.setVolume(volume, volume);
+            }
         } else {
-            stereoVolumeAudioProcessor.setVolume(volume, volume);
+            exoPlayer.setVolume(volume);
         }
         playingParam.setCurrentVolume(volume);
     }
@@ -1434,7 +1451,7 @@ public class ExoPlayerFragment extends Fragment {
     private class ExoPlayerEventListener implements Player.EventListener {
 
         @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
             Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
             Log.d(TAG, "Playback state = " + playbackState);
@@ -1560,7 +1577,7 @@ public class ExoPlayerFragment extends Fragment {
     private class MediaControllerCallback extends MediaControllerCompat.Callback {
 
         @Override
-        public void onPlaybackStateChanged(PlaybackStateCompat state) {
+        public synchronized void onPlaybackStateChanged(PlaybackStateCompat state) {
             super.onPlaybackStateChanged(state);
             if( state == null ) {
                 return;

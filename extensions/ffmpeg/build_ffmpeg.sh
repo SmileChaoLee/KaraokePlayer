@@ -1,8 +1,9 @@
-cd /Users/chaolee/AndroidStudio/ExoPlayerDemo
-EXOPLAYER_ROOT="$(pwd)"
-echo ${EXOPLAYER_ROOT}
+#cd /Users/chaolee/AndroidStudio/ExoPlayerDemo
+#EXOPLAYER_ROOT="$(pwd)"
+#echo ${EXOPLAYER_ROOT}
 
-FFMPEG_EXT_PATH="${EXOPLAYER_ROOT}/extensions/ffmpeg/src/main"
+#FFMPEG_EXT_PATH="${EXOPLAYER_ROOT}/extensions/ffmpeg/src/main"
+FFMPEG_EXT_PATH="$(pwd)/src/main"
 echo ${FFMPEG_EXT_PATH}
 
 NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"

@@ -62,7 +62,7 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        String fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
+        String fragmentTag = SmileApplication.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
             playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);

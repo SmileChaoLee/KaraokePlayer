@@ -22,12 +22,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
+import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
+// public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -81,10 +83,11 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        String fragmentTag = ExoPlayerFragment.ExoPlayerFragmentTag;
+        String fragmentTag = SmileApplication.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
-            playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            // playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
             ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
         } else {
             ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
@@ -153,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.d(TAG,"PlayOneSongActivity-->onSaveInstanceState() is called.");
+        Log.d(TAG,"MainActivity-->onSaveInstanceState() is called.");
         outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, isPlayingSingleSong);
         outState.putParcelable(ExoPlayerFragment.SongInfoState, songInfo);
         super.onSaveInstanceState(outState);

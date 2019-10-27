@@ -13,7 +13,7 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         multiDexEnabled true
         versionCode 113
@@ -75,7 +75,13 @@ dependencies {
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
 
+    implementation 'org.videolan.android:libvlc-all:3.1.12'
+    implementation 'com.adityak:browsemyfiles:1.9'   // file chooser
+
     implementation project(':extension-ffmpeg')
+    implementation project(':extension-vp9')
+    implementation project(':extension-flac')
+    implementation project(':extension-opus')
 }
 
 apply plugin: 'com.google.gms.google-services'
