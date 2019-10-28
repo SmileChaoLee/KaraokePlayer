@@ -5,6 +5,16 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
+    <!-- the banner ads showing area -->
+    <LinearLayout
+        android:id="@+id/linearLayout_for_ads"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="top">
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/messageLinearLayout"
         android:orientation="vertical"
@@ -22,16 +32,6 @@
             android:textAllCaps="false"
             android:text="@string/bufferingString">
         </TextView>
-    </LinearLayout>
-
-    <!-- the banner ads showing area -->
-    <LinearLayout
-        android:id="@+id/linearLayout_for_ads"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:gravity="top">
     </LinearLayout>
 
 </LinearLayout>
