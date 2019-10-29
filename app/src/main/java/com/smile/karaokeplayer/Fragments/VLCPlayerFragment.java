@@ -97,7 +97,7 @@ public class VLCPlayerFragment extends Fragment {
     private float toastTextSize;
 
     private Context callingContext;
-    private View vlcPlayerFragmentView;
+    private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
     private ImageButton volumeImageButton;
@@ -235,12 +235,6 @@ public class VLCPlayerFragment extends Fragment {
         // so retains instance has to be set to false
         setRetainInstance(false);
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.d(TAG, "onCreateView() is called");
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, SmileApplication.FontSize_Scale_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
@@ -248,29 +242,34 @@ public class VLCPlayerFragment extends Fragment {
         toastTextSize = 0.7f * textFontSize;
         useFilePicker = true;
 
-        // Inflate the layout for this fragment
-        vlcPlayerFragmentView = inflater.inflate(R.layout.fragment_vlcplayer, container, false);
-
-        return vlcPlayerFragmentView;
+        colorRed = ContextCompat.getColor(callingContext, R.color.red);
+        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated() is called");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView() is called");
 
-        colorRed = ContextCompat.getColor(callingContext, R.color.red);
-        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
+        // Inflate the layout for this fragment
+        fragmentView = inflater.inflate(R.layout.fragment_vlcplayer, container, false);
+
+        if (fragmentView == null) {
+            // exit
+            mListener.onExitFragment();
+        }
 
         initializeVariables(savedInstanceState);
+
         // Video player view
-        videoVLCPlayerView = vlcPlayerFragmentView.findViewById(R.id.videoVLCPlayerView);
+        videoVLCPlayerView = fragmentView.findViewById(R.id.videoVLCPlayerView);
         videoVLCPlayerView.setVisibility(View.VISIBLE);
-        //
+
         initVLCPlayer();
         initMediaSessionCompat();
+
         // use custom toolbar
-        supportToolbar = vlcPlayerFragmentView.findViewById(R.id.custom_toolbar);
+        supportToolbar = fragmentView.findViewById(R.id.custom_toolbar);
         mListener.setSupportActionBarForFragment(supportToolbar);
         ActionBar actionBar = mListener.getSupportActionBarForFragment();
         if (actionBar != null) {
@@ -278,7 +277,7 @@ public class VLCPlayerFragment extends Fragment {
         }
         supportToolbar.setVisibility(View.VISIBLE);
 
-        volumeSeekBar = vlcPlayerFragmentView.findViewById(R.id.volumeSeekBar);
+        volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
         volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -332,15 +331,15 @@ public class VLCPlayerFragment extends Fragment {
         volumeImageButton.getLayoutParams().height = imageButtonHeight;
         volumeImageButton.getLayoutParams().width = imageButtonHeight;
 
-        repeatImageButton = vlcPlayerFragmentView.findViewById(R.id.repeatImageButton);
+        repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
         repeatImageButton.getLayoutParams().height = imageButtonHeight;
         repeatImageButton.getLayoutParams().width = imageButtonHeight;
 
-        switchToMusicImageButton = vlcPlayerFragmentView.findViewById(R.id.switchToMusicImageButton);
+        switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
         switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
         switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
 
-        switchToVocalImageButton = vlcPlayerFragmentView.findViewById(R.id.switchToVocalImageButton);
+        switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
         switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
         switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
 
@@ -352,7 +351,7 @@ public class VLCPlayerFragment extends Fragment {
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
         // banner ads view
-        linearLayout_for_ads = vlcPlayerFragmentView.findViewById(R.id.linearLayout_for_ads);
+        linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
                 bannerAdView = new AdView(callingContext);
@@ -369,9 +368,9 @@ public class VLCPlayerFragment extends Fragment {
         }
 
         // message area
-        messageLinearLayout = vlcPlayerFragmentView.findViewById(R.id.messageLinearLayout);
+        messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.INVISIBLE);
-        bufferingStringTextView = vlcPlayerFragmentView.findViewById(R.id.bufferingStringTextView);
+        bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
@@ -379,30 +378,30 @@ public class VLCPlayerFragment extends Fragment {
         animationText.setRepeatMode(Animation.REVERSE);
         animationText.setRepeatCount(Animation.INFINITE);
         //
-        audioControllerView = vlcPlayerFragmentView.findViewById(R.id.audioControllerView);
-        previousMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.previousMediaImageButton);
+        audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
+        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
         previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
         previousMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
-        playMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.playMediaImageButton);
+        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
         playMediaImageButton.getLayoutParams().height = imageButtonHeight;
         playMediaImageButton.getLayoutParams().width = imageButtonHeight;
         playMediaImageButton.setVisibility(View.VISIBLE);
 
-        pauseMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.pauseMediaImageButton);
+        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
         pauseMediaImageButton.getLayoutParams().height = imageButtonHeight;
         pauseMediaImageButton.getLayoutParams().width = imageButtonHeight;
         pauseMediaImageButton.setVisibility(View.GONE);
 
-        replayMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.replayMediaImageButton);
+        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
         replayMediaImageButton.getLayoutParams().height = imageButtonHeight;
         replayMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
-        stopMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.stopMediaImageButton);
+        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
         stopMediaImageButton.getLayoutParams().height = imageButtonHeight;
         stopMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
-        nextMediaImageButton = vlcPlayerFragmentView.findViewById(R.id.nextMediaImageButton);
+        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
         nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
         nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
@@ -435,6 +434,14 @@ public class VLCPlayerFragment extends Fragment {
                 }
             }
         }
+
+        return fragmentView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() is called");
     }
 
     public void onInteractionProcessed(String msgString) {
@@ -721,21 +728,21 @@ public class VLCPlayerFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.d(TAG,"VLCPlayerFragment-->onResume() is called.");
-        videoVLCPlayerView.requestFocus();
-        vlcPlayer.attachViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
         super.onResume();
+        Log.d(TAG,"VLCPlayerFragment-->onResume() is called.");
+        // videoVLCPlayerView.requestFocus();
+        vlcPlayer.attachViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
     }
     @Override
     public void onPause() {
+        super.onPause();
         Log.d(TAG,"VLCPlayerFragment-->onPause() is called.");
         vlcPlayer.detachViews();
-        super.onPause();
     }
     @Override
     public void onStop() {
-        Log.d(TAG,"VLCPlayerFragment-->onStop() is called.");
         super.onStop();
+        Log.d(TAG,"VLCPlayerFragment-->onStop() is called.");
     }
 
     @Override
@@ -792,6 +799,15 @@ public class VLCPlayerFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // added on 2019-10-29 for testing
+        if (videoVLCPlayerView != null) {
+            int vHeight = videoVLCPlayerView.getHeight();
+            Log.d(TAG,"videoVLCPlayerView.Height = " + vHeight);
+            int vWidth = videoVLCPlayerView.getWidth();
+            Log.d(TAG,"videoVLCPlayerView.Width = " + vWidth);
+        }
+
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
@@ -1336,7 +1352,6 @@ public class VLCPlayerFragment extends Fragment {
 
     private void startPlay() {
         Log.d(TAG, "startPlay() is called.");
-        // if ( (mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PLAYING) ) {
         int playbackState = playingParam.getCurrentPlaybackState();
         if ( (mediaUri != null) && (playbackState != PlaybackStateCompat.STATE_PLAYING) ) {
             // no media file opened or playing has been stopped
@@ -1648,7 +1663,7 @@ public class VLCPlayerFragment extends Fragment {
                     case PlaybackStateCompat.STATE_PLAYING:
                     case PlaybackStateCompat.STATE_NONE:
                         // start playing when ready or just start new playing
-                        Media mediaSource = new Media(mLibVLC, uri);
+                        final Media mediaSource = new Media(mLibVLC, uri);
                         vlcPlayer.setMedia(mediaSource);
                         vlcPlayer.play();
                         mediaSource.release();
@@ -1786,6 +1801,8 @@ public class VLCPlayerFragment extends Fragment {
                     }
                     playMediaImageButton.setVisibility(View.GONE);
                     pauseMediaImageButton.setVisibility(View.VISIBLE);
+                    // added for testing
+                    //
                     break;
                 case PlaybackStateCompat.STATE_PAUSED:
                     Log.d(TAG, "PlaybackStateCompat.STATE_PAUSED");
