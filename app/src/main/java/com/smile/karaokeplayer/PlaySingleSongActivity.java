@@ -14,10 +14,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
+import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener{
+// public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener{
+public class PlaySingleSongActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener{
 
     private static final String TAG = new String(".PlayOneSongActivity");
 
@@ -65,7 +67,8 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
         String fragmentTag = SmileApplication.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
-            playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            // playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
             ft.add(oneSongPlayerFragmentLayoutId, playerFragment, fragmentTag);
         } else {
             ft.replace(oneSongPlayerFragmentLayoutId, playerFragment, fragmentTag);

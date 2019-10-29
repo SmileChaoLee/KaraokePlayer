@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.aditya.filebrowser.FileChooser;
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -52,15 +53,24 @@ public class SongDataActivity extends AppCompatActivity {
     private String actionButtonString;
     private String crudAction;;
     private SongInfo mSongInfo;
+    private boolean useFilePicker = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() is called.");
 
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
+        textFontSize *= 0.8f;
+        toastTextSize = 0.9f * textFontSize;
+
+        useFilePicker = false;
+        Intent callingIntent = getIntent();
         if (savedInstanceState == null) {
-            Intent callingIntent = getIntent();
             crudAction = callingIntent.getStringExtra(SmileApplication.CrudActionString);
+            useFilePicker = callingIntent.getBooleanExtra(SmileApplication.UseFilePickerString, false);
             switch (crudAction.toUpperCase()) {
                 case SmileApplication.AddActionString:
                     // add one record
@@ -86,6 +96,7 @@ public class SongDataActivity extends AppCompatActivity {
             // not null, has savedInstanceState
             actionButtonString = savedInstanceState.getString("ActionButtonString");
             crudAction = savedInstanceState.getString(SmileApplication.CrudActionString);
+            useFilePicker = savedInstanceState.getBoolean(SmileApplication.UseFilePickerString);
             mSongInfo = savedInstanceState.getParcelable("SongInfo");
             Log.d(TAG, "savedInstanceState is not null.");
         }
@@ -98,12 +109,6 @@ public class SongDataActivity extends AppCompatActivity {
             returnToPrevious();
             return;
         }
-
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
-        textFontSize *= 0.8f;
-        toastTextSize = 0.9f * textFontSize;
 
         setContentView(R.layout.activity_song_data);
 
@@ -240,6 +245,7 @@ public class SongDataActivity extends AppCompatActivity {
 
         outState.putParcelable("SongInfo", mSongInfo);
         outState.putString(SmileApplication.CrudActionString, crudAction);
+        outState.putBoolean(SmileApplication.UseFilePickerString, useFilePicker);
         outState.putString("ActionButtonString", actionButtonString);
 
         super.onSaveInstanceState(outState);
@@ -304,14 +310,18 @@ public class SongDataActivity extends AppCompatActivity {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        if (!useFilePicker) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            } else {
+                intent = new Intent(Intent.ACTION_GET_CONTENT);
+            }
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("*/*");
         } else {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent = new Intent(this, FileChooser.class);
+            intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
         }
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-
         startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
     }
 

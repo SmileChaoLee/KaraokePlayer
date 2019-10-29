@@ -164,7 +164,7 @@ public class VLCPlayerFragment extends Fragment {
     private SongInfo songInfo;
 
     // temporary settings
-    private static final boolean UseAdityaFileBrowser = true;
+    private boolean useFilePicker = true;
     //
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -246,6 +246,7 @@ public class VLCPlayerFragment extends Fragment {
         textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
         fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
+        useFilePicker = true;
 
         // Inflate the layout for this fragment
         vlcPlayerFragmentView = inflater.inflate(R.layout.fragment_vlcplayer, container, false);
@@ -544,6 +545,7 @@ public class VLCPlayerFragment extends Fragment {
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
+                songListIntent.putExtra(SmileApplication.UseFilePickerString, useFilePicker);
                 startActivityForResult(songListIntent, SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
@@ -827,7 +829,7 @@ public class VLCPlayerFragment extends Fragment {
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
 
-                if (!UseAdityaFileBrowser) {
+                if (!useFilePicker) {
                     // not useFileChooser.class in com.adityak:browsemyfiles:1.9
                     String filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
                     if (filePath != null) {
@@ -868,15 +870,15 @@ public class VLCPlayerFragment extends Fragment {
                 int repeatStatus = playingParam.getRepeatStatus();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
-                        // switch to repeat all
-                        playingParam.setRepeatStatus(RepeatAllSongs);
-                        break;
-                    case RepeatAllSongs:
-                        // switch to repeat on song
+                        // switch to repeat one song
                         playingParam.setRepeatStatus(RepeatOneSong);
                         break;
                     case RepeatOneSong:
-                        // switch to no repeat but show symbol of repeat all song with transparent background
+                        // switch to repeat song list
+                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        break;
+                    case RepeatAllSongs:
+                        // switch to no repeat
                         playingParam.setRepeatStatus(NoRepeatPlaying);
                         break;
                 }
@@ -1007,15 +1009,15 @@ public class VLCPlayerFragment extends Fragment {
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
             case NoRepeatPlaying:
-                // switch to repeat all
+                // no repeat but show symbol of repeat all song with transparent background
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
-            case RepeatAllSongs:
-                // switch to repeat on song
+            case RepeatOneSong:
+                // repeat one song
                 repeatImageButton.setImageResource(R.drawable.repeat_one_white);
                 break;
-            case RepeatOneSong:
-                // switch to no repeat but show symbol of repeat all song with transparent background
+            case RepeatAllSongs:
+                // repeat all song list
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
         }
@@ -1115,7 +1117,7 @@ public class VLCPlayerFragment extends Fragment {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent;
-        if (!UseAdityaFileBrowser) {
+        if (!useFilePicker) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
             } else {
@@ -1261,8 +1263,10 @@ public class VLCPlayerFragment extends Fragment {
                         break;
                     case RepeatOneSong:
                         // repeat one song
+                        Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
                         if ( (publicSongIndex > 0) && (publicSongIndex <= publicSongListSize) ) {
                             publicSongIndex--;
+                            Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicSongIndex);
                         }
                         break;
                     case RepeatAllSongs:
@@ -1279,12 +1283,12 @@ public class VLCPlayerFragment extends Fragment {
                     publicSongIndex++;  // set next index of playlist that will be played
                     playingParam.setPublicSongIndex(publicSongIndex);
                 }
+                Log.d(TAG, "Repeat status = " + repeatStatus);
                 Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
                 // }
             }
         } else {
             // startPlay next song that user has ordered
-            Log.d(TAG, "startAutoPlay() finished --> ordered song.");
             playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
             // if (mediaSource != null) {
             if (mediaUri != null) {
@@ -1294,6 +1298,7 @@ public class VLCPlayerFragment extends Fragment {
                     // next song that user ordered
                 }
             }
+            Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
         setToolbarImageButtonStatus();
     }
@@ -1748,6 +1753,17 @@ public class VLCPlayerFragment extends Fragment {
                     // if (mediaSource != null) {
                     if (mediaUri != null) {
                         Log.d(TAG, "MediaControllerCallback--> Song was finished.");
+                        if (playingParam.isAutoPlay()) {
+                            // start playing next video from list
+                            startAutoPlay();
+                        } else {
+                            // end of playing
+                            if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                                replayMedia();
+                            } else {
+                                showNativeAds();
+                            }
+                        }
                     }
                     playMediaImageButton.setVisibility(View.VISIBLE);
                     pauseMediaImageButton.setVisibility(View.GONE);

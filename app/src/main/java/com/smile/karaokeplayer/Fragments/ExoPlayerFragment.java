@@ -383,19 +383,19 @@ public class ExoPlayerFragment extends Fragment {
                 int repeatStatus = playingParam.getRepeatStatus();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
-                        // switch to repeat all
-                        playingParam.setRepeatStatus(RepeatAllSongs);
-                        break;
-                    case RepeatAllSongs:
-                        // switch to repeat on song
+                        // switch to repeat one song
                         playingParam.setRepeatStatus(RepeatOneSong);
                         break;
                     case RepeatOneSong:
-                        // switch to no repeat but show symbol of repeat all song with transparent background
+                        // switch to repeat song list
+                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        break;
+                    case RepeatAllSongs:
+                        // switch to no repeat
                         playingParam.setRepeatStatus(NoRepeatPlaying);
                         break;
                 }
-                setImageButtonStatus();
+                setToolbarImageButtonStatus();
             }
         });
 
@@ -419,7 +419,7 @@ public class ExoPlayerFragment extends Fragment {
             }
         });
 
-        setImageButtonStatus();
+        setToolbarImageButtonStatus();
 
         int volumeSeekBarHeight = (int)(textFontSize * 2.0f);
         volumeSeekBar.getLayoutParams().width = volumeSeekBarHeight;
@@ -589,7 +589,7 @@ public class ExoPlayerFragment extends Fragment {
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
                 }
-                setImageButtonStatus();
+                setToolbarImageButtonStatus();
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
@@ -889,7 +889,7 @@ public class ExoPlayerFragment extends Fragment {
         menu.close();
     }
 
-    private void setImageButtonStatus() {
+    private void setToolbarImageButtonStatus() {
         boolean isAutoPlay = playingParam.isAutoPlay();
         boolean isPlayingSingleSong = playingParam.isPlaySingleSong();
         if ( isAutoPlay || isPlayingSingleSong ) {
@@ -908,15 +908,15 @@ public class ExoPlayerFragment extends Fragment {
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
             case NoRepeatPlaying:
-                // switch to repeat all
+                // no repeat but show symbol of repeat all song with transparent background
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
-            case RepeatAllSongs:
-                // switch to repeat on song
+            case RepeatOneSong:
+                // repeat one song
                 repeatImageButton.setImageResource(R.drawable.repeat_one_white);
                 break;
-            case RepeatOneSong:
-                // switch to no repeat but show symbol of repeat all song with transparent background
+            case RepeatAllSongs:
+                // repeat all song list
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
         }
@@ -1270,7 +1270,7 @@ public class ExoPlayerFragment extends Fragment {
             }
             Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
-        setImageButtonStatus();
+        setToolbarImageButtonStatus();
     }
 
     private void playSingleSong(SongInfo songInfo) {

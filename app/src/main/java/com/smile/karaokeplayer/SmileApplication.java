@@ -20,6 +20,7 @@ public class SmileApplication extends MultiDexApplication {
     public static final int leftChannel = 0;
     public static final int rightChannel = 1;
     public static final int stereoChannel = 2;
+    public static final String UseFilePickerString = "UseFilePicker";
     public static final String PlayerFragmentTag = "PlayerFragmentTag";
     public static final String CrudActionString = "CrudAction";
     public static final String AddActionString = "ADD";
