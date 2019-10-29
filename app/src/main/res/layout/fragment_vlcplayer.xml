@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     tools:context=".Fragments.VLCPlayerFragment">
 
     <org.videolan.libvlc.util.VLCVideoLayout
@@ -17,6 +18,9 @@
     </org.videolan.libvlc.util.VLCVideoLayout>
 
     <include layout="@layout/custom_toolbar_layout" />
+
+    <include layout="@layout/audio_controller_layout" />
+
     <include layout="@layout/message_banner_ads_layout" />
 
 </FrameLayout>
