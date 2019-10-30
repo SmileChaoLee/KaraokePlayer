@@ -131,7 +131,7 @@ public class ExoPlayerFragment extends Fragment {
     private float toastTextSize;
 
     private Context callingContext;
-    private View exoPlayerFragmentView;
+    private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
     private ImageButton volumeImageButton;
@@ -174,15 +174,23 @@ public class ExoPlayerFragment extends Fragment {
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private MediaSource mediaSource;
     private SimpleExoPlayer exoPlayer;
-    // private AudioAttributes.Builder audioAttributesBuilder;
 
+    private LinearLayout linearLayout_for_ads;
+    private AdView bannerAdView;
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
+
+    private LinearLayout audioControllerView;
+    private ImageButton previousMediaImageButton;
+    private ImageButton playMediaImageButton;
+    private ImageButton replayMediaImageButton;
+    private ImageButton pauseMediaImageButton;
+    private ImageButton stopMediaImageButton;
+    private ImageButton nextMediaImageButton;
+
     private int colorRed;
     private int colorTransparent;
-    private LinearLayout linearLayout_for_ads;
-    private AdView bannerAdView;
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
@@ -263,6 +271,14 @@ public class ExoPlayerFragment extends Fragment {
         // so retains instance has to be set to false
         setRetainInstance(false);
         setHasOptionsMenu(true);
+
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, SmileApplication.FontSize_Scale_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
+        toastTextSize = 0.7f * textFontSize;
+
+        colorRed = ContextCompat.getColor(callingContext, R.color.red);
+        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
     }
 
     @Override
@@ -270,51 +286,32 @@ public class ExoPlayerFragment extends Fragment {
                              Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView() is called");
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
-        toastTextSize = 0.7f * textFontSize;
-
         // Inflate the layout for this fragment
-        exoPlayerFragmentView = inflater.inflate(R.layout.fragment_exoplayer, container, false);
-
-        return exoPlayerFragmentView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        Log.d(TAG, "onActivityCreated() is called");
-
-        colorRed = ContextCompat.getColor(callingContext, R.color.red);
-        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
+        fragmentView = inflater.inflate(R.layout.fragment_exoplayer, container, false);
+        if (fragmentView == null) {
+            // exit
+            mListener.onExitFragment();
+        }
 
         initializeVariables(savedInstanceState);
+
         // Video player view
-        videoExoPlayerView = exoPlayerFragmentView.findViewById(R.id.videoExoPlayerView);
+        videoExoPlayerView = fragmentView.findViewById(R.id.videoExoPlayerView);
         videoExoPlayerView.setVisibility(View.VISIBLE);
-        //
+
         initExoPlayer();
         initMediaSessionCompat();
+
         // use custom toolbar
-        supportToolbar = exoPlayerFragmentView.findViewById(R.id.custom_toolbar);
+        supportToolbar = fragmentView.findViewById(R.id.custom_toolbar);
         mListener.setSupportActionBarForFragment(supportToolbar);
         ActionBar actionBar = mListener.getSupportActionBarForFragment();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
         supportToolbar.setVisibility(View.VISIBLE);
-        supportToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int visibility = v.getVisibility();
-                if (visibility == View.VISIBLE) {
-                    videoExoPlayerView.hideController();
-                }
-            }
-        });
 
-        volumeSeekBar = exoPlayerFragmentView.findViewById(R.id.volumeSeekBar);
+        volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
         volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -362,62 +359,18 @@ public class ExoPlayerFragment extends Fragment {
         volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
         volumeImageButton.getLayoutParams().height = imageButtonHeight;
         volumeImageButton.getLayoutParams().width = imageButtonHeight;
-        volumeImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int visibility = volumeSeekBar.getVisibility();
-                if ( (visibility == View.GONE) || (visibility == View.INVISIBLE) ) {
-                    volumeSeekBar.setVisibility(View.VISIBLE);
-                } else {
-                    volumeSeekBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
 
-        repeatImageButton = exoPlayerFragmentView.findViewById(R.id.repeatImageButton);
+        repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
         repeatImageButton.getLayoutParams().height = imageButtonHeight;
         repeatImageButton.getLayoutParams().width = imageButtonHeight;
-        repeatImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int repeatStatus = playingParam.getRepeatStatus();
-                switch (repeatStatus) {
-                    case NoRepeatPlaying:
-                        // switch to repeat one song
-                        playingParam.setRepeatStatus(RepeatOneSong);
-                        break;
-                    case RepeatOneSong:
-                        // switch to repeat song list
-                        playingParam.setRepeatStatus(RepeatAllSongs);
-                        break;
-                    case RepeatAllSongs:
-                        // switch to no repeat
-                        playingParam.setRepeatStatus(NoRepeatPlaying);
-                        break;
-                }
-                setToolbarImageButtonStatus();
-            }
-        });
 
-        switchToMusicImageButton = exoPlayerFragmentView.findViewById(R.id.switchToMusicImageButton);
+        switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
         switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
         switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToMusic();
-            }
-        });
 
-        switchToVocalImageButton = exoPlayerFragmentView.findViewById(R.id.switchToVocalImageButton);
+        switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
         switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
         switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToVocal();
-            }
-        });
 
         setToolbarImageButtonStatus();
 
@@ -426,19 +379,7 @@ public class ExoPlayerFragment extends Fragment {
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
-        // message area
-        messageLinearLayout = exoPlayerFragmentView.findViewById(R.id.messageLinearLayout);
-        messageLinearLayout.setVisibility(View.GONE);
-        bufferingStringTextView = exoPlayerFragmentView.findViewById(R.id.bufferingStringTextView);
-        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-        animationText = new AlphaAnimation(0.0f,1.0f);
-        animationText.setDuration(500);
-        animationText.setStartOffset(0);
-        animationText.setRepeatMode(Animation.REVERSE);
-        animationText.setRepeatCount(Animation.INFINITE);
-        //
-
-        linearLayout_for_ads = exoPlayerFragmentView.findViewById(R.id.linearLayout_for_ads);
+        linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
                 bannerAdView = new AdView(callingContext);
@@ -453,6 +394,49 @@ public class ExoPlayerFragment extends Fragment {
         } else {
             linearLayout_for_ads.setVisibility(View.GONE);
         }
+
+        // message area
+        messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
+        messageLinearLayout.setVisibility(View.GONE);
+        bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
+        // added for testing
+        bufferingStringTextView.setText("ExoPlayer-->" + bufferingStringTextView.getText());
+        //
+        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        animationText = new AlphaAnimation(0.0f,1.0f);
+        animationText.setDuration(500);
+        animationText.setStartOffset(0);
+        animationText.setRepeatMode(Animation.REVERSE);
+        animationText.setRepeatCount(Animation.INFINITE);
+        //
+        audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
+        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
+        previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        previousMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
+        playMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        playMediaImageButton.getLayoutParams().width = imageButtonHeight;
+        playMediaImageButton.setVisibility(View.VISIBLE);
+
+        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
+        pauseMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        pauseMediaImageButton.getLayoutParams().width = imageButtonHeight;
+        pauseMediaImageButton.setVisibility(View.GONE);
+
+        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
+        replayMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        replayMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
+        stopMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        stopMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
+        nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
+        nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        setOnClickEvents();
 
         hideBannerAds();
         showNativeAds();
@@ -481,6 +465,14 @@ public class ExoPlayerFragment extends Fragment {
                 }
             }
         }
+
+        return fragmentView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated() is called");
     }
 
     public void onInteractionProcessed(String msgString) {
@@ -874,6 +866,161 @@ public class ExoPlayerFragment extends Fragment {
         }
     }
 
+    private void setOnClickEvents() {
+
+        volumeImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int visibility = volumeSeekBar.getVisibility();
+                if ( (visibility == View.GONE) || (visibility == View.INVISIBLE) ) {
+                    volumeSeekBar.setVisibility(View.VISIBLE);
+                } else {
+                    volumeSeekBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        repeatImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int repeatStatus = playingParam.getRepeatStatus();
+                switch (repeatStatus) {
+                    case NoRepeatPlaying:
+                        // switch to repeat one song
+                        playingParam.setRepeatStatus(RepeatOneSong);
+                        break;
+                    case RepeatOneSong:
+                        // switch to repeat song list
+                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        break;
+                    case RepeatAllSongs:
+                        // switch to no repeat
+                        playingParam.setRepeatStatus(NoRepeatPlaying);
+                        break;
+                }
+                setToolbarImageButtonStatus();
+            }
+        });
+
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToVocal();
+            }
+        });
+
+        previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( (publicSongList == null) || (!playingParam.isAutoPlay())) {
+                    return;
+                }
+                int publicSongListSize = publicSongList.size();
+                int nextIndex = playingParam.getPublicNextSongIndex();
+                int repeatStatus = playingParam.getRepeatStatus();
+                nextIndex = nextIndex - 2;
+                if (nextIndex < 0) {
+                    // is going to play the last one
+                    nextIndex = publicSongListSize - 1; // the last one
+                }
+                if (repeatStatus == RepeatOneSong) {
+                    // because in startAutoPlay() will subtract 1 from next index
+                    nextIndex++;
+                }
+                playingParam.setPublicNextSongIndex(nextIndex);
+
+                startAutoPlay();
+            }
+        });
+
+        playMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPlay();
+            }
+        });
+
+        pauseMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pausePlay();
+            }
+        });
+
+        replayMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replayMedia();
+            }
+        });
+
+        stopMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stopPlay();
+            }
+        });
+
+        nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ( (publicSongList == null) || (!playingParam.isAutoPlay())) {
+                    return;
+                }
+                int publicSongListSize = publicSongList.size();
+                int nextIndex = playingParam.getPublicNextSongIndex();
+                int repeatStatus = playingParam.getRepeatStatus();
+                if (repeatStatus == RepeatOneSong) {
+                    nextIndex++;
+                }
+                if (nextIndex > publicSongListSize) {
+                    // it is playing the last one right now
+                    // so it is going to play the first one
+                    playingParam.setPublicNextSongIndex(0);
+                } else {
+                    playingParam.setPublicNextSongIndex(nextIndex);
+                }
+                startAutoPlay();
+            }
+        });
+
+        supportToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int visibility = v.getVisibility();
+                if (visibility == View.VISIBLE) {
+                    videoExoPlayerView.hideController();
+                }
+            }
+        });
+
+        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout);
+        videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+                if (visibility == View.VISIBLE) {
+                    // use custom toolbar
+                    supportToolbar.setVisibility(View.VISIBLE);
+                    hideBannerAds();
+                } else {
+                    // use custom toolbar
+                    supportToolbar.setVisibility(View.GONE);
+                    // mainMenu.close();
+                    closeMenu(mainMenu);
+                    showBannerAds();
+                }
+                volumeSeekBar.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
     private void closeMenu(Menu menu) {
         if (menu == null) {
             return;
@@ -1109,30 +1256,10 @@ public class ExoPlayerFragment extends Fragment {
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
 
-        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout);
-        videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
-            @Override
-            public void onVisibilityChange(int visibility) {
-                if (visibility == View.VISIBLE) {
-                    // use custom toolbar
-                    supportToolbar.setVisibility(View.VISIBLE);
-                    hideBannerAds();
-                } else {
-                    // use custom toolbar
-                    supportToolbar.setVisibility(View.GONE);
-                    // mainMenu.close();
-                    closeMenu(mainMenu);
-                    showBannerAds();
-                }
-                volumeSeekBar.setVisibility(View.INVISIBLE);
-            }
-        });
-
         Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
         Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
         Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
         Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
-
     }
 
     private void releaseExoPlayer() {
@@ -1223,11 +1350,11 @@ public class ExoPlayerFragment extends Fragment {
                 // There are public songs to be played
                 boolean stillPlayNext = true;
                 int repeatStatus = playingParam.getRepeatStatus();
-                int publicSongIndex = playingParam.getPublicNextSongIndex();
+                int publicNextSongIndex = playingParam.getPublicNextSongIndex();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
                         // no repeat
-                        if (publicSongIndex >= publicSongListSize) {
+                        if (publicNextSongIndex >= publicSongListSize) {
                             // stop playing
                             playingParam.setAutoPlay(false);
                             stopPlay();
@@ -1236,25 +1363,28 @@ public class ExoPlayerFragment extends Fragment {
                         break;
                     case RepeatOneSong:
                         // repeat one song
-                        if ( (publicSongIndex > 0) && (publicSongIndex <= publicSongListSize) ) {
-                            publicSongIndex--;
+                        Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
+                        if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
+                            publicNextSongIndex--;
+                            Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
                         }
                         break;
                     case RepeatAllSongs:
                         // repeat all songs
-                        if (publicSongIndex >= publicSongListSize) {
-                            publicSongIndex = 0;
+                        if (publicNextSongIndex >= publicSongListSize) {
+                            publicNextSongIndex = 0;
                         }
                         break;
                 }
 
                 if (stillPlayNext) {    // still play the next song
-                    songInfo = publicSongList.get(publicSongIndex);
+                    songInfo = publicSongList.get(publicNextSongIndex);
                     playSingleSong(songInfo);
-                    publicSongIndex++;  // set next index of playlist that will be played
-                    playingParam.setPublicNextSongIndex(publicSongIndex);
+                    publicNextSongIndex++;  // set next index of playlist that will be played
+                    playingParam.setPublicNextSongIndex(publicNextSongIndex);
                 }
-                Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
+                Log.d(TAG, "Repeat status = " + repeatStatus);
+                Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
                 // }
             }
         } else {
