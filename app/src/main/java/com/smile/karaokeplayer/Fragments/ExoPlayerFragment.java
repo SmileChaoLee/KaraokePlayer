@@ -572,7 +572,7 @@ public class ExoPlayerFragment extends Fragment {
                     publicSongList = readPublicSongList();
                     if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
                         playingParam.setAutoPlay(true);
-                        playingParam.setPublicSongIndex(0);
+                        playingParam.setPublicNextSongIndex(0);
                         // start playing video from list
                         // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
                         if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
@@ -964,7 +964,7 @@ public class ExoPlayerFragment extends Fragment {
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentVolume(1.0f);
 
-        playingParam.setPublicSongIndex(0);
+        playingParam.setPublicNextSongIndex(0);
         playingParam.setPlayingPublic(true);
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
@@ -1223,7 +1223,7 @@ public class ExoPlayerFragment extends Fragment {
                 // There are public songs to be played
                 boolean stillPlayNext = true;
                 int repeatStatus = playingParam.getRepeatStatus();
-                int publicSongIndex = playingParam.getPublicSongIndex();
+                int publicSongIndex = playingParam.getPublicNextSongIndex();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
                         // no repeat
@@ -1252,7 +1252,7 @@ public class ExoPlayerFragment extends Fragment {
                     songInfo = publicSongList.get(publicSongIndex);
                     playSingleSong(songInfo);
                     publicSongIndex++;  // set next index of playlist that will be played
-                    playingParam.setPublicSongIndex(publicSongIndex);
+                    playingParam.setPublicNextSongIndex(publicSongIndex);
                 }
                 Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
                 // }

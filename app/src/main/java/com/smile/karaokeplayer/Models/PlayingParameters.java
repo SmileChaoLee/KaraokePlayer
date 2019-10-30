@@ -17,7 +17,7 @@ public class PlayingParameters implements Parcelable {
     private int currentAudioTrackIndexPlayed;
     private long currentAudioPosition;
     private float currentVolume;
-    private int publicSongIndex;
+    private int publicNextSongIndex;
     private boolean isPlayingPublic;
     private int musicOrVocalOrNoSetting;
     private int repeatStatus;
@@ -41,7 +41,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioTrackIndexPlayed = currentAudioTrackIndexPlayed;
         this.currentAudioPosition = currentAudioPosition;
         this.currentVolume = currentVolume;
-        this.publicSongIndex = publicSongIndex;
+        this.publicNextSongIndex = publicSongIndex;
         this.isPlayingPublic = isPlayingPublic;
         this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
         this.repeatStatus = repeatStatus;
@@ -147,12 +147,12 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = currentVolume;
     }
 
-    public int getPublicSongIndex() {
-        return publicSongIndex;
+    public int getPublicNextSongIndex() {
+        return publicNextSongIndex;
     }
 
-    public void setPublicSongIndex(int publicSongIndex) {
-        this.publicSongIndex = publicSongIndex;
+    public void setPublicNextSongIndex(int publicNextSongIndex) {
+        this.publicNextSongIndex = publicNextSongIndex;
     }
 
     public boolean isPlayingPublic() {
@@ -206,7 +206,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.currentAudioTrackIndexPlayed);
         dest.writeLong(this.currentAudioPosition);
         dest.writeFloat(this.currentVolume);
-        dest.writeInt(this.publicSongIndex);
+        dest.writeInt(this.publicNextSongIndex);
         dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
         dest.writeInt(this.musicOrVocalOrNoSetting);
         dest.writeInt(this.repeatStatus);
@@ -226,7 +226,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioTrackIndexPlayed = in.readInt();
         this.currentAudioPosition = in.readLong();
         this.currentVolume = in.readFloat();
-        this.publicSongIndex = in.readInt();
+        this.publicNextSongIndex = in.readInt();
         this.isPlayingPublic = in.readByte() != 0;
         this.musicOrVocalOrNoSetting = in.readInt();
         this.repeatStatus = in.readInt();

@@ -532,7 +532,7 @@ public class VLCPlayerFragment extends Fragment {
                     publicSongList = readPublicSongList();
                     if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
                         playingParam.setAutoPlay(true);
-                        playingParam.setPublicSongIndex(0);
+                        playingParam.setPublicNextSongIndex(0);
                         // start playing video from list
                         if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
                             // media is playing or prepared
@@ -722,26 +722,32 @@ public class VLCPlayerFragment extends Fragment {
             isAudioTrackMenuItemPressed = false;
         }
 
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG,"VLCPlayerFragment-->onStart() is called.");
+        videoVLCPlayerView.requestFocus();
+        vlcPlayer.attachViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG,"VLCPlayerFragment-->onResume() is called.");
-        // videoVLCPlayerView.requestFocus();
-        vlcPlayer.attachViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
     }
     @Override
     public void onPause() {
         super.onPause();
         Log.d(TAG,"VLCPlayerFragment-->onPause() is called.");
-        vlcPlayer.detachViews();
     }
+
     @Override
     public void onStop() {
         super.onStop();
+        vlcPlayer.detachViews();
         Log.d(TAG,"VLCPlayerFragment-->onStop() is called.");
     }
 
@@ -919,7 +925,24 @@ public class VLCPlayerFragment extends Fragment {
         previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if ( (publicSongList == null) || (!playingParam.isAutoPlay())) {
+                    return;
+                }
+                int publicSongListSize = publicSongList.size();
+                int nextIndex = playingParam.getPublicNextSongIndex();
+                int repeatStatus = playingParam.getRepeatStatus();
+                nextIndex = nextIndex - 2;
+                if (nextIndex < 0) {
+                    // is going to play the last one
+                    nextIndex = publicSongListSize - 1; // the last one
+                }
+                if (repeatStatus == RepeatOneSong) {
+                    // because in startAutoPlay() will subtract 1 from next index
+                    nextIndex++;
+                }
+                playingParam.setPublicNextSongIndex(nextIndex);
 
+                startAutoPlay();
             }
         });
 
@@ -954,7 +977,23 @@ public class VLCPlayerFragment extends Fragment {
         nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if ( (publicSongList == null) || (!playingParam.isAutoPlay())) {
+                    return;
+                }
+                int publicSongListSize = publicSongList.size();
+                int nextIndex = playingParam.getPublicNextSongIndex();
+                int repeatStatus = playingParam.getRepeatStatus();
+                if (repeatStatus == RepeatOneSong) {
+                    nextIndex++;
+                }
+                if (nextIndex > publicSongListSize) {
+                    // it is playing the last one right now
+                    // so it is going to play the first one
+                    playingParam.setPublicNextSongIndex(0);
+                } else {
+                    playingParam.setPublicNextSongIndex(nextIndex);
+                }
+                startAutoPlay();
             }
         });
 
@@ -1083,7 +1122,7 @@ public class VLCPlayerFragment extends Fragment {
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentVolume(1.0f);
 
-        playingParam.setPublicSongIndex(0);
+        playingParam.setPublicNextSongIndex(0);
         playingParam.setPlayingPublic(true);
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
@@ -1266,11 +1305,11 @@ public class VLCPlayerFragment extends Fragment {
                 // There are public songs to be played
                 boolean stillPlayNext = true;
                 int repeatStatus = playingParam.getRepeatStatus();
-                int publicSongIndex = playingParam.getPublicSongIndex();
+                int publicNextSongIndex = playingParam.getPublicNextSongIndex();
                 switch (repeatStatus) {
                     case NoRepeatPlaying:
                         // no repeat
-                        if (publicSongIndex >= publicSongListSize) {
+                        if (publicNextSongIndex >= publicSongListSize) {
                             // stop playing
                             playingParam.setAutoPlay(false);
                             stopPlay();
@@ -1280,27 +1319,27 @@ public class VLCPlayerFragment extends Fragment {
                     case RepeatOneSong:
                         // repeat one song
                         Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
-                        if ( (publicSongIndex > 0) && (publicSongIndex <= publicSongListSize) ) {
-                            publicSongIndex--;
-                            Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicSongIndex);
+                        if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
+                            publicNextSongIndex--;
+                            Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
                         }
                         break;
                     case RepeatAllSongs:
                         // repeat all songs
-                        if (publicSongIndex >= publicSongListSize) {
-                            publicSongIndex = 0;
+                        if (publicNextSongIndex >= publicSongListSize) {
+                            publicNextSongIndex = 0;
                         }
                         break;
                 }
 
                 if (stillPlayNext) {    // still startPlay the next song
-                    songInfo = publicSongList.get(publicSongIndex);
+                    songInfo = publicSongList.get(publicNextSongIndex);
                     playSingleSong(songInfo);
-                    publicSongIndex++;  // set next index of playlist that will be played
-                    playingParam.setPublicSongIndex(publicSongIndex);
+                    publicNextSongIndex++;  // set next index of playlist that will be played
+                    playingParam.setPublicNextSongIndex(publicNextSongIndex);
                 }
                 Log.d(TAG, "Repeat status = " + repeatStatus);
-                Log.d(TAG, "startAutoPlay() finished --> " + publicSongIndex--);
+                Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
                 // }
             }
         } else {
