@@ -3,8 +3,8 @@
     <item>
         <shape android:shape="oval">
             <size
-                android:height="@dimen/seekbar_thumb_size"
-                android:width="@dimen/seekbar_thumb_size" >
+                android:height="@dimen/volume_pressed_seekbar_thumb_size"
+                android:width="@dimen/volume_pressed_seekbar_thumb_size" >
             </size>
             <stroke android:width="2dp" android:color="@color/lightGray" />
             <solid android:color="@color/lightGray" />

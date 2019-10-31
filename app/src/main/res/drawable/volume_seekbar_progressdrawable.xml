@@ -10,8 +10,8 @@
     <item android:id="@android:id/progress">
         <clip>
             <shape android:shape="line">
-                <stroke android:width="@dimen/volume_progress_width"
-                    android:color="@android:color/holo_blue_light" />
+                <stroke android:width="@dimen/volume_progress_background_width"
+                    android:color="@android:color/holo_blue_bright" />
             </shape>
         </clip>
     </item>

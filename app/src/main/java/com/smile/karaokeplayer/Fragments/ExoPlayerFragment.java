@@ -31,6 +31,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -45,6 +46,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.audio.AudioProcessor;
@@ -55,6 +57,8 @@ import com.google.android.exoplayer2.ext.opus.OpusLibrary;
 import com.google.android.exoplayer2.ext.vp9.VpxLibrary;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.metadata.Metadata;
+import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -188,6 +192,8 @@ public class ExoPlayerFragment extends Fragment {
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
+    private TextView exo_position_TextView;
+    private TextView exo_duration_TextView;
 
     private int colorRed;
     private int colorTransparent;
@@ -374,8 +380,8 @@ public class ExoPlayerFragment extends Fragment {
 
         setToolbarImageButtonStatus();
 
-        int volumeSeekBarHeight = (int)(textFontSize * 2.0f);
-        volumeSeekBar.getLayoutParams().width = volumeSeekBarHeight;
+        int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
+        volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
@@ -435,6 +441,14 @@ public class ExoPlayerFragment extends Fragment {
         nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
         nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
         nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        float durationTextSize = textFontSize * 0.6f;
+        exo_position_TextView = fragmentView.findViewById(R.id.exo_position);
+        ScreenUtil.resizeTextSize(exo_position_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+
+        exo_duration_TextView = fragmentView.findViewById(R.id.exo_duration);
+        ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+
 
         setOnClickEvents();
 
@@ -1578,132 +1592,6 @@ public class ExoPlayerFragment extends Fragment {
         }
     }
 
-    private class ExoPlayerEventListener implements Player.EventListener {
-
-        @Override
-        public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
-            Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
-            Log.d(TAG, "Playback state = " + playbackState);
-
-            if (playbackState == Player.STATE_BUFFERING) {
-                showBufferingMessage();
-                return;
-            }
-            dismissBufferingMessage();
-
-            if (playbackState == Player.STATE_ENDED) {
-                // playing is finished
-                if (playingParam.isAutoPlay()) {
-                    // start playing next video from list
-                    startAutoPlay();
-                } else {
-                    // end of playing
-                    if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
-                        replayMedia();
-                    } else {
-                        showNativeAds();
-                    }
-                }
-                Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
-                return;
-            }
-            if (playbackState == Player.STATE_IDLE) {
-                // There is bug here
-                // The listener will get twice of (Player.STATE_IDLE)
-                // when user stop playing using ExoPlayer.stop()
-                // so do not put startAutoPlay() inside this event
-                // if (mediaSource != null) {
-                if (mediaUri != null) {
-                    playingParam.setMediaSourcePrepared(false);
-                    Log.d(TAG, "Song was stopped by user (by stopPlay()).");
-                }
-                if (!playingParam.isAutoPlay()) {
-                    // not auto play
-                    showNativeAds();
-                }
-                return;
-            }
-            if (playbackState == Player.STATE_READY) {
-                if (!playingParam.isMediaSourcePrepared()) {
-                    // the first time of Player.STATE_READY means prepared
-
-                    findTracksForVideoAudio_1();
-
-                    // build R.id.audioTrack submenu
-                    if (audioTrackMenuItem != null) {
-                        if (!audioTrackMenuItem.hasSubMenu()) {
-                            // no sub menu
-                            ((Menu) audioTrackMenuItem).addSubMenu("Text title");
-                        }
-                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                        subMenu.clear();
-                        String audioTrackName;
-                        for (int index=0; index<audioTrackIndicesList.size(); index++) {
-                            // audio track index start from 1 for user interface
-                            audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
-                            subMenu.add(audioTrackName);
-                        }
-                    }
-                }
-
-                playingParam.setMediaSourcePrepared(true);
-
-                if (numberOfVideoTracks == 0) {
-                    // no video is being played, show native ads
-                    showNativeAds();
-                } else {
-                    // video is being played, hide native ads
-                    hideNativeAds();
-                }
-
-                return;
-            }
-        }
-
-        @Override
-        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-            Log.d(TAG,"Player.EventListener.onTracksChanged() is called.");
-        }
-        @Override
-        public void onIsPlayingChanged(boolean isPlaying) {
-            Log.d(TAG,"Player.EventListener.onIsPlayingChanged() is called.");
-        }
-
-        @Override
-        public void onPlayerError(ExoPlaybackException error) {
-            switch (error.type) {
-                case ExoPlaybackException.TYPE_SOURCE:
-                    Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
-                    break;
-
-                case ExoPlaybackException.TYPE_RENDERER:
-                    Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
-                    break;
-
-                case ExoPlaybackException.TYPE_UNEXPECTED:
-                    Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
-                    break;
-            }
-            Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
-
-            String formatNotSupportedString = getString(R.string.formatNotSupportedString);
-            if (playingParam.isAutoPlay()) {
-                // go to next one in the list
-                if (canShowNotSupportedFormat) {
-                    // only show once
-                    ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
-                    canShowNotSupportedFormat = false;
-                }
-                startAutoPlay();
-            } else {
-                ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
-            }
-
-            mediaUri = null;
-        }
-    }
-
     private class MediaControllerCallback extends MediaControllerCompat.Callback {
 
         @Override
@@ -1810,8 +1698,146 @@ public class ExoPlayerFragment extends Fragment {
         }
     }
 
-    // method 1
-    private void findTracksForVideoAudio_1() {
+
+    private class ExoPlayerEventListener implements Player.EventListener {
+
+        @Override
+        public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+            Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
+            Log.d(TAG, "Playback state = " + playbackState);
+
+            switch (playbackState) {
+                case Player.STATE_BUFFERING:
+                    showBufferingMessage();
+                    return;
+                case Player.STATE_READY:
+                    if (!playingParam.isMediaSourcePrepared()) {
+                        // the first time of Player.STATE_READY means prepared
+
+                        findTracksForVideoAudio();
+
+                        // build R.id.audioTrack submenu
+                        if (audioTrackMenuItem != null) {
+                            if (!audioTrackMenuItem.hasSubMenu()) {
+                                // no sub menu
+                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
+                            }
+                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                            subMenu.clear();
+                            String audioTrackName;
+                            for (int index=0; index<audioTrackIndicesList.size(); index++) {
+                                // audio track index start from 1 for user interface
+                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
+                                subMenu.add(audioTrackName);
+                            }
+                        }
+                    }
+
+                    playingParam.setMediaSourcePrepared(true);
+
+                    if (numberOfVideoTracks == 0) {
+                        // no video is being played, show native ads
+                        showNativeAds();
+                    } else {
+                        // video is being played, hide native ads
+                        hideNativeAds();
+                    }
+                    break;
+                case Player.STATE_ENDED:
+                    // playing is finished
+                    if (playingParam.isAutoPlay()) {
+                        // start playing next video from list
+                        startAutoPlay();
+                    } else {
+                        // end of playing
+                        if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                            replayMedia();
+                        } else {
+                            showNativeAds();
+                        }
+                    }
+                    Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
+                    break;
+                case Player.STATE_IDLE:
+                    // There is bug here
+                    // The listener will get twice of (Player.STATE_IDLE)
+                    // when user stop playing using ExoPlayer.stop()
+                    // so do not put startAutoPlay() inside this event
+                    // if (mediaSource != null) {
+                    if (mediaUri != null) {
+                        playingParam.setMediaSourcePrepared(false);
+                        Log.d(TAG, "Song was stopped by user (by stopPlay()).");
+                    }
+                    if (!playingParam.isAutoPlay()) {
+                        // not auto play
+                        showNativeAds();
+                    }
+                    break;
+            }
+
+            dismissBufferingMessage();
+        }
+
+        @Override
+        public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
+            Log.d(TAG,"Player.EventListener.onTimelineChanged() is called.");
+        }
+
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            Log.d(TAG,"Player.EventListener.onTracksChanged() is called.");
+        }
+        @Override
+        public void onIsPlayingChanged(boolean isPlaying) {
+            Log.d(TAG,"Player.EventListener.onIsPlayingChanged() is called.");
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+            switch (error.type) {
+                case ExoPlaybackException.TYPE_SOURCE:
+                    Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
+                    break;
+
+                case ExoPlaybackException.TYPE_RENDERER:
+                    Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
+                    break;
+
+                case ExoPlaybackException.TYPE_UNEXPECTED:
+                    Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                    break;
+            }
+            Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
+
+            String formatNotSupportedString = getString(R.string.formatNotSupportedString);
+            if (playingParam.isAutoPlay()) {
+                // go to next one in the list
+                if (canShowNotSupportedFormat) {
+                    // only show once
+                    ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                    canShowNotSupportedFormat = false;
+                }
+                startAutoPlay();
+            } else {
+                ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+            }
+
+            mediaUri = null;
+        }
+
+        @Override
+        public void onPositionDiscontinuity(int reason) {
+            Log.d(TAG,"Player.EventListener.onPositionDiscontinuity() is called.");
+        }
+
+        @Override
+        public void onSeekProcessed() {
+            Log.d(TAG,"Player.EventListener.onSeekProcessed() is called.");
+        }
+    }
+
+    private void findTracksForVideoAudio() {
 
         int numVideoRenderers = 0;
         int numAudioRenderers = 0;

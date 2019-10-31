@@ -36,6 +36,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.aditya.filebrowser.FileChooser;
 import com.google.android.gms.ads.AdRequest;
@@ -140,6 +141,7 @@ public class VLCPlayerFragment extends Fragment {
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
+
     private LinearLayout audioControllerView;
     private ImageButton previousMediaImageButton;
     private ImageButton playMediaImageButton;
@@ -147,6 +149,9 @@ public class VLCPlayerFragment extends Fragment {
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
+    private TextView playingTimeTextView;
+    private AppCompatSeekBar player_duration_seekbar;
+    private TextView durationTimeTextView;
 
     private int colorRed;
     private int colorTransparent;
@@ -253,7 +258,6 @@ public class VLCPlayerFragment extends Fragment {
 
         // Inflate the layout for this fragment
         fragmentView = inflater.inflate(R.layout.fragment_vlcplayer, container, false);
-
         if (fragmentView == null) {
             // exit
             mListener.onExitFragment();
@@ -287,7 +291,7 @@ public class VLCPlayerFragment extends Fragment {
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
         volumeSeekBar.setMax(maxProgress);
-        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        volumeSeekBar.setOnSeekBarChangeListener(new AppCompatSeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 volumeSeekBar.setProgressAndThumb(i);
@@ -345,8 +349,8 @@ public class VLCPlayerFragment extends Fragment {
 
         setToolbarImageButtonStatus();
 
-        int volumeSeekBarHeight = (int)(textFontSize * 2.0f);
-        volumeSeekBar.getLayoutParams().width = volumeSeekBarHeight;
+        int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
+        volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
@@ -371,6 +375,9 @@ public class VLCPlayerFragment extends Fragment {
         messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.INVISIBLE);
         bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
+        // added for testing
+        bufferingStringTextView.setText("VLCPlayer-->" + bufferingStringTextView.getText());
+        //
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
@@ -404,6 +411,17 @@ public class VLCPlayerFragment extends Fragment {
         nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
         nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
         nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
+
+        float durationTextSize = textFontSize * 0.6f;
+        playingTimeTextView = fragmentView.findViewById(R.id.playingTimeTextView);
+        playingTimeTextView.setText("000:00");
+        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+
+        player_duration_seekbar = fragmentView.findViewById(R.id.player_duration_seekbar);
+
+        durationTimeTextView = fragmentView.findViewById(R.id.durationTimeTextView);
+        durationTimeTextView.setText("000:00");
+        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
 
         setOnClickEvents();
 
@@ -996,6 +1014,33 @@ public class VLCPlayerFragment extends Fragment {
                 startAutoPlay();
             }
         });
+
+        player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // update the duration on controller UI
+                float positionTime = progress / 1000.0f;   // seconds
+                int minutes = (int)(positionTime / 60.0f);    // minutes
+                int seconds = (int)positionTime - (minutes * 60);
+                String durationString = String.format("%3d:%02d", minutes, seconds);
+                playingTimeTextView.setText(durationString);
+                if (fromUser) {
+                    vlcPlayer.setTime(progress);
+                }
+                playingParam.setCurrentAudioPosition(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
 
         supportToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1644,6 +1689,89 @@ public class VLCPlayerFragment extends Fragment {
                 }
             }
         }
+
+        // update the duration on controller UI
+        float duration = vlcPlayer.getLength();
+        player_duration_seekbar.setProgress(0);
+        player_duration_seekbar.setMax((int)duration);
+        duration /= 1000.0f;   // seconds
+        int minutes = (int)(duration / 60.0f);    // minutes
+        int seconds = (int)duration - (minutes * 60);
+        String durationString = String.format("%3d:%02d", minutes, seconds);
+        durationTimeTextView.setText(durationString);
+    }
+
+    private class MediaControllerCallback extends MediaControllerCompat.Callback {
+
+        @Override
+        public synchronized void onPlaybackStateChanged(PlaybackStateCompat state) {
+            super.onPlaybackStateChanged(state);
+            if( state == null ) {
+                return;
+            }
+
+            int currentState = state.getState();
+            switch (currentState) {
+                case PlaybackStateCompat.STATE_NONE:
+                    // initial state and when playing is stopped by user
+                    Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
+                    playingParam.setMediaSourcePrepared(false);
+                    // if (mediaSource != null) {
+                    if (mediaUri != null) {
+                        Log.d(TAG, "MediaControllerCallback--> Song was finished.");
+                        if (playingParam.isAutoPlay()) {
+                            // start playing next video from list
+                            startAutoPlay();
+                        } else {
+                            // end of playing
+                            if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                                replayMedia();
+                            } else {
+                                showNativeAds();
+                            }
+                        }
+                    }
+                    playMediaImageButton.setVisibility(View.VISIBLE);
+                    pauseMediaImageButton.setVisibility(View.GONE);
+                    break;
+                case PlaybackStateCompat.STATE_PLAYING:
+                    // when playing
+                    Log.d(TAG, "PlaybackStateCompat.STATE_PLAYING");
+                    if (!playingParam.isMediaSourcePrepared()) {
+                        // first playing
+                        playingParam.setMediaSourcePrepared(true);  // has been prepared
+                        final Handler handler = new Handler(Looper.getMainLooper());
+                        final Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                handler.removeCallbacksAndMessages(null);
+                                getPlayingMediaInfoAndSetAudioActionSubMenu();
+                            }
+                        };
+                        handler.postDelayed(runnable, 500); // delay 0.5 seconds
+                    }
+                    playMediaImageButton.setVisibility(View.GONE);
+                    pauseMediaImageButton.setVisibility(View.VISIBLE);
+                    // added for testing
+                    //
+                    break;
+                case PlaybackStateCompat.STATE_PAUSED:
+                    Log.d(TAG, "PlaybackStateCompat.STATE_PAUSED");
+                    playMediaImageButton.setVisibility(View.VISIBLE);
+                    pauseMediaImageButton.setVisibility(View.GONE);
+                    break;
+                case PlaybackStateCompat.STATE_STOPPED:
+                    Log.d(TAG, "PlaybackStateCompat.STATE_STOPPED");
+                    if (mediaUri != null) {
+                        Log.d(TAG, "MediaControllerCallback--> Song was stopped by user.");
+                    }
+                    playMediaImageButton.setVisibility(View.VISIBLE);
+                    pauseMediaImageButton.setVisibility(View.GONE);
+                    break;
+            }
+            playingParam.setCurrentPlaybackState(currentState);
+            Log.d(TAG, "MediaControllerCallback.onPlaybackStateChanged() is called. " + currentState);
+        }
     }
 
     private class MediaSessionCallback extends MediaSessionCompat.Callback {
@@ -1789,79 +1917,6 @@ public class VLCPlayerFragment extends Fragment {
         }
     }
 
-    private class MediaControllerCallback extends MediaControllerCompat.Callback {
-
-        @Override
-        public synchronized void onPlaybackStateChanged(PlaybackStateCompat state) {
-            super.onPlaybackStateChanged(state);
-            if( state == null ) {
-                return;
-            }
-
-            int currentState = state.getState();
-            switch (currentState) {
-                case PlaybackStateCompat.STATE_NONE:
-                    // initial state and when playing is stopped by user
-                    Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
-                    playingParam.setMediaSourcePrepared(false);
-                    // if (mediaSource != null) {
-                    if (mediaUri != null) {
-                        Log.d(TAG, "MediaControllerCallback--> Song was finished.");
-                        if (playingParam.isAutoPlay()) {
-                            // start playing next video from list
-                            startAutoPlay();
-                        } else {
-                            // end of playing
-                            if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
-                                replayMedia();
-                            } else {
-                                showNativeAds();
-                            }
-                        }
-                    }
-                    playMediaImageButton.setVisibility(View.VISIBLE);
-                    pauseMediaImageButton.setVisibility(View.GONE);
-                    break;
-                case PlaybackStateCompat.STATE_PLAYING:
-                    // when playing
-                    Log.d(TAG, "PlaybackStateCompat.STATE_PLAYING");
-                    if (!playingParam.isMediaSourcePrepared()) {
-                        // first playing
-                        playingParam.setMediaSourcePrepared(true);  // has been prepared
-                        final Handler handler = new Handler(Looper.getMainLooper());
-                        final Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                handler.removeCallbacksAndMessages(null);
-                                getPlayingMediaInfoAndSetAudioActionSubMenu();
-                            }
-                        };
-                        handler.postDelayed(runnable, 500); // delay 0.5 seconds
-                    }
-                    playMediaImageButton.setVisibility(View.GONE);
-                    pauseMediaImageButton.setVisibility(View.VISIBLE);
-                    // added for testing
-                    //
-                    break;
-                case PlaybackStateCompat.STATE_PAUSED:
-                    Log.d(TAG, "PlaybackStateCompat.STATE_PAUSED");
-                    playMediaImageButton.setVisibility(View.VISIBLE);
-                    pauseMediaImageButton.setVisibility(View.GONE);
-                    break;
-                case PlaybackStateCompat.STATE_STOPPED:
-                    Log.d(TAG, "PlaybackStateCompat.STATE_STOPPED");
-                    if (mediaUri != null) {
-                        Log.d(TAG, "MediaControllerCallback--> Song was stopped by user.");
-                    }
-                    playMediaImageButton.setVisibility(View.VISIBLE);
-                    pauseMediaImageButton.setVisibility(View.GONE);
-                    break;
-            }
-            playingParam.setCurrentPlaybackState(currentState);
-            Log.d(TAG, "MediaControllerCallback.onPlaybackStateChanged() is called. " + currentState);
-        }
-    }
-
     private class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
         @Override
@@ -1917,6 +1972,7 @@ public class VLCPlayerFragment extends Fragment {
                 case MediaPlayer.Event.PositionChanged:
                     break;
                 case MediaPlayer.Event.TimeChanged:
+                    player_duration_seekbar.setProgress((int)vlcPlayer.getTime());
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     Log.d(TAG, "vlcPlayer is EncounteredError event");

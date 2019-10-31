@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item>
+        <shape android:shape="oval">
+            <size
+                android:height="@dimen/duration_seekbar_thumb_size"
+                android:width="@dimen/duration_seekbar_thumb_size" >
+            </size>
+            <stroke android:width="2dp" android:color="@android:color/white" />
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</layer-list>
