@@ -184,6 +184,8 @@ public class ExoPlayerFragment extends Fragment {
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
+    private LinearLayout nativeAdsLinearLayout;
+    private TextView nativeAdsStringTextView;
 
     private LinearLayout audioControllerView;
     private ImageButton previousMediaImageButton;
@@ -405,16 +407,17 @@ public class ExoPlayerFragment extends Fragment {
         messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.GONE);
         bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
-        // added for testing
-        bufferingStringTextView.setText("ExoPlayer-->" + bufferingStringTextView.getText());
-        //
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
         animationText.setStartOffset(0);
         animationText.setRepeatMode(Animation.REVERSE);
         animationText.setRepeatCount(Animation.INFINITE);
-        //
+
+        nativeAdsLinearLayout = fragmentView.findViewById(R.id.nativeAdsLinearLayout);
+        nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
+        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+
         audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
         previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
         previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
@@ -1098,13 +1101,14 @@ public class ExoPlayerFragment extends Fragment {
     private void showNativeAds() {
         // simulate showing native ad
         if (BuildConfig.DEBUG) {
-            messageLinearLayout.setVisibility(View.VISIBLE);
+            nativeAdsLinearLayout.setVisibility(View.VISIBLE);
         }
     }
     private void hideNativeAds() {
         // simulate hide native ad
+        Log.d(TAG, "hideNativeAds() is called.");
         if (BuildConfig.DEBUG) {
-            messageLinearLayout.setVisibility(View.GONE);
+            nativeAdsLinearLayout.setVisibility(View.GONE);
         }
     }
 

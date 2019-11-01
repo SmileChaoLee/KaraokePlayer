@@ -9,7 +9,7 @@
         android:id="@+id/linearLayout_for_ads"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:gravity="top">
     </LinearLayout>
@@ -30,6 +30,25 @@
             android:textColor="@android:color/white"
             android:textAllCaps="false"
             android:text="@string/bufferingString">
+        </TextView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nativeAdsLinearLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/nativeAdsStringTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:text="Show Native Ads">
         </TextView>
     </LinearLayout>
 
