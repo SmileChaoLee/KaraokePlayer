@@ -1946,6 +1946,7 @@ public class VLCPlayerFragment extends Fragment {
                 case MediaPlayer.Event.Buffering:
                     Log.d(TAG, "vlcPlayer is buffering.");
                     if (!vlcPlayer.isPlaying()) {
+                        hideNativeAds();
                         showBufferingMessage();
                         setMediaPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
                     }
