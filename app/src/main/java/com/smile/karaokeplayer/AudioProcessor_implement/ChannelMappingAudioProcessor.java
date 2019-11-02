@@ -1,5 +1,3 @@
-package com.smile.karaokeplayer.AudioProcessor_implement;
-
 /*
  * Copyright (C) 2017 The Android Open Source Project
  *
@@ -16,45 +14,57 @@ package com.smile.karaokeplayer.AudioProcessor_implement;
  * limitations under the License.
  */
 
-import androidx.annotation.Nullable;
+package com.smile.karaokeplayer.AudioProcessor_implement;
+
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.google.android.exoplayer2.audio.AudioSink;
-import com.google.android.exoplayer2.audio.BaseAudioProcessor;
-import com.google.android.exoplayer2.util.Assertions;
+import com.google.android.exoplayer2.C.Encoding;
+import com.google.android.exoplayer2.Format;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
+import com.google.android.exoplayer2.audio.AudioProcessor;
 
 /**
  * An {@link AudioProcessor} that applies a mapping from input channels onto specified output
  * channels. This can be used to reorder, duplicate or discard channels.
  */
-/* package */ final public class ChannelMappingAudioProcessor extends BaseAudioProcessor {
+/* package */ final class ChannelMappingAudioProcessor implements AudioProcessor {
 
-    @Nullable private int[] pendingOutputChannels;
+    private int channelCount;
+    private int sampleRateHz;
+    private int[] pendingOutputChannels;
 
     private boolean active;
-    @Nullable private int[] outputChannels;
+    private int[] outputChannels;
+    private ByteBuffer buffer;
+    private ByteBuffer outputBuffer;
+    private boolean inputEnded;
+
+    /**
+     * Creates a new processor that applies a channel mapping.
+     */
+    public ChannelMappingAudioProcessor() {
+        buffer = EMPTY_BUFFER;
+        outputBuffer = EMPTY_BUFFER;
+        channelCount = Format.NO_VALUE;
+        sampleRateHz = Format.NO_VALUE;
+    }
 
     /**
      * Resets the channel mapping. After calling this method, call {@link #configure(int, int, int)}
      * to start using the new channel map.
      *
-     * @param outputChannels The mapping from input to output channel indices, or {@code null} to
-     *     leave the input unchanged.
-     * @see AudioSink#configure(int, int, int, int, int[], int, int)
+     * @see AudioTrack#configure(String, int, int, int, int, int[])
      */
-    public void setChannelMap(@Nullable int[] outputChannels) {
+    public void setChannelMap(int[] outputChannels) {
         pendingOutputChannels = outputChannels;
     }
 
     @Override
-    public boolean configure(int sampleRateHz, int channelCount, @C.PcmEncoding int encoding)
+    public boolean configure(int sampleRateHz, int channelCount, @Encoding int encoding)
             throws UnhandledFormatException {
         boolean outputChannelsChanged = !Arrays.equals(pendingOutputChannels, outputChannels);
         outputChannels = pendingOutputChannels;
-
-        int[] outputChannels = this.outputChannels;
         if (outputChannels == null) {
             active = false;
             return outputChannelsChanged;
@@ -62,9 +72,12 @@ import java.util.Arrays;
         if (encoding != C.ENCODING_PCM_16BIT) {
             throw new UnhandledFormatException(sampleRateHz, channelCount, encoding);
         }
-        if (!outputChannelsChanged && !setInputFormat(sampleRateHz, channelCount, encoding)) {
+        if (!outputChannelsChanged && this.sampleRateHz == sampleRateHz
+                && this.channelCount == channelCount) {
             return false;
         }
+        this.sampleRateHz = sampleRateHz;
+        this.channelCount = channelCount;
 
         active = channelCount != outputChannels.length;
         for (int i = 0; i < outputChannels.length; i++) {
@@ -88,13 +101,26 @@ import java.util.Arrays;
     }
 
     @Override
+    public int getOutputEncoding() {
+        return C.ENCODING_PCM_16BIT;
+    }
+
+    @Override
+    public int getOutputSampleRateHz() {
+        return 0;
+    }
+
+    @Override
     public void queueInput(ByteBuffer inputBuffer) {
-        int[] outputChannels = Assertions.checkNotNull(this.outputChannels);
         int position = inputBuffer.position();
         int limit = inputBuffer.limit();
         int frameCount = (limit - position) / (2 * channelCount);
         int outputSize = frameCount * outputChannels.length * 2;
-        ByteBuffer buffer = replaceOutputBuffer(outputSize);
+        if (buffer.capacity() < outputSize) {
+            buffer = ByteBuffer.allocateDirect(outputSize).order(ByteOrder.nativeOrder());
+        } else {
+            buffer.clear();
+        }
         while (position < limit) {
             for (int channelIndex : outputChannels) {
                 buffer.putShort(inputBuffer.getShort(position + 2 * channelIndex));
@@ -103,12 +129,40 @@ import java.util.Arrays;
         }
         inputBuffer.position(limit);
         buffer.flip();
+        outputBuffer = buffer;
     }
 
     @Override
-    protected void onReset() {
+    public void queueEndOfStream() {
+        inputEnded = true;
+    }
+
+    @Override
+    public ByteBuffer getOutput() {
+        ByteBuffer outputBuffer = this.outputBuffer;
+        this.outputBuffer = EMPTY_BUFFER;
+        return outputBuffer;
+    }
+
+    @SuppressWarnings("ReferenceEquality")
+    @Override
+    public boolean isEnded() {
+        return inputEnded && outputBuffer == EMPTY_BUFFER;
+    }
+
+    @Override
+    public void flush() {
+        outputBuffer = EMPTY_BUFFER;
+        inputEnded = false;
+    }
+
+    @Override
+    public void reset() {
+        flush();
+        buffer = EMPTY_BUFFER;
+        channelCount = Format.NO_VALUE;
+        sampleRateHz = Format.NO_VALUE;
         outputChannels = null;
-        pendingOutputChannels = null;
         active = false;
     }
 

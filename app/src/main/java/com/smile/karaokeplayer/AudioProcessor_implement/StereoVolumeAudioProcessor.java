@@ -43,17 +43,14 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
 
     private float[] volume;
 
-    private static final int LEFT_SPEAKER = 0;
-    private static final int RIGHT_SPEAKER = 1;
+    public static final int LEFT_SPEAKER = 0;
+    public static final int RIGHT_SPEAKER = 1;
 
     public StereoVolumeAudioProcessor() {
         buffer = EMPTY_BUFFER;
         outputBuffer = EMPTY_BUFFER;
         channelCount = Format.NO_VALUE;
         sampleRateHz = Format.NO_VALUE;
-
-        setChannelMap(new int[]{0,1});
-        setVolume(1.0f, 1.0f);
 
         active = false;
     }
@@ -75,19 +72,18 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
      * Sets the volume of right and left channels/speakers
      * The values are between 0.0 and 1.0
      *
-     * @param left
-     * @param right
      */
-    public void setVolume(float left, float right) {
-        volume = new float[]{left, right};
+    public void setVolume(float[] volumeInput) {
+        if ( (volume == null) || (volumeInput == null) )  {
+            return;
+        }
+        for (int i=0; i<volumeInput.length; i++) {
+            volume[i] = volumeInput[i];
+        }
     }
 
-    public float getLeftVolume() {
-        return volume[LEFT_SPEAKER];
-    }
-
-    public float getRightVolume() {
-        return volume[RIGHT_SPEAKER];
+    public float[] getVolume() {
+        return volume;
     }
 
     @Override
@@ -95,6 +91,17 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
             throws UnhandledFormatException {
 
         Log.d(TAG, "StereoVolumeAudioProcessor.configure() was called.");
+        Log.d(TAG, "StereoVolumeAudioProcessor.configure() --> channelCount = " + channelCount);
+        Log.d(TAG, "StereoVolumeAudioProcessor.configure() --> encoding = " + encoding);
+
+        outputChannels = new int[channelCount];
+        volume = new float[channelCount];
+        for (int i=0; i<channelCount; i++) {
+            outputChannels[i] = i;
+            volume[i] = 1.0f;
+        }
+
+        setChannelMap(outputChannels);
 
         if (volume == null) {
             throw new IllegalStateException("volume has not been set! Call setVolume(float left,float right)");
@@ -118,6 +125,7 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
             Log.d(TAG, "StereoVolumeAudioProcessor.configure() = " + false);
             return false;
         }
+
         this.sampleRateHz = sampleRateHz;
         this.channelCount = channelCount;
 
@@ -157,49 +165,63 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
     public void queueInput(ByteBuffer inputBuffer) {
         int position = inputBuffer.position();
         int limit = inputBuffer.limit();
-        int size = limit - position;
 
-        if (buffer.capacity() < size) {
-            buffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+        /*
+        int frameCount = (limit - position) / (2 * channelCount);
+        int outputSize = frameCount * outputChannels.length * 2;
+        */
+
+        int outputSize = limit - position;
+        if (buffer.capacity() < outputSize) {
+            buffer = ByteBuffer.allocateDirect(outputSize).order(ByteOrder.nativeOrder());
         } else {
             buffer.clear();
         }
 
-        if (isActive()) {
-            if ( (volume[LEFT_SPEAKER] != 0) && (volume[RIGHT_SPEAKER] == 0) ) {
-                // only left speaker has sound
-                for (int i = position; i < limit; i += 4) {
-                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
-                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
-                    buffer.putShort(sampleLeft);    // left speaker
-                    buffer.putShort(sampleLeft);    // use left sound for right speaker
+        if (!isActive()) {
+            Log.d(TAG, "queueInputStereo() --> Exception: ");
+            throw new IllegalStateException();
+        }
+
+        if (channelCount != 2) {
+            // not stereo
+            while (position < limit) {
+                for (int channelIndex : outputChannels) {
+                    buffer.putShort((short) (inputBuffer.getShort(position + 2 * channelIndex) * volume[channelIndex]));
                 }
-            } else if ( (volume[LEFT_SPEAKER] == 0) && (volume[RIGHT_SPEAKER] != 0) ) {
-                // only right speaker has sound
-                for (int i = position; i < limit; i += 4) {
-                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
-                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
-                    buffer.putShort(sampleRight);    // use right sound for left speaker
-                    buffer.putShort(sampleRight);    // right speaker
-                }
-            } else {
-                /*
-                int ch = 0;
-                for (int i = position; i < limit; i += 2) {
-                    short sample = (short) (inputBuffer.getShort(i) * volume[ch++]);
-                    buffer.putShort(sample);
-                    ch %= channelCount;
-                }
-                */
-                for (int i = position; i < limit; i += 4) {
-                    short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
-                    short sampleRight = (short) (inputBuffer.getShort(i + 2) * volume[RIGHT_SPEAKER]);
-                    buffer.putShort(sampleLeft);    //left speaker
-                    buffer.putShort(sampleRight);   // right speaker
-                }
+                position += channelCount * 2;
             }
         } else {
-            throw new IllegalStateException();
+            // channelCount = 2 (Stereo)
+            try {
+                if ((volume[LEFT_SPEAKER] != 0) && (volume[RIGHT_SPEAKER] == 0)) {
+                    // only left speaker has sound
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleLeft);    // left speaker
+                        buffer.putShort(sampleLeft);    // use left sound for right speaker
+                    }
+                } else if ((volume[LEFT_SPEAKER] == 0) && (volume[RIGHT_SPEAKER] != 0)) {
+                    // only right speaker has sound
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleRight);    // use right sound for left speaker
+                        buffer.putShort(sampleRight);    // right speaker
+                    }
+                } else {
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleLeft);    // left speaker
+                        buffer.putShort(sampleRight);   // right speaker
+                    }
+                }
+            } catch (Exception ex) {
+                Log.d(TAG, "queueInputStereo() --> Exception: ");
+                ex.printStackTrace();
+            }
         }
 
         inputBuffer.position(limit);
@@ -239,5 +261,79 @@ public class StereoVolumeAudioProcessor implements AudioProcessor {
         sampleRateHz = Format.NO_VALUE;
         outputChannels = null;
         active = false;
+    }
+
+    private void queueInputNotStereo(ByteBuffer inputBuffer) {
+        int position = inputBuffer.position();
+        int limit = inputBuffer.limit();
+        int frameCount = (limit - position) / (2 * channelCount);
+        int outputSize = frameCount * outputChannels.length * 2;
+        if (buffer.capacity() < outputSize) {
+            buffer = ByteBuffer.allocateDirect(outputSize).order(ByteOrder.nativeOrder());
+        } else {
+            buffer.clear();
+        }
+
+        while (position < limit) {
+            for (int channelIndex : outputChannels) {
+                buffer.putShort((short) (inputBuffer.getShort(position + 2 * channelIndex) * volume[channelIndex]));
+            }
+            position += channelCount * 2;
+        }
+
+        inputBuffer.position(limit);
+        buffer.flip();
+        outputBuffer = buffer;
+    }
+
+    private void queueInputStereo(ByteBuffer inputBuffer) {
+        int position = inputBuffer.position();
+        int limit = inputBuffer.limit();
+        int size = limit - position;
+
+        if (buffer.capacity() < size) {
+            buffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder());
+        } else {
+            buffer.clear();
+        }
+
+        if (isActive()) {
+            try {
+                if ((volume[LEFT_SPEAKER] != 0) && (volume[RIGHT_SPEAKER] == 0)) {
+                    // only left speaker has sound
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleLeft);    // left speaker
+                        buffer.putShort(sampleLeft);    // use left sound for right speaker
+                    }
+                } else if ((volume[LEFT_SPEAKER] == 0) && (volume[RIGHT_SPEAKER] != 0)) {
+                    // only right speaker has sound
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleRight);    // use right sound for left speaker
+                        buffer.putShort(sampleRight);    // right speaker
+                    }
+                } else {
+                    for (int i = position; i < limit; i += 4) {
+                        short sampleLeft = (short) (inputBuffer.getShort(i) * volume[LEFT_SPEAKER]);
+                        short sampleRight = (short) (inputBuffer.getShort(i+2) * volume[RIGHT_SPEAKER]);
+                        buffer.putShort(sampleLeft);    // left speaker
+                        buffer.putShort(sampleRight);   // right speaker
+                    }
+                }
+            } catch (Exception ex) {
+                Log.d(TAG, "queueInputStereo() --> Exception: ");
+                ex.printStackTrace();
+            }
+        } else {
+            Log.d(TAG, "queueInputStereo() --> Exception: ");
+            throw new IllegalStateException();
+        }
+
+        inputBuffer.position(limit);
+        buffer.flip();
+        outputBuffer = buffer;
     }
 }

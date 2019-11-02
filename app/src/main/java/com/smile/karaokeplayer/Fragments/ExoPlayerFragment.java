@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.media.AudioFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,34 +32,24 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
-import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
-import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
-import com.google.android.exoplayer2.ext.flac.FlacLibrary;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.ext.opus.OpusLibrary;
-import com.google.android.exoplayer2.ext.vp9.VpxLibrary;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.metadata.Metadata;
-import com.google.android.exoplayer2.metadata.MetadataOutput;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -78,6 +69,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
 import com.smile.karaokeplayer.BuildConfig;
+import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -173,7 +165,7 @@ public class ExoPlayerFragment extends Fragment {
     private PlayerView videoExoPlayerView;
     private DataSource.Factory dataSourceFactory;
     private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
-    private RenderersFactory renderersFactory;
+    private MyRenderersFactory myRenderersFactory;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private MediaSource mediaSource;
@@ -1213,35 +1205,10 @@ public class ExoPlayerFragment extends Fragment {
         trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
-        renderersFactory = new DefaultRenderersFactory(callingContext) {
-            @Override
-            protected AudioProcessor[] buildAudioProcessors() {
-                Log.d(TAG,"DefaultRenderersFactory.buildAudioProcessors() is called.");
-
-                // Customized AudioProcessor
-                stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
-                AudioProcessor[] audioProcessors;
-                if (super.buildAudioProcessors() != null) {
-                    int len = super.buildAudioProcessors().length;
-                    audioProcessors = new AudioProcessor[len + 1];
-                    for (int i=0; i<len; i++) {
-                        audioProcessors[i] = (super.buildAudioProcessors())[i];
-                    }
-                    audioProcessors[len] = stereoVolumeAudioProcessor;
-                } else {
-                    audioProcessors = new AudioProcessor[] {stereoVolumeAudioProcessor};
-                }
-
-                return audioProcessors;
-            }
-        }
-        // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
-        .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
-        // .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER);
-
-        // renderersFactory = new DefaultRenderersFactory(callingContext).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+        myRenderersFactory = new MyRenderersFactory(callingContext);
+        stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, renderersFactory, trackSelector);
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, myRenderersFactory, trackSelector);
 
         // no need. It will ve overridden by MediaSessionConnector
         exoPlayer.addListener(new ExoPlayerEventListener());
@@ -1250,7 +1217,6 @@ public class ExoPlayerFragment extends Fragment {
             public void onAudioSessionId(int audioSessionId) {
                 Log.d(TAG, "addAudioListener.onAudioSessionId() is called.");
                 Log.d(TAG, "addAudioListener.audioSessionId = " + audioSessionId);
-
             }
 
             @Override
@@ -1274,10 +1240,10 @@ public class ExoPlayerFragment extends Fragment {
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
 
-        Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
-        Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
-        Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
-        Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
+        // Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
+        // Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
+        // Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
+        // Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
     }
 
     private void releaseExoPlayer() {
@@ -1546,6 +1512,7 @@ public class ExoPlayerFragment extends Fragment {
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
 
             // select audio channel
+            Log.d(TAG, "setAudioTrackAndChannel() -- > audioChannel = " + audioChannel);
             playingParam.setCurrentChannelPlayed(audioChannel);
             setAudioVolume(playingParam.getCurrentVolume());
         }
@@ -1568,16 +1535,36 @@ public class ExoPlayerFragment extends Fragment {
     private void setAudioVolume(float volume) {
         // get current channel
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
+        Log.d(TAG, "setAudioVolume() -- > currentChannelPlayed = " + currentChannelPlayed);
         //
+        boolean useAudioProcessor = false;
         if (stereoVolumeAudioProcessor != null) {
-            if (currentChannelPlayed == SmileApplication.leftChannel) {
-                stereoVolumeAudioProcessor.setVolume(volume, 0.0f);
-            } else if (currentChannelPlayed == SmileApplication.rightChannel) {
-                stereoVolumeAudioProcessor.setVolume(0.0f, volume);
-            } else {
-                stereoVolumeAudioProcessor.setVolume(volume, volume);
+            if (stereoVolumeAudioProcessor.getVolume() != null) {
+                useAudioProcessor = true;
+                float[] volumeInput = new float[stereoVolumeAudioProcessor.getVolume().length];
+                switch (volumeInput.length) {
+                    case 2:
+                        if (currentChannelPlayed == SmileApplication.leftChannel) {
+                            volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = volume;
+                            volumeInput[StereoVolumeAudioProcessor.RIGHT_SPEAKER] = 0.0f;
+                        } else if (currentChannelPlayed == SmileApplication.rightChannel) {
+                            volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = 0.0f;
+                            volumeInput[StereoVolumeAudioProcessor.RIGHT_SPEAKER] = volume;
+                        } else {
+                            volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = volume;
+                            volumeInput[StereoVolumeAudioProcessor.RIGHT_SPEAKER] = volume;
+                        }
+                        break;
+                    default:
+                        for (int i = 0; i < volumeInput.length; i++) {
+                            volumeInput[i] = volume;
+                        }
+                        break;
+                }
+                stereoVolumeAudioProcessor.setVolume(volumeInput);
             }
-        } else {
+        }
+        if (!useAudioProcessor) {
             exoPlayer.setVolume(volume);
         }
         playingParam.setCurrentVolume(volume);
@@ -1713,6 +1700,7 @@ public class ExoPlayerFragment extends Fragment {
 
             switch (playbackState) {
                 case Player.STATE_BUFFERING:
+                    hideNativeAds();
                     showBufferingMessage();
                     return;
                 case Player.STATE_READY:
@@ -1866,6 +1854,10 @@ public class ExoPlayerFragment extends Fragment {
         Format audioPlayedFormat = exoPlayer.getAudioFormat();
         if (audioPlayedFormat != null) {
             Log.d(TAG, "audioPlayedFormat.id = " + audioPlayedFormat.id);
+            int channelsNum = audioPlayedFormat.channelCount;
+            Log.d(TAG, "audioPlayedFormat.channelCount = " + channelsNum);
+            Log.d(TAG, "audioPlayedFormat.sampleRate = " + audioPlayedFormat.sampleRate);
+            Log.d(TAG, "audioPlayedFormat.pcmEncoding = " + audioPlayedFormat.pcmEncoding);
         } else {
             Log.d(TAG, "audioPlayedFormat is null.");
         }

@@ -80,7 +80,7 @@ dependencies {
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-vp9')
-    implementation project(':extension-flac')
+    //implementation project(':extension-flac')
     implementation project(':extension-opus')
 }
 
