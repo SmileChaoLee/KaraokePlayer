@@ -1802,6 +1802,8 @@ public class ExoPlayerFragment extends Fragment {
             }
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
 
+            stereoVolumeAudioProcessor.reset();
+
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
             if (playingParam.isAutoPlay()) {
                 // go to next one in the list

@@ -19,7 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.aditya.filebrowser.FileChooser;
+// import com.aditya.filebrowser.FileChooser;
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -318,11 +318,13 @@ public class SongDataActivity extends AppCompatActivity {
             }
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             intent.setType("*/*");
+            startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
         } else {
-            intent = new Intent(this, FileChooser.class);
-            intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
+            // intent = new Intent(this, FileChooser.class);
+            // intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
+            // startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
         }
-        startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
+
     }
 
     private void setSongInfoFromInput() {
