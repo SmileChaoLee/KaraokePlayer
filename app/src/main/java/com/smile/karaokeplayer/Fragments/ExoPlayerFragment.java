@@ -38,6 +38,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -81,6 +82,9 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
+
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
+import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -1207,8 +1211,10 @@ public class ExoPlayerFragment extends Fragment {
 
         myRenderersFactory = new MyRenderersFactory(callingContext);
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
-        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
         exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, myRenderersFactory, trackSelector);
+        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
+        // DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(callingContext).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
+        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, defaultRenderersFactory, trackSelector);
 
         // no need. It will ve overridden by MediaSessionConnector
         exoPlayer.addListener(new ExoPlayerEventListener());
@@ -1539,10 +1545,11 @@ public class ExoPlayerFragment extends Fragment {
         //
         boolean useAudioProcessor = false;
         if (stereoVolumeAudioProcessor != null) {
-            if (stereoVolumeAudioProcessor.getVolume() != null) {
+            int channelCount = stereoVolumeAudioProcessor.getOutputChannelCount();
+            if (channelCount >= 0) {
                 useAudioProcessor = true;
-                float[] volumeInput = new float[stereoVolumeAudioProcessor.getVolume().length];
-                switch (volumeInput.length) {
+                float[] volumeInput = new float[stereoVolumeAudioProcessor.getOutputChannelCount()];
+                switch (channelCount) {
                     case 2:
                         if (currentChannelPlayed == SmileApplication.leftChannel) {
                             volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = volume;
@@ -1639,7 +1646,9 @@ public class ExoPlayerFragment extends Fragment {
         @Override
         public void onPrepareFromUri(Uri uri, boolean playWhenReady, Bundle extras) {
             Log.d(TAG, "Uri = " + uri);
-            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+            ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory()
+                    .setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS)
+                    .setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
             playingParam.setMediaSourcePrepared(false);
             dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
@@ -1801,8 +1810,6 @@ public class ExoPlayerFragment extends Fragment {
                     break;
             }
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
-
-            stereoVolumeAudioProcessor.reset();
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
             if (playingParam.isAutoPlay()) {

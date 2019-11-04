@@ -33,10 +33,12 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
         }
 
         audioProcessors = new AudioProcessor[arrayLength + 1];
-        for (int i=0; i<arrayLength; i++) {
+
+        audioProcessors[0] = stereoVolumeAudioProcessor;
+
+        for (int i=1; i<=arrayLength; i++) {
             audioProcessors[i] = (super.buildAudioProcessors())[i];
         }
-        audioProcessors[arrayLength] = stereoVolumeAudioProcessor;
 
         return audioProcessors;
     }
