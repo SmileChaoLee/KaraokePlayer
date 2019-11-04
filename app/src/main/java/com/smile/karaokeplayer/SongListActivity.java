@@ -45,8 +45,6 @@ public class SongListActivity extends AppCompatActivity {
     private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
 
-    private boolean useFilePicker = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -55,14 +53,7 @@ public class SongListActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
-        useFilePicker = false;
         Intent callingIntent = getIntent();
-        if (savedInstanceState == null) {
-            useFilePicker = callingIntent.getBooleanExtra(SmileApplication.UseFilePickerString, false);
-        } else {
-            useFilePicker = savedInstanceState.getBoolean(SmileApplication.UseFilePickerString);
-        }
-        Log.d(TAG, "useFilePicker = " + useFilePicker);
 
         songListSQLite = new SongListSQLite(SmileApplication.AppContext);
 
@@ -80,7 +71,6 @@ public class SongListActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent addIntent = new Intent(SongListActivity.this, SongDataActivity.class);
                 addIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.AddActionString);
-                addIntent.putExtra(SmileApplication.UseFilePickerString, useFilePicker);
                 startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
             }
         });
@@ -111,7 +101,6 @@ public class SongListActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putBoolean(SmileApplication.UseFilePickerString, useFilePicker);
         super.onSaveInstanceState(outState);
     }
 
@@ -283,7 +272,6 @@ public class SongListActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent editIntent = new Intent(context, SongDataActivity.class);
                         editIntent.putExtra(SmileApplication.CrudActionString, SmileApplication.EditActionString);
-                        editIntent.putExtra(SmileApplication.UseFilePickerString, useFilePicker);
                         editIntent.putExtra("SongInfo", songInfo);
                         startActivityForResult(editIntent, EDIT_ONE_SONG_TO_PLAY_LIST);
                     }

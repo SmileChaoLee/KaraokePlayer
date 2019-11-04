@@ -38,7 +38,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
-import com.aditya.filebrowser.FileChooser;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -169,6 +168,22 @@ public class VLCPlayerFragment extends Fragment {
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
     private SongInfo songInfo;
+
+    private final Handler timerHandler = new Handler(Looper.getMainLooper());
+    private final Runnable timerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            timerHandler.removeCallbacksAndMessages(null);
+            if (playingParam.isMediaSourcePrepared()) {
+                if (supportToolbar.getVisibility() == View.VISIBLE) {
+                    // hide supportToolbar
+                    hideSupportToolbarAndAudioController();
+                }
+            } else {
+                showSupportToolbarAndAudioController();
+            }
+        }
+    };
 
     // temporary settings
     private boolean useFilePicker = true;
@@ -573,7 +588,6 @@ public class VLCPlayerFragment extends Fragment {
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
-                songListIntent.putExtra(SmileApplication.UseFilePickerString, useFilePicker);
                 startActivityForResult(songListIntent, SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
@@ -815,6 +829,8 @@ public class VLCPlayerFragment extends Fragment {
         Log.d(TAG,"VLCPlayerFragment-->onDestroy() is called.");
         releaseMediaSessionCompat();
         releaseVLCPlayer();
+
+        timerHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -864,8 +880,7 @@ public class VLCPlayerFragment extends Fragment {
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
 
-                if (!useFilePicker) {
-                    // not useFileChooser.class in com.adityak:browsemyfiles:1.9
+                if (useFilePicker) {
                     String filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
                     if (filePath != null) {
                         if (!filePath.isEmpty()) {
@@ -1067,21 +1082,7 @@ public class VLCPlayerFragment extends Fragment {
 
     private void setTimerToHideSupportAndAudioController() {
         final int timerDuration = 10000;    // 10 seconds
-        final Handler timerHandler = new Handler(Looper.getMainLooper());
-        final Runnable timerRunnable = new Runnable() {
-            @Override
-            public void run() {
-                timerHandler.removeCallbacksAndMessages(null);
-                if (playingParam.isMediaSourcePrepared()) {
-                    if (supportToolbar.getVisibility() == View.VISIBLE) {
-                        // hide supportToolbar
-                        hideSupportToolbarAndAudioController();
-                    }
-                } else {
-                    showSupportToolbarAndAudioController();
-                }
-            }
-        };
+        timerHandler.removeCallbacksAndMessages(null);
         timerHandler.postDelayed(timerRunnable, timerDuration); // 10 seconds
     }
 
@@ -1241,18 +1242,13 @@ public class VLCPlayerFragment extends Fragment {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
         Intent intent;
-        if (!useFilePicker) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            } else {
-                intent = new Intent(Intent.ACTION_GET_CONTENT);
-            }
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         } else {
-            intent = new Intent(callingContext, FileChooser.class);
-            intent.putExtra(com.aditya.filebrowser.Constants.SELECTION_MODE, com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal());
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
         }
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
         startActivityForResult(intent, FILE_READ_REQUEST_CODE);
     }
 
@@ -1445,11 +1441,20 @@ public class VLCPlayerFragment extends Fragment {
 
         String filePath = songInfo.getFilePath();
         Log.i(TAG, "filePath : " + filePath);
-        // File songFile = new File(filePath);
-        // if (songFile.exists()) {
-        // mediaUri = Uri.fromFile(new File(filePath));
-        // mediaUri = Uri.parse("file://" + filePath);
-        mediaUri = Uri.parse(filePath);
+
+        if (useFilePicker) {
+            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
+                }
+            }
+        } else {
+
+            mediaUri = Uri.parse(filePath);
+        }
+
         Log.i(TAG, "mediaUri from filePath : " + mediaUri);
         // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
         // pass the saved instance of playingParam to
