@@ -112,12 +112,6 @@ public class VLCPlayerFragment extends Fragment {
     private MenuItem autoPlayMenuItem;
     private MenuItem openMenuItem;
     private MenuItem closeMenuItem;
-    // submenu of action
-    private MenuItem playMenuItem;
-    private MenuItem pauseMenuItem;
-    private MenuItem stopMenuItem;
-    private MenuItem replayMenuItem;
-    private MenuItem toTvMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
     private boolean isAudioTrackMenuItemPressed;
@@ -501,12 +495,6 @@ public class VLCPlayerFragment extends Fragment {
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
         openMenuItem = menu.findItem(R.id.open);
         closeMenuItem = menu.findItem(R.id.close);
-        // submenu of action
-        playMenuItem = menu.findItem(R.id.play);
-        pauseMenuItem = menu.findItem(R.id.pause);
-        stopMenuItem = menu.findItem(R.id.stop);
-        replayMenuItem = menu.findItem(R.id.replay);
-        toTvMenuItem = menu.findItem(R.id.toTV);
 
         // submenu of audio
         audioTrackMenuItem = menu.findItem(R.id.audioTrack);
@@ -518,9 +506,6 @@ public class VLCPlayerFragment extends Fragment {
         if (playingParam.isPlaySingleSong()) {
             MenuItem fileMenuItem = menu.findItem(R.id.file);
             fileMenuItem.setVisible(false);
-            MenuItem actionMenuItem = menu.findItem(R.id.action);
-            actionMenuItem.setVisible(true);
-            actionMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             audioTrackMenuItem.setVisible(false);
             MenuItem channelMenuItem = menu.findItem(R.id.channel);
             channelMenuItem.setVisible(false);
@@ -606,61 +591,6 @@ public class VLCPlayerFragment extends Fragment {
                 if (mListener != null) {
                     mListener.onExitFragment();
                 }
-                break;
-            case R.id.action:
-                Log.d(TAG, "R.id.action --> mediaUri = " + mediaUri);
-                Log.d(TAG, "R.id.action --> numberOfAudioTracks = " + numberOfAudioTracks);
-                if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
-                    Log.d(TAG, "R.id.action --> mediaUri is not null.");
-                    playMenuItem.setEnabled(true);
-                    pauseMenuItem.setEnabled(true);
-                    stopMenuItem.setEnabled(true);
-                    replayMenuItem.setEnabled(true);
-                    toTvMenuItem.setEnabled(true);
-                    mCurrentState = playingParam.getCurrentPlaybackState();
-                    if (mCurrentState == PlaybackStateCompat.STATE_PLAYING) {
-                        playMenuItem.setCheckable(true);
-                        playMenuItem.setChecked(true);
-                    } else {
-                        playMenuItem.setCheckable(false);
-                    }
-                    if (mCurrentState == PlaybackStateCompat.STATE_PAUSED) {
-                        pauseMenuItem.setCheckable(true);
-                        pauseMenuItem.setChecked(true);
-                    } else {
-                        pauseMenuItem.setCheckable(false);
-                    }
-                    if ((mediaUri != null) && (mCurrentState == PlaybackStateCompat.STATE_STOPPED)) {
-                        stopMenuItem.setCheckable(true);
-                        stopMenuItem.setChecked(true);
-                    } else {
-                        stopMenuItem.setCheckable(false);
-                    }
-                    // toTvMenuItem
-                } else {
-                    Log.d(TAG, "R.id.action --> mediaUri is null or numberOfAudioTracks = 0.");
-                    playMenuItem.setEnabled(false);
-                    pauseMenuItem.setEnabled(false);
-                    stopMenuItem.setEnabled(false);
-                    replayMenuItem.setEnabled(false);
-                    toTvMenuItem.setEnabled(false);
-                }
-                break;
-            case R.id.play:
-                startPlay();
-                break;
-            case R.id.pause:
-                pausePlay();
-                break;
-            case R.id.stop:
-                // if (mCurrentState != PlaybackStateCompat.STATE_STOPPED) {
-                // mCurrentState = PlaybackStateCompat.STATE_STOPPED when finished playing
-                stopPlay();
-                break;
-            case R.id.replay:
-                replayMedia();
-                break;
-            case R.id.toTV:
                 break;
             case R.id.audioTrack:
                 isAudioTrackMenuItemPressed = true;

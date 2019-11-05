@@ -46,40 +46,6 @@
         </menu>
     </item>
 
-    <item android:id="@+id/action"
-        android:title="@string/actionString"
-        android:orderInCategory="2"
-        app:showAsAction="never">
-        <menu>
-            <item android:id="@+id/play"
-                android:title="@string/playString"
-                android:orderInCategory="1"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/pause"
-                android:title="@string/pauseString"
-                android:orderInCategory="2"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/stop"
-                android:title="@string/stopString"
-                android:orderInCategory="3"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/replay"
-                android:title="@string/replayString"
-                android:orderInCategory="4"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/toTV"
-                android:title="@string/toTVString"
-                android:orderInCategory="5"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-        </menu>
-    </item>
-
     <item android:id="@+id/audioTrack"
         android:title="@string/audioTrackString"
         android:orderInCategory="3"

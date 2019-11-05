@@ -97,17 +97,6 @@ public class KaraokePlayerInstrumentedTest {
     }
 
     @Test
-    public void test_ActionSubmenu() {
-        onView(withId(R.id.action)).perform(click());
-        onView(withText(R.string.playString)).check(matches(isDisplayed()));
-        onView(withText(R.string.pauseString)).check(matches(isDisplayed()));
-        onView(withText(R.string.stopString)).check(matches(isDisplayed()));
-        onView(withText(R.string.replayString)).check(matches(isDisplayed()));
-        onView(withText(R.string.toTVString)).check(matches(isDisplayed()));
-        Espresso.pressBack();
-    }
-
-    @Test
     public void test_AudioSubmenu() {
         onView(withId(R.id.audioTrack)).perform(click());
     }
