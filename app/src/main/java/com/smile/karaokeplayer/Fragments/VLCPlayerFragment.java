@@ -405,12 +405,18 @@ public class VLCPlayerFragment extends Fragment {
         playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
         playMediaImageButton.getLayoutParams().height = imageButtonHeight;
         playMediaImageButton.getLayoutParams().width = imageButtonHeight;
-        playMediaImageButton.setVisibility(View.VISIBLE);
 
         pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
         pauseMediaImageButton.getLayoutParams().height = imageButtonHeight;
         pauseMediaImageButton.getLayoutParams().width = imageButtonHeight;
-        pauseMediaImageButton.setVisibility(View.GONE);
+
+        if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
+            playMediaImageButton.setVisibility(View.GONE);
+            pauseMediaImageButton.setVisibility(View.VISIBLE);
+        } else {
+            playMediaImageButton.setVisibility(View.VISIBLE);
+            pauseMediaImageButton.setVisibility(View.GONE);
+        }
 
         replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
         replayMediaImageButton.getLayoutParams().height = imageButtonHeight;
@@ -445,7 +451,14 @@ public class VLCPlayerFragment extends Fragment {
         } else {
             Log.d(TAG, "songInfo is not null");
         }
-        if (mediaUri != null) {
+        if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
+            if (playingParam.isPlaySingleSong()) {
+                if (songInfo != null) {
+                    playingParam.setAutoPlay(false);
+                    playSingleSong(songInfo);
+                }
+            }
+        } else {
             int playbackState = playingParam.getCurrentPlaybackState();
             Log.d(TAG, "onCreateView() --> playingParam.getCurrentPlaybackState() = " + playbackState);
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
@@ -455,13 +468,6 @@ public class VLCPlayerFragment extends Fragment {
                 Bundle playingParamOriginExtras = new Bundle();
                 playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
-            }
-        } else {
-            if (playingParam.isPlaySingleSong()) {
-                if (songInfo != null) {
-                    playingParam.setAutoPlay(false);
-                    playSingleSong(songInfo);
-                }
             }
         }
 
@@ -611,7 +617,7 @@ public class VLCPlayerFragment extends Fragment {
                 //
                 break;
             case R.id.channel:
-                if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
+                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
                     leftChannelMenuItem.setEnabled(true);
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
@@ -668,7 +674,7 @@ public class VLCPlayerFragment extends Fragment {
 
         // deal with switching audio track
         if ( (isAudioTrackMenuItemPressed) && (id != audioTrackMenuItem.getItemId()) ) {
-            if ((mediaUri != null) && (numberOfAudioTracks > 0)) {
+            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
                 if (item.getTitle() != null) {
                     String itemTitle = item.getTitle().toString();
                     Log.d(TAG, "itemTitle = " + itemTitle);
@@ -1340,8 +1346,7 @@ public class VLCPlayerFragment extends Fragment {
         } else {
             // startPlay next song that user has ordered
             playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
-            // if (mediaSource != null) {
-            if (mediaUri != null) {
+            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
                 if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
                     // repeat playing this mediaUri
                 } else {
@@ -1354,6 +1359,36 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void playSingleSong(SongInfo songInfo) {
+
+        if (songInfo == null) {
+            return;
+        }
+
+        String filePath = songInfo.getFilePath();
+        if (filePath==null) {
+            return;
+        }
+        filePath = filePath.trim();
+        if (filePath.equals("")) {
+            return;
+        }
+
+        if (useFilePicker) {
+            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
+                }
+            }
+        } else {
+            mediaUri = Uri.parse(filePath);
+        }
+
+        if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
+            return;
+        }
+
         playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
 
@@ -1369,23 +1404,6 @@ public class VLCPlayerFragment extends Fragment {
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaSourcePrepared(false);
 
-        String filePath = songInfo.getFilePath();
-        Log.i(TAG, "filePath : " + filePath);
-
-        if (useFilePicker) {
-            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
-            if (filePath != null) {
-                if (!filePath.isEmpty()) {
-                    File songFile = new File(filePath);
-                    mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
-                }
-            }
-        } else {
-
-            mediaUri = Uri.parse(filePath);
-        }
-
-        Log.i(TAG, "mediaUri from filePath : " + mediaUri);
         // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
         // pass the saved instance of playingParam to
         Bundle playingParamOriginExtras = new Bundle();
@@ -1396,7 +1414,7 @@ public class VLCPlayerFragment extends Fragment {
     private void startPlay() {
         Log.d(TAG, "startPlay() is called.");
         int playbackState = playingParam.getCurrentPlaybackState();
-        if ( (mediaUri != null) && (playbackState != PlaybackStateCompat.STATE_PLAYING) ) {
+        if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playbackState != PlaybackStateCompat.STATE_PLAYING) ) {
             // no media file opened or playing has been stopped
             if ( (playbackState == PlaybackStateCompat.STATE_PAUSED)
                     || (playbackState == PlaybackStateCompat.STATE_REWINDING)
@@ -1414,7 +1432,7 @@ public class VLCPlayerFragment extends Fragment {
 
     private void pausePlay() {
         // if ( (mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
-        if ( (mediaUri != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
+        if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
             // no media file opened or playing has been stopped
             mediaTransportControls.pause();
         }
@@ -1427,7 +1445,7 @@ public class VLCPlayerFragment extends Fragment {
         } else {
             if (playingParam.getRepeatStatus() == NoRepeatPlaying) {
                 // no repeat playing
-                if ((mediaUri != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
+                if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
                     mediaTransportControls.stop();
                     Log.d(TAG, "stopPlay() ---> mediaTransportControls.stop() is called.");
                 }
@@ -1440,23 +1458,24 @@ public class VLCPlayerFragment extends Fragment {
 
     private void replayMedia() {
         Log.d(TAG, "replayMedia() is called.");
-        // if ( (mediaSource != null) && (numberOfAudioTracks>0) ) {
-        if ( (mediaUri != null) && (numberOfAudioTracks >0) ) {
-            long currentAudioPosition = 0;
-            playingParam.setCurrentAudioPosition(currentAudioPosition);
-            if (playingParam.isMediaSourcePrepared()) {
-                vlcPlayer.setTime(currentAudioPosition); // use time to set position
-                setProperAudioTrackAndChannel();
-                if (!vlcPlayer.isPlaying()) {
-                    vlcPlayer.play();
-                }
-                Log.d(TAG, "replayMedia()--> vlcPlayer.seekTo(currentAudioPosition).");
-            } else {
-                Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
-                mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and startPlay
-                Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
+        if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
+            return;
+        }
+
+        long currentAudioPosition = 0;
+        playingParam.setCurrentAudioPosition(currentAudioPosition);
+        if (playingParam.isMediaSourcePrepared()) {
+            vlcPlayer.setTime(currentAudioPosition); // use time to set position
+            setProperAudioTrackAndChannel();
+            if (!vlcPlayer.isPlaying()) {
+                vlcPlayer.play();
             }
+            Log.d(TAG, "replayMedia()--> vlcPlayer.seekTo(currentAudioPosition).");
+        } else {
+            Bundle playingParamOriginExtras = new Bundle();
+            playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and startPlay
+            Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
         }
     }
 
@@ -1672,7 +1691,7 @@ public class VLCPlayerFragment extends Fragment {
                 case PlaybackStateCompat.STATE_NONE:
                     // initial state and when playing is stopped by user
                     Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
-                    if (mediaUri != null) {
+                    if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
                         Log.d(TAG, "MediaControllerCallback--> Song was finished.");
                         if (playingParam.isAutoPlay()) {
                             // start playing next video from list
@@ -1717,7 +1736,7 @@ public class VLCPlayerFragment extends Fragment {
                     break;
                 case PlaybackStateCompat.STATE_STOPPED:
                     Log.d(TAG, "PlaybackStateCompat.STATE_STOPPED");
-                    if (mediaUri != null) {
+                    if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
                         Log.d(TAG, "MediaControllerCallback--> Song was stopped by user.");
                     }
                     playMediaImageButton.setVisibility(View.VISIBLE);

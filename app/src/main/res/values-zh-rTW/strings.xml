@@ -45,4 +45,6 @@
     <string name="backKeyToExitApp">再按一次倒退鍵離開程式</string>
     <string name="musicString">音樂</string>
     <string name="vocalString">伴唱</string>
+    <string name="titileEmptyString">抬頭是空白</string>
+    <string name="filepathEmptyString">檔案路徑是空白</string>
 </resources>

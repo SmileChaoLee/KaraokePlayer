@@ -14,7 +14,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
-import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
+// import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 

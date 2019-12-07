@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,19 +15,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-// import com.aditya.filebrowser.FileChooser;
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
-import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
+// import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class SongDataActivity extends AppCompatActivity {
@@ -191,17 +191,21 @@ public class SongDataActivity extends AppCompatActivity {
         edit_saveOneSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setSongInfoFromInput();
+                final boolean isValid = setSongInfoFromInput(true);
                 SongListSQLite songListSQLite = new SongListSQLite(SmileApplication.AppContext);
-                long databaseResult;
+                long databaseResult = -1;
                 switch (crudAction.toUpperCase()) {
                     case SmileApplication.AddActionString:
                         // add one record
-                        databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+                        if (isValid) {
+                            databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+                        }
                         break;
                     case SmileApplication.EditActionString:
                         // = "EDIT". Edit one record
-                        databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                        if (isValid) {
+                            databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                        }
                         break;
                     case SmileApplication.DeleteActionString:
                         // = "DELETE". Delete one record
@@ -210,7 +214,9 @@ public class SongDataActivity extends AppCompatActivity {
                 }
                 songListSQLite.closeDatabase();
 
-                returnToPrevious();
+                if (databaseResult != -1) {
+                    returnToPrevious();
+                }
             }
         });
 
@@ -239,7 +245,7 @@ public class SongDataActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
 
-        setSongInfoFromInput();
+        setSongInfoFromInput(false);
 
         outState.putParcelable("SongInfo", mSongInfo);
         outState.putString(SmileApplication.CrudActionString, crudAction);
@@ -318,10 +324,21 @@ public class SongDataActivity extends AppCompatActivity {
         startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
     }
 
-    private void setSongInfoFromInput() {
+    private boolean setSongInfoFromInput(boolean hasMessage) {
 
-        String title = edit_titleNameEditText.getText().toString();
-        String filePath = edit_filePathEditText.getText().toString();
+        boolean isValid = true;
+
+        String title = "";
+        Editable text = edit_titleNameEditText.getText();
+        if (text != null) {
+            title = text.toString().trim();
+        }
+        text = edit_filePathEditText.getText();
+        String filePath = "";
+        if (text != null) {
+            filePath = text.toString().trim();
+        }
+
         String musicTrack = edit_musicTrackSpinner.getSelectedItem().toString();
         String musicChannel = edit_musicChannelSpinner.getSelectedItem().toString();
         String vocalTrack = edit_vocalTrackSpinner.getSelectedItem().toString();
@@ -335,5 +352,22 @@ public class SongDataActivity extends AppCompatActivity {
         mSongInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
         mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
+
+        if (title.isEmpty()) {
+            isValid = false;
+            if (hasMessage) {
+                ScreenUtil.showToast(getApplicationContext(), getString(R.string.titileEmptyString),
+                        toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+            }
+        }
+        if (filePath.isEmpty()) {
+            isValid = false;
+            if (hasMessage) {
+                ScreenUtil.showToast(getApplicationContext(), getString(R.string.filepathEmptyString),
+                        toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+            }
+        }
+
+        return isValid;
     }
 }
