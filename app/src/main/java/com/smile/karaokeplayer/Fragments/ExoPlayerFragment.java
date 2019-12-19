@@ -38,9 +38,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
@@ -1086,7 +1084,7 @@ public class ExoPlayerFragment extends Fragment {
                 songInfo = arguments.getParcelable(SongInfoState);
             }
 
-            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
 
         } else {
             // needed to be set
@@ -1136,12 +1134,18 @@ public class ExoPlayerFragment extends Fragment {
 
         // trackSelector = new DefaultTrackSelector();
         // trackSelector = new DefaultTrackSelector(new RandomTrackSelection.Factory());
-        trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory());
+        trackSelector = new DefaultTrackSelector(callingContext, new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
         myRenderersFactory = new MyRenderersFactory(callingContext);
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, myRenderersFactory, trackSelector);
+
+
+        SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(callingContext, myRenderersFactory);
+        exoPlayerBuilder.setTrackSelector(trackSelector);
+        exoPlayer = exoPlayerBuilder.build();
+
+        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, myRenderersFactory, trackSelector);
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
         // DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(callingContext).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, defaultRenderersFactory, trackSelector);
@@ -1166,20 +1170,8 @@ public class ExoPlayerFragment extends Fragment {
             }
         });
 
-        // removed on 2019-10-14 for testing
-        /*
-        audioAttributesBuilder = new AudioAttributes.Builder();
-        audioAttributesBuilder.setUsage(C.USAGE_MEDIA).setContentType(C.CONTENT_TYPE_MOVIE);
-        exoPlayer.setAudioAttributes(audioAttributesBuilder.build(), true);
-        */
-
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
-
-        // Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
-        // Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
-        // Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
-        // Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
     }
 
     private void releaseExoPlayer() {
@@ -1491,6 +1483,7 @@ public class ExoPlayerFragment extends Fragment {
         boolean useAudioProcessor = false;
         if (stereoVolumeAudioProcessor != null) {
             int channelCount = stereoVolumeAudioProcessor.getOutputChannelCount();
+            Log.d(TAG, "setAudioVolume() -- > channelCount = " + channelCount);
             if (channelCount >= 0) {
                 useAudioProcessor = true;
                 float[] volumeInput = new float[stereoVolumeAudioProcessor.getOutputChannelCount()];
@@ -1663,7 +1656,7 @@ public class ExoPlayerFragment extends Fragment {
         @Override
         public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-            Log.d(TAG,"Player.EventListener.onPlayerStateChanged is called.");
+            Log.d(TAG, "Player.EventListener.onPlayerStateChanged is called.");
             Log.d(TAG, "Playback state = " + playbackState);
 
             switch (playbackState) {
@@ -1686,9 +1679,9 @@ public class ExoPlayerFragment extends Fragment {
                             SubMenu subMenu = audioTrackMenuItem.getSubMenu();
                             subMenu.clear();
                             String audioTrackName;
-                            for (int index=0; index<audioTrackIndicesList.size(); index++) {
+                            for (int index = 0; index < audioTrackIndicesList.size(); index++) {
                                 // audio track index start from 1 for user interface
-                                audioTrackName = getString(R.string.audioTrackString) + " " + (index+1);
+                                audioTrackName = getString(R.string.audioTrackString) + " " + (index + 1);
                                 subMenu.add(audioTrackName);
                             }
                         }
@@ -1736,11 +1729,6 @@ public class ExoPlayerFragment extends Fragment {
             }
 
             dismissBufferingMessage();
-        }
-
-        @Override
-        public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-            Log.d(TAG,"Player.EventListener.onTimelineChanged() is called.");
         }
 
         @Override

@@ -1,6 +1,7 @@
 package com.smile.karaokeplayer.AudioProcessor_implement;
 
 import android.util.Log;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.audio.BaseAudioProcessor;
 
@@ -42,6 +43,14 @@ public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
     }
 
     @Override
+    public AudioFormat onConfigure(AudioFormat inputAudioFormat)
+            throws UnhandledAudioFormatException {
+
+        return new AudioFormat(inputAudioFormat.sampleRate, inputAudioFormat.channelCount, inputAudioFormat.encoding);
+    }
+
+    /*
+    @Override
     public boolean configure(int sampleRateHz, int channelCount, @C.Encoding int encoding)
             throws UnhandledFormatException {
 
@@ -53,14 +62,21 @@ public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
 
         return isSetConfig;
     }
+    */
 
     @Override
     public void queueInput(ByteBuffer inputBuffer) {
+
+        if (!isActive()) {
+            Log.d(TAG, "queueInput() --> Exception because of isActive() = " + isActive());
+            throw new IllegalStateException();
+        }
+
         int position = inputBuffer.position();
         int limit = inputBuffer.limit();
         int outputSize = limit - position;
         int reSampledSize;
-        switch (encoding) {
+        switch (inputAudioFormat.encoding) {
             case C.ENCODING_PCM_8BIT:
                 reSampledSize = outputSize * 2;
                 break;
@@ -78,12 +94,7 @@ public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
 
         ByteBuffer buffer = replaceOutputBuffer(reSampledSize);
 
-        if (!isActive()) {
-            Log.d(TAG, "queueInput() --> Exception because of isActive() = " + isActive());
-            throw new IllegalStateException();
-        }
-
-        switch (encoding) {
+        switch (inputAudioFormat.encoding) {
             case C.ENCODING_PCM_8BIT:
                 // 8->16 bit resampling. Shift each byte from [0, 256) to [-128, 128) and scale up.
                 for (int i = position; i < limit; i++) {
@@ -109,13 +120,13 @@ public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
                 break;
             case C.ENCODING_PCM_16BIT:
             default:
-                if (channelCount != 2) {
+                if (inputAudioFormat.channelCount != 2) {
                     // not stereo
                     while (position < limit) {
-                        for (int channelIndex=0; channelIndex<channelCount; channelIndex++) {
+                        for (int channelIndex=0; channelIndex<inputAudioFormat.channelCount; channelIndex++) {
                             buffer.putShort((short) (inputBuffer.getShort(position + 2 * channelIndex) * volume[channelIndex]));
                         }
-                        position += channelCount * 2;
+                        position += inputAudioFormat.channelCount * 2;
                     }
                 } else {
                     // channelCount = 2 (Stereo)
@@ -164,5 +175,9 @@ public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
 
         inputBuffer.position(limit);
         buffer.flip();
+    }
+
+    public int getOutputChannelCount() {
+        return inputAudioFormat.channelCount;
     }
 }

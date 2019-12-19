@@ -3,7 +3,6 @@ package com.smile.karaokeplayer.ExoRenderersFactory;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
@@ -32,12 +31,14 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
             arrayLength = super.buildAudioProcessors().length;
         }
 
+        Log.d(TAG,"buildAudioProcessors --> arrayLength() = " + arrayLength);
+
         audioProcessors = new AudioProcessor[arrayLength + 1];
 
         audioProcessors[0] = stereoVolumeAudioProcessor;
 
         for (int i=1; i<=arrayLength; i++) {
-            audioProcessors[i] = (super.buildAudioProcessors())[i];
+            audioProcessors[i] = (super.buildAudioProcessors())[i-1];
         }
 
         return audioProcessors;
