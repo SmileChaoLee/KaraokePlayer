@@ -46,7 +46,6 @@ android {
             res {
                 exclude "**/fragment_vlcplayer.xml"
                 exclude "**/vlcplayer_audio_controller_layout.xml"
-                exclude "**/vlcplayer_audio_controller_layout.xml"
             }
         }
     }
@@ -65,7 +64,7 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core:1.2.0-rc01'
     implementation 'androidx.multidex:multidex:2.0.1'

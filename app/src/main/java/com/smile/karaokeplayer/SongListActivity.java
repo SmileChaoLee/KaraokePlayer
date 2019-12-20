@@ -22,6 +22,7 @@ import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
+import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class SongListActivity extends AppCompatActivity {
         exitSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnToPrevious();
+                showAdAndExitActivity();
             }
         });
 
@@ -127,6 +128,21 @@ public class SongListActivity extends AppCompatActivity {
                 case DELETE_ONE_SONG_TO_PLAY_LIST:
                     break;
                 case PLAY_ONE_SONG_IN_PLAY_LIST:
+                    if (SmileApplication.InterstitialAd != null) {
+                        // free version
+                        Log.d(TAG, "onActivityResult() --> Starting to show Ads");
+                        int entryPoint = 0; //  no used
+                        ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
+                                SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
+                                        , entryPoint
+                                        , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
+                                    @Override
+                                    public void executeAfterDismissAds(int endPoint) {
+                                        // do nothing
+                                    }
+                                });
+                        showAdAsyncTask.execute();
+                    }
                     break;
             }
         }
@@ -137,7 +153,27 @@ public class SongListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        returnToPrevious();
+        showAdAndExitActivity();
+    }
+
+    private void showAdAndExitActivity() {
+        if (SmileApplication.InterstitialAd != null) {
+            // free version
+            Log.d(TAG, "showAdAndExitActivity() --> Starting to show Ads");
+            int entryPoint = 0; //  no used
+            ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
+                            , entryPoint
+                            , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
+                        @Override
+                        public void executeAfterDismissAds(int endPoint) {
+                            returnToPrevious();
+                        }
+                    });
+            showAdAsyncTask.execute();
+        } else {
+            returnToPrevious();
+        }
     }
 
     private void returnToPrevious() {
