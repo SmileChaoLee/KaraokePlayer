@@ -42,6 +42,7 @@ android {
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/ExternalStorageUtil.java"
                 exclude "**/VLCPlayerFragment.java"
+                exclude "**/PlaySingleSongActivity.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"

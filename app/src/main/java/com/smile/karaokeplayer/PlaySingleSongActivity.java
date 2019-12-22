@@ -106,8 +106,7 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
             Log.d(TAG, "showAdAndExitActivity() --> Starting to show Ads");
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
-                            , entryPoint
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
                             , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
                         @Override
                         public void executeAfterDismissAds(int endPoint) {

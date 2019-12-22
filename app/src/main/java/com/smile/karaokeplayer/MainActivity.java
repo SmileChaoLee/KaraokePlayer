@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     public void onBackPressed() {
         ExitAppTimer exitAppTimer = ExitAppTimer.getInstance(1000); // singleton class
         if (exitAppTimer.canExit()) {
-            showAdAndExitApplication();
+            showAdAndExitActivity();
         } else {
             exitAppTimer.start();
             ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
@@ -188,27 +188,23 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         finish();
     }
 
-    private void showAdAndExitApplication() {
+    private void showAdAndExitActivity() {
+        returnToPrevious();
         if (SmileApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
-                            , entryPoint
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
                             , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
                         @Override
                         public void executeAfterDismissAds(int endPoint) {
-                            exitApplication();
+                            // returnToPrevious();
                         }
                     });
             showAdAsyncTask.execute();
         } else {
-            exitApplication();
+            // returnToPrevious();
         }
-    }
-
-    private void exitApplication() {
-        finish();
     }
 
     @Override
@@ -221,12 +217,6 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     }
     @Override
     public void onExitFragment() {
-        if (!isPlayingSingleSong) {
-            // not only play one single song
-            // so not android.intent.category.LAUNCHER
-            showAdAndExitApplication();
-        } else {
-            returnToPrevious();
-        }
+        showAdAndExitActivity();
     }
 }

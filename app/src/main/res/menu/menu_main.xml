@@ -38,11 +38,6 @@
                 android:orderInCategory="5"
                 app:showAsAction="never">
             </item>
-            <item android:id="@+id/exit"
-                android:title="@string/exitString"
-                android:orderInCategory="6"
-                app:showAsAction="never">
-            </item>
         </menu>
     </item>
 
@@ -75,6 +70,12 @@
                 app:showAsAction="never">
             </item>
         </menu>
+    </item>
+
+    <item android:id="@+id/exit"
+        android:title="@string/exitString"
+        android:orderInCategory="5"
+        app:showAsAction="never">
     </item>
 
 </menu>

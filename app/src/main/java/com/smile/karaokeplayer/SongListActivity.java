@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
@@ -135,29 +136,28 @@ public class SongListActivity extends AppCompatActivity {
         mySongListAdapter.updateData(mSongList);    // update the UI
     }
 
-
     @Override
     public void onBackPressed() {
         showAdAndExitActivity();
     }
 
     private void showAdAndExitActivity() {
+        returnToPrevious();
         if (SmileApplication.InterstitialAd != null) {
             // free version
             Log.d(TAG, "showAdAndExitActivity() --> Starting to show Ads");
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
-                            , entryPoint
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
                             , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
                         @Override
                         public void executeAfterDismissAds(int endPoint) {
-                            returnToPrevious();
+                            // returnToPrevious();
                         }
                     });
             showAdAsyncTask.execute();
         } else {
-            returnToPrevious();
+            // returnToPrevious();
         }
     }
 
@@ -312,8 +312,10 @@ public class SongListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // play this item (media file)
-                        Intent playOneSongIntent = new Intent(getApplicationContext(), PlaySingleSongActivity.class);
+                        // Intent playOneSongIntent = new Intent(getApplicationContext(), PlaySingleSongActivity.class);
+                        Intent playOneSongIntent = new Intent(getApplicationContext(), MainActivity.class);
                         Bundle extras = new Bundle();
+                        extras.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, true);   // play single song
                         extras.putParcelable("SongInfo", songInfo);
                         playOneSongIntent.putExtras(extras);
                         startActivityForResult(playOneSongIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
