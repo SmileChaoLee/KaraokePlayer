@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 // import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener{
@@ -91,14 +92,7 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
 
     @Override
     public void onBackPressed() {
-        returnToPrevious();
-    }
-
-    private void returnToPrevious() {
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
-        // setResult(Activity.RESULT_OK);   // no bundle data
-        finish();
+        showAdAndExitActivity();
     }
 
     @Override
@@ -106,13 +100,29 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
         super.onDestroy();
     }
 
-    private void returnToPrevious(int exitCode) {
+    private void showAdAndExitActivity() {
+        if (SmileApplication.InterstitialAd != null) {
+            // free version
+            Log.d(TAG, "showAdAndExitActivity() --> Starting to show Ads");
+            int entryPoint = 0; //  no used
+            ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
+                            , entryPoint
+                            , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
+                        @Override
+                        public void executeAfterDismissAds(int endPoint) {
+                            returnToPrevious();
+                        }
+                    });
+            showAdAsyncTask.execute();
+        } else {
+            returnToPrevious();
+        }
+    }
+
+    private void returnToPrevious() {
         Intent returnIntent = new Intent();
-        // can bundle some data to previous activity
-        Bundle extras = new Bundle();
-        extras.putInt("ExitCode", exitCode);
-        returnIntent.putExtras(extras);
-        setResult(Activity.RESULT_OK, returnIntent);
+        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
         // setResult(Activity.RESULT_OK);   // no bundle data
         finish();
     }
@@ -127,6 +137,6 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
     }
     @Override
     public void onExitFragment() {
-        returnToPrevious();
+        showAdAndExitActivity();
     }
 }

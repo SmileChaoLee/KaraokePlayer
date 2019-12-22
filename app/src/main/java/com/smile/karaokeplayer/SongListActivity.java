@@ -128,21 +128,6 @@ public class SongListActivity extends AppCompatActivity {
                 case DELETE_ONE_SONG_TO_PLAY_LIST:
                     break;
                 case PLAY_ONE_SONG_IN_PLAY_LIST:
-                    if (SmileApplication.InterstitialAd != null) {
-                        // free version
-                        Log.d(TAG, "onActivityResult() --> Starting to show Ads");
-                        int entryPoint = 0; //  no used
-                        ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                                SmileApplication.InterstitialAd.new ShowAdAsyncTask(this
-                                        , entryPoint
-                                        , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
-                                    @Override
-                                    public void executeAfterDismissAds(int endPoint) {
-                                        // do nothing
-                                    }
-                                });
-                        showAdAsyncTask.execute();
-                    }
                     break;
             }
         }
