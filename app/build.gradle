@@ -16,8 +16,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 120
-        versionName "1.20"
+        versionCode 121
+        versionName "1.21"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -40,6 +40,7 @@ android {
             java {
                 exclude "**/ChannelMappingAudioProcessor.java"
                 exclude "**/ResamplingAudioProcessor.java"
+                exclude "**/StereoVolumeProcessor.java"
                 exclude "**/ExternalStorageUtil.java"
                 exclude "**/VLCPlayerFragment.java"
                 exclude "**/PlaySingleSongActivity.java"

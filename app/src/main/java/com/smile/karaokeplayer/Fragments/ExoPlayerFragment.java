@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.media.AudioFormat;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,7 +42,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
@@ -166,6 +164,7 @@ public class ExoPlayerFragment extends Fragment {
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private MediaSource mediaSource;
     private SimpleExoPlayer exoPlayer;
+    private ExoPlayerEventListener mExoPlayerEventListener;
 
     private LinearLayout linearLayout_for_ads;
     private AdView bannerAdView;
@@ -1144,14 +1143,12 @@ public class ExoPlayerFragment extends Fragment {
         SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(callingContext, myRenderersFactory);
         exoPlayerBuilder.setTrackSelector(trackSelector);
         exoPlayer = exoPlayerBuilder.build();
-
         // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, myRenderersFactory, trackSelector);
-        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, trackSelector);
-        // DefaultRenderersFactory defaultRenderersFactory = new DefaultRenderersFactory(callingContext).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
-        // exoPlayer = ExoPlayerFactory.newSimpleInstance(callingContext, defaultRenderersFactory, trackSelector);
 
         // no need. It will ve overridden by MediaSessionConnector
-        exoPlayer.addListener(new ExoPlayerEventListener());
+        mExoPlayerEventListener = new ExoPlayerEventListener();
+        exoPlayer.addListener(mExoPlayerEventListener);
+        /*
         exoPlayer.addAudioListener(new AudioListener() {
             @Override
             public void onAudioSessionId(int audioSessionId) {
@@ -1169,6 +1166,7 @@ public class ExoPlayerFragment extends Fragment {
                 Log.d(TAG, "addAudioListener.onVolumeChanged() is called.");
             }
         });
+        */
 
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
@@ -1176,6 +1174,7 @@ public class ExoPlayerFragment extends Fragment {
 
     private void releaseExoPlayer() {
         if (exoPlayer != null) {
+            exoPlayer.removeListener(mExoPlayerEventListener);
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;

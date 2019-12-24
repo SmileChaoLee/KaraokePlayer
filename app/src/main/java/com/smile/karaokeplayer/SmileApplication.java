@@ -2,9 +2,12 @@ package com.smile.karaokeplayer;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.multidex.MultiDexApplication;
 
+import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
 import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
@@ -64,9 +67,9 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(rightChannelString, rightChannel);
         audioChannelReverseMap.put(stereoChannelString, stereoChannel);
 
+        AudienceNetworkAds.initialize(this);
         String facebookPlacementID = new String("1712962715503258_1712963252169871");
         facebookAds = new FacebookInterstitialAds(AppContext, facebookPlacementID);
-        facebookAds.loadAd();
 
         // Google AdMob
         String googleAdMobAppID = getString(R.string.google_AdMobAppID);
@@ -74,8 +77,18 @@ public class SmileApplication extends MultiDexApplication {
         googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
         MobileAds.initialize(AppContext, googleAdMobAppID);
         googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
-        googleInterstitialAd.loadAd(); // load first ad
 
         InterstitialAd = new ShowingInterstitialAdsUtil(facebookAds, googleInterstitialAd);
+
+        final Handler adHandler = new Handler(Looper.getMainLooper());
+        final Runnable adRunnable = new Runnable() {
+            @Override
+            public void run() {
+                adHandler.removeCallbacksAndMessages(null);
+                googleInterstitialAd.loadAd(); // load first google ad
+                facebookAds.loadAd();   // load first facebook ad
+            }
+        };
+        adHandler.postDelayed(adRunnable, 1000);
     }
 }
