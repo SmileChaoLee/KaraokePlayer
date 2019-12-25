@@ -724,7 +724,12 @@ public class ExoPlayerFragment extends Fragment {
         outState.putParcelableArrayList(PublicSongListState, publicSongList);
 
         outState.putParcelable(MediaUriState, mediaUri);
-        playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
+        if (exoPlayer != null) {
+            playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
+        } else {
+            playingParam.setCurrentAudioPosition(0);
+        }
+
         outState.putParcelable(PlayingParamState, playingParam);
         outState.putBoolean(CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(SongInfoState, songInfo);
