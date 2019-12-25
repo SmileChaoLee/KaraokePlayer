@@ -42,8 +42,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.audio.AudioListener;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -157,32 +155,25 @@ public class ExoPlayerFragment extends Fragment {
     private MediaSessionConnector mediaSessionConnector;
 
     private PlayerView videoExoPlayerView;
-    private DataSource.Factory dataSourceFactory;
     private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
-    private MyRenderersFactory myRenderersFactory;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
-    private MediaSource mediaSource;
     private SimpleExoPlayer exoPlayer;
     private ExoPlayerEventListener mExoPlayerEventListener;
 
     private LinearLayout linearLayout_for_ads;
-    private AdView bannerAdView;
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
     private LinearLayout nativeAdsLinearLayout;
     private TextView nativeAdsStringTextView;
 
-    private LinearLayout audioControllerView;
     private ImageButton previousMediaImageButton;
     private ImageButton playMediaImageButton;
     private ImageButton replayMediaImageButton;
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
-    private TextView exo_position_TextView;
-    private TextView exo_duration_TextView;
 
     private int colorRed;
     private int colorTransparent;
@@ -377,7 +368,7 @@ public class ExoPlayerFragment extends Fragment {
         linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
-                bannerAdView = new AdView(callingContext);
+                AdView bannerAdView = new AdView(callingContext);
                 bannerAdView.setAdSize(AdSize.BANNER);
                 bannerAdView.setAdUnitId(SmileApplication.googleAdMobBannerID);
                 linearLayout_for_ads.addView(bannerAdView);
@@ -405,7 +396,6 @@ public class ExoPlayerFragment extends Fragment {
         nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
         ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
 
-        audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
         previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
         previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
         previousMediaImageButton.getLayoutParams().width = imageButtonHeight;
@@ -439,10 +429,10 @@ public class ExoPlayerFragment extends Fragment {
         nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
         float durationTextSize = textFontSize * 0.6f;
-        exo_position_TextView = fragmentView.findViewById(R.id.exo_position);
+        TextView exo_position_TextView = fragmentView.findViewById(R.id.exo_position);
         ScreenUtil.resizeTextSize(exo_position_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
 
-        exo_duration_TextView = fragmentView.findViewById(R.id.exo_duration);
+        TextView exo_duration_TextView = fragmentView.findViewById(R.id.exo_duration);
         ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
 
         setOnClickEvents();
@@ -1131,12 +1121,10 @@ public class ExoPlayerFragment extends Fragment {
 
     private void initExoPlayer() {
 
-        // trackSelector = new DefaultTrackSelector();
-        // trackSelector = new DefaultTrackSelector(new RandomTrackSelection.Factory());
         trackSelector = new DefaultTrackSelector(callingContext, new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
-        myRenderersFactory = new MyRenderersFactory(callingContext);
+        MyRenderersFactory myRenderersFactory = new MyRenderersFactory(callingContext);
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
 
 
@@ -1148,25 +1136,6 @@ public class ExoPlayerFragment extends Fragment {
         // no need. It will ve overridden by MediaSessionConnector
         mExoPlayerEventListener = new ExoPlayerEventListener();
         exoPlayer.addListener(mExoPlayerEventListener);
-        /*
-        exoPlayer.addAudioListener(new AudioListener() {
-            @Override
-            public void onAudioSessionId(int audioSessionId) {
-                Log.d(TAG, "addAudioListener.onAudioSessionId() is called.");
-                Log.d(TAG, "addAudioListener.audioSessionId = " + audioSessionId);
-            }
-
-            @Override
-            public void onAudioAttributesChanged(AudioAttributes audioAttributes) {
-                Log.d(TAG, "addAudioListener.onAudioAttributesChanged() is called.");
-            }
-
-            @Override
-            public void onVolumeChanged(float volume) {
-                Log.d(TAG, "addAudioListener.onVolumeChanged() is called.");
-            }
-        });
-        */
 
         videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.requestFocus();
@@ -1603,9 +1572,10 @@ public class ExoPlayerFragment extends Fragment {
                     .setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS)
                     .setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
             playingParam.setMediaSourcePrepared(false);
-            dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
             // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
-            mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+            // mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
             exoPlayer.prepare(mediaSource);
             long currentAudioPosition = playingParam.getCurrentAudioPosition();
             float currentVolume = playingParam.getCurrentVolume();
