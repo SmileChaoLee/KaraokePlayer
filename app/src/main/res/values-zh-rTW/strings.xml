@@ -21,6 +21,14 @@
     <string name="toTVString">電視播放</string>
     <string name="volumeString">音量</string>
     <string name="audioTrackString">音軌</string>
+    <string name="audioTrack1String">音軌 1</string>
+    <string name="audioTrack2String">音軌 2</string>
+    <string name="audioTrack3String">音軌 3</string>
+    <string name="audioTrack4String">音軌 4</string>
+    <string name="audioTrack5String">音軌 5</string>
+    <string name="audioTrack6String">音軌 6</string>
+    <string name="audioTrack7String">音軌 7</string>
+    <string name="audioTrack8String">音軌 8</string>
     <string name="videoTrackString">影像軌</string>
     <string name="channelString">聲道</string>
     <string name="leftChannelString">左聲道</string>

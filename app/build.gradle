@@ -44,6 +44,7 @@ android {
                 exclude "**/ExternalStorageUtil.java"
                 exclude "**/VLCPlayerFragment.java"
                 exclude "**/PlaySingleSongActivity.java"
+                exclude "**/ExoPlayerFragment_original.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"

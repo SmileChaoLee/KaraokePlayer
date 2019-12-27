@@ -22,8 +22,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-
-// import androidx.appcompat.widget.ActionMenuView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -85,12 +83,12 @@ import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderF
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ExoPlayerFragment.OnFragmentInteractionListener} interface
+ * {@link ExoPlayerFragment_original.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ExoPlayerFragment#newInstance} factory method to
+ * Use the {@link ExoPlayerFragment_original#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ExoPlayerFragment extends Fragment {
+public class ExoPlayerFragment_original extends Fragment {
 
     private static final String TAG = new String(".ExoPlayerFragment");
     private static final String LOG_TAG = new String("MediaSessionCompatTag");
@@ -130,7 +128,6 @@ public class ExoPlayerFragment extends Fragment {
     private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
-    // private ActionMenuView actionMenuView;
     private ImageButton volumeImageButton;
     private VerticalSeekBar volumeSeekBar;
     private ImageButton switchToMusicImageButton;
@@ -142,8 +139,10 @@ public class ExoPlayerFragment extends Fragment {
     // submenu of file
     private MenuItem autoPlayMenuItem;
     private MenuItem openMenuItem;
+    private MenuItem closeMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
+    private boolean isAudioTrackMenuItemPressed;
     // submenu of channel
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
@@ -212,7 +211,7 @@ public class ExoPlayerFragment extends Fragment {
         void onExitFragment();
     }
 
-    public ExoPlayerFragment() {
+    public ExoPlayerFragment_original() {
         // Required empty public constructor
     }
 
@@ -224,8 +223,8 @@ public class ExoPlayerFragment extends Fragment {
      * @param songInfo Parameter 2.
      * @return A new instance of fragment ExoPlayerFragment.
      */
-    public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
-        ExoPlayerFragment fragment = new ExoPlayerFragment();
+    public static ExoPlayerFragment_original newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
+        ExoPlayerFragment_original fragment = new ExoPlayerFragment_original();
         Bundle args = new Bundle();
         args.putBoolean(IsPlaySingleSongState, isPlaySingleSong);
         args.putParcelable(SongInfoState, songInfo);
@@ -291,12 +290,12 @@ public class ExoPlayerFragment extends Fragment {
 
         // use custom toolbar
         supportToolbar = fragmentView.findViewById(R.id.custom_toolbar);
-        supportToolbar.setVisibility(View.VISIBLE);
         mListener.setSupportActionBarForFragment(supportToolbar);
         ActionBar actionBar = mListener.getSupportActionBarForFragment();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
+        supportToolbar.setVisibility(View.VISIBLE);
 
         volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
@@ -361,24 +360,9 @@ public class ExoPlayerFragment extends Fragment {
 
         setToolbarImageButtonStatus();
 
-        // added on 2019-12-26
-        /*
-        actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
-        actionMenuView.getLayoutParams().height = imageButtonHeight;
-        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
-        */
-        //
-
-        // int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
-        // volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
-        volumeSeekBar.getLayoutParams().width = imageButtonHeight;
+        int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
+        volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
         Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
 
         linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
@@ -390,7 +374,6 @@ public class ExoPlayerFragment extends Fragment {
                 linearLayout_for_ads.addView(bannerAdView);
                 AdRequest adRequest = new AdRequest.Builder().build();
                 bannerAdView.loadAd(adRequest);
-                linearLayout_for_ads.setVisibility(View.VISIBLE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -503,35 +486,36 @@ public class ExoPlayerFragment extends Fragment {
         Log.d(TAG, "onCreateOptionsMenu() is called");
         // Inflate the menu; this adds items to the action bar if it is present.
 
+        menuInflater.inflate(R.menu.menu_main, menu);
         mainMenu = menu;
-        // mainMenu = actionMenuView.getMenu();
-        menuInflater.inflate(R.menu.menu_main, mainMenu);
 
         // according to the above explanations, the following statement will fit every situation
-        ScreenUtil.resizeMenuTextSize(mainMenu, fontScale);
+        ScreenUtil.resizeMenuTextSize(menu, fontScale);
 
         // submenu of file
-        autoPlayMenuItem = mainMenu.findItem(R.id.autoPlay);
-        openMenuItem = mainMenu.findItem(R.id.open);
+        autoPlayMenuItem = menu.findItem(R.id.autoPlay);
+        openMenuItem = menu.findItem(R.id.open);
+        closeMenuItem = menu.findItem(R.id.close);
 
         // submenu of audio
-        audioTrackMenuItem = mainMenu.findItem(R.id.audioTrack);
+        audioTrackMenuItem = menu.findItem(R.id.audioTrack);
         // submenu of channel
-        leftChannelMenuItem = mainMenu.findItem(R.id.leftChannel);
-        rightChannelMenuItem = mainMenu.findItem(R.id.rightChannel);
-        stereoChannelMenuItem = mainMenu.findItem(R.id.stereoChannel);
+        leftChannelMenuItem = menu.findItem(R.id.leftChannel);
+        rightChannelMenuItem = menu.findItem(R.id.rightChannel);
+        stereoChannelMenuItem = menu.findItem(R.id.stereoChannel);
 
         if (playingParam.isPlaySingleSong()) {
-            MenuItem fileMenuItem = mainMenu.findItem(R.id.file);
+            MenuItem fileMenuItem = menu.findItem(R.id.file);
             fileMenuItem.setVisible(false);
             audioTrackMenuItem.setVisible(false);
-            MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
+            MenuItem channelMenuItem = menu.findItem(R.id.channel);
             channelMenuItem.setVisible(false);
         }
     }
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        isAudioTrackMenuItemPressed = false;
         Log.d(TAG, "onPrepareOptionsMenu() is called.");
         super.onPrepareOptionsMenu(menu);
     }
@@ -543,6 +527,7 @@ public class ExoPlayerFragment extends Fragment {
 
         boolean isAutoPlay;
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
+        int mCurrentState;
 
         if (item.hasSubMenu()) {
             SubMenu subMenu = item.getSubMenu();
@@ -555,9 +540,11 @@ public class ExoPlayerFragment extends Fragment {
                 if (playingParam.isAutoPlay()) {
                     autoPlayMenuItem.setChecked(true);
                     openMenuItem.setEnabled(false);
+                    closeMenuItem.setEnabled(false);
                 } else {
                     autoPlayMenuItem.setChecked(false);
                     openMenuItem.setEnabled(true);
+                    closeMenuItem.setEnabled(true);
                 }
                 break;
             case R.id.autoPlay:
@@ -597,6 +584,9 @@ public class ExoPlayerFragment extends Fragment {
                     selectFileToOpen();
                 }
                 break;
+            case R.id.close:
+                stopPlay();
+                break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), SmileApplication.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
                 break;
@@ -606,8 +596,10 @@ public class ExoPlayerFragment extends Fragment {
                 }
                 break;
             case R.id.audioTrack:
+                isAudioTrackMenuItemPressed = true;
                 // if there are audio tracks
                 SubMenu subMenu = item.getSubMenu();
+                ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
                 // check if MenuItems of audioTrack need CheckBox
                 for (int i=0; i<subMenu.size(); i++) {
                     MenuItem mItem = subMenu.getItem(i);
@@ -620,30 +612,6 @@ public class ExoPlayerFragment extends Fragment {
                     }
                 }
                 //
-                break;
-            case R.id.audioTrack1:
-                setAudioTrackAndChannel(1, currentChannelPlayed);
-                break;
-            case R.id.audioTrack2:
-                setAudioTrackAndChannel(2, currentChannelPlayed);
-                break;
-            case R.id.audioTrack3:
-                setAudioTrackAndChannel(3, currentChannelPlayed);
-                break;
-            case R.id.audioTrack4:
-                setAudioTrackAndChannel(4, currentChannelPlayed);
-                break;
-            case R.id.audioTrack5:
-                setAudioTrackAndChannel(5, currentChannelPlayed);
-                break;
-            case R.id.audioTrack6:
-                setAudioTrackAndChannel(6, currentChannelPlayed);
-                break;
-            case R.id.audioTrack7:
-                setAudioTrackAndChannel(7, currentChannelPlayed);
-                break;
-            case R.id.audioTrack8:
-                setAudioTrackAndChannel(8, currentChannelPlayed);
                 break;
             case R.id.channel:
                 if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
@@ -701,6 +669,28 @@ public class ExoPlayerFragment extends Fragment {
                 break;
         }
 
+        // deal with switching audio track
+        if ( (isAudioTrackMenuItemPressed) && (id != audioTrackMenuItem.getItemId()) ) {
+            Log.d(TAG, "isAudioTrackMenuItemPressed is true");
+            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
+                if (item.getTitle() != null) {
+                    String itemTitle = item.getTitle().toString();
+                    Log.d(TAG, "itemTitle = " + itemTitle);
+                    if (audioTrackMenuItem.hasSubMenu()) {
+                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                        int menuSize = subMenu.size();
+                        for (int index = 0; index < menuSize; index++) {
+                            if (itemTitle.equals(subMenu.getItem(index).getTitle().toString())) {
+                                setAudioTrackAndChannel(index + 1, currentChannelPlayed);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            isAudioTrackMenuItemPressed = false;
+        }
+
         videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout); // cancel the time out
 
         return super.onOptionsItemSelected(item);
@@ -721,7 +711,6 @@ public class ExoPlayerFragment extends Fragment {
             volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
         }
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
     }
 
     @Override
@@ -1014,7 +1003,7 @@ public class ExoPlayerFragment extends Fragment {
                 break;
         }
         if (repeatStatus == NoRepeatPlaying) {
-            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, android.R.color.black));
+            repeatImageButton.setBackgroundColor(colorTransparent);
         } else {
             repeatImageButton.setBackgroundColor(colorRed);
         }
@@ -1025,7 +1014,7 @@ public class ExoPlayerFragment extends Fragment {
         linearLayout_for_ads.setVisibility(View.VISIBLE);
     }
     private void hideBannerAds() {
-        // linearLayout_for_ads.setVisibility(View.GONE);
+        linearLayout_for_ads.setVisibility(View.GONE);
     }
     private void showNativeAds() {
         // simulate showing native ad
@@ -1659,14 +1648,17 @@ public class ExoPlayerFragment extends Fragment {
 
                         // build R.id.audioTrack submenu
                         if (audioTrackMenuItem != null) {
-                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                            int index=0;
-                            for (index = 0; index < audioTrackIndicesList.size(); index++) {
-                                // audio track index start from 1 for user interface
-                                subMenu.getItem(index).setVisible(true);
+                            if (!audioTrackMenuItem.hasSubMenu()) {
+                                // no sub menu
+                                ((Menu) audioTrackMenuItem).addSubMenu("Text title");
                             }
-                            for (int j=index; j<subMenu.size(); j++) {
-                                subMenu.getItem(j).setVisible(false);
+                            SubMenu subMenu = audioTrackMenuItem.getSubMenu();
+                            subMenu.clear();
+                            String audioTrackName;
+                            for (int index = 0; index < audioTrackIndicesList.size(); index++) {
+                                // audio track index start from 1 for user interface
+                                audioTrackName = getString(R.string.audioTrackString) + " " + (index + 1);
+                                subMenu.add(audioTrackName);
                             }
                         }
                     }

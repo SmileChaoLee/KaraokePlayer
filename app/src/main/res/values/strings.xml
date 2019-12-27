@@ -20,6 +20,14 @@
     <string name="toTVString">To TV</string>
     <string name="volumeString">Volume</string>
     <string name="audioTrackString">Track</string>
+    <string name="audioTrack1String">Track 1</string>
+    <string name="audioTrack2String">Track 2</string>
+    <string name="audioTrack3String">Track 3</string>
+    <string name="audioTrack4String">Track 4</string>
+    <string name="audioTrack5String">Track 5</string>
+    <string name="audioTrack6String">Track 6</string>
+    <string name="audioTrack7String">Track 7</string>
+    <string name="audioTrack8String">Track 8</string>
     <string name="videoTrackString">Track</string>
     <string name="channelString">Channel</string>
     <string name="leftChannelString">Left</string>
