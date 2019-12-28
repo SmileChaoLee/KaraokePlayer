@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +27,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-// import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.ActionMenuView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -130,7 +134,7 @@ public class ExoPlayerFragment extends Fragment {
     private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
-    // private ActionMenuView actionMenuView;
+    private ActionMenuView actionMenuView;
     private ImageButton volumeImageButton;
     private VerticalSeekBar volumeSeekBar;
     private ImageButton switchToMusicImageButton;
@@ -362,7 +366,6 @@ public class ExoPlayerFragment extends Fragment {
         setToolbarImageButtonStatus();
 
         // added on 2019-12-26
-        /*
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
         actionMenuView.getLayoutParams().height = imageButtonHeight;
         actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
@@ -371,15 +374,14 @@ public class ExoPlayerFragment extends Fragment {
                 return onOptionsItemSelected(item);
             }
         });
-        */
+        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon);
+        Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
+        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
         //
 
-        // int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
-        // volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
         volumeSeekBar.getLayoutParams().width = imageButtonHeight;
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
-        Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
+        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
 
         linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
@@ -390,6 +392,7 @@ public class ExoPlayerFragment extends Fragment {
                 linearLayout_for_ads.addView(bannerAdView);
                 AdRequest adRequest = new AdRequest.Builder().build();
                 bannerAdView.loadAd(adRequest);
+                linearLayout_for_ads.setGravity(Gravity.TOP);
                 linearLayout_for_ads.setVisibility(View.VISIBLE);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -454,7 +457,7 @@ public class ExoPlayerFragment extends Fragment {
 
         setOnClickEvents();
 
-        hideBannerAds();
+        // hideBannerAds();
         showNativeAds();
 
         if (songInfo == null) {
@@ -503,8 +506,8 @@ public class ExoPlayerFragment extends Fragment {
         Log.d(TAG, "onCreateOptionsMenu() is called");
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        mainMenu = menu;
-        // mainMenu = actionMenuView.getMenu();
+        // mainMenu = menu;
+        mainMenu = actionMenuView.getMenu();
         menuInflater.inflate(R.menu.menu_main, mainMenu);
 
         // according to the above explanations, the following statement will fit every situation
@@ -720,8 +723,8 @@ public class ExoPlayerFragment extends Fragment {
         } else {
             volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
         }
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
+        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
     }
 
     @Override
@@ -954,13 +957,13 @@ public class ExoPlayerFragment extends Fragment {
                 if (visibility == View.VISIBLE) {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.VISIBLE);
-                    hideBannerAds();
+                    // hideBannerAds();
                 } else {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.GONE);
                     // mainMenu.close();
                     closeMenu(mainMenu);
-                    showBannerAds();
+                    // showBannerAds();
                 }
                 volumeSeekBar.setVisibility(View.INVISIBLE);
             }
@@ -1025,7 +1028,7 @@ public class ExoPlayerFragment extends Fragment {
         linearLayout_for_ads.setVisibility(View.VISIBLE);
     }
     private void hideBannerAds() {
-        // linearLayout_for_ads.setVisibility(View.GONE);
+        linearLayout_for_ads.setVisibility(View.GONE);
     }
     private void showNativeAds() {
         // simulate showing native ad

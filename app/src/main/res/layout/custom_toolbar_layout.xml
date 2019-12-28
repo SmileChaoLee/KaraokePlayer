@@ -17,13 +17,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/volume_seekbar_layout" />
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black"
+            android:background="@color/transparentDark"
             android:gravity="center">
 
             <ImageButton
@@ -70,7 +68,6 @@
                 android:src="@drawable/vocal_imagebutton_source"
                 android:background="@drawable/main_menuitem_background_color">
             </ImageButton>
-            <!--
             <androidx.appcompat.widget.ActionMenuView
                 android:id="@+id/actionMenuViewLayout"
                 android:theme="@style/menu_text_style"
@@ -79,7 +76,6 @@
                 android:layout_marginLeft="10dp"
                 android:padding="0dp">
             </androidx.appcompat.widget.ActionMenuView>
-            -->
         </LinearLayout>
 
     </LinearLayout>

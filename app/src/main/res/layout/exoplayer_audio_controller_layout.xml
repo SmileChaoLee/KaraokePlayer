@@ -17,13 +17,14 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <include layout="@layout/custom_toolbar_layout" />
+        <include layout="@layout/volume_seekbar_layout" />
         <include layout="@layout/audio_control_buttons_layout"/>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/transparentDark"
             android:weightSum="100">
             <TextView
                 android:id="@id/exo_position"
@@ -53,6 +54,8 @@
                 android:layout_weight="15">
             </TextView>
         </LinearLayout>
+
+        <include layout="@layout/custom_toolbar_layout" />
 
     </LinearLayout>
 

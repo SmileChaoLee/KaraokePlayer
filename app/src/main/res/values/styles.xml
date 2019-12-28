@@ -47,6 +47,9 @@
         <item name="android:actionButtonStyle">@style/CustomActionButtonStyle</item>
         <item name="actionButtonStyle">@style/CustomActionButtonStyle</item>
         <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
+        <!--
+        <item name="actionOverflowButtonStyle">@style/CustomActionOverflowButtonStyle</item>
+        -->
     </style>
 
     <style name="CustomActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
@@ -66,4 +69,10 @@
         <item name="overlapAnchor">false</item>
         <item name="android:popupBackground">@drawable/popupmenu_background</item>
     </style>
+
+    <!--
+    <style name="CustomActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@mipmap/app_icon</item>
+    </style>
+    -->
 </resources>
