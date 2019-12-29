@@ -36,6 +36,6 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.10.6'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     compileOnly 'org.checkerframework:checker-qual:' + '2.5.0'
 }

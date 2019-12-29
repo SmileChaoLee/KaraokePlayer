@@ -14,6 +14,4 @@
      limitations under the License.
 -->
 
-<manifest package="com.google.android.exoplayer2.ext.vp9">
-    <uses-sdk/>
-</manifest>
+<manifest package="com.google.android.exoplayer2.ext.av1"/>

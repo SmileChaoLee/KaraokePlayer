@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.google.android.exoplayer2.ext.vp9;
+package com.google.android.exoplayer2.ext.av1;
 
-import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
-import com.google.android.exoplayer2.video.ColorInfo;
+import com.google.android.exoplayer2.video.VideoDecoderException;
 
-/**
- * Input buffer to a {@link VpxDecoder}.
- */
-/* package */ final class VpxInputBuffer extends DecoderInputBuffer {
+/** Thrown when a libgav1 decoder error occurs. */
+public final class Gav1DecoderException extends VideoDecoderException {
 
-  public ColorInfo colorInfo;
-
-  public VpxInputBuffer() {
-    super(DecoderInputBuffer.BUFFER_REPLACEMENT_MODE_DIRECT);
+  /* package */ Gav1DecoderException(String message) {
+    super(message);
   }
 
+  /* package */ Gav1DecoderException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

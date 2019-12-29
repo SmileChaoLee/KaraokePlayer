@@ -6,7 +6,8 @@
 VP9_EXT_PATH="$(pwd)/src/main"
 
 # Download the [Android NDK][] and set its location in an environment variable.
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
+# NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"  # this works fine
+NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
 
 #Fetch libvpx:
 cd "${VP9_EXT_PATH}/jni"

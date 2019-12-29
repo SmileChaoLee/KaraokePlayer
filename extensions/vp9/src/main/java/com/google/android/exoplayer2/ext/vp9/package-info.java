@@ -13,21 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@NonNullApi
 package com.google.android.exoplayer2.ext.vp9;
 
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.testutil.DefaultRenderersFactoryAsserts;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-/** Unit test for {@link DefaultRenderersFactoryTest} with {@link LibvpxVideoRenderer}. */
-@RunWith(AndroidJUnit4.class)
-public final class DefaultRenderersFactoryTest {
-
-  @Test
-  public void createRenderers_instantiatesVpxRenderer() {
-    DefaultRenderersFactoryAsserts.assertExtensionRendererCreated(
-        LibvpxVideoRenderer.class, C.TRACK_TYPE_VIDEO);
-  }
-}
+import com.google.android.exoplayer2.util.NonNullApi;

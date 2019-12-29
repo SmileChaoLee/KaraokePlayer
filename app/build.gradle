@@ -73,8 +73,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.0'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.1'
 
     implementation 'com.facebook.android:audience-network-sdk:5.6.0'
     implementation 'com.google.firebase:firebase-core:17.2.1'
@@ -98,6 +99,7 @@ dependencies {
     implementation project(':extension-flac')
     implementation project(':extension-opus')
     implementation project(':extension-vp9')
+    implementation project(':extension-av1')
 }
 
 apply plugin: 'com.google.gms.google-services'
