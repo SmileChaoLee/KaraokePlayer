@@ -1468,11 +1468,10 @@ public class ExoPlayerFragment extends Fragment {
     }
 
     private void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
-        Log.d(TAG, "setAudioTrackAndChannel() -- > audioTrackIndex = " + audioTrackIndex);
         if (numberOfAudioTracks > 0) {
             // select audio track
             int indexInArrayList = audioTrackIndex - 1;
-            if (indexInArrayList < 0) {
+            if ( (indexInArrayList<0) || indexInArrayList>=audioTrackIndicesList.size()) {
                 //
                 return;
             }
@@ -1482,7 +1481,6 @@ public class ExoPlayerFragment extends Fragment {
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
 
             // select audio channel
-            Log.d(TAG, "setAudioTrackAndChannel() -- > audioChannel = " + audioChannel);
             playingParam.setCurrentChannelPlayed(audioChannel);
             setAudioVolume(playingParam.getCurrentVolume());
         }
@@ -1505,12 +1503,10 @@ public class ExoPlayerFragment extends Fragment {
     private void setAudioVolume(float volume) {
         // get current channel
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
-        Log.d(TAG, "setAudioVolume() -- > currentChannelPlayed = " + currentChannelPlayed);
         //
         boolean useAudioProcessor = false;
         if (stereoVolumeAudioProcessor != null) {
             int channelCount = stereoVolumeAudioProcessor.getOutputChannelCount();
-            Log.d(TAG, "setAudioVolume() -- > channelCount = " + channelCount);
             if (channelCount >= 0) {
                 useAudioProcessor = true;
                 float[] volumeInput = new float[stereoVolumeAudioProcessor.getOutputChannelCount()];
