@@ -1769,21 +1769,20 @@ public class ExoPlayerFragment extends Fragment {
 
         @Override
         public void onPlayerError(ExoPlaybackException error) {
+            Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
             switch (error.type) {
                 case ExoPlaybackException.TYPE_SOURCE:
-                    Log.e(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
+                    Log.d(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
                     break;
 
                 case ExoPlaybackException.TYPE_RENDERER:
-                    Log.e(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
+                    Log.d(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
                     break;
 
                 case ExoPlaybackException.TYPE_UNEXPECTED:
-                    Log.e(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
+                    Log.d(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
                     break;
             }
-            Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
-            Log.e(TAG, error.type + ": " + error.getUnexpectedException().getMessage());
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
             if (playingParam.isAutoPlay()) {
