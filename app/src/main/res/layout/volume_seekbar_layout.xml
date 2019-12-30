@@ -9,7 +9,7 @@
     android:indeterminateOnly="false"
     android:thumb="@drawable/volume_seekbar_thumb"
     android:progressDrawable="@drawable/volume_seekbar_progressdrawable"
-    android:background="@color/transparentLightGray"
+    android:background="@color/transparentDark"
     android:maxWidth="1000dp"
     android:maxHeight="1000dp"
     android:layout_centerHorizontal="true"

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -28,6 +29,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
 import androidx.appcompat.widget.ActionMenuView;
+
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -38,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -118,7 +122,6 @@ public class ExoPlayerFragment extends Fragment {
     private static final int noAudioTrack = -1;
     private static final int noAudioChannel = -1;
     private static final int maxProgress = 100;
-    private static final float timesOfVolumeBarForPortrait = 1.5f;
     private static final int MusicOrVocalUnknown = 0;
     private static final int PlayingMusic = 1;
     private static final int PlayingVocal = 2;
@@ -134,12 +137,10 @@ public class ExoPlayerFragment extends Fragment {
     private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
-    private ActionMenuView actionMenuView;
-    private ImageButton volumeImageButton;
-    private VerticalSeekBar volumeSeekBar;
+    private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
-    private ImageButton repeatImageButton;
+    private ActionMenuView actionMenuView;
     private int volumeSeekBarHeightForLandscape;
 
     private Menu mainMenu;
@@ -173,6 +174,8 @@ public class ExoPlayerFragment extends Fragment {
     private LinearLayout nativeAdsLinearLayout;
     private TextView nativeAdsStringTextView;
 
+    private VerticalSeekBar volumeSeekBar;
+    private ImageButton volumeImageButton;
     private ImageButton previousMediaImageButton;
     private ImageButton playMediaImageButton;
     private ImageButton replayMediaImageButton;
@@ -180,8 +183,7 @@ public class ExoPlayerFragment extends Fragment {
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
 
-    private int colorRed;
-    private int colorTransparent;
+    private int buttonMarginLeft = 60;   // pixels 60 (20dp for Nexus 5). Default
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
@@ -200,16 +202,6 @@ public class ExoPlayerFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         void setSupportActionBarForFragment(Toolbar toolbar);
         ActionBar getSupportActionBarForFragment();
@@ -267,9 +259,6 @@ public class ExoPlayerFragment extends Fragment {
         textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
         fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
-
-        colorRed = ContextCompat.getColor(callingContext, R.color.red);
-        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
     }
 
     @Override
@@ -305,10 +294,7 @@ public class ExoPlayerFragment extends Fragment {
         volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
         volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // if orientation is portrait, then double the height of volumeBar
-            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
-        }
+
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
         volumeSeekBar.setMax(maxProgress);
@@ -335,7 +321,7 @@ public class ExoPlayerFragment extends Fragment {
 
             }
         });
-        // int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+
         int currentProgress;
         float currentVolume = playingParam.getCurrentVolume();
         if ( currentVolume >= 1.0f) {
@@ -345,43 +331,40 @@ public class ExoPlayerFragment extends Fragment {
             currentProgress = Math.max(0, currentProgress);
         }
         volumeSeekBar.setProgressAndThumb(currentProgress);
+        volumeImageButton = fragmentView.findViewById(R.id.volumeImageButton);
 
-        int imageButtonHeight = (int)(textFontSize * 1.5f);
-        volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
-        volumeImageButton.getLayoutParams().height = imageButtonHeight;
-        volumeImageButton.getLayoutParams().width = imageButtonHeight;
+        //
+        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
+        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
+        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
+        if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
+            playMediaImageButton.setVisibility(View.GONE);
+            pauseMediaImageButton.setVisibility(View.VISIBLE);
+        } else {
+            playMediaImageButton.setVisibility(View.VISIBLE);
+            pauseMediaImageButton.setVisibility(View.GONE);
+        }
+        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
+        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
+        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
 
+        //
         repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
-        repeatImageButton.getLayoutParams().height = imageButtonHeight;
-        repeatImageButton.getLayoutParams().width = imageButtonHeight;
-
         switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
-        switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
-
         switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
-        switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
-
         setToolbarImageButtonStatus();
 
         // added on 2019-12-26
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
-        actionMenuView.getLayoutParams().height = imageButtonHeight;
         actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return onOptionsItemSelected(item);
             }
         });
-        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon);
-        Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
-        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
         //
 
-        volumeSeekBar.getLayoutParams().width = imageButtonHeight;
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
+        setButtonsPositionAndSize(getResources().getConfiguration());
 
         linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
@@ -415,38 +398,6 @@ public class ExoPlayerFragment extends Fragment {
         nativeAdsLinearLayout = fragmentView.findViewById(R.id.nativeAdsLinearLayout);
         nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
         ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
-
-        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
-        previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        previousMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
-        playMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        playMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
-        pauseMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        pauseMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
-            playMediaImageButton.setVisibility(View.GONE);
-            pauseMediaImageButton.setVisibility(View.VISIBLE);
-        } else {
-            playMediaImageButton.setVisibility(View.VISIBLE);
-            pauseMediaImageButton.setVisibility(View.GONE);
-        }
-
-        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
-        replayMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        replayMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
-        stopMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        stopMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
-        nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
 
         float durationTextSize = textFontSize * 0.6f;
         TextView exo_position_TextView = fragmentView.findViewById(R.id.exo_position);
@@ -715,16 +666,7 @@ public class ExoPlayerFragment extends Fragment {
         super.onConfigurationChanged(newConfig);
         // mainMenu.close();
         closeMenu(mainMenu);
-
-        // reset the heights of volumeBar and supportToolbar
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // if orientation is portrait, then double the height of volumeBar
-            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
-        } else {
-            volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
-        }
-        // supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
+        setButtonsPositionAndSize(newConfig);
     }
 
     @Override
@@ -813,6 +755,99 @@ public class ExoPlayerFragment extends Fragment {
             }
             return;
         }
+    }
+
+    private void setButtonsPositionAndSize(Configuration config) {
+
+        int buttonMarginLeft = (int)(60.0f * fontScale);    // 60 pixels = 20dp on Nexus 5
+        Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
+        Point screenSize = ScreenUtil.getScreenSize(callingContext);
+        Log.d(TAG, "screenSize.x = " + screenSize.x);
+        Log.d(TAG, "screenSize.y = " + screenSize.y);
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            buttonMarginLeft = (int)((float)buttonMarginLeft * ((float)screenSize.x / (float)screenSize.y));
+            Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
+        }
+
+        ViewGroup.MarginLayoutParams layoutParams;
+        int imageButtonHeight = (int)(textFontSize * 1.5f);
+        int buttonNum = 6;  // 6 buttons
+        int maxWidth = buttonNum * imageButtonHeight + (buttonNum-1) * buttonMarginLeft;
+        if (maxWidth > screenSize.x) {
+            // greater than the width of screen
+            buttonMarginLeft = (screenSize.x-10-(buttonNum*imageButtonHeight)) / (buttonNum-1);
+        }
+
+        layoutParams = (ViewGroup.MarginLayoutParams) volumeSeekBar.getLayoutParams();
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) volumeImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        //
+        layoutParams = (ViewGroup.MarginLayoutParams) previousMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        FrameLayout playPauseButtonFrameLayout = fragmentView.findViewById(R.id.playPauseButtonFrameLayout);
+        layoutParams = (ViewGroup.MarginLayoutParams) playPauseButtonFrameLayout.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) replayMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) stopMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) nextMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        //
+        layoutParams = (ViewGroup.MarginLayoutParams) repeatImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) switchToMusicImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) switchToVocalImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) actionMenuView.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon);
+        Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
+        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
+
+        // reset the heights of volumeBar and supportToolbar
+        final float timesOfVolumeBarForPortrait = 1.5f;
+        if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // if orientation is portrait, then double the height of volumeBar
+            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
+        } else {
+            volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
+        }
+
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
     }
 
     private void setOnClickEvents() {
@@ -1017,12 +1052,13 @@ public class ExoPlayerFragment extends Fragment {
                 break;
         }
         if (repeatStatus == NoRepeatPlaying) {
-            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, android.R.color.black));
+            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.transparentDark));
         } else {
-            repeatImageButton.setBackgroundColor(colorRed);
+            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.red));
         }
     }
 
+    /*
     private void showBannerAds() {
         linearLayout_for_ads.setGravity(Gravity.TOP);
         linearLayout_for_ads.setVisibility(View.VISIBLE);
@@ -1030,6 +1066,8 @@ public class ExoPlayerFragment extends Fragment {
     private void hideBannerAds() {
         linearLayout_for_ads.setVisibility(View.GONE);
     }
+    */
+
     private void showNativeAds() {
         // simulate showing native ad
         if (BuildConfig.DEBUG) {
