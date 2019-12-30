@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/darkRed"
         android:textStyle="normal"
+        android:enabled="false"
         android:background="@android:drawable/editbox_background">
     </EditText>
 </LinearLayout>

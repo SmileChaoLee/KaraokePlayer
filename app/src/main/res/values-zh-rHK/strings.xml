@@ -34,7 +34,7 @@
     <string name="leftChannelString">左聲道</string>
     <string name="rightChannelString">右聲道</string>
     <string name="stereoChannelString">立體聲</string>
-    <string name="formatNotSupportedString">沒有支援此媒體格式</string>
+    <string name="formatNotSupportedString">播放錯誤或沒有支援</string>
     <string name="songListString">歌曲清單</string>
     <string name="playlistString">播放清單</string>
     <string name="titleWithColonString">名稱:</string>

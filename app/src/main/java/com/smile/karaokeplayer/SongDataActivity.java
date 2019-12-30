@@ -136,6 +136,7 @@ public class SongDataActivity extends AppCompatActivity {
         TextView edit_filePathStringTextView = findViewById(R.id.edit_filePathStringTextView);
         ScreenUtil.resizeTextSize(edit_filePathStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_filePathEditText = findViewById(R.id.edit_filePathEditText);
+        edit_filePathEditText.setEnabled(false);
         ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
         edit_filePathEditText.setText(mSongInfo.getFilePath());
 

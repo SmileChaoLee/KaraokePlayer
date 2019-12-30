@@ -1468,13 +1468,19 @@ public class ExoPlayerFragment extends Fragment {
     }
 
     private void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
+        // numberOfAudioTracks = audioTrackIndicesList.size();
         if (numberOfAudioTracks > 0) {
             // select audio track
-            int indexInArrayList = audioTrackIndex - 1;
-            if ( (indexInArrayList<0) || indexInArrayList>=audioTrackIndicesList.size()) {
-                //
+            if (audioTrackIndex<=0) {
+                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
                 return;
             }
+            if (audioTrackIndex>numberOfAudioTracks) {
+                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
+                // set to first track
+                audioTrackIndex = 1;
+            }
+            int indexInArrayList = audioTrackIndex - 1;
 
             Integer[] trackIndicesCombination = audioTrackIndicesList.get(indexInArrayList);
             selectAudioTrack(trackIndicesCombination);
@@ -1777,6 +1783,7 @@ public class ExoPlayerFragment extends Fragment {
                     break;
             }
             Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
+            Log.e(TAG, error.type + ": " + error.getUnexpectedException().getMessage());
 
             String formatNotSupportedString = getString(R.string.formatNotSupportedString);
             if (playingParam.isAutoPlay()) {

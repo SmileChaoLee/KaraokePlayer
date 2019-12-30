@@ -1480,15 +1480,19 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
+        // numberOfAudioTracks = audioTrackIndicesList.size();
         if (numberOfAudioTracks > 0) {
             // select audio track
-            Log.d(TAG, "setAudioTrackAndChannel()-->audioTrackIndex = " + audioTrackIndex);
-
-            int indexInArrayList = audioTrackIndex - 1;
-            if ( (indexInArrayList<0) || indexInArrayList>=audioTrackIndicesList.size()) {
+            if (audioTrackIndex<=0) {
                 Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
                 return;
             }
+            if (audioTrackIndex>numberOfAudioTracks) {
+                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
+                // set to first track
+                audioTrackIndex = 1;
+            }
+            int indexInArrayList = audioTrackIndex - 1;
 
             int audioTrackId = audioTrackIndicesList.get(indexInArrayList);
             vlcPlayer.setAudioTrack(audioTrackId);

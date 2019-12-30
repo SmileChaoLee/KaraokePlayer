@@ -33,7 +33,7 @@
     <string name="leftChannelString">Left</string>
     <string name="rightChannelString">Right</string>
     <string name="stereoChannelString">Stereo</string>
-    <string name="formatNotSupportedString">Format Not Supported.</string>
+    <string name="formatNotSupportedString">Error or not Supported.</string>
     <string name="songListString">Song List</string>
     <string name="playlistString">Play List</string>
     <string name="titleWithColonString">Title:</string>
