@@ -1483,7 +1483,14 @@ public class VLCPlayerFragment extends Fragment {
         if (numberOfAudioTracks > 0) {
             // select audio track
             Log.d(TAG, "setAudioTrackAndChannel()-->audioTrackIndex = " + audioTrackIndex);
-            int audioTrackId = audioTrackIndicesList.get(audioTrackIndex - 1);
+
+            int indexInArrayList = audioTrackIndex - 1;
+            if ( (indexInArrayList<0) || indexInArrayList>=audioTrackIndicesList.size()) {
+                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
+                return;
+            }
+
+            int audioTrackId = audioTrackIndicesList.get(indexInArrayList);
             vlcPlayer.setAudioTrack(audioTrackId);
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
 
