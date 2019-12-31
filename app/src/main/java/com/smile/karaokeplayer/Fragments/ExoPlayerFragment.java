@@ -834,7 +834,7 @@ public class ExoPlayerFragment extends Fragment {
         layoutParams.height = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
-        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon);
+        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.circle_and_three_dots);
         Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
         actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
 

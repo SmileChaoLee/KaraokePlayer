@@ -1,6 +1,5 @@
-include ':app', ':extension-ffmpeg', ':extension-vp9', ':extension-flac', ':extension-opus', ':extension-av1'
+include ':app', ':extension-ffmpeg', ':extension-vp9', ':extension-flac', ':extension-opus'
 project(':extension-ffmpeg').projectDir = new File('extensions/ffmpeg')
 project(':extension-vp9').projectDir = new File('extensions/vp9')
 project(':extension-flac').projectDir = new File('extensions/flac')
 project(':extension-opus').projectDir = new File('extensions/opus')
-project(':extension-av1').projectDir = new File('extensions/av1')
