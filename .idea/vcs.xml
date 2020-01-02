@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/extensions/ffmpeg/src/main/jni/ffmpeg" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/extensions/opus/src/main/jni/libopus" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/extensions/vp9/src/main/jni/libvpx" vcs="Git" />
   </component>

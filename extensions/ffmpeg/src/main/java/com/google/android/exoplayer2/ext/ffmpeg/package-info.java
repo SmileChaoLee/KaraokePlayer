@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@NonNullApi
 package com.google.android.exoplayer2.ext.ffmpeg;
 
-import com.google.android.exoplayer2.audio.AudioDecoderException;
-
-/**
- * Thrown when an FFmpeg decoder error occurs.
- */
-public final class FfmpegDecoderException extends AudioDecoderException {
-
-  /* package */ FfmpegDecoderException(String message) {
-    super(message);
-  }
-
-  /* package */ FfmpegDecoderException(String message, Throwable cause) {
-    super(message, cause);
-  }
-}
+import com.google.android.exoplayer2.util.NonNullApi;
