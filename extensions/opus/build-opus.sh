@@ -6,7 +6,8 @@
 OPUS_EXT_PATH="$(pwd)/src/main"
 
 # Download the [Android NDK][] and set its location in an environment variable:
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
+# NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
+NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
 
 # Fetch libopus:
 cd "${OPUS_EXT_PATH}/jni"
