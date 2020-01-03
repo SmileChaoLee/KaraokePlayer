@@ -6,9 +6,11 @@
 FLAC_EXT_PATH="$(pwd)/src/main"
 
 # Download the [Android NDK][] and set its location in an environment variable.
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
+# NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
 # or
 #NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r17c"  # this one works too
+
+NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
 
 # Download and extract flac-1.3.2 as "${FLAC_EXT_PATH}/jni/flac" folder:
 cd "${FLAC_EXT_PATH}/jni"

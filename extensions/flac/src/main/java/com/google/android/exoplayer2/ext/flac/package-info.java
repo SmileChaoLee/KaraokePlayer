@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 The Android Open Source Project
+ * Copyright (C) 2019 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@NonNullApi
+package com.google.android.exoplayer2.ext.flac;
 
-#ifndef INCLUDE_DATA_SOURCE_H_
-#define INCLUDE_DATA_SOURCE_H_
-
-#include <jni.h>
-#include <sys/types.h>
-
-class DataSource {
- public:
-  virtual ~DataSource() {}
-  // Returns the number of bytes read, or -1 on failure. It's not an error if
-  // this returns zero; it just means the given offset is equal to, or
-  // beyond, the end of the source.
-  virtual ssize_t readAt(off64_t offset, void* const data, size_t size) = 0;
-};
-
-#endif  // INCLUDE_DATA_SOURCE_H_
+import com.google.android.exoplayer2.util.NonNullApi;
