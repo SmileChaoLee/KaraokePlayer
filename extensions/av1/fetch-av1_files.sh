@@ -6,7 +6,7 @@
 AV1_EXT_PATH="$(pwd)/src/main"
 
 # Download the [Android NDK][] and set its location in an environment variable.
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r15c"
+NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
 
 # Fetch cpu_features:
 cd "${AV1_EXT_PATH}/jni"
@@ -17,7 +17,8 @@ cd "${AV1_EXT_PATH}/jni"
 git clone https://chromium.googlesource.com/codecs/libgav1 libgav1
 
 # Fetch Abseil:
-cd "${AV1_EXT_PATH}/jni"
-git clone https://github.com/abseil/abseil-cpp.git third_party/abseil-cpp
-
-echo "Finished to build using ndk-build -j4"
+cd "${AV1_EXT_PATH}/jni/libgav1"
+mkdir "${AV1_EXT_PATH}/jni/libgav1/third_party"
+cd "${AV1_EXT_PATH}/jni/libgav1/third_party"
+#git clone https://github.com/abseil/abseil-cpp.git third_party/abseil-cpp
+git clone https://github.com/abseil/abseil-cpp.git

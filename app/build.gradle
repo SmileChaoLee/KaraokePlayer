@@ -99,7 +99,7 @@ dependencies {
     implementation project(':extension-flac')
     implementation project(':extension-opus')
     implementation project(':extension-vp9')
-    // implementation project(':extension-av1')
+    implementation project(':extension-av1')
 }
 
 apply plugin: 'com.google.gms.google-services'

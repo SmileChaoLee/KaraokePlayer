@@ -52,6 +52,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.av1.Gav1Library;
 import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
 import com.google.android.exoplayer2.ext.flac.FlacLibrary;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
@@ -1205,6 +1206,7 @@ public class ExoPlayerFragment extends Fragment {
         Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
         Log.d(TAG, "FlacLibrary.isAvailable() = " + FlacLibrary.isAvailable());
         Log.d(TAG, "OpusLibrary.isAvailable() = " + OpusLibrary.isAvailable());
+        Log.d(TAG, "Gav1Library.isAvailable() = " + Gav1Library.isAvailable());
     }
 
     private void releaseExoPlayer() {
