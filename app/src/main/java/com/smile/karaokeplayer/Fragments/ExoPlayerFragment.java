@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 
 import android.widget.FrameLayout;
@@ -145,6 +146,7 @@ public class ExoPlayerFragment extends Fragment {
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
+    private ImageButton actionMenuImageButton;
     private ActionMenuView actionMenuView;
     private int volumeSeekBarHeightForLandscape;
 
@@ -357,6 +359,8 @@ public class ExoPlayerFragment extends Fragment {
         repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
+        actionMenuImageButton = fragmentView.findViewById(R.id.actionMenuImageButton);
+
         setToolbarImageButtonStatus();
 
         // added on 2019-12-26
@@ -835,6 +839,11 @@ public class ExoPlayerFragment extends Fragment {
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
+        layoutParams = (ViewGroup.MarginLayoutParams) actionMenuImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
         layoutParams = (ViewGroup.MarginLayoutParams) actionMenuView.getLayoutParams();
         layoutParams.height = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
@@ -842,6 +851,7 @@ public class ExoPlayerFragment extends Fragment {
         Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.circle_and_three_dots);
         Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
         actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
+        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots
 
         // reset the heights of volumeBar and supportToolbar
         final float timesOfVolumeBarForPortrait = 1.5f;
@@ -866,42 +876,6 @@ public class ExoPlayerFragment extends Fragment {
                 } else {
                     volumeSeekBar.setVisibility(View.INVISIBLE);
                 }
-            }
-        });
-
-        repeatImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int repeatStatus = playingParam.getRepeatStatus();
-                switch (repeatStatus) {
-                    case NoRepeatPlaying:
-                        // switch to repeat one song
-                        playingParam.setRepeatStatus(RepeatOneSong);
-                        break;
-                    case RepeatOneSong:
-                        // switch to repeat song list
-                        playingParam.setRepeatStatus(RepeatAllSongs);
-                        break;
-                    case RepeatAllSongs:
-                        // switch to no repeat
-                        playingParam.setRepeatStatus(NoRepeatPlaying);
-                        break;
-                }
-                setToolbarImageButtonStatus();
-            }
-        });
-
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToMusic();
-            }
-        });
-
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToVocal();
             }
         });
 
@@ -977,6 +951,50 @@ public class ExoPlayerFragment extends Fragment {
                     playingParam.setPublicNextSongIndex(nextIndex);
                 }
                 startAutoPlay();
+            }
+        });
+
+        repeatImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int repeatStatus = playingParam.getRepeatStatus();
+                switch (repeatStatus) {
+                    case NoRepeatPlaying:
+                        // switch to repeat one song
+                        playingParam.setRepeatStatus(RepeatOneSong);
+                        break;
+                    case RepeatOneSong:
+                        // switch to repeat song list
+                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        break;
+                    case RepeatAllSongs:
+                        // switch to no repeat
+                        playingParam.setRepeatStatus(NoRepeatPlaying);
+                        break;
+                }
+                setToolbarImageButtonStatus();
+            }
+        });
+
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToVocal();
+            }
+        });
+
+        actionMenuImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // getActivity().openOptionsMenu();
+                actionMenuView.showOverflowMenu();
             }
         });
 

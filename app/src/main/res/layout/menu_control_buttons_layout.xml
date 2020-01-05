@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparentDark"
+    android:gravity="center">
+
+    <ImageButton
+        android:id="@+id/repeatImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@drawable/repeat_all_white"
+        android:background="@drawable/main_menuitem_background_color">
+    </ImageButton>
+    <ImageButton
+        android:id="@+id/switchToMusicImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@drawable/music_imagebutton_source"
+        android:background="@drawable/main_menuitem_background_color">
+    </ImageButton>
+    <ImageButton
+        android:id="@+id/switchToVocalImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@drawable/vocal_imagebutton_source"
+        android:background="@drawable/main_menuitem_background_color">
+    </ImageButton>
+    <ImageButton
+        android:id="@+id/actionMenuImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@mipmap/circle_and_three_dots"
+        android:background="@drawable/main_menuitem_background_color">
+    </ImageButton>
+</LinearLayout>

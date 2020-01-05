@@ -21,6 +21,6 @@
 
     <include layout="@layout/vlcplayer_audio_controller_layout" />
 
-    <include layout="@layout/message_banner_ads_layout" />
+    <include layout="@layout/banner_ads_toolbar_message_layout" />
 
 </FrameLayout>

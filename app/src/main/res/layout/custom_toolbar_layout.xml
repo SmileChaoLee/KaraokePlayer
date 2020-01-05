@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.appcompat.widget.Toolbar
-
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:ToolbarPopupTheme.android="http://schemas.android.com/tools"
-
     android:id="@+id/custom_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,50 +13,17 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/transparentDark"
-        android:gravity="center">
-
-        <ImageButton
-            android:id="@+id/repeatImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:padding="0dp"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            android:src="@drawable/repeat_all_white"
-            android:background="@drawable/main_menuitem_background_color">
-        </ImageButton>
-        <ImageButton
-            android:id="@+id/switchToMusicImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:padding="0dp"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            android:src="@drawable/music_imagebutton_source"
-            android:background="@drawable/main_menuitem_background_color">
-        </ImageButton>
-        <ImageButton
-            android:id="@+id/switchToVocalImageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:padding="0dp"
-            android:scaleType="centerInside"
-            android:adjustViewBounds="true"
-            android:src="@drawable/vocal_imagebutton_source"
-            android:background="@drawable/main_menuitem_background_color">
-        </ImageButton>
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:background="@android:color/transparent">
         <androidx.appcompat.widget.ActionMenuView
             android:id="@+id/actionMenuViewLayout"
             android:theme="@style/menu_text_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:padding="0dp">
+            android:padding="0dp"
+            android:visibility="invisible">
         </androidx.appcompat.widget.ActionMenuView>
     </LinearLayout>
 

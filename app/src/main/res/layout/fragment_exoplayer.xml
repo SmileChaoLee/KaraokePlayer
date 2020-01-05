@@ -19,6 +19,6 @@
         app:layout_constraintTop_toTopOf="parent" >
     </com.google.android.exoplayer2.ui.PlayerView>
 
-    <include layout="@layout/message_banner_ads_layout" />
+    <include layout="@layout/banner_ads_toolbar_message_layout" />
 
 </FrameLayout>

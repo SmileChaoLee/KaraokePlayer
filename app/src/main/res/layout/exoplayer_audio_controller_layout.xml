@@ -54,7 +54,7 @@
             </TextView>
         </LinearLayout>
 
-        <include layout="@layout/custom_toolbar_layout" />
+        <include layout="@layout/menu_control_buttons_layout" />
 
     </LinearLayout>
 

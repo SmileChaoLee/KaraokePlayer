@@ -4,14 +4,23 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <!-- the banner ads showing area -->
     <LinearLayout
-        android:id="@+id/linearLayout_for_ads"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
         android:gravity="top">
+        <!-- the banner ads showing area -->
+        <LinearLayout
+            android:id="@+id/linearLayout_for_ads"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:gravity="center_horizontal">
+        </LinearLayout>
+
+        <include layout="@layout/custom_toolbar_layout" />
+
     </LinearLayout>
 
     <LinearLayout
