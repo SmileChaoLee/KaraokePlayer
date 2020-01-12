@@ -140,20 +140,13 @@ public class ExoPlayerFragment extends Fragment {
     private MediaControllerCompat.TransportControls mediaTransportControls;
     private MediaSessionConnector mediaSessionConnector;
 
-    private PlayerView videoExoPlayerView;
     private StereoVolumeAudioProcessor stereoVolumeAudioProcessor;
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
     private ExoPlayerEventListener mExoPlayerEventListener;
 
-    private LinearLayout linearLayout_for_ads;
-    private LinearLayout messageLinearLayout;
-    private TextView bufferingStringTextView;
-    private Animation animationText;
-    private LinearLayout nativeAdsLinearLayout;
-    private TextView nativeAdsStringTextView;
-
+    private PlayerView videoExoPlayerView;
     private VerticalSeekBar volumeSeekBar;
     private ImageButton volumeImageButton;
     private ImageButton previousMediaImageButton;
@@ -162,6 +155,13 @@ public class ExoPlayerFragment extends Fragment {
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
+
+    private LinearLayout linearLayout_for_ads;
+    private LinearLayout messageLinearLayout;
+    private TextView bufferingStringTextView;
+    private Animation animationText;
+    private LinearLayout nativeAdsLinearLayout;
+    private TextView nativeAdsStringTextView;
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
@@ -388,7 +388,6 @@ public class ExoPlayerFragment extends Fragment {
 
         setOnClickEvents();
 
-        // hideBannerAds();
         showNativeAds();
 
         if (songInfo == null) {
@@ -424,11 +423,6 @@ public class ExoPlayerFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated() is called");
-    }
-
-    public void onInteractionProcessed(String msgString) {
-        if (mListener != null) {
-        }
     }
 
     @Override
@@ -472,8 +466,6 @@ public class ExoPlayerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        videoExoPlayerView.setControllerShowTimeoutMs(-1); // cancel the time out
 
         boolean isAutoPlay;
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
@@ -635,8 +627,6 @@ public class ExoPlayerFragment extends Fragment {
                 break;
         }
 
-        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.ExoPlayerView_Timeout); // cancel the time out
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -674,20 +664,6 @@ public class ExoPlayerFragment extends Fragment {
         outState.putParcelable(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters);
 
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG,"ExoPlayerFragment-->onDestroy() is called.");
-        releaseMediaSessionCompat();
-        releaseExoPlayer();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -735,6 +711,20 @@ public class ExoPlayerFragment extends Fragment {
             }
             return;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"ExoPlayerFragment-->onDestroy() is called.");
+        releaseMediaSessionCompat();
+        releaseExoPlayer();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     private void setButtonsPositionAndSize(Configuration config) {
@@ -821,8 +811,8 @@ public class ExoPlayerFragment extends Fragment {
 
         Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.circle_and_three_dots);
         Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
-        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
-        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots
+        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots for ActionMenuView
+        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots for toolbar
 
         // reset the heights of volumeBar and supportToolbar
         final float timesOfVolumeBarForPortrait = 1.5f;
@@ -979,20 +969,17 @@ public class ExoPlayerFragment extends Fragment {
             }
         });
 
-        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.ExoPlayerView_Timeout);
+        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.PlayerView_Timeout);
         videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
                 if (visibility == View.VISIBLE) {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.VISIBLE);
-                    // hideBannerAds();
                 } else {
                     // use custom toolbar
                     supportToolbar.setVisibility(View.GONE);
-                    // mainMenu.close();
                     closeMenu(mainMenu);
-                    // showBannerAds();
                 }
                 volumeSeekBar.setVisibility(View.INVISIBLE);
             }
@@ -1051,16 +1038,6 @@ public class ExoPlayerFragment extends Fragment {
             repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.red));
         }
     }
-
-    /*
-    private void showBannerAds() {
-        linearLayout_for_ads.setGravity(Gravity.TOP);
-        linearLayout_for_ads.setVisibility(View.VISIBLE);
-    }
-    private void hideBannerAds() {
-        linearLayout_for_ads.setVisibility(View.GONE);
-    }
-    */
 
     private void showNativeAds() {
         // simulate showing native ad

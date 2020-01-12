@@ -19,7 +19,7 @@ public final class PlayerConstants {
     public static final int PrivacyPolicyActivityRequestCode = 10;
     public static final int FILE_READ_REQUEST_CODE = 1;
     public static final int SONG_LIST_ACTIVITY_CODE = 2;
-    public static final int ExoPlayerView_Timeout = 10000;  //  10 seconds
+    public static final int PlayerView_Timeout = 10000;  //  10 seconds
     public static final int NoVideoTrack = -1;
     public static final int NoAudioTrack = -1;
     public static final int NoAudioChannel = -1;
@@ -30,5 +30,4 @@ public final class PlayerConstants {
     public static final int NoRepeatPlaying = 0;
     public static final int RepeatOneSong = 1;
     public static final int RepeatAllSongs = 2;
-
 }

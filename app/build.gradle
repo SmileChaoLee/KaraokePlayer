@@ -13,7 +13,7 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         multiDexEnabled true
         versionCode 129
@@ -41,13 +41,13 @@ android {
                 exclude "**/ChannelMappingAudioProcessor.java"
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/StereoVolumeProcessor.java"
-                exclude "**/ExternalStorageUtil.java"
-                exclude "**/VLCPlayerFragment.java"
+                // exclude "**/ExternalStorageUtil.java"
+                // exclude "**/VLCPlayerFragment.java"
                 exclude "**/PlaySingleSongActivity.java"
             }
             res {
-                exclude "**/fragment_vlcplayer.xml"
-                exclude "**/vlcplayer_audio_controller_layout.xml"
+                // exclude "**/fragment_vlcplayer.xml"
+                // exclude "**/vlcplayer_audio_controller_layout.xml"
             }
         }
     }
@@ -93,7 +93,7 @@ dependencies {
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
 
-    //implementation 'org.videolan.android:libvlc-all:3.1.12'
+    implementation 'org.videolan.android:libvlc-all:3.1.12'
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-flac')

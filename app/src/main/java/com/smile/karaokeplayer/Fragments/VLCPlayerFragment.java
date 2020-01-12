@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -33,6 +39,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -43,6 +50,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.BuildConfig;
 import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -73,25 +81,8 @@ import java.util.ArrayList;
 public class VLCPlayerFragment extends Fragment {
 
     private static final String TAG = new String(".VLCPlayerFragment");
-    private static final String LOG_TAG = new String("MediaSessionCompatTag");
-    private static final String PlayingParamOrigin = "PlayingParamOrigin";
-    private static final int PrivacyPolicyActivityRequestCode = 10;
-    private static final int FILE_READ_REQUEST_CODE = 1;
-    private static final int SONG_LIST_ACTIVITY_CODE = 2;
     private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean ENABLE_SUBTITLES = true;
-    private static final int VLCPlayerView_Timeout = 10000;  //  10 seconds
-    private static final int noVideoTrack = -1;
-    private static final int noAudioTrack = -1;
-    private static final int noAudioChannel = -1;
-    private static final int maxProgress = 100;
-    private static final float timesOfVolumeBarForPortrait = 1.5f;
-    private static final int MusicOrVocalUnknown = 0;
-    private static final int PlayingMusic = 1;
-    private static final int PlayingVocal = 2;
-    private static final int NoRepeatPlaying = 0;
-    private static final int RepeatOneSong = 1;
-    private static final int RepeatAllSongs = 2;
 
     private float textFontSize;
     private float fontScale;
@@ -101,11 +92,11 @@ public class VLCPlayerFragment extends Fragment {
     private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
-    private ImageButton volumeImageButton;
-    private VerticalSeekBar volumeSeekBar;
+    private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
-    private ImageButton repeatImageButton;
+    private ImageButton actionMenuImageButton;
+    private ActionMenuView actionMenuView;
     private int volumeSeekBarHeightForLandscape;
 
     private Menu mainMenu;
@@ -114,29 +105,22 @@ public class VLCPlayerFragment extends Fragment {
     private MenuItem openMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
-    private boolean isAudioTrackMenuItemPressed;
     // submenu of channel
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
-
-    private LibVLC mLibVLC = null;
-    private MediaPlayer vlcPlayer = null;
-    private VLCVideoLayout videoVLCPlayerView;
 
     private MediaSessionCompat mediaSessionCompat;
     private MediaControllerCompat mediaControllerCompat;
     private MediaControllerCallback mediaControllerCallback;
     private MediaControllerCompat.TransportControls mediaTransportControls;
 
-    private LinearLayout linearLayout_for_ads;
-    private AdView bannerAdView;
-    private LinearLayout messageLinearLayout;
-    private TextView bufferingStringTextView;
-    private Animation animationText;
-    private LinearLayout nativeAdsLinearLayout;
-    private TextView nativeAdsStringTextView;
+    private LibVLC mLibVLC = null;
+    private MediaPlayer vlcPlayer = null;
+    private VLCVideoLayout videoVLCPlayerView;
 
+    private VerticalSeekBar volumeSeekBar;
+    private ImageButton volumeImageButton;
     private LinearLayout audioControllerView;
     private ImageButton previousMediaImageButton;
     private ImageButton playMediaImageButton;
@@ -144,12 +128,17 @@ public class VLCPlayerFragment extends Fragment {
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
+
     private TextView playingTimeTextView;
     private AppCompatSeekBar player_duration_seekbar;
     private TextView durationTimeTextView;
 
-    private int colorRed;
-    private int colorTransparent;
+    private LinearLayout linearLayout_for_ads;
+    private LinearLayout messageLinearLayout;
+    private TextView bufferingStringTextView;
+    private Animation animationText;
+    private LinearLayout nativeAdsLinearLayout;
+    private TextView nativeAdsStringTextView;
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
@@ -257,9 +246,6 @@ public class VLCPlayerFragment extends Fragment {
         fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
         useFilePicker = true;
-
-        colorRed = ContextCompat.getColor(callingContext, R.color.red);
-        colorTransparent = ContextCompat.getColor(callingContext, android.R.color.transparent);
     }
 
     @Override
@@ -290,29 +276,19 @@ public class VLCPlayerFragment extends Fragment {
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
         }
-        supportToolbar.setVisibility(View.VISIBLE);
 
         volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
         volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // if orientation is portrait, then double the height of volumeBar
-            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
-        }
+
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
-        volumeSeekBar.setMax(maxProgress);
+        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 volumeSeekBar.setProgressAndThumb(i);
-                float currentVolume = (float)i / (float)maxProgress;
-                /*
-                float currentVolume = 1.0f;
-                if (i < MaxProgress) {
-                    currentVolume = (float)(1.0f - (Math.log(MaxProgress - i) / Math.log(MaxProgress)));
-                }
-                */
+                float currentVolume = (float)i / (float) PlayerConstants.MaxProgress;
                 playingParam.setCurrentVolume(currentVolume);
                 setAudioVolume(currentVolume);
             }
@@ -327,59 +303,65 @@ public class VLCPlayerFragment extends Fragment {
 
             }
         });
-        // int currentProgress = (int)(playingParam.getCurrentVolume() * MaxProgress);
+
         int currentProgress;
         float currentVolume = playingParam.getCurrentVolume();
-        currentProgress = (int)(currentVolume * maxProgress);
-        /*
-        if ( currentVolume >= 1.0f) {
-            currentProgress = MaxProgress;
-        } else {
-            currentProgress = MaxProgress - (int)Math.pow(MaxProgress, (1-currentVolume));
-            currentProgress = Math.max(0, currentProgress);
-        }
-        */
+        currentProgress = (int)(currentVolume * PlayerConstants.MaxProgress);
         volumeSeekBar.setProgressAndThumb(currentProgress);
+        volumeImageButton = fragmentView.findViewById(R.id.volumeImageButton);
 
-        int imageButtonHeight = (int)(textFontSize * 1.5f);
-        volumeImageButton = supportToolbar.findViewById(R.id.volumeImageButton);
-        volumeImageButton.getLayoutParams().height = imageButtonHeight;
-        volumeImageButton.getLayoutParams().width = imageButtonHeight;
+        //
+        audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
+        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
+        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
+        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
+        if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
+            playMediaImageButton.setVisibility(View.GONE);
+            pauseMediaImageButton.setVisibility(View.VISIBLE);
+        } else {
+            playMediaImageButton.setVisibility(View.VISIBLE);
+            pauseMediaImageButton.setVisibility(View.GONE);
+        }
+        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
+        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
+        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
 
+        //
         repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton);
-        repeatImageButton.getLayoutParams().height = imageButtonHeight;
-        repeatImageButton.getLayoutParams().width = imageButtonHeight;
-
         switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton);
-        switchToMusicImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToMusicImageButton.getLayoutParams().width = imageButtonHeight;
-
         switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
-        switchToVocalImageButton.getLayoutParams().height = imageButtonHeight;
-        switchToVocalImageButton.getLayoutParams().width = imageButtonHeight;
+        actionMenuImageButton = fragmentView.findViewById(R.id.actionMenuImageButton);
 
         setToolbarImageButtonStatus();
 
-        int volumeSeekBarWidth = (int)(textFontSize * 2.0f);
-        volumeSeekBar.getLayoutParams().width = volumeSeekBarWidth;
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
-        Log.d(TAG, "supportToolbar = " + supportToolbar.getLayoutParams().height);
+        // added on 2019-12-26
+        actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
+        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+        //
 
-        // banner ads view
+        setButtonsPositionAndSize(getResources().getConfiguration());
+
         linearLayout_for_ads = fragmentView.findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
-                bannerAdView = new AdView(callingContext);
+                AdView bannerAdView = new AdView(callingContext);
                 bannerAdView.setAdSize(AdSize.BANNER);
                 bannerAdView.setAdUnitId(SmileApplication.googleAdMobBannerID);
                 linearLayout_for_ads.addView(bannerAdView);
                 AdRequest adRequest = new AdRequest.Builder().build();
                 bannerAdView.loadAd(adRequest);
+                linearLayout_for_ads.setGravity(Gravity.TOP);
+                linearLayout_for_ads.setVisibility(View.VISIBLE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
-            linearLayout_for_ads.setVisibility(View.INVISIBLE);
+            linearLayout_for_ads.setVisibility(View.GONE);
         }
 
         // message area
@@ -397,39 +379,6 @@ public class VLCPlayerFragment extends Fragment {
         nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
         ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
-        audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
-        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
-        previousMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        previousMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton);
-        playMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        playMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton);
-        pauseMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        pauseMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
-            playMediaImageButton.setVisibility(View.GONE);
-            pauseMediaImageButton.setVisibility(View.VISIBLE);
-        } else {
-            playMediaImageButton.setVisibility(View.VISIBLE);
-            pauseMediaImageButton.setVisibility(View.GONE);
-        }
-
-        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton);
-        replayMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        replayMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton);
-        stopMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        stopMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
-        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton);
-        nextMediaImageButton.getLayoutParams().height = imageButtonHeight;
-        nextMediaImageButton.getLayoutParams().width = imageButtonHeight;
-
         float durationTextSize = textFontSize * 0.6f;
         playingTimeTextView = fragmentView.findViewById(R.id.playingTimeTextView);
         playingTimeTextView.setText("000:00");
@@ -443,7 +392,6 @@ public class VLCPlayerFragment extends Fragment {
 
         setOnClickEvents();
 
-        hideBannerAds();
         showNativeAds();
 
         if (songInfo == null) {
@@ -466,7 +414,7 @@ public class VLCPlayerFragment extends Fragment {
                 // pass the saved instance of playingParam to
                 // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
                 Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
             }
         }
@@ -480,46 +428,41 @@ public class VLCPlayerFragment extends Fragment {
         Log.d(TAG, "onActivityCreated() is called");
     }
 
-    public void onInteractionProcessed(String msgString) {
-        if (mListener != null) {
-        }
-    }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
         super.onCreateOptionsMenu(menu, menuInflater);
         Log.d(TAG, "onCreateOptionsMenu() is called");
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        menuInflater.inflate(R.menu.menu_main, menu);
-        mainMenu = menu;
+        // mainMenu = menu;
+        mainMenu = actionMenuView.getMenu();
+        menuInflater.inflate(R.menu.menu_main, mainMenu);
 
         // according to the above explanations, the following statement will fit every situation
-        ScreenUtil.resizeMenuTextSize(menu, fontScale);
+        ScreenUtil.resizeMenuTextSize(mainMenu, fontScale);
 
         // submenu of file
-        autoPlayMenuItem = menu.findItem(R.id.autoPlay);
-        openMenuItem = menu.findItem(R.id.open);
+        autoPlayMenuItem = mainMenu.findItem(R.id.autoPlay);
+        openMenuItem = mainMenu.findItem(R.id.open);
 
         // submenu of audio
-        audioTrackMenuItem = menu.findItem(R.id.audioTrack);
+        audioTrackMenuItem = mainMenu.findItem(R.id.audioTrack);
         // submenu of channel
-        leftChannelMenuItem = menu.findItem(R.id.leftChannel);
-        rightChannelMenuItem = menu.findItem(R.id.rightChannel);
-        stereoChannelMenuItem = menu.findItem(R.id.stereoChannel);
+        leftChannelMenuItem = mainMenu.findItem(R.id.leftChannel);
+        rightChannelMenuItem = mainMenu.findItem(R.id.rightChannel);
+        stereoChannelMenuItem = mainMenu.findItem(R.id.stereoChannel);
 
         if (playingParam.isPlaySingleSong()) {
-            MenuItem fileMenuItem = menu.findItem(R.id.file);
+            MenuItem fileMenuItem = mainMenu.findItem(R.id.file);
             fileMenuItem.setVisible(false);
             audioTrackMenuItem.setVisible(false);
-            MenuItem channelMenuItem = menu.findItem(R.id.channel);
+            MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
             channelMenuItem.setVisible(false);
         }
     }
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
-        isAudioTrackMenuItemPressed = false;
         Log.d(TAG, "onPrepareOptionsMenu() is called.");
         super.onPrepareOptionsMenu(menu);
     }
@@ -529,13 +472,11 @@ public class VLCPlayerFragment extends Fragment {
 
         boolean isAutoPlay;
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
-        int mCurrentState;
 
         if (item.hasSubMenu()) {
             SubMenu subMenu = item.getSubMenu();
             subMenu.clearHeader();
         }
-
         int id = item.getItemId();
         switch (id) {
             case R.id.file:
@@ -558,10 +499,11 @@ public class VLCPlayerFragment extends Fragment {
                         playingParam.setAutoPlay(true);
                         playingParam.setPublicNextSongIndex(0);
                         // start playing video from list
+                        // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
                         if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
                             // media is playing or prepared
-                            // vlcPlayer.stop();// no need   // will go to onPlayerStateChanged()
-                            Log.d(TAG, "isAutoPlay is true and vlcPlayer.stop().");
+                            // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
+                            Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
 
                         }
                         startAutoPlay();
@@ -576,7 +518,7 @@ public class VLCPlayerFragment extends Fragment {
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
-                startActivityForResult(songListIntent, SONG_LIST_ACTIVITY_CODE);
+                startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
@@ -585,7 +527,7 @@ public class VLCPlayerFragment extends Fragment {
                 }
                 break;
             case R.id.privacyPolicy:
-                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), CommonConstants.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
+                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), CommonConstants.PrivacyPolicyUrl, PlayerConstants.PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
                 if (mListener != null) {
@@ -593,10 +535,8 @@ public class VLCPlayerFragment extends Fragment {
                 }
                 break;
             case R.id.audioTrack:
-                isAudioTrackMenuItemPressed = true;
                 // if there are audio tracks
                 SubMenu subMenu = item.getSubMenu();
-                ScreenUtil.resizeMenuTextSize(subMenu, fontScale);
                 // check if MenuItems of audioTrack need CheckBox
                 for (int i=0; i<subMenu.size(); i++) {
                     MenuItem mItem = subMenu.getItem(i);
@@ -609,6 +549,30 @@ public class VLCPlayerFragment extends Fragment {
                     }
                 }
                 //
+                break;
+            case R.id.audioTrack1:
+                setAudioTrackAndChannel(1, currentChannelPlayed);
+                break;
+            case R.id.audioTrack2:
+                setAudioTrackAndChannel(2, currentChannelPlayed);
+                break;
+            case R.id.audioTrack3:
+                setAudioTrackAndChannel(3, currentChannelPlayed);
+                break;
+            case R.id.audioTrack4:
+                setAudioTrackAndChannel(4, currentChannelPlayed);
+                break;
+            case R.id.audioTrack5:
+                setAudioTrackAndChannel(5, currentChannelPlayed);
+                break;
+            case R.id.audioTrack6:
+                setAudioTrackAndChannel(6, currentChannelPlayed);
+                break;
+            case R.id.audioTrack7:
+                setAudioTrackAndChannel(7, currentChannelPlayed);
+                break;
+            case R.id.audioTrack8:
+                setAudioTrackAndChannel(8, currentChannelPlayed);
                 break;
             case R.id.channel:
                 if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
@@ -666,27 +630,6 @@ public class VLCPlayerFragment extends Fragment {
                 break;
         }
 
-        // deal with switching audio track
-        if ( (isAudioTrackMenuItemPressed) && (id != audioTrackMenuItem.getItemId()) ) {
-            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
-                if (item.getTitle() != null) {
-                    String itemTitle = item.getTitle().toString();
-                    Log.d(TAG, "itemTitle = " + itemTitle);
-                    if (audioTrackMenuItem.hasSubMenu()) {
-                        SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-                        int menuSize = subMenu.size();
-                        for (int index = 0; index < menuSize; index++) {
-                            if (itemTitle.equals(subMenu.getItem(index).getTitle().toString())) {
-                                setAudioTrackAndChannel(index + 1, currentChannelPlayed);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            isAudioTrackMenuItemPressed = false;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -722,15 +665,7 @@ public class VLCPlayerFragment extends Fragment {
         super.onConfigurationChanged(newConfig);
         // mainMenu.close();
         closeMenu(mainMenu);
-
-        // reset the heights of volumeBar and supportToolbar
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // if orientation is portrait, then double the height of volumeBar
-            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
-        } else {
-            volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
-        }
-        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height + volumeSeekBar.getLayoutParams().height;
+        setButtonsPositionAndSize(newConfig);
     }
 
     @Override
@@ -754,22 +689,6 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG,"VLCPlayerFragment-->onDestroy() is called.");
-        releaseMediaSessionCompat();
-        releaseVLCPlayer();
-
-        timerHandler.removeCallbacksAndMessages(null);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -777,7 +696,7 @@ public class VLCPlayerFragment extends Fragment {
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
 
-        if (requestCode == FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // The document selected by the user won't be returned in the intent.
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
@@ -806,9 +725,9 @@ public class VLCPlayerFragment extends Fragment {
                 playingParam.setMediaSourcePrepared(false);
 
                 // music or vocal is unknown
-                playingParam.setMusicOrVocalOrNoSetting(MusicOrVocalUnknown);
+                playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
                 Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
 
                 if (useFilePicker) {
                     String filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
@@ -830,6 +749,121 @@ public class VLCPlayerFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG,"VLCPlayerFragment-->onDestroy() is called.");
+        releaseMediaSessionCompat();
+        releaseVLCPlayer();
+
+        timerHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    private void setButtonsPositionAndSize(Configuration config) {
+
+        int buttonMarginLeft = (int)(60.0f * fontScale);    // 60 pixels = 20dp on Nexus 5
+        Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
+        Point screenSize = ScreenUtil.getScreenSize(callingContext);
+        Log.d(TAG, "screenSize.x = " + screenSize.x);
+        Log.d(TAG, "screenSize.y = " + screenSize.y);
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            buttonMarginLeft = (int)((float)buttonMarginLeft * ((float)screenSize.x / (float)screenSize.y));
+            Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
+        }
+
+        ViewGroup.MarginLayoutParams layoutParams;
+        int imageButtonHeight = (int)(textFontSize * 1.5f);
+        int buttonNum = 6;  // 6 buttons
+        int maxWidth = buttonNum * imageButtonHeight + (buttonNum-1) * buttonMarginLeft;
+        if (maxWidth > screenSize.x) {
+            // greater than the width of screen
+            buttonMarginLeft = (screenSize.x-10-(buttonNum*imageButtonHeight)) / (buttonNum-1);
+        }
+
+        layoutParams = (ViewGroup.MarginLayoutParams) volumeSeekBar.getLayoutParams();
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) volumeImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        //
+        layoutParams = (ViewGroup.MarginLayoutParams) previousMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        FrameLayout playPauseButtonFrameLayout = fragmentView.findViewById(R.id.playPauseButtonFrameLayout);
+        layoutParams = (ViewGroup.MarginLayoutParams) playPauseButtonFrameLayout.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) replayMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) stopMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) nextMediaImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        //
+        layoutParams = (ViewGroup.MarginLayoutParams) repeatImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(0, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) switchToMusicImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) switchToVocalImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) actionMenuImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) actionMenuView.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        Bitmap tempBitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.circle_and_three_dots);
+        Drawable iconDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true));
+        actionMenuView.setOverflowIcon(iconDrawable);   // set icon of three dots
+        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots
+
+        // reset the heights of volumeBar and supportToolbar
+        final float timesOfVolumeBarForPortrait = 1.5f;
+        if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // if orientation is portrait, then double the height of volumeBar
+            volumeSeekBar.getLayoutParams().height = (int) ((float)volumeSeekBarHeightForLandscape * timesOfVolumeBarForPortrait);
+        } else {
+            volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
+        }
+
+        supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
+    }
+
     private void setOnClickEvents() {
 
         volumeImageButton.setOnClickListener(new View.OnClickListener() {
@@ -841,42 +875,6 @@ public class VLCPlayerFragment extends Fragment {
                 } else {
                     volumeSeekBar.setVisibility(View.INVISIBLE);
                 }
-            }
-        });
-
-        repeatImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int repeatStatus = playingParam.getRepeatStatus();
-                switch (repeatStatus) {
-                    case NoRepeatPlaying:
-                        // switch to repeat one song
-                        playingParam.setRepeatStatus(RepeatOneSong);
-                        break;
-                    case RepeatOneSong:
-                        // switch to repeat song list
-                        playingParam.setRepeatStatus(RepeatAllSongs);
-                        break;
-                    case RepeatAllSongs:
-                        // switch to no repeat
-                        playingParam.setRepeatStatus(NoRepeatPlaying);
-                        break;
-                }
-                setToolbarImageButtonStatus();
-            }
-        });
-
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToMusic();
-            }
-        });
-
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchAudioToVocal();
             }
         });
 
@@ -894,7 +892,7 @@ public class VLCPlayerFragment extends Fragment {
                     // is going to play the last one
                     nextIndex = publicSongListSize - 1; // the last one
                 }
-                if (repeatStatus == RepeatOneSong) {
+                if (repeatStatus == PlayerConstants.RepeatOneSong) {
                     // because in startAutoPlay() will subtract 1 from next index
                     nextIndex++;
                 }
@@ -941,7 +939,7 @@ public class VLCPlayerFragment extends Fragment {
                 int publicSongListSize = publicSongList.size();
                 int nextIndex = playingParam.getPublicNextSongIndex();
                 int repeatStatus = playingParam.getRepeatStatus();
-                if (repeatStatus == RepeatOneSong) {
+                if (repeatStatus == PlayerConstants.RepeatOneSong) {
                     nextIndex++;
                 }
                 if (nextIndex > publicSongListSize) {
@@ -952,6 +950,50 @@ public class VLCPlayerFragment extends Fragment {
                     playingParam.setPublicNextSongIndex(nextIndex);
                 }
                 startAutoPlay();
+            }
+        });
+
+        repeatImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int repeatStatus = playingParam.getRepeatStatus();
+                switch (repeatStatus) {
+                    case PlayerConstants.NoRepeatPlaying:
+                        // switch to repeat one song
+                        playingParam.setRepeatStatus(PlayerConstants.RepeatOneSong);
+                        break;
+                    case PlayerConstants.RepeatOneSong:
+                        // switch to repeat song list
+                        playingParam.setRepeatStatus(PlayerConstants.RepeatAllSongs);
+                        break;
+                    case PlayerConstants.RepeatAllSongs:
+                        // switch to no repeat
+                        playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
+                        break;
+                }
+                setToolbarImageButtonStatus();
+            }
+        });
+
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchAudioToVocal();
+            }
+        });
+
+        actionMenuImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // getActivity().openOptionsMenu();
+                actionMenuView.showOverflowMenu();
             }
         });
 
@@ -1011,22 +1053,19 @@ public class VLCPlayerFragment extends Fragment {
     }
 
     private void setTimerToHideSupportAndAudioController() {
-        final int timerDuration = 10000;    // 10 seconds
         timerHandler.removeCallbacksAndMessages(null);
-        timerHandler.postDelayed(timerRunnable, timerDuration); // 10 seconds
+        timerHandler.postDelayed(timerRunnable, PlayerConstants.PlayerView_Timeout); // 10 seconds
     }
 
     private void showSupportToolbarAndAudioController() {
         supportToolbar.setVisibility(View.VISIBLE);
         audioControllerView.setVisibility(View.VISIBLE);
-        hideBannerAds();
     }
 
     private void hideSupportToolbarAndAudioController() {
         supportToolbar.setVisibility(View.GONE);
         audioControllerView.setVisibility(View.GONE);
         closeMenu(mainMenu);
-        showBannerAds();
     }
 
     private void closeMenu(Menu menu) {
@@ -1062,34 +1101,26 @@ public class VLCPlayerFragment extends Fragment {
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
-            case NoRepeatPlaying:
+            case PlayerConstants.NoRepeatPlaying:
                 // no repeat but show symbol of repeat all song with transparent background
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
-            case RepeatOneSong:
+            case PlayerConstants.RepeatOneSong:
                 // repeat one song
                 repeatImageButton.setImageResource(R.drawable.repeat_one_white);
                 break;
-            case RepeatAllSongs:
+            case PlayerConstants.RepeatAllSongs:
                 // repeat all song list
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
         }
-        if (repeatStatus == NoRepeatPlaying) {
-            repeatImageButton.setBackgroundColor(colorTransparent);
+        if (repeatStatus == PlayerConstants.NoRepeatPlaying) {
+            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.transparentDark));
         } else {
-            repeatImageButton.setBackgroundColor(colorRed);
+            repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.red));
         }
     }
 
-    private void showBannerAds() {
-        // linearLayout_for_ads.setGravity(Gravity.TOP);
-        linearLayout_for_ads.setVisibility(View.VISIBLE);
-    }
-    private void hideBannerAds() {
-        Log.d(TAG, "hideBannerAds() is called.");
-        linearLayout_for_ads.setVisibility(View.GONE);
-    }
     private void showNativeAds() {
         // simulate showing native ad
         Log.d(TAG, "showNativeAds() is called.");
@@ -1126,7 +1157,7 @@ public class VLCPlayerFragment extends Fragment {
         playingParam.setPlayingPublic(true);
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
-        playingParam.setRepeatStatus(NoRepeatPlaying);    // no repeat playing songs
+        playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         playingParam.setPlaySingleSong(true);     // default
     }
 
@@ -1179,7 +1210,7 @@ public class VLCPlayerFragment extends Fragment {
         }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
-        startActivityForResult(intent, FILE_READ_REQUEST_CODE);
+        startActivityForResult(intent, PlayerConstants.FILE_READ_REQUEST_CODE);
     }
 
     private void showBufferingMessage() {
@@ -1227,7 +1258,7 @@ public class VLCPlayerFragment extends Fragment {
 
     private void initMediaSessionCompat() {
         // Create a MediaSessionCompat
-        mediaSessionCompat = new MediaSessionCompat(callingContext, LOG_TAG);
+        mediaSessionCompat = new MediaSessionCompat(callingContext, PlayerConstants.LOG_TAG);
         MediaSessionCallback mediaSessionCallback = new MediaSessionCallback();
         mediaSessionCompat.setCallback(mediaSessionCallback);
         // Do not let MediaButtons restart the player when the app is not visible
@@ -1302,7 +1333,7 @@ public class VLCPlayerFragment extends Fragment {
                 int repeatStatus = playingParam.getRepeatStatus();
                 int publicNextSongIndex = playingParam.getPublicNextSongIndex();
                 switch (repeatStatus) {
-                    case NoRepeatPlaying:
+                    case PlayerConstants.NoRepeatPlaying:
                         // no repeat
                         if (publicNextSongIndex >= publicSongListSize) {
                             // stop playing
@@ -1311,7 +1342,7 @@ public class VLCPlayerFragment extends Fragment {
                             stillPlayNext = false;  // stop here and do not go to next
                         }
                         break;
-                    case RepeatOneSong:
+                    case PlayerConstants.RepeatOneSong:
                         // repeat one song
                         Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
                         if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
@@ -1319,7 +1350,7 @@ public class VLCPlayerFragment extends Fragment {
                             Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
                         }
                         break;
-                    case RepeatAllSongs:
+                    case PlayerConstants.RepeatAllSongs:
                         // repeat all songs
                         if (publicNextSongIndex >= publicSongListSize) {
                             publicNextSongIndex = 0;
@@ -1339,9 +1370,9 @@ public class VLCPlayerFragment extends Fragment {
             }
         } else {
             // startPlay next song that user has ordered
-            playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
+            playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);  // presume music
             if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
-                if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                     // repeat playing this mediaUri
                 } else {
                     // next song that user ordered
@@ -1383,7 +1414,7 @@ public class VLCPlayerFragment extends Fragment {
             return;
         }
 
-        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
 
         playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
@@ -1401,7 +1432,7 @@ public class VLCPlayerFragment extends Fragment {
         // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
         // pass the saved instance of playingParam to
         Bundle playingParamOriginExtras = new Bundle();
-        playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
         mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
     }
 
@@ -1437,7 +1468,7 @@ public class VLCPlayerFragment extends Fragment {
             // auto startPlay
             startAutoPlay();
         } else {
-            if (playingParam.getRepeatStatus() == NoRepeatPlaying) {
+            if (playingParam.getRepeatStatus() == PlayerConstants.NoRepeatPlaying) {
                 // no repeat playing
                 if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
                     mediaTransportControls.stop();
@@ -1467,7 +1498,7 @@ public class VLCPlayerFragment extends Fragment {
             Log.d(TAG, "replayMedia()--> vlcPlayer.seekTo(currentAudioPosition).");
         } else {
             Bundle playingParamOriginExtras = new Bundle();
-            playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+            playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
             mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and startPlay
             Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
         }
@@ -1502,14 +1533,14 @@ public class VLCPlayerFragment extends Fragment {
     private void switchAudioToVocal() {
         int vocalAudioTrackIndex = playingParam.getVocalAudioTrackIndex();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);
         setAudioTrackAndChannel(vocalAudioTrackIndex, vocalAudioChannel);
     }
 
     private void switchAudioToMusic() {
         int musicAudioTrackIndex = playingParam.getMusicAudioTrackIndex();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);
         setAudioTrackAndChannel(musicAudioTrackIndex, musicAudioChannel);
     }
 
@@ -1576,7 +1607,7 @@ public class VLCPlayerFragment extends Fragment {
         numberOfVideoTracks = videoTrackIndicesList.size();
         Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
         if (numberOfVideoTracks == 0) {
-            playingParam.setCurrentVideoTrackIndexPlayed(noVideoTrack);
+            playingParam.setCurrentVideoTrackIndexPlayed(PlayerConstants.NoVideoTrack);
         } else {
             // set which video track to be played
             int videoTrackIdPlayed = vlcPlayer.getVideoTrack();
@@ -1605,8 +1636,8 @@ public class VLCPlayerFragment extends Fragment {
         numberOfAudioTracks = audioTrackIndicesList.size();
         Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
         if (numberOfAudioTracks == 0) {
-            playingParam.setCurrentAudioTrackIndexPlayed(noAudioTrack);
-            playingParam.setCurrentChannelPlayed(noAudioChannel);
+            playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
+            playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
             int audioTrackIdPlayed = vlcPlayer.getAudioTrack();
             Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
@@ -1703,7 +1734,7 @@ public class VLCPlayerFragment extends Fragment {
                             startAutoPlay();
                         } else {
                             // end of playing
-                            if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                            if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                                 replayMedia();
                             } else {
                                 showNativeAds();
@@ -1782,7 +1813,7 @@ public class VLCPlayerFragment extends Fragment {
             int playbackState = playbackState = playingParam.getCurrentPlaybackState();
             if (extras != null) {
                 Log.d(TAG, "extras is not null.");
-                PlayingParameters playingParamOrigin = extras.getParcelable(PlayingParamOrigin);
+                PlayingParameters playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
                 if (playingParamOrigin != null) {
                     Log.d(TAG, "playingParamOrigin is not null.");
                     playbackState = playingParamOrigin.getCurrentPlaybackState();
