@@ -9,27 +9,14 @@ import androidx.multidex.MultiDexApplication;
 
 import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
 import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
-import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.LinkedHashMap;
 
 public class SmileApplication extends MultiDexApplication {
-
-    public static final String PrivacyPolicyUrl = "http://ec2-13-59-195-3.us-east-2.compute.amazonaws.com/PrivacyPolicy";
-    public static final int FontSize_Scale_Type = ScreenUtil.FontSize_Pixel_Type;
-    public static final int leftChannel = 0;
-    public static final int rightChannel = 1;
-    public static final int stereoChannel = 2;
-    public static final String UseFilePickerString = "UseFilePicker";
-    public static final String PlayerFragmentTag = "PlayerFragmentTag";
-    public static final String CrudActionString = "CrudAction";
-    public static final String AddActionString = "ADD";
-    public static final String EditActionString = "EDIT";
-    public static final String DeleteActionString = "DELETE";
-    public static final String PlayActionString = "PLAY";
 
     public static String leftChannelString;
     public static String rightChannelString;
@@ -58,14 +45,14 @@ public class SmileApplication extends MultiDexApplication {
         stereoChannelString = getString(R.string.stereoChannelString);
 
         audioChannelMap = new LinkedHashMap<>();
-        audioChannelMap.put(leftChannel, leftChannelString);
-        audioChannelMap.put(rightChannel, rightChannelString);
-        audioChannelMap.put(stereoChannel, stereoChannelString);
+        audioChannelMap.put(CommonConstants.LeftChannel, leftChannelString);
+        audioChannelMap.put(CommonConstants.RightChannel, rightChannelString);
+        audioChannelMap.put(CommonConstants.StereoChannel, stereoChannelString);
 
         audioChannelReverseMap = new LinkedHashMap<>();
-        audioChannelReverseMap.put(leftChannelString, leftChannel);
-        audioChannelReverseMap.put(rightChannelString, rightChannel);
-        audioChannelReverseMap.put(stereoChannelString, stereoChannel);
+        audioChannelReverseMap.put(leftChannelString, CommonConstants.LeftChannel);
+        audioChannelReverseMap.put(rightChannelString, CommonConstants.RightChannel);
+        audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
         AudienceNetworkAds.initialize(this);
         String facebookPlacementID = new String("1712962715503258_1712963252169871");

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 // import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -35,9 +36,9 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
 
         isPlayingSingleSong = true;
@@ -65,7 +66,7 @@ public class PlaySingleSongActivity extends AppCompatActivity implements ExoPlay
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        String fragmentTag = SmileApplication.PlayerFragmentTag;
+        String fragmentTag = CommonConstants.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
             playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);

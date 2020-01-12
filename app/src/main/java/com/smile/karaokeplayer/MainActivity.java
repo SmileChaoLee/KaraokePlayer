@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 // import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -48,11 +49,11 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreate() is called");
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, null);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, null);
         Log.d(TAG, "defaultTextFontSize = " + defaultTextFontSize);
-        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
+        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         Log.d(TAG, "textFontSize = " + textFontSize);
-        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, SmileApplication.FontSize_Scale_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.7f * textFontSize;
 
@@ -83,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         FragmentManager fmManager = getSupportFragmentManager();
         FragmentTransaction ft = fmManager.beginTransaction();
 
-        String fragmentTag = SmileApplication.PlayerFragmentTag;
+        String fragmentTag = CommonConstants.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
             playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                 hasPermissionForExternalStorage = false;
-                ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_LONG);
+                ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
             } else {
                 hasPermissionForExternalStorage = true;
             }
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
             showAdAndExitActivity();
         } else {
             exitAppTimer.start();
-            ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+            ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
 
         Log.d(TAG, "onBackPressed() is called");

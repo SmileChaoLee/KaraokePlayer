@@ -42,6 +42,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.BuildConfig;
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -111,7 +112,6 @@ public class VLCPlayerFragment extends Fragment {
     // submenu of file
     private MenuItem autoPlayMenuItem;
     private MenuItem openMenuItem;
-    private MenuItem closeMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
     private boolean isAudioTrackMenuItemPressed;
@@ -252,9 +252,9 @@ public class VLCPlayerFragment extends Fragment {
         setRetainInstance(false);
         setHasOptionsMenu(true);
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
         useFilePicker = true;
 
@@ -309,8 +309,8 @@ public class VLCPlayerFragment extends Fragment {
                 float currentVolume = (float)i / (float)maxProgress;
                 /*
                 float currentVolume = 1.0f;
-                if (i < maxProgress) {
-                    currentVolume = (float)(1.0f - (Math.log(maxProgress - i) / Math.log(maxProgress)));
+                if (i < MaxProgress) {
+                    currentVolume = (float)(1.0f - (Math.log(MaxProgress - i) / Math.log(MaxProgress)));
                 }
                 */
                 playingParam.setCurrentVolume(currentVolume);
@@ -327,15 +327,15 @@ public class VLCPlayerFragment extends Fragment {
 
             }
         });
-        // int currentProgress = (int)(playingParam.getCurrentVolume() * maxProgress);
+        // int currentProgress = (int)(playingParam.getCurrentVolume() * MaxProgress);
         int currentProgress;
         float currentVolume = playingParam.getCurrentVolume();
         currentProgress = (int)(currentVolume * maxProgress);
         /*
         if ( currentVolume >= 1.0f) {
-            currentProgress = maxProgress;
+            currentProgress = MaxProgress;
         } else {
-            currentProgress = maxProgress - (int)Math.pow(maxProgress, (1-currentVolume));
+            currentProgress = MaxProgress - (int)Math.pow(MaxProgress, (1-currentVolume));
             currentProgress = Math.max(0, currentProgress);
         }
         */
@@ -386,7 +386,7 @@ public class VLCPlayerFragment extends Fragment {
         messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.INVISIBLE);
         bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
-        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
         animationText.setStartOffset(0);
@@ -395,7 +395,7 @@ public class VLCPlayerFragment extends Fragment {
 
         nativeAdsLinearLayout = fragmentView.findViewById(R.id.nativeAdsLinearLayout);
         nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
-        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
         audioControllerView = fragmentView.findViewById(R.id.audioControllerView);
         previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton);
@@ -433,13 +433,13 @@ public class VLCPlayerFragment extends Fragment {
         float durationTextSize = textFontSize * 0.6f;
         playingTimeTextView = fragmentView.findViewById(R.id.playingTimeTextView);
         playingTimeTextView.setText("000:00");
-        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         player_duration_seekbar = fragmentView.findViewById(R.id.player_duration_seekbar);
 
         durationTimeTextView = fragmentView.findViewById(R.id.durationTimeTextView);
         durationTimeTextView.setText("000:00");
-        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         setOnClickEvents();
 
@@ -500,7 +500,6 @@ public class VLCPlayerFragment extends Fragment {
         // submenu of file
         autoPlayMenuItem = menu.findItem(R.id.autoPlay);
         openMenuItem = menu.findItem(R.id.open);
-        closeMenuItem = menu.findItem(R.id.close);
 
         // submenu of audio
         audioTrackMenuItem = menu.findItem(R.id.audioTrack);
@@ -544,11 +543,9 @@ public class VLCPlayerFragment extends Fragment {
                 if (playingParam.isAutoPlay()) {
                     autoPlayMenuItem.setChecked(true);
                     openMenuItem.setEnabled(false);
-                    closeMenuItem.setEnabled(false);
                 } else {
                     autoPlayMenuItem.setChecked(false);
                     openMenuItem.setEnabled(true);
-                    closeMenuItem.setEnabled(true);
                 }
                 break;
             case R.id.autoPlay:
@@ -570,7 +567,7 @@ public class VLCPlayerFragment extends Fragment {
                         startAutoPlay();
                     } else {
                         String msg = getString(R.string.noPlaylistString);
-                        ScreenUtil.showToast(callingContext, msg, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        ScreenUtil.showToast(callingContext, msg, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     }
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
@@ -587,11 +584,8 @@ public class VLCPlayerFragment extends Fragment {
                     selectFileToOpen();
                 }
                 break;
-            case R.id.close:
-                stopPlay();
-                break;
             case R.id.privacyPolicy:
-                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), SmileApplication.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
+                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), CommonConstants.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
                 if (mListener != null) {
@@ -622,21 +616,21 @@ public class VLCPlayerFragment extends Fragment {
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
                     if (playingParam.isMediaSourcePrepared()) {
-                        if (currentChannelPlayed == SmileApplication.leftChannel) {
+                        if (currentChannelPlayed == CommonConstants.LeftChannel) {
                             leftChannelMenuItem.setCheckable(true);
                             leftChannelMenuItem.setChecked(true);
                         } else {
                             leftChannelMenuItem.setCheckable(false);
                             leftChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == SmileApplication.rightChannel) {
+                        if (currentChannelPlayed == CommonConstants.RightChannel) {
                             rightChannelMenuItem.setCheckable(true);
                             rightChannelMenuItem.setChecked(true);
                         } else {
                             rightChannelMenuItem.setCheckable(false);
                             rightChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == SmileApplication.stereoChannel) {
+                        if (currentChannelPlayed == CommonConstants.StereoChannel) {
                             stereoChannelMenuItem.setCheckable(true);
                             stereoChannelMenuItem.setChecked(true);
                         } else {
@@ -659,15 +653,15 @@ public class VLCPlayerFragment extends Fragment {
 
                 break;
             case R.id.leftChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.leftChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.rightChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.rightChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.stereoChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
         }
@@ -803,9 +797,9 @@ public class VLCPlayerFragment extends Fragment {
                 playingParam.setVocalAudioTrackIndex(currentAudioRederer);
                 playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
 
-                playingParam.setMusicAudioChannel(SmileApplication.leftChannel);
-                playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
-                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
+                playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
+                playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
 
                 playingParam.setCurrentAudioPosition(0);
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
@@ -1122,8 +1116,8 @@ public class VLCPlayerFragment extends Fragment {
         playingParam.setMusicAudioTrackIndex(1);
         playingParam.setVocalAudioTrackIndex(1);
         playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getMusicAudioTrackIndex());
-        playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
-        playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
+        playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);     // default
+        playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);   // default
         playingParam.setCurrentChannelPlayed(playingParam.getMusicAudioChannel());
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentVolume(1.0f);
@@ -1300,7 +1294,7 @@ public class VLCPlayerFragment extends Fragment {
             }
             if (publicSongListSize <= 0) {
                 // no public songs
-                ScreenUtil.showToast(callingContext, getString(R.string.noPlaylistString), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                ScreenUtil.showToast(callingContext, getString(R.string.noPlaylistString), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 playingParam.setAutoPlay(false);    // cancel auto startPlay
             } else {
                 // There are public songs to be played
@@ -1524,13 +1518,13 @@ public class VLCPlayerFragment extends Fragment {
         float leftVolume = volume;
         float rightVolume = volume;
         switch (audioChannel) {
-            case SmileApplication.leftChannel:
+            case CommonConstants.LeftChannel:
                 rightVolume = 0;
                 break;
-            case SmileApplication.rightChannel:
+            case CommonConstants.RightChannel:
                 leftVolume = 0;
                 break;
-            case SmileApplication.stereoChannel:
+            case CommonConstants.StereoChannel:
                 leftVolume = rightVolume;
                 break;
         }
@@ -1618,7 +1612,7 @@ public class VLCPlayerFragment extends Fragment {
             Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             int audioTrackIndex = 1;    // default audio track index
-            int audioChannel = SmileApplication.stereoChannel;
+            int audioChannel = CommonConstants.StereoChannel;
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
                 audioTrackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
@@ -1971,12 +1965,12 @@ public class VLCPlayerFragment extends Fragment {
                         // go to next one in the list
                         if (canShowNotSupportedFormat) {
                             // only show once
-                            ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                            ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                             canShowNotSupportedFormat = false;
                         }
                         startAutoPlay();
                     } else {
-                        ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     }
                     break;
                 default:

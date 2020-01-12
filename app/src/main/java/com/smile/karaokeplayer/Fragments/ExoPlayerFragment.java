@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 
 import android.widget.FrameLayout;
@@ -42,7 +41,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.Group;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -80,6 +78,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
 import com.smile.karaokeplayer.BuildConfig;
+import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -107,33 +107,6 @@ import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderF
 public class ExoPlayerFragment extends Fragment {
 
     private static final String TAG = new String(".ExoPlayerFragment");
-    private static final String LOG_TAG = new String("MediaSessionCompatTag");
-    private static final String PlayingParamOrigin = "PlayingParamOrigin";
-
-    private static final String PlayingParamState = "PlayingParam";
-    private static final String TrackSelectorParametersState = "TrackSelectorParameters";
-    private static final String NumberOfVideoTracksState = "NumberOfVideoTracks";
-    private static final String NumberOfAudioTracksState = "NumberOfAudioTracks";
-    private static final String PublicSongListState = "PublicSongList";
-    private static final String MediaUriState = "MediaUri";
-    private static final String CanShowNotSupportedFormatState = "CanShowNotSupportedFormat";
-    private static final String VideoTrackIndicesListState = "VideoTrackIndicesList";
-    private static final String AudioTrackIndicesListState = "AudioTrackIndicesList";
-
-    private static final int PrivacyPolicyActivityRequestCode = 10;
-    private static final int FILE_READ_REQUEST_CODE = 1;
-    private static final int SONG_LIST_ACTIVITY_CODE = 2;
-    private static final int ExoPlayerView_Timeout = 10000;  //  10 seconds
-    private static final int noVideoTrack = -1;
-    private static final int noAudioTrack = -1;
-    private static final int noAudioChannel = -1;
-    private static final int maxProgress = 100;
-    private static final int MusicOrVocalUnknown = 0;
-    private static final int PlayingMusic = 1;
-    private static final int PlayingVocal = 2;
-    private static final int NoRepeatPlaying = 0;
-    private static final int RepeatOneSong = 1;
-    private static final int RepeatAllSongs = 2;
 
     private float textFontSize;
     private float fontScale;
@@ -189,8 +162,6 @@ public class ExoPlayerFragment extends Fragment {
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
-
-    private int buttonMarginLeft = 60;   // pixels 60 (20dp for Nexus 5). Default
 
     // instances of the following members have to be saved when configuration changed
     private Uri mediaUri;
@@ -262,9 +233,9 @@ public class ExoPlayerFragment extends Fragment {
         setRetainInstance(false);
         setHasOptionsMenu(true);
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(callingContext, SmileApplication.FontSize_Scale_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
     }
 
@@ -304,15 +275,15 @@ public class ExoPlayerFragment extends Fragment {
 
         // uses dimens.xml for different devices' sizes
         volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
-        volumeSeekBar.setMax(maxProgress);
+        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
         volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 volumeSeekBar.setProgressAndThumb(i);
-                // float currentVolume = (float)i / (float)maxProgress;
+                // float currentVolume = (float)i / (float)MaxProgress;
                 float currentVolume = 1.0f;
-                if (i < maxProgress) {
-                    currentVolume = (float)(1.0f - (Math.log(maxProgress - i) / Math.log(maxProgress)));
+                if (i < PlayerConstants.MaxProgress) {
+                    currentVolume = (float)(1.0f - (Math.log(PlayerConstants.MaxProgress - i) / Math.log(PlayerConstants.MaxProgress)));
                 }
                 playingParam.setCurrentVolume(currentVolume);
                 setAudioVolume(currentVolume);
@@ -332,9 +303,9 @@ public class ExoPlayerFragment extends Fragment {
         int currentProgress;
         float currentVolume = playingParam.getCurrentVolume();
         if ( currentVolume >= 1.0f) {
-            currentProgress = maxProgress;
+            currentProgress = PlayerConstants.MaxProgress;
         } else {
-            currentProgress = maxProgress - (int)Math.pow(maxProgress, (1-currentVolume));
+            currentProgress = PlayerConstants.MaxProgress - (int)Math.pow(PlayerConstants.MaxProgress, (1-currentVolume));
             currentProgress = Math.max(0, currentProgress);
         }
         volumeSeekBar.setProgressAndThumb(currentProgress);
@@ -397,7 +368,7 @@ public class ExoPlayerFragment extends Fragment {
         messageLinearLayout = fragmentView.findViewById(R.id.messageLinearLayout);
         messageLinearLayout.setVisibility(View.GONE);
         bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView);
-        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
         animationText.setStartOffset(0);
@@ -406,14 +377,14 @@ public class ExoPlayerFragment extends Fragment {
 
         nativeAdsLinearLayout = fragmentView.findViewById(R.id.nativeAdsLinearLayout);
         nativeAdsStringTextView = fragmentView.findViewById(R.id.nativeAdsStringTextView);
-        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
         float durationTextSize = textFontSize * 0.6f;
         TextView exo_position_TextView = fragmentView.findViewById(R.id.exo_position);
-        ScreenUtil.resizeTextSize(exo_position_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(exo_position_TextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         TextView exo_duration_TextView = fragmentView.findViewById(R.id.exo_duration);
-        ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         setOnClickEvents();
 
@@ -441,7 +412,7 @@ public class ExoPlayerFragment extends Fragment {
                 // pass the saved instance of playingParam to
                 // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
                 Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
             }
         }
@@ -543,7 +514,7 @@ public class ExoPlayerFragment extends Fragment {
                         startAutoPlay();
                     } else {
                         String msg = getString(R.string.noPlaylistString);
-                        ScreenUtil.showToast(callingContext, msg, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        ScreenUtil.showToast(callingContext, msg, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     }
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
@@ -552,7 +523,7 @@ public class ExoPlayerFragment extends Fragment {
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
-                startActivityForResult(songListIntent, SONG_LIST_ACTIVITY_CODE);
+                startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
@@ -561,7 +532,7 @@ public class ExoPlayerFragment extends Fragment {
                 }
                 break;
             case R.id.privacyPolicy:
-                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), SmileApplication.PrivacyPolicyUrl, PrivacyPolicyActivityRequestCode);
+                PrivacyPolicyUtil.startPrivacyPolicyActivity(getActivity(), CommonConstants.PrivacyPolicyUrl, PlayerConstants.PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
                 if (mListener != null) {
@@ -614,21 +585,21 @@ public class ExoPlayerFragment extends Fragment {
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
                     if (playingParam.isMediaSourcePrepared()) {
-                        if (currentChannelPlayed == SmileApplication.leftChannel) {
+                        if (currentChannelPlayed == CommonConstants.LeftChannel) {
                             leftChannelMenuItem.setCheckable(true);
                             leftChannelMenuItem.setChecked(true);
                         } else {
                             leftChannelMenuItem.setCheckable(false);
                             leftChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == SmileApplication.rightChannel) {
+                        if (currentChannelPlayed == CommonConstants.RightChannel) {
                             rightChannelMenuItem.setCheckable(true);
                             rightChannelMenuItem.setChecked(true);
                         } else {
                             rightChannelMenuItem.setCheckable(false);
                             rightChannelMenuItem.setChecked(false);
                         }
-                        if (currentChannelPlayed == SmileApplication.stereoChannel) {
+                        if (currentChannelPlayed == CommonConstants.StereoChannel) {
                             stereoChannelMenuItem.setCheckable(true);
                             stereoChannelMenuItem.setChecked(true);
                         } else {
@@ -651,20 +622,20 @@ public class ExoPlayerFragment extends Fragment {
 
                 break;
             case R.id.leftChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.leftChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.rightChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.rightChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
             case R.id.stereoChannel:
-                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
                 setAudioVolume(playingParam.getCurrentVolume());
                 break;
         }
 
-        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout); // cancel the time out
+        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.ExoPlayerView_Timeout); // cancel the time out
 
         return super.onOptionsItemSelected(item);
     }
@@ -682,25 +653,25 @@ public class ExoPlayerFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"ExoPlayerFragment-->onSaveInstanceState() is called.");
 
-        outState.putInt(NumberOfVideoTracksState, numberOfVideoTracks);
-        outState.putInt(NumberOfAudioTracksState, numberOfAudioTracks);
-        outState.putSerializable(VideoTrackIndicesListState, videoTrackIndicesList);
-        outState.putSerializable(AudioTrackIndicesListState, audioTrackIndicesList);
-        outState.putParcelableArrayList(PublicSongListState, publicSongList);
+        outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);
+        outState.putInt(PlayerConstants.NumberOfAudioTracksState, numberOfAudioTracks);
+        outState.putSerializable(PlayerConstants.VideoTrackIndicesListState, videoTrackIndicesList);
+        outState.putSerializable(PlayerConstants.AudioTrackIndicesListState, audioTrackIndicesList);
+        outState.putParcelableArrayList(PlayerConstants.PublicSongListState, publicSongList);
 
-        outState.putParcelable(MediaUriState, mediaUri);
+        outState.putParcelable(PlayerConstants.MediaUriState, mediaUri);
         if (exoPlayer != null) {
             playingParam.setCurrentAudioPosition(exoPlayer.getContentPosition());
         } else {
             playingParam.setCurrentAudioPosition(0);
         }
 
-        outState.putParcelable(PlayingParamState, playingParam);
-        outState.putBoolean(CanShowNotSupportedFormatState, canShowNotSupportedFormat);
+        outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
+        outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(SongInfoState, songInfo);
 
         trackSelectorParameters = trackSelector.getParameters();
-        outState.putParcelable(TrackSelectorParametersState, trackSelectorParameters);
+        outState.putParcelable(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters);
 
         super.onSaveInstanceState(outState);
     }
@@ -726,7 +697,7 @@ public class ExoPlayerFragment extends Fragment {
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
 
-        if (requestCode == FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             // The document selected by the user won't be returned in the intent.
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
@@ -745,21 +716,21 @@ public class ExoPlayerFragment extends Fragment {
                 playingParam.setVocalAudioTrackIndex(currentAudioRederer);
                 playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
 
-                playingParam.setMusicAudioChannel(SmileApplication.leftChannel);
-                playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);
-                playingParam.setCurrentChannelPlayed(SmileApplication.stereoChannel);
+                playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
+                playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
+                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
 
                 playingParam.setCurrentAudioPosition(0);
                 playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
                 playingParam.setMediaSourcePrepared(false);
 
                 // music or vocal is unknown
-                playingParam.setMusicOrVocalOrNoSetting(MusicOrVocalUnknown);
+                playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
                 // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
                 // pass the saved instance of playingParam to
                 // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
                 Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
                 mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
             }
             return;
@@ -893,7 +864,7 @@ public class ExoPlayerFragment extends Fragment {
                     // is going to play the last one
                     nextIndex = publicSongListSize - 1; // the last one
                 }
-                if (repeatStatus == RepeatOneSong) {
+                if (repeatStatus == PlayerConstants.RepeatOneSong) {
                     // because in startAutoPlay() will subtract 1 from next index
                     nextIndex++;
                 }
@@ -940,7 +911,7 @@ public class ExoPlayerFragment extends Fragment {
                 int publicSongListSize = publicSongList.size();
                 int nextIndex = playingParam.getPublicNextSongIndex();
                 int repeatStatus = playingParam.getRepeatStatus();
-                if (repeatStatus == RepeatOneSong) {
+                if (repeatStatus == PlayerConstants.RepeatOneSong) {
                     nextIndex++;
                 }
                 if (nextIndex > publicSongListSize) {
@@ -959,17 +930,17 @@ public class ExoPlayerFragment extends Fragment {
             public void onClick(View v) {
                 int repeatStatus = playingParam.getRepeatStatus();
                 switch (repeatStatus) {
-                    case NoRepeatPlaying:
+                    case PlayerConstants.NoRepeatPlaying:
                         // switch to repeat one song
-                        playingParam.setRepeatStatus(RepeatOneSong);
+                        playingParam.setRepeatStatus(PlayerConstants.RepeatOneSong);
                         break;
-                    case RepeatOneSong:
+                    case PlayerConstants.RepeatOneSong:
                         // switch to repeat song list
-                        playingParam.setRepeatStatus(RepeatAllSongs);
+                        playingParam.setRepeatStatus(PlayerConstants.RepeatAllSongs);
                         break;
-                    case RepeatAllSongs:
+                    case PlayerConstants.RepeatAllSongs:
                         // switch to no repeat
-                        playingParam.setRepeatStatus(NoRepeatPlaying);
+                        playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
                         break;
                 }
                 setToolbarImageButtonStatus();
@@ -1008,7 +979,7 @@ public class ExoPlayerFragment extends Fragment {
             }
         });
 
-        videoExoPlayerView.setControllerShowTimeoutMs(ExoPlayerView_Timeout);
+        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.ExoPlayerView_Timeout);
         videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
@@ -1061,20 +1032,20 @@ public class ExoPlayerFragment extends Fragment {
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
-            case NoRepeatPlaying:
+            case PlayerConstants.NoRepeatPlaying:
                 // no repeat but show symbol of repeat all song with transparent background
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
-            case RepeatOneSong:
+            case PlayerConstants.RepeatOneSong:
                 // repeat one song
                 repeatImageButton.setImageResource(R.drawable.repeat_one_white);
                 break;
-            case RepeatAllSongs:
+            case PlayerConstants.RepeatAllSongs:
                 // repeat all song list
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
         }
-        if (repeatStatus == NoRepeatPlaying) {
+        if (repeatStatus == PlayerConstants.NoRepeatPlaying) {
             repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.transparentDark));
         } else {
             repeatImageButton.setBackgroundColor(ContextCompat.getColor(callingContext, R.color.red));
@@ -1116,8 +1087,8 @@ public class ExoPlayerFragment extends Fragment {
         playingParam.setMusicAudioTrackIndex(1);
         playingParam.setVocalAudioTrackIndex(1);
         playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getMusicAudioTrackIndex());
-        playingParam.setMusicAudioChannel(SmileApplication.leftChannel);     // default
-        playingParam.setVocalAudioChannel(SmileApplication.stereoChannel);   // default
+        playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);     // default
+        playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);   // default
         playingParam.setCurrentChannelPlayed(playingParam.getMusicAudioChannel());
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentVolume(1.0f);
@@ -1126,7 +1097,7 @@ public class ExoPlayerFragment extends Fragment {
         playingParam.setPlayingPublic(true);
 
         playingParam.setMusicOrVocalOrNoSetting(0); // no music and vocal setting
-        playingParam.setRepeatStatus(NoRepeatPlaying);    // no repeat playing songs
+        playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         playingParam.setPlaySingleSong(true);     // default
     }
 
@@ -1157,21 +1128,21 @@ public class ExoPlayerFragment extends Fragment {
 
         } else {
             // needed to be set
-            numberOfVideoTracks = savedInstanceState.getInt(NumberOfVideoTracksState,0);
-            numberOfAudioTracks = savedInstanceState.getInt(NumberOfAudioTracksState);
-            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(VideoTrackIndicesListState);
-            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(AudioTrackIndicesListState);
-            publicSongList = savedInstanceState.getParcelableArrayList(PublicSongListState);
+            numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
+            numberOfAudioTracks = savedInstanceState.getInt(PlayerConstants.NumberOfAudioTracksState);
+            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
+            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+            publicSongList = savedInstanceState.getParcelableArrayList(PlayerConstants.PublicSongListState);
 
-            mediaUri = savedInstanceState.getParcelable(MediaUriState);
-            playingParam = savedInstanceState.getParcelable(PlayingParamState);
-            canShowNotSupportedFormat = savedInstanceState.getBoolean(CanShowNotSupportedFormatState);
+            mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState);
+            playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState);
+            canShowNotSupportedFormat = savedInstanceState.getBoolean(PlayerConstants.CanShowNotSupportedFormatState);
             if (playingParam == null) {
                 initializePlayingParam();
             }
             songInfo = savedInstanceState.getParcelable(SongInfoState);
 
-            trackSelectorParameters = savedInstanceState.getParcelable(TrackSelectorParametersState);
+            trackSelectorParameters = savedInstanceState.getParcelable(PlayerConstants.TrackSelectorParametersState);
         }
     }
 
@@ -1187,7 +1158,7 @@ public class ExoPlayerFragment extends Fragment {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType("*/*");
 
-        startActivityForResult(intent, FILE_READ_REQUEST_CODE);
+        startActivityForResult(intent, PlayerConstants.FILE_READ_REQUEST_CODE);
     }
 
     private void showBufferingMessage() {
@@ -1240,7 +1211,7 @@ public class ExoPlayerFragment extends Fragment {
         // Create a MediaSessionCompat
         Activity mActivity = getActivity();
 
-        mediaSessionCompat = new MediaSessionCompat(callingContext, LOG_TAG);
+        mediaSessionCompat = new MediaSessionCompat(callingContext, PlayerConstants.LOG_TAG);
 
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
@@ -1312,7 +1283,7 @@ public class ExoPlayerFragment extends Fragment {
             }
             if (publicSongListSize <= 0) {
                 // no public songs
-                ScreenUtil.showToast(callingContext, getString(R.string.noPlaylistString), toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                ScreenUtil.showToast(callingContext, getString(R.string.noPlaylistString), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 playingParam.setAutoPlay(false);    // cancel auto play
             } else {
                 // There are public songs to be played
@@ -1320,7 +1291,7 @@ public class ExoPlayerFragment extends Fragment {
                 int repeatStatus = playingParam.getRepeatStatus();
                 int publicNextSongIndex = playingParam.getPublicNextSongIndex();
                 switch (repeatStatus) {
-                    case NoRepeatPlaying:
+                    case PlayerConstants.NoRepeatPlaying:
                         // no repeat
                         if (publicNextSongIndex >= publicSongListSize) {
                             // stop playing
@@ -1329,7 +1300,7 @@ public class ExoPlayerFragment extends Fragment {
                             stillPlayNext = false;  // stop here and do not go to next
                         }
                         break;
-                    case RepeatOneSong:
+                    case PlayerConstants.RepeatOneSong:
                         // repeat one song
                         Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
                         if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
@@ -1337,7 +1308,7 @@ public class ExoPlayerFragment extends Fragment {
                             Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
                         }
                         break;
-                    case RepeatAllSongs:
+                    case PlayerConstants.RepeatAllSongs:
                         // repeat all songs
                         if (publicNextSongIndex >= publicSongListSize) {
                             publicNextSongIndex = 0;
@@ -1357,9 +1328,9 @@ public class ExoPlayerFragment extends Fragment {
             }
         } else {
             // play next song that user has ordered
-            playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);  // presume music
+            playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);  // presume music
             if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
-                if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                     // repeat playing this mediaUri
                 } else {
                     // next song that user ordered
@@ -1390,7 +1361,7 @@ public class ExoPlayerFragment extends Fragment {
             return;
         }
 
-        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);  // presume vocal
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
 
         playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
@@ -1409,7 +1380,7 @@ public class ExoPlayerFragment extends Fragment {
         // pass the saved instance of playingParam to
         // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
         Bundle playingParamOriginExtras = new Bundle();
-        playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
         mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
     }
 
@@ -1446,7 +1417,7 @@ public class ExoPlayerFragment extends Fragment {
             // auto play
             startAutoPlay();
         } else {
-            if (playingParam.getRepeatStatus() == NoRepeatPlaying) {
+            if (playingParam.getRepeatStatus() == PlayerConstants.NoRepeatPlaying) {
                 // no repeat playing
                 // if ((mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
                 if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
@@ -1488,7 +1459,7 @@ public class ExoPlayerFragment extends Fragment {
             // pass the saved instance of playingParam to
             // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
             Bundle playingParamOriginExtras = new Bundle();
-            playingParamOriginExtras.putParcelable(PlayingParamOrigin, playingParam);
+            playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
             mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and play
             Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
         }
@@ -1524,14 +1495,14 @@ public class ExoPlayerFragment extends Fragment {
     private void switchAudioToVocal() {
         int vocalAudioTrackIndex = playingParam.getVocalAudioTrackIndex();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayingVocal);
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);
         setAudioTrackAndChannel(vocalAudioTrackIndex, vocalAudioChannel);
     }
 
     private void switchAudioToMusic() {
         int musicAudioTrackIndex = playingParam.getMusicAudioTrackIndex();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayingMusic);
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);
         setAudioTrackAndChannel(musicAudioTrackIndex, musicAudioChannel);
     }
 
@@ -1547,10 +1518,10 @@ public class ExoPlayerFragment extends Fragment {
                 float[] volumeInput = new float[stereoVolumeAudioProcessor.getOutputChannelCount()];
                 switch (channelCount) {
                     case 2:
-                        if (currentChannelPlayed == SmileApplication.leftChannel) {
+                        if (currentChannelPlayed == CommonConstants.LeftChannel) {
                             volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = volume;
                             volumeInput[StereoVolumeAudioProcessor.RIGHT_SPEAKER] = 0.0f;
-                        } else if (currentChannelPlayed == SmileApplication.rightChannel) {
+                        } else if (currentChannelPlayed == CommonConstants.RightChannel) {
                             volumeInput[StereoVolumeAudioProcessor.LEFT_SPEAKER] = 0.0f;
                             volumeInput[StereoVolumeAudioProcessor.RIGHT_SPEAKER] = volume;
                         } else {
@@ -1670,7 +1641,7 @@ public class ExoPlayerFragment extends Fragment {
             int playbackState = playbackState = playingParam.getCurrentPlaybackState();
             if (extras != null) {
                 Log.d(TAG, "extras is not null.");
-                PlayingParameters playingParamOrigin = extras.getParcelable(PlayingParamOrigin);
+                PlayingParameters playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
                 if (playingParamOrigin != null) {
                     Log.d(TAG, "playingParamOrigin is not null.");
                     playbackState = playingParamOrigin.getCurrentPlaybackState();
@@ -1760,7 +1731,7 @@ public class ExoPlayerFragment extends Fragment {
                         startAutoPlay();
                     } else {
                         // end of playing
-                        if (playingParam.getRepeatStatus() != NoRepeatPlaying) {
+                        if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                             replayMedia();
                         } else {
                             showNativeAds();
@@ -1818,12 +1789,12 @@ public class ExoPlayerFragment extends Fragment {
                 // go to next one in the list
                 if (canShowNotSupportedFormat) {
                     // only show once
-                    ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                    ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     canShowNotSupportedFormat = false;
                 }
                 startAutoPlay();
             } else {
-                ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
 
             mediaUri = null;
@@ -1955,7 +1926,7 @@ public class ExoPlayerFragment extends Fragment {
         numberOfVideoTracks = videoTrackIndicesList.size();
         Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
         if (numberOfVideoTracks == 0) {
-            playingParam.setCurrentVideoTrackIndexPlayed(noVideoTrack);
+            playingParam.setCurrentVideoTrackIndexPlayed(PlayerConstants.NoVideoTrack);
         } else {
             Log.d(TAG, "audioTrackIdPlayed = " + videoTrackIdPlayed);
             if (videoTrackIdPlayed < 0) {
@@ -1967,10 +1938,10 @@ public class ExoPlayerFragment extends Fragment {
         numberOfAudioTracks = audioTrackIndicesList.size();
         Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
         if (numberOfAudioTracks == 0) {
-            playingParam.setCurrentAudioTrackIndexPlayed(noAudioTrack);
-            playingParam.setCurrentChannelPlayed(noAudioChannel);
+            playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
+            playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
-            int audioChannel = SmileApplication.stereoChannel;  // default channel
+            int audioChannel = CommonConstants.StereoChannel;  // default channel
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();

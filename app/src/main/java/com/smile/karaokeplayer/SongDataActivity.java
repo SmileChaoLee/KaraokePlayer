@@ -22,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 // import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
@@ -61,27 +62,27 @@ public class SongDataActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate() is called.");
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, SmileApplication.FontSize_Scale_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, SmileApplication.FontSize_Scale_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(this, SmileApplication.FontSize_Scale_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         textFontSize *= 0.8f;
         toastTextSize = 0.9f * textFontSize;
 
         Intent callingIntent = getIntent();
         if (savedInstanceState == null) {
-            crudAction = callingIntent.getStringExtra(SmileApplication.CrudActionString);
+            crudAction = callingIntent.getStringExtra(CommonConstants.CrudActionString);
             switch (crudAction.toUpperCase()) {
-                case SmileApplication.AddActionString:
+                case CommonConstants.AddActionString:
                     // add one record
                     mSongInfo = new SongInfo();
                     actionButtonString = getString(R.string.addString);
                     break;
-                case SmileApplication.EditActionString:
+                case CommonConstants.EditActionString:
                     // = "EDIT". Edit one record
                     mSongInfo = callingIntent.getParcelableExtra("SongInfo");
                     actionButtonString = getString(R.string.saveString);
                     break;
-                case SmileApplication.DeleteActionString:
+                case CommonConstants.DeleteActionString:
                     // = "DELETE". Delete one record
                     mSongInfo = callingIntent.getParcelableExtra("SongInfo");
                     actionButtonString = getString(R.string.deleteString);
@@ -94,7 +95,7 @@ public class SongDataActivity extends AppCompatActivity {
         } else {
             // not null, has savedInstanceState
             actionButtonString = savedInstanceState.getString("ActionButtonString");
-            crudAction = savedInstanceState.getString(SmileApplication.CrudActionString);
+            crudAction = savedInstanceState.getString(CommonConstants.CrudActionString);
             mSongInfo = savedInstanceState.getParcelable("SongInfo");
             Log.d(TAG, "savedInstanceState is not null.");
         }
@@ -120,24 +121,24 @@ public class SongDataActivity extends AppCompatActivity {
         numList.add("6");
         numList.add("7");
         numList.add("8");
-        audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, SmileApplication.FontSize_Scale_Type);
-        audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         ArrayList<String> aList = new ArrayList<>(SmileApplication.audioChannelMap.values());
-        audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, SmileApplication.FontSize_Scale_Type);
-        audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, SmileApplication.FontSize_Scale_Type);
+        audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         // audioVocalChannelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
 
         TextView edit_titleStringTextView = findViewById(R.id.edit_titleStringTextView);
-        ScreenUtil.resizeTextSize(edit_titleStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_titleStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_titleNameEditText = findViewById(R.id.edit_titleNameEditText);
-        ScreenUtil.resizeTextSize(edit_titleNameEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_titleNameEditText, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_titleNameEditText.setText(mSongInfo.getSongName());
 
         TextView edit_filePathStringTextView = findViewById(R.id.edit_filePathStringTextView);
-        ScreenUtil.resizeTextSize(edit_filePathStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_filePathStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_filePathEditText = findViewById(R.id.edit_filePathEditText);
         edit_filePathEditText.setEnabled(false);
-        ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_filePathEditText.setText(mSongInfo.getFilePath());
 
         edit_selectFilePathButton = findViewById(R.id.edit_selectFilePathButton);
@@ -149,33 +150,33 @@ public class SongDataActivity extends AppCompatActivity {
         });
 
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
-        ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_musicTrackSpinner = findViewById(R.id.edit_musicTrackSpinner);
         edit_musicTrackSpinner.setAdapter(audioMusicTrackAdapter);
         edit_musicTrackSpinner.setSelection(mSongInfo.getMusicTrackNo() - 1);
 
         TextView edit_musicChannelStringTextView = findViewById(R.id.edit_musicChannelStringTextView);
-        ScreenUtil.resizeTextSize(edit_musicChannelStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_musicChannelStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_musicChannelSpinner = findViewById(R.id.edit_musicChannelSpinner);
         edit_musicChannelSpinner.setAdapter(audioMusicChannelAdapter);
         edit_musicChannelSpinner.setSelection(mSongInfo.getMusicChannel());
 
         TextView edit_vocalTrackStringTextView = findViewById(R.id.edit_vocalTrackStringTextView);
-        ScreenUtil.resizeTextSize(edit_vocalTrackStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_vocalTrackStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_vocalTrackSpinner = findViewById(R.id.edit_vocalTrackSpinner);
         edit_vocalTrackSpinner.setAdapter(audioVocalTrackAdapter);
         edit_vocalTrackSpinner.setSelection(mSongInfo.getVocalTrackNo() - 1);
 
         TextView edit_vocalChannelStringTextView = findViewById(R.id.edit_vocalChannelStringTextView);
-        ScreenUtil.resizeTextSize(edit_vocalChannelStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_vocalChannelStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_vocalChannelSpinner = findViewById(R.id.edit_vocalChannelSpinner);
         edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
         edit_vocalChannelSpinner.setSelection(mSongInfo.getVocalChannel());
 
         TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
-        ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_includedPlaylistCheckBox = findViewById(R.id.edit_includedPlaylistCheckBox);
-        ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         boolean isChecked = (mSongInfo.getIncluded().equals("1")) ? true : false;
         edit_includedPlaylistCheckBox.setChecked(isChecked);
         edit_includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -187,7 +188,7 @@ public class SongDataActivity extends AppCompatActivity {
         });
 
         final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
-        ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_saveOneSongButton.setText(actionButtonString);
         edit_saveOneSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,19 +197,19 @@ public class SongDataActivity extends AppCompatActivity {
                 SongListSQLite songListSQLite = new SongListSQLite(SmileApplication.AppContext);
                 long databaseResult = -1;
                 switch (crudAction.toUpperCase()) {
-                    case SmileApplication.AddActionString:
+                    case CommonConstants.AddActionString:
                         // add one record
                         if (isValid) {
                             databaseResult = songListSQLite.addSongToSongList(mSongInfo);
                         }
                         break;
-                    case SmileApplication.EditActionString:
+                    case CommonConstants.EditActionString:
                         // = "EDIT". Edit one record
                         if (isValid) {
                             databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
                         }
                         break;
-                    case SmileApplication.DeleteActionString:
+                    case CommonConstants.DeleteActionString:
                         // = "DELETE". Delete one record
                         databaseResult = songListSQLite.deleteOneSongFromSongList(mSongInfo);
                         break;
@@ -222,7 +223,7 @@ public class SongDataActivity extends AppCompatActivity {
         });
 
         final Button edit_exitEditSongButton = findViewById(R.id.edit_exitEditSongButton);
-        ScreenUtil.resizeTextSize(edit_exitEditSongButton, textFontSize, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeTextSize(edit_exitEditSongButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_exitEditSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -249,7 +250,7 @@ public class SongDataActivity extends AppCompatActivity {
         setSongInfoFromInput(false);
 
         outState.putParcelable("SongInfo", mSongInfo);
-        outState.putString(SmileApplication.CrudActionString, crudAction);
+        outState.putString(CommonConstants.CrudActionString, crudAction);
         outState.putString("ActionButtonString", actionButtonString);
 
         super.onSaveInstanceState(outState);
@@ -358,14 +359,14 @@ public class SongDataActivity extends AppCompatActivity {
             isValid = false;
             if (hasMessage) {
                 ScreenUtil.showToast(getApplicationContext(), getString(R.string.titileEmptyString),
-                        toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         }
         if (filePath.isEmpty()) {
             isValid = false;
             if (hasMessage) {
                 ScreenUtil.showToast(getApplicationContext(), getString(R.string.filepathEmptyString),
-                        toastTextSize, SmileApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT);
+                        toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         }
 
