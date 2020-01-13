@@ -39,11 +39,11 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                     Log.d(TAG, "MediaControllerCallback--> Song was finished.");
                     if (playingParam.isAutoPlay()) {
                         // start playing next video from list
-                        mPresenter.getPresentView().startAutoPlay();
+                        mPresenter.startAutoPlay();
                     } else {
                         // end of playing
                         if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
-                            mPresenter.getPresentView().replayMedia();
+                            mPresenter.replayMedia();
                         } else {
                             mPresenter.getPresentView().showNativeAds();
                         }
@@ -62,7 +62,7 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                         @Override
                         public void run() {
                             handler.removeCallbacksAndMessages(null);
-                            mPresenter.getPresentView().getPlayingMediaInfoAndSetAudioActionSubMenu();
+                            mPresenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
                         }
                     };
                     handler.postDelayed(runnable, 500); // delay 0.5 seconds

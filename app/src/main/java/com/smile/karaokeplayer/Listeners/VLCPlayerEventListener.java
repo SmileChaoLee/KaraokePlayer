@@ -45,7 +45,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 if (!vlcPlayer.isPlaying()) {
                     mPresenter.getPresentView().hideNativeAds();
                     mPresenter.getPresentView().showBufferingMessage();
-                    mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
+                    mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
                 }
                 break;
             case MediaPlayer.Event.Playing:
@@ -55,13 +55,13 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 // getPlayingMediaInfoAndSetAudioActionSubMenu();
                 mPresenter.getPresentView().dismissBufferingMessage();
                 mPresenter.getPresentView().hideNativeAds();
-                mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
+                mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 break;
             case MediaPlayer.Event.Paused:
                 Log.d(TAG, "vlcPlayer is paused");
                 mPresenter.getPresentView().dismissBufferingMessage();
                 mPresenter.getPresentView().hideNativeAds();
-                mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
+                mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
                 break;
             case MediaPlayer.Event.Stopped:
                 Log.d(TAG, "vlcPlayer is stopped");
@@ -73,13 +73,13 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 if (playingParam.isMediaSourcePrepared()) {
                     // playing has been finished yet
                     Log.d(TAG, "Sending a event, PlaybackStateCompat.STATE_STOPPED");
-                    mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
+                    mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
                 }
                 break;
             case MediaPlayer.Event.EndReached:
                 Log.d(TAG, "vlcPlayer is Reached end.");
                 playingParam.setMediaSourcePrepared(false);
-                mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+                mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
                 // to fix bugs that vlcPlayer.attachViews() does works in onResume()
                 // after finishing playing and reopen the same media file
                 // vlcPlayer.stop() can make status become stop status for vlcPlayer
@@ -97,7 +97,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
             case MediaPlayer.Event.EncounteredError:
                 Log.d(TAG, "vlcPlayer is EncounteredError event");
                 mPresenter.getPresentView().showNativeAds();
-                mPresenter.getPresentView().setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
+                mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
                 String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
                 if (playingParam.isAutoPlay()) {
                     // go to next one in the list
@@ -106,7 +106,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                         ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                         canShowNotSupportedFormat = false;
                     }
-                    mPresenter.getPresentView().startAutoPlay();
+                    mPresenter.startAutoPlay();
                 } else {
                     ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 }
