@@ -116,11 +116,19 @@ public class ExoPlayerFragment extends Fragment {
     private View fragmentView;
 
     private Toolbar supportToolbar;  // use customized ToolBar
+    private ActionMenuView actionMenuView;
+    private VerticalSeekBar volumeSeekBar;
+    private ImageButton volumeImageButton;
+    private ImageButton previousMediaImageButton;
+    private ImageButton playMediaImageButton;
+    private ImageButton replayMediaImageButton;
+    private ImageButton pauseMediaImageButton;
+    private ImageButton stopMediaImageButton;
+    private ImageButton nextMediaImageButton;
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
     private ImageButton actionMenuImageButton;
-    private ActionMenuView actionMenuView;
     private int volumeSeekBarHeightForLandscape;
 
     private Menu mainMenu;
@@ -145,16 +153,7 @@ public class ExoPlayerFragment extends Fragment {
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
     private ExoPlayerEventListener mExoPlayerEventListener;
-
     private PlayerView videoExoPlayerView;
-    private VerticalSeekBar volumeSeekBar;
-    private ImageButton volumeImageButton;
-    private ImageButton previousMediaImageButton;
-    private ImageButton playMediaImageButton;
-    private ImageButton replayMediaImageButton;
-    private ImageButton pauseMediaImageButton;
-    private ImageButton stopMediaImageButton;
-    private ImageButton nextMediaImageButton;
 
     private LinearLayout linearLayout_for_ads;
     private LinearLayout messageLinearLayout;
@@ -173,10 +172,6 @@ public class ExoPlayerFragment extends Fragment {
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
     private SongInfo songInfo;
-
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String IsPlaySingleSongState = "IsPlaySingleSong";
-    public static final String SongInfoState = "SongInfo";
 
     private OnFragmentInteractionListener mListener;
 
@@ -201,8 +196,8 @@ public class ExoPlayerFragment extends Fragment {
     public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
         ExoPlayerFragment fragment = new ExoPlayerFragment();
         Bundle args = new Bundle();
-        args.putBoolean(IsPlaySingleSongState, isPlaySingleSong);
-        args.putParcelable(SongInfoState, songInfo);
+        args.putBoolean(PlayerConstants.IsPlaySingleSongState, isPlaySingleSong);
+        args.putParcelable(PlayerConstants.SongInfoState, songInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -332,7 +327,7 @@ public class ExoPlayerFragment extends Fragment {
         switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton);
         actionMenuImageButton = fragmentView.findViewById(R.id.actionMenuImageButton);
 
-        setToolbarImageButtonStatus();
+        setImageButtonStatus();
 
         // added on 2019-12-26
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
@@ -511,7 +506,7 @@ public class ExoPlayerFragment extends Fragment {
                 } else {
                     playingParam.setAutoPlay(isAutoPlay);
                 }
-                setToolbarImageButtonStatus();
+                setImageButtonStatus();
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(callingContext, SongListActivity.class);
@@ -658,7 +653,7 @@ public class ExoPlayerFragment extends Fragment {
 
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
-        outState.putParcelable(SongInfoState, songInfo);
+        outState.putParcelable(PlayerConstants.SongInfoState, songInfo);
 
         trackSelectorParameters = trackSelector.getParameters();
         outState.putParcelable(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters);
@@ -850,13 +845,20 @@ public class ExoPlayerFragment extends Fragment {
                 int nextIndex = playingParam.getPublicNextSongIndex();
                 int repeatStatus = playingParam.getRepeatStatus();
                 nextIndex = nextIndex - 2;
-                if (nextIndex < 0) {
-                    // is going to play the last one
-                    nextIndex = publicSongListSize - 1; // the last one
-                }
-                if (repeatStatus == PlayerConstants.RepeatOneSong) {
-                    // because in startAutoPlay() will subtract 1 from next index
-                    nextIndex++;
+                switch (repeatStatus) {
+                    case PlayerConstants.RepeatOneSong:
+                        // because in startAutoPlay() will subtract 1 from next index
+                        nextIndex++;
+                        break;
+                    case PlayerConstants.RepeatAllSongs:
+                        if (nextIndex < 0) {
+                            // is going to play the last one
+                            nextIndex = publicSongListSize - 1; // the last one
+                        }
+                        break;
+                    case PlayerConstants.NoRepeatPlaying:
+                    default:
+                        break;
                 }
                 playingParam.setPublicNextSongIndex(nextIndex);
 
@@ -901,16 +903,23 @@ public class ExoPlayerFragment extends Fragment {
                 int publicSongListSize = publicSongList.size();
                 int nextIndex = playingParam.getPublicNextSongIndex();
                 int repeatStatus = playingParam.getRepeatStatus();
-                if (repeatStatus == PlayerConstants.RepeatOneSong) {
-                    nextIndex++;
+                switch (repeatStatus) {
+                    case PlayerConstants.RepeatOneSong:
+                        nextIndex++;
+                        break;
+                    case PlayerConstants.RepeatAllSongs:
+                        if (nextIndex > publicSongListSize) {
+                            // it is playing the last one right now
+                            // so it is going to play the first one
+                            nextIndex = 0;
+                        }
+                        break;
+                    case PlayerConstants.NoRepeatPlaying:
+                    default:
+                        break;
                 }
-                if (nextIndex > publicSongListSize) {
-                    // it is playing the last one right now
-                    // so it is going to play the first one
-                    playingParam.setPublicNextSongIndex(0);
-                } else {
-                    playingParam.setPublicNextSongIndex(nextIndex);
-                }
+                playingParam.setPublicNextSongIndex(nextIndex);
+
                 startAutoPlay();
             }
         });
@@ -933,7 +942,7 @@ public class ExoPlayerFragment extends Fragment {
                         playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
                         break;
                 }
-                setToolbarImageButtonStatus();
+                setImageButtonStatus();
             }
         });
 
@@ -1001,7 +1010,7 @@ public class ExoPlayerFragment extends Fragment {
         menu.close();
     }
 
-    private void setToolbarImageButtonStatus() {
+    private void setImageButtonStatus() {
         boolean isAutoPlay = playingParam.isAutoPlay();
         boolean isPlayingSingleSong = playingParam.isPlaySingleSong();
         if ( isAutoPlay || isPlayingSingleSong ) {
@@ -1097,8 +1106,8 @@ public class ExoPlayerFragment extends Fragment {
             songInfo = null;    // default
             Bundle arguments = getArguments();
             if (arguments != null) {
-                playingParam.setPlaySingleSong(arguments.getBoolean(IsPlaySingleSongState));
-                songInfo = arguments.getParcelable(SongInfoState);
+                playingParam.setPlaySingleSong(arguments.getBoolean(PlayerConstants.IsPlaySingleSongState));
+                songInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
             }
 
             trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
@@ -1117,7 +1126,7 @@ public class ExoPlayerFragment extends Fragment {
             if (playingParam == null) {
                 initializePlayingParam();
             }
-            songInfo = savedInstanceState.getParcelable(SongInfoState);
+            songInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
 
             trackSelectorParameters = savedInstanceState.getParcelable(PlayerConstants.TrackSelectorParametersState);
         }
@@ -1270,7 +1279,7 @@ public class ExoPlayerFragment extends Fragment {
                 switch (repeatStatus) {
                     case PlayerConstants.NoRepeatPlaying:
                         // no repeat
-                        if (publicNextSongIndex >= publicSongListSize) {
+                        if ( (publicNextSongIndex >= publicSongListSize) || (publicNextSongIndex<0) ) {
                             // stop playing
                             playingParam.setAutoPlay(false);
                             stopPlay();
@@ -1315,7 +1324,7 @@ public class ExoPlayerFragment extends Fragment {
             }
             Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
-        setToolbarImageButtonStatus();
+        setImageButtonStatus();
     }
 
     private void playSingleSong(SongInfo songInfo) {
