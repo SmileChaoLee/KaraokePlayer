@@ -849,6 +849,10 @@ public class ExoPlayerFragment extends Fragment {
                     case PlayerConstants.RepeatOneSong:
                         // because in startAutoPlay() will subtract 1 from next index
                         nextIndex++;
+                        if (nextIndex == 0) {
+                            // go to last song
+                            nextIndex = publicSongListSize;
+                        }
                         break;
                     case PlayerConstants.RepeatAllSongs:
                         if (nextIndex < 0) {
@@ -903,20 +907,13 @@ public class ExoPlayerFragment extends Fragment {
                 int publicSongListSize = publicSongList.size();
                 int nextIndex = playingParam.getPublicNextSongIndex();
                 int repeatStatus = playingParam.getRepeatStatus();
-                switch (repeatStatus) {
-                    case PlayerConstants.RepeatOneSong:
-                        nextIndex++;
-                        break;
-                    case PlayerConstants.RepeatAllSongs:
-                        if (nextIndex > publicSongListSize) {
-                            // it is playing the last one right now
-                            // so it is going to play the first one
-                            nextIndex = 0;
-                        }
-                        break;
-                    case PlayerConstants.NoRepeatPlaying:
-                    default:
-                        break;
+                if (repeatStatus == PlayerConstants.RepeatOneSong) {
+                    nextIndex++;
+                }
+                if (nextIndex > publicSongListSize) {
+                    // it is playing the last one right now
+                    // so it is going to play the first one
+                    nextIndex = 0;
                 }
                 playingParam.setPublicNextSongIndex(nextIndex);
 
