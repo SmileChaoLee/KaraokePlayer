@@ -22,6 +22,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
@@ -65,14 +66,14 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
                 Bundle extras = callingIntent.getExtras();
                 if (extras != null) {
                     Log.d(TAG, "extras is not null.");
-                    isPlayingSingleSong = extras.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
-                    songInfo = extras.getParcelable(ExoPlayerFragment.SongInfoState);
+                    isPlayingSingleSong = extras.getBoolean(PlayerConstants.IsPlaySingleSongState, false);
+                    songInfo = extras.getParcelable(PlayerConstants.SongInfoState);
                 }
             }
         } else {
             Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(ExoPlayerFragment.IsPlaySingleSongState, false);
-            songInfo = savedInstanceState.getParcelable(ExoPlayerFragment.SongInfoState);
+            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerConstants.IsPlaySingleSongState, false);
+            songInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
         }
 
         super.onCreate(savedInstanceState);
@@ -158,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"MainActivity-->onSaveInstanceState() is called.");
-        outState.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, isPlayingSingleSong);
-        outState.putParcelable(ExoPlayerFragment.SongInfoState, songInfo);
+        outState.putBoolean(PlayerConstants.IsPlaySingleSongState, isPlayingSingleSong);
+        outState.putParcelable(PlayerConstants.SongInfoState, songInfo);
         super.onSaveInstanceState(outState);
     }
 

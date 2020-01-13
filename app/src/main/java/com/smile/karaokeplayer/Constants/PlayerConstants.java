@@ -30,4 +30,8 @@ public final class PlayerConstants {
     public static final int NoRepeatPlaying = 0;
     public static final int RepeatOneSong = 1;
     public static final int RepeatAllSongs = 2;
+
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    public static final String IsPlaySingleSongState = "IsPlaySingleSong";
+    public static final String SongInfoState = "SongInfo";
 }

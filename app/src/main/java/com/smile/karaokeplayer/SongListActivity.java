@@ -21,6 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -316,7 +317,7 @@ public class SongListActivity extends AppCompatActivity {
                         // Intent playOneSongIntent = new Intent(getApplicationContext(), PlaySingleSongActivity.class);
                         Intent playOneSongIntent = new Intent(getApplicationContext(), MainActivity.class);
                         Bundle extras = new Bundle();
-                        extras.putBoolean(ExoPlayerFragment.IsPlaySingleSongState, true);   // play single song
+                        extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                         extras.putParcelable("SongInfo", songInfo);
                         playOneSongIntent.putExtras(extras);
                         startActivityForResult(playOneSongIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
