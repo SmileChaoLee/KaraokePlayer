@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/app_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:requestLegacyExternalStorage="true">
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -36,12 +37,15 @@
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SongListActivity"></activity>
-        <activity android:name=".SongDataActivity"></activity>
+        <activity
+            android:name=".PlayerBaseActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity android:name=".SongListActivity" />
+        <activity android:name=".SongDataActivity" />
     </application>
 
 </manifest>

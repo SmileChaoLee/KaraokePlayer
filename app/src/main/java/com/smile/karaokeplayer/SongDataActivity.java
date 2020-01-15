@@ -283,17 +283,23 @@ public class SongDataActivity extends AppCompatActivity {
             Uri filePathUri = null;
             if (data != null) {
                 filePathUri = data.getData();
-                Log.i(TAG, "Filepath Uri: " + filePathUri.toString());
+                Log.i(TAG, "Filepath Uri: " + filePathUri);
 
                 if ( (filePathUri == null) || (Uri.EMPTY.equals(filePathUri)) ) {
                     return;
                 }
 
-                String filePathString = filePathUri.toString();
-                Uri uri = Uri.parse(filePathString);
-                Log.i(TAG, "Uri from filePathString: " + uri.toString());
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getContentResolver().takePersistableUriPermission(filePathUri, takeFlags);
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Failed to add persistable permission of filePathUri");
+                    ex.printStackTrace();
+                }
 
-                edit_filePathEditText.setText(filePathString);
+                edit_filePathEditText.setText(filePathUri.toString());
             }
             return;
         }

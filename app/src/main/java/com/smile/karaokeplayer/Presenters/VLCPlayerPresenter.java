@@ -3,6 +3,7 @@ package com.smile.karaokeplayer.Presenters;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -343,20 +344,24 @@ public class VLCPlayerPresenter {
             return;
         }
 
-        mediaUri = null;
-        if (VLCPlayerFragment.useFilePicker) {
+        // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
+            // to let devices that are above (included) API 29 can still use external storage
+            mediaUri = null;
             filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
             if (filePath != null) {
                 if (!filePath.isEmpty()) {
                     File songFile = new File(filePath);
-                    mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
+                    mediaUri = Uri.fromFile(songFile);
                 }
             }
-        } else {
-            mediaUri = Uri.parse(filePath);
-        }
+        // } else {
+        //     mediaUri = Uri.parse(filePath);
+        // }
 
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
+            Log.d(TAG, "Media Uri is empty.");
+            ScreenUtil.showToast(callingContext, "Media Uri is empty.", toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
 

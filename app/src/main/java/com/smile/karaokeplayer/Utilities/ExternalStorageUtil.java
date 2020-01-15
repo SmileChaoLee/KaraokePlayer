@@ -11,7 +11,8 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
-public class ExternalStorageUtil {
+public final class ExternalStorageUtil {
+    private ExternalStorageUtil() {}
 
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
@@ -101,7 +102,8 @@ public class ExternalStorageUtil {
                         String realDocId = idArr[1];
 
                         if ("primary".equalsIgnoreCase(type)) {
-                            ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
+                            // ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
+                            ret = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + realDocId;
                         }
                     }
                 }

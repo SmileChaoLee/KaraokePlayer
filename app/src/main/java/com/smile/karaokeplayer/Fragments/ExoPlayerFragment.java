@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -88,9 +89,12 @@ import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.SongListActivity;
+import com.smile.karaokeplayer.Utilities.AccessContentUtil;
+import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
@@ -515,7 +519,7 @@ public class ExoPlayerFragment extends Fragment {
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
                     // isMediaSourcePrepared = false;
-                    selectFileToOpen();
+                    AccessContentUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE);
                 }
                 break;
             case R.id.privacyPolicy:
@@ -663,6 +667,7 @@ public class ExoPlayerFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Log.d(TAG, "onActivityResult() is called.");
         super.onActivityResult(requestCode, resultCode, data);
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
@@ -680,6 +685,17 @@ public class ExoPlayerFragment extends Fragment {
                 if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) ) {
                     return;
                 }
+
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getActivity().getContentResolver().takePersistableUriPermission(mediaUri, takeFlags);
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Failed to add persistable permission of mediaUri");
+                    ex.printStackTrace();
+                }
+
                 playingParam.setCurrentVideoTrackIndexPlayed(0);
 
                 int currentAudioRederer = 0;
@@ -1129,21 +1145,6 @@ public class ExoPlayerFragment extends Fragment {
         }
     }
 
-    private void selectFileToOpen() {
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        } else {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-        }
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-
-        startActivityForResult(intent, PlayerConstants.FILE_READ_REQUEST_CODE);
-    }
-
     private void showBufferingMessage() {
         messageLinearLayout.setVisibility(View.VISIBLE);
         bufferingStringTextView.startAnimation(animationText);
@@ -1339,8 +1340,24 @@ public class ExoPlayerFragment extends Fragment {
             return;
         }
 
-        mediaUri = Uri.parse(filePath);
+        // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
+            // to let devices that are above (included) API 29 can still use external storage
+            mediaUri = null;
+            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    mediaUri = Uri.fromFile(songFile);
+                }
+            }
+        // } else {
+        //     mediaUri = Uri.parse(filePath);
+        // }
+
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
+            Log.d(TAG, "Media Uri is empty.");
+            ScreenUtil.showToast(callingContext, "Media Uri is empty.", toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
 

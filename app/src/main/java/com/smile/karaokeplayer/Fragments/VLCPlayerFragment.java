@@ -60,6 +60,7 @@ import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.SongListActivity;
+import com.smile.karaokeplayer.Utilities.AccessContentUtil;
 import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -529,7 +530,7 @@ public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.Pr
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
                     // isMediaSourcePrepared = false;
-                    selectFileToOpen();
+                    AccessContentUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE);
                 }
                 break;
             case R.id.privacyPolicy:
@@ -706,6 +707,16 @@ public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.Pr
                     return;
                 }
 
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        getActivity().getContentResolver().takePersistableUriPermission(orgMediaUri, takeFlags);
+                    }
+                } catch (Exception ex) {
+                    Log.d(TAG, "Failed to add persistable permission of orgMediaUri");
+                    ex.printStackTrace();
+                }
+
                 PlayingParameters playingParam = mPresenter.getPlayingParam();
                 playingParam.setCurrentVideoTrackIndexPlayed(0);
 
@@ -733,7 +744,7 @@ public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.Pr
                     if (filePath != null) {
                         if (!filePath.isEmpty()) {
                             File songFile = new File(filePath);
-                            mediaUri = Uri.fromFile(songFile);   // ACTION_GET_CONTENT
+                            mediaUri = Uri.fromFile(songFile);
                         }
                     }
                 }
@@ -1096,20 +1107,6 @@ public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.Pr
             closeMenu(subMenu);
         }
         menu.close();
-    }
-
-    private void selectFileToOpen() {
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-        } else {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-        }
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        startActivityForResult(intent, PlayerConstants.FILE_READ_REQUEST_CODE);
     }
 
     // Implement PlayerPresenter.PresentView
