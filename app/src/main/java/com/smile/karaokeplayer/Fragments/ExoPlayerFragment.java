@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -89,7 +88,7 @@ import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.SongListActivity;
-import com.smile.karaokeplayer.Utilities.AccessContentUtil;
+import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -175,7 +174,7 @@ public class ExoPlayerFragment extends Fragment {
     private ArrayList<SongInfo> publicSongList;
     private PlayingParameters playingParam;
     private boolean canShowNotSupportedFormat;
-    private SongInfo songInfo;
+    private SongInfo singleSongInfo;
 
     private OnFragmentInteractionListener mListener;
 
@@ -193,15 +192,24 @@ public class ExoPlayerFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param isPlaySingleSong Parameter 1.
-     * @param songInfo Parameter 2.
+     * @param callingActivityIntent Parameter 1.
      * @return A new instance of fragment ExoPlayerFragment.
      */
-    public static ExoPlayerFragment newInstance(boolean isPlaySingleSong, SongInfo songInfo) {
+    public static ExoPlayerFragment newInstance(Intent callingActivityIntent) {
+        boolean isPlaySingleSong = false;
+        SongInfo singleSongInfo = null;
+        Bundle extras = null;
+        if (callingActivityIntent != null) {
+            extras = callingActivityIntent.getExtras();
+            if (extras != null) {
+                isPlaySingleSong = extras.getBoolean(PlayerConstants.IsPlaySingleSongState, false);
+                singleSongInfo = extras.getParcelable(PlayerConstants.SongInfoState);
+            }
+        }
         ExoPlayerFragment fragment = new ExoPlayerFragment();
         Bundle args = new Bundle();
         args.putBoolean(PlayerConstants.IsPlaySingleSongState, isPlaySingleSong);
-        args.putParcelable(PlayerConstants.SongInfoState, songInfo);
+        args.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -389,17 +397,14 @@ public class ExoPlayerFragment extends Fragment {
 
         showNativeAds();
 
-        if (songInfo == null) {
-            Log.d(TAG, "songInfo is null");
-        } else {
-            Log.d(TAG, "songInfo is not null");
-        }
-
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
-                if (songInfo != null) {
+                if (singleSongInfo == null) {
+                    Log.d(TAG, "singleSongInfo is null");
+                } else {
+                    Log.d(TAG, "singleSongInfo is not null");
                     playingParam.setAutoPlay(false);
-                    playSingleSong(songInfo);
+                    playSingleSong(singleSongInfo);
                 }
             }
         } else {
@@ -519,7 +524,7 @@ public class ExoPlayerFragment extends Fragment {
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {
                     // isMediaSourcePrepared = false;
-                    AccessContentUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE);
+                    DataOrContentAccessUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE);
                 }
                 break;
             case R.id.privacyPolicy:
@@ -657,7 +662,7 @@ public class ExoPlayerFragment extends Fragment {
 
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
-        outState.putParcelable(PlayerConstants.SongInfoState, songInfo);
+        outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
 
         trackSelectorParameters = trackSelector.getParameters();
         outState.putParcelable(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters);
@@ -1116,11 +1121,12 @@ public class ExoPlayerFragment extends Fragment {
             mediaUri = null;
             initializePlayingParam();
             canShowNotSupportedFormat = false;
-            songInfo = null;    // default
+            playingParam.setPlaySingleSong(false);  // default
+            singleSongInfo = null;    // default
             Bundle arguments = getArguments();
             if (arguments != null) {
                 playingParam.setPlaySingleSong(arguments.getBoolean(PlayerConstants.IsPlaySingleSongState));
-                songInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
+                singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
             }
 
             trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
@@ -1139,7 +1145,7 @@ public class ExoPlayerFragment extends Fragment {
             if (playingParam == null) {
                 initializePlayingParam();
             }
-            songInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
+            singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
 
             trackSelectorParameters = savedInstanceState.getParcelable(PlayerConstants.TrackSelectorParametersState);
         }

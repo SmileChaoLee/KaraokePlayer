@@ -7,10 +7,13 @@ import android.os.Build;
 
 import androidx.fragment.app.Fragment;
 
-import com.smile.karaokeplayer.Constants.PlayerConstants;
+import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 
-public final class AccessContentUtil {
-    private AccessContentUtil() {}
+import java.util.ArrayList;
+
+public final class DataOrContentAccessUtil {
+    private DataOrContentAccessUtil() {}
 
     public static void selectFileToOpen(Activity activity, int requestCode) {
         Intent intent = createIntentForSelectingFile();
@@ -36,5 +39,19 @@ public final class AccessContentUtil {
         intent.setType("*/*");
 
         return intent;
+    }
+
+    public static ArrayList<SongInfo> readPublicSongList(Context callingContext) {
+        ArrayList<SongInfo> playlist;
+        SongListSQLite songListSQLite = new SongListSQLite(callingContext);
+        if (songListSQLite != null) {
+            playlist = songListSQLite.readPlaylist();
+            songListSQLite.closeDatabase();
+            songListSQLite = null;
+        } else {
+            playlist = new ArrayList<>();
+        }
+
+        return playlist;
     }
 }

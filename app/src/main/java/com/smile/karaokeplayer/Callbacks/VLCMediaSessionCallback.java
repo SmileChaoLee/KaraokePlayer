@@ -50,8 +50,10 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     public void onPrepareFromUri(Uri uri, Bundle extras) {
         Log.d(TAG, "onPrepareFromUri() is called.");
         super.onPrepareFromUri(uri, extras);
+
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         playingParam.setMediaSourcePrepared(false);
+
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         float currentVolume = playingParam.getCurrentVolume();
         int playbackState = playbackState = playingParam.getCurrentPlaybackState();

@@ -22,16 +22,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
-import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-// public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
-public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
+// public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -41,9 +39,7 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
     private float toastTextSize;
     private String accessExternalStoragePermissionDeniedString;
     private boolean hasPermissionForExternalStorage;
-    private boolean isPlayingSingleSong;
 
-    private SongInfo songInfo;
     private Fragment playerFragment;
 
     @Override
@@ -58,23 +54,7 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
         Log.d(TAG, "fontScale = " + fontScale);
         toastTextSize = 0.7f * textFontSize;
 
-        isPlayingSingleSong = false;    // first entry of main activity
-        songInfo = null;
-        if (savedInstanceState == null) {
-            Intent callingIntent = getIntent();
-            if (callingIntent != null) {
-                Bundle extras = callingIntent.getExtras();
-                if (extras != null) {
-                    Log.d(TAG, "extras is not null.");
-                    isPlayingSingleSong = extras.getBoolean(PlayerConstants.IsPlaySingleSongState, false);
-                    songInfo = extras.getParcelable(PlayerConstants.SongInfoState);
-                }
-            }
-        } else {
-            Log.d(TAG, "savedInstanceState is not null.");
-            isPlayingSingleSong = savedInstanceState.getBoolean(PlayerConstants.IsPlaySingleSongState, false);
-            songInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
-        }
+        Intent callingIntent = getIntent();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -88,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
         String fragmentTag = CommonConstants.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
-            // playerFragment = ExoPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
-            playerFragment = VLCPlayerFragment.newInstance(isPlayingSingleSong, songInfo);
+            playerFragment = ExoPlayerFragment.newInstance(callingIntent);
+            // playerFragment = VLCPlayerFragment.newInstance(callingIntent);
             ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
         } else {
             ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
@@ -159,8 +139,6 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"MainActivity-->onSaveInstanceState() is called.");
-        outState.putBoolean(PlayerConstants.IsPlaySingleSongState, isPlayingSingleSong);
-        outState.putParcelable(PlayerConstants.SongInfoState, songInfo);
         super.onSaveInstanceState(outState);
     }
 

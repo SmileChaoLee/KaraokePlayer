@@ -37,7 +37,6 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
         AppCompatSeekBar player_duration_seekbar = mPresenter.getPresentView().getPlayer_duration_seekbar();
         PlayingParameters playingParam = mPresenter.getPlayingParam();
-        boolean canShowNotSupportedFormat = mPresenter.isCanShowNotSupportedFormat();
 
         switch(event.type) {
             case MediaPlayer.Event.Buffering:
@@ -101,10 +100,10 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
                 if (playingParam.isAutoPlay()) {
                     // go to next one in the list
-                    if (canShowNotSupportedFormat) {
+                    if (mPresenter.isCanShowNotSupportedFormat()) {
                         // only show once
+                        mPresenter.setCanShowNotSupportedFormat(false);
                         ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-                        canShowNotSupportedFormat = false;
                     }
                     mPresenter.startAutoPlay();
                 } else {

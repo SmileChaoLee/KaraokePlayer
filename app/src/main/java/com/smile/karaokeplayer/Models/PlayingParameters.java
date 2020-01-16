@@ -2,6 +2,10 @@ package com.smile.karaokeplayer.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.media.session.PlaybackStateCompat;
+
+import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 
 public class PlayingParameters implements Parcelable {
 
@@ -244,4 +248,28 @@ public class PlayingParameters implements Parcelable {
             return new PlayingParameters[size];
         }
     };
+
+    public void initializePlayingParameters() {
+        setAutoPlay(false);
+        setMediaSourcePrepared(false);
+        setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+
+        setCurrentVideoTrackIndexPlayed(0);
+
+        setMusicAudioTrackIndex(1);
+        setVocalAudioTrackIndex(1);
+        setCurrentAudioTrackIndexPlayed(getMusicAudioTrackIndex());
+        setMusicAudioChannel(CommonConstants.LeftChannel);     // default
+        setVocalAudioChannel(CommonConstants.StereoChannel);   // default
+        setCurrentChannelPlayed(getMusicAudioChannel());
+        setCurrentAudioPosition(0);
+        setCurrentVolume(1.0f);
+
+        setPublicNextSongIndex(0);
+        setPlayingPublic(true);
+
+        setMusicOrVocalOrNoSetting(0); // no music and vocal setting
+        setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
+        setPlaySingleSong(false);    // default
+    }
 }

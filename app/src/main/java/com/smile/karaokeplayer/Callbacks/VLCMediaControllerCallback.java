@@ -83,7 +83,9 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                 mPresenter.getPresentView().playButtonOnPauseButtonOff();
                 break;
         }
+
         playingParam.setCurrentPlaybackState(currentState);
+
         Log.d(TAG, "MediaControllerCallback.onPlaybackStateChanged() is called. " + currentState);
     }
 }
