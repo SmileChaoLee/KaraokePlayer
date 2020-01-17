@@ -22,7 +22,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -48,7 +47,6 @@ import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
@@ -56,8 +54,6 @@ import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
-
-import java.util.ArrayList;
 
 public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPresenter.PresentView{
 
@@ -71,6 +67,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     private String accessExternalStoragePermissionDeniedString;
     private boolean hasPermissionForExternalStorage;
 
+    protected LinearLayout playerViewLinearLayout;
     private Toolbar supportToolbar;  // use customized ToolBar
     private ActionMenuView actionMenuView;
     private VerticalSeekBar volumeSeekBar;
@@ -116,6 +113,15 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         fontScale = ScreenUtil.suitableFontScale(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
 
+        hasPermissionForExternalStorage = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+            }
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_exoplayer);
 
@@ -126,6 +132,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         final PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         // Video player view
+        // playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout);
         videoExoPlayerView = findViewById(R.id.videoExoPlayerView);
         videoExoPlayerView.setVisibility(View.VISIBLE);
 
@@ -139,21 +146,24 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         }
 
         //
+        volumeSeekBar = findViewById(R.id.volumeSeekBar);
+        // get default height of volumeBar from dimen.xml
+        // uses dimens.xml for different devices' sizes
+        volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
+        volumeImageButton = findViewById(R.id.volumeImageButton);
         previousMediaImageButton = findViewById(R.id.previousMediaImageButton);
         playMediaImageButton = findViewById(R.id.playMediaImageButton);
         pauseMediaImageButton = findViewById(R.id.pauseMediaImageButton);
         if (playingParam.getCurrentPlaybackState()==PlaybackStateCompat.STATE_PLAYING) {
-            playMediaImageButton.setVisibility(View.GONE);
-            pauseMediaImageButton.setVisibility(View.VISIBLE);
+            playButtonOffPauseButtonOn();
         } else {
-            playMediaImageButton.setVisibility(View.VISIBLE);
-            pauseMediaImageButton.setVisibility(View.GONE);
+            playButtonOnPauseButtonOff();
         }
+
         replayMediaImageButton = findViewById(R.id.replayMediaImageButton);
         stopMediaImageButton = findViewById(R.id.stopMediaImageButton);
         nextMediaImageButton = findViewById(R.id.nextMediaImageButton);
 
-        //
         repeatImageButton = findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
@@ -207,92 +217,27 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         TextView exo_duration_TextView = findViewById(R.id.exo_duration);
         ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
+        /*
+        mPresenter.initExoPlayer();   // must be before volumeSeekBar settings
+        videoExoPlayerView.setPlayer(mPresenter.getExoPlayer());
+        videoExoPlayerView.requestFocus();
+        mPresenter.initMediaSessionCompat();
+        */
+
+        setImageButtonStatus();
+        setButtonsPositionAndSize(getResources().getConfiguration());
+        setOnClickEvents();
+        showNativeAds();
+
         mPresenter.initExoPlayer();   // must be before volumeSeekBar settings
         videoExoPlayerView.setPlayer(mPresenter.getExoPlayer());
         videoExoPlayerView.requestFocus();
         mPresenter.initMediaSessionCompat();
 
-        volumeSeekBar = findViewById(R.id.volumeSeekBar);
-        // get default height of volumeBar from dimen.xml
-        volumeSeekBarHeightForLandscape = volumeSeekBar.getLayoutParams().height;
-        // uses dimens.xml for different devices' sizes
-        volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
-        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
-        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                volumeSeekBar.setProgressAndThumb(i);
-                // float currentVolume = (float)i / (float)MaxProgress;
-                float currentVolume = 1.0f;
-                if (i < PlayerConstants.MaxProgress) {
-                    currentVolume = (float)(1.0f - (Math.log(PlayerConstants.MaxProgress - i) / Math.log(PlayerConstants.MaxProgress)));
-                }
-                playingParam.setCurrentVolume(currentVolume);
-                mPresenter.setAudioVolume(currentVolume);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-        int currentProgress;
-        float currentVolume = playingParam.getCurrentVolume();
-        if ( currentVolume >= 1.0f) {
-            currentProgress = PlayerConstants.MaxProgress;
-        } else {
-            currentProgress = PlayerConstants.MaxProgress - (int)Math.pow(PlayerConstants.MaxProgress, (1-currentVolume));
-            currentProgress = Math.max(0, currentProgress);
-        }
+        int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
-        volumeImageButton = findViewById(R.id.volumeImageButton);
 
-        setImageButtonStatus();
-        setButtonsPositionAndSize(getResources().getConfiguration());
-
-        setOnClickEvents();
-
-        showNativeAds();
-
-        Uri mediaUri = mPresenter.getMediaUri();
-        if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
-            if (playingParam.isPlaySingleSong()) {
-                SongInfo singleSongInfo = mPresenter.getSingleSongInfo();
-                if (singleSongInfo == null) {
-                    Log.d(TAG, "singleSongInfo is null");
-                } else {
-                    Log.d(TAG, "singleSongInfo is not null");
-                    playingParam.setAutoPlay(false);
-                    mPresenter.playSingleSong(singleSongInfo);
-                }
-            }
-        } else {
-            int playbackState = playingParam.getCurrentPlaybackState();
-            Log.d(TAG, "onActivityCreated() --> playingParam.getCurrentPlaybackState() = " + playbackState);
-            if (playbackState != PlaybackStateCompat.STATE_NONE) {
-                // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-                // pass the saved instance of playingParam to
-                // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-                Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-                MediaControllerCompat.TransportControls mediaTransportControls = mPresenter.getMediaTransportControls();
-                mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
-            }
-        }
-
-        hasPermissionForExternalStorage = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
-            }
-        }
+        mPresenter.playTheSongThatWasPlayedBeforeActivityRecreated();
     }
 
     @Override
@@ -346,8 +291,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         PlayingParameters playingParam = mPresenter.getPlayingParam();
-
-        boolean isAutoPlay;
         int currentChannelPlayed = playingParam.getCurrentChannelPlayed();
 
         if (item.hasSubMenu()) {
@@ -368,32 +311,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
                 break;
             case R.id.autoPlay:
                 // item.isChecked() return the previous value
-                isAutoPlay = !playingParam.isAutoPlay();
-                // boolean canShowNotSupportedFormat = true;
-                mPresenter.setCanShowNotSupportedFormat(true);
-                if (isAutoPlay) {
-                    ArrayList<SongInfo> publicSongList = DataOrContentAccessUtil.readPublicSongList(this);
-                    mPresenter.setPublicSongList(publicSongList);
-                    if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
-                        playingParam.setAutoPlay(true);
-                        playingParam.setPublicNextSongIndex(0);
-                        // start playing video from list
-                        // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
-                        if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
-                            // media is playing or prepared
-                            // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
-                            Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
-
-                        }
-                        mPresenter.startAutoPlay();
-                    } else {
-                        String msg = getString(R.string.noPlaylistString);
-                        ScreenUtil.showToast(this, msg, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-                    }
-                } else {
-                    playingParam.setAutoPlay(isAutoPlay);
-                }
-                setImageButtonStatus();
+                mPresenter.setAutoPlayStatusAndAction();
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(this, SongListActivity.class);
@@ -496,16 +414,13 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
 
                 break;
             case R.id.leftChannel:
-                playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
-                mPresenter.setAudioVolume(playingParam.getCurrentVolume());
+                mPresenter.playLeftChannel();
                 break;
             case R.id.rightChannel:
-                playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
-                mPresenter.setAudioVolume(playingParam.getCurrentVolume());
+                mPresenter.playRightChannel();
                 break;
             case R.id.stereoChannel:
-                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-                mPresenter.setAudioVolume(playingParam.getCurrentVolume());
+                mPresenter.playStereoChannel();
                 break;
         }
 
@@ -557,30 +472,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
                     ex.printStackTrace();
                 }
 
-                mPresenter.setMediaUri(mediaUri);
-
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                playingParam.setCurrentVideoTrackIndexPlayed(0);
-                int currentAudioRederer = 0;
-                playingParam.setMusicAudioTrackIndex(currentAudioRederer);
-                playingParam.setVocalAudioTrackIndex(currentAudioRederer);
-                playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
-                playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
-                playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
-                playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-                playingParam.setCurrentAudioPosition(0);
-                playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-                playingParam.setMediaSourcePrepared(false);
-                // music or vocal is unknown
-                playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
-                // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-                // pass the saved instance of playingParam to
-                // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-
-                Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-                MediaControllerCompat.TransportControls mediaTransportControls = mPresenter.getMediaTransportControls();
-                mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
+                mPresenter.playSelectedSongFromStorage(mediaUri);
             }
             return;
         }
@@ -732,6 +624,21 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     }
 
     private void setOnClickEvents() {
+        volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
+        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                volumeSeekBar.setProgressAndThumb(i);
+                mPresenter.setAudioVolumeInsideVolumeSeekBar(i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
         volumeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -748,37 +655,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<SongInfo> publicSongList = mPresenter.getPublicSongList();
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-                    return;
-                }
-                int publicSongListSize = publicSongList.size();
-                int nextIndex = playingParam.getPublicNextSongIndex();
-                int repeatStatus = playingParam.getRepeatStatus();
-                nextIndex = nextIndex - 2;
-                switch (repeatStatus) {
-                    case PlayerConstants.RepeatOneSong:
-                        // because in startAutoPlay() will subtract 1 from next index
-                        nextIndex++;
-                        if (nextIndex == 0) {
-                            // go to last song
-                            nextIndex = publicSongListSize;
-                        }
-                        break;
-                    case PlayerConstants.RepeatAllSongs:
-                        if (nextIndex < 0) {
-                            // is going to play the last one
-                            nextIndex = publicSongListSize - 1; // the last one
-                        }
-                        break;
-                    case PlayerConstants.NoRepeatPlaying:
-                    default:
-                        break;
-                }
-                playingParam.setPublicNextSongIndex(nextIndex);
-
-                mPresenter.startAutoPlay();
+                mPresenter.playPreviousSong();
             }
         });
 
@@ -813,48 +690,14 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ArrayList<SongInfo> publicSongList = mPresenter.getPublicSongList();
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-                    return;
-                }
-                int publicSongListSize = publicSongList.size();
-                int nextIndex = playingParam.getPublicNextSongIndex();
-                int repeatStatus = playingParam.getRepeatStatus();
-                if (repeatStatus == PlayerConstants.RepeatOneSong) {
-                    nextIndex++;
-                }
-                if (nextIndex > publicSongListSize) {
-                    // it is playing the last one right now
-                    // so it is going to play the first one
-                    nextIndex = 0;
-                }
-                playingParam.setPublicNextSongIndex(nextIndex);
-
-                mPresenter.startAutoPlay();
+                mPresenter.playNextSong();
             }
         });
 
         repeatImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                int repeatStatus = playingParam.getRepeatStatus();
-                switch (repeatStatus) {
-                    case PlayerConstants.NoRepeatPlaying:
-                        // switch to repeat one song
-                        playingParam.setRepeatStatus(PlayerConstants.RepeatOneSong);
-                        break;
-                    case PlayerConstants.RepeatOneSong:
-                        // switch to repeat song list
-                        playingParam.setRepeatStatus(PlayerConstants.RepeatAllSongs);
-                        break;
-                    case PlayerConstants.RepeatAllSongs:
-                        // switch to no repeat
-                        playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
-                        break;
-                }
-                setImageButtonStatus();
+                mPresenter.setRepeatSongStatus();
             }
         });
 

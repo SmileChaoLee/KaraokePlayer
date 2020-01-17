@@ -38,6 +38,7 @@ import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -281,6 +282,45 @@ public class ExoPlayerPresenter {
             exoPlayer.setVolume(volume);
         }
         playingParam.setCurrentVolume(volume);
+    }
+
+    public void setAudioVolumeInsideVolumeSeekBar(int i) {
+        // needed to put inside the presenter
+        float currentVolume = 1.0f;
+        if (i < PlayerConstants.MaxProgress) {
+            currentVolume = (float)(1.0f - (Math.log(PlayerConstants.MaxProgress - i) / Math.log(PlayerConstants.MaxProgress)));
+        }
+        playingParam.setCurrentVolume(currentVolume);
+        setAudioVolume(currentVolume);
+        //
+    }
+
+    public int setCurrentProgressForVolumeSeekBar() {
+        int currentProgress;
+        float currentVolume = playingParam.getCurrentVolume();
+        if ( currentVolume >= 1.0f) {
+            currentProgress = PlayerConstants.MaxProgress;
+        } else {
+            currentProgress = PlayerConstants.MaxProgress - (int)Math.pow(PlayerConstants.MaxProgress, (1-currentVolume));
+            currentProgress = Math.max(0, currentProgress);
+        }
+
+        return currentProgress;
+    }
+
+    public void playLeftChannel() {
+        playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
+        setAudioVolume(playingParam.getCurrentVolume());
+    }
+
+    public void playRightChannel() {
+        playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
+        setAudioVolume(playingParam.getCurrentVolume());
+    }
+
+    public void playStereoChannel() {
+        playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
+        setAudioVolume(playingParam.getCurrentVolume());
     }
 
     public void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
@@ -656,6 +696,156 @@ public class ExoPlayerPresenter {
             Log.d(TAG, "startAutoPlay() finished --> ordered song.");
         }
 
+        presentView.setImageButtonStatus();
+    }
+
+    public void setAutoPlayStatusAndAction() {
+        boolean isAutoPlay = !playingParam.isAutoPlay();
+        canShowNotSupportedFormat = true;
+        if (isAutoPlay) {
+            publicSongList = DataOrContentAccessUtil.readPublicSongList(callingContext);
+            if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
+                playingParam.setAutoPlay(true);
+                playingParam.setPublicNextSongIndex(0);
+                // start playing video from list
+                // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
+                if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
+                    // media is playing or prepared
+                    // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
+                    Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
+
+                }
+                startAutoPlay();
+            } else {
+                String msg = callingContext.getString(R.string.noPlaylistString);
+                ScreenUtil.showToast(callingContext, msg, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            }
+        } else {
+            playingParam.setAutoPlay(isAutoPlay);
+        }
+        presentView.setImageButtonStatus();
+    }
+
+    public void playPreviousSong() {
+        if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+            return;
+        }
+        int publicSongListSize = publicSongList.size();
+        int nextIndex = playingParam.getPublicNextSongIndex();
+        int repeatStatus = playingParam.getRepeatStatus();
+        nextIndex = nextIndex - 2;
+        switch (repeatStatus) {
+            case PlayerConstants.RepeatOneSong:
+                // because in startAutoPlay() will subtract 1 from next index
+                nextIndex++;
+                if (nextIndex == 0) {
+                    // go to last song
+                    nextIndex = publicSongListSize;
+                }
+                break;
+            case PlayerConstants.RepeatAllSongs:
+                if (nextIndex < 0) {
+                    // is going to play the last one
+                    nextIndex = publicSongListSize - 1; // the last one
+                }
+                break;
+            case PlayerConstants.NoRepeatPlaying:
+            default:
+                break;
+        }
+        playingParam.setPublicNextSongIndex(nextIndex);
+
+        startAutoPlay();
+    }
+
+    public void playNextSong() {
+        if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+            return;
+        }
+        int publicSongListSize = publicSongList.size();
+        int nextIndex = playingParam.getPublicNextSongIndex();
+        int repeatStatus = playingParam.getRepeatStatus();
+        if (repeatStatus == PlayerConstants.RepeatOneSong) {
+            nextIndex++;
+        }
+        if (nextIndex > publicSongListSize) {
+            // it is playing the last one right now
+            // so it is going to play the first one
+            nextIndex = 0;
+        }
+        playingParam.setPublicNextSongIndex(nextIndex);
+
+        startAutoPlay();
+    }
+
+    public void playSelectedSongFromStorage(Uri tempUri) {
+        mediaUri = tempUri;
+        playingParam.setCurrentVideoTrackIndexPlayed(0);
+        int currentAudioRederer = 0;
+        playingParam.setMusicAudioTrackIndex(currentAudioRederer);
+        playingParam.setVocalAudioTrackIndex(currentAudioRederer);
+        playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
+        playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
+        playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
+        playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
+        playingParam.setCurrentAudioPosition(0);
+        playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+        playingParam.setMediaSourcePrepared(false);
+        // music or vocal is unknown
+        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
+        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
+        // pass the saved instance of playingParam to
+        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
+
+        Bundle playingParamOriginExtras = new Bundle();
+        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
+        mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
+    }
+
+    public void playTheSongThatWasPlayedBeforeActivityRecreated() {
+        // Uri mediaUri = mPresenter.getMediaUri();
+        if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
+            if (playingParam.isPlaySingleSong()) {
+                // SongInfo singleSongInfo = mPresenter.getSingleSongInfo();
+                if (singleSongInfo == null) {
+                    Log.d(TAG, "singleSongInfo is null");
+                } else {
+                    Log.d(TAG, "singleSongInfo is not null");
+                    playingParam.setAutoPlay(false);
+                    playSingleSong(singleSongInfo);
+                }
+            }
+        } else {
+            int playbackState = playingParam.getCurrentPlaybackState();
+            Log.d(TAG, "onActivityCreated() --> playingParam.getCurrentPlaybackState() = " + playbackState);
+            if (playbackState != PlaybackStateCompat.STATE_NONE) {
+                // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
+                // pass the saved instance of playingParam to
+                // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
+                Bundle playingParamOriginExtras = new Bundle();
+                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
+                // MediaControllerCompat.TransportControls mediaTransportControls = mPresenter.getMediaTransportControls();
+                mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
+            }
+        }
+    }
+
+    public void setRepeatSongStatus() {
+        int repeatStatus = playingParam.getRepeatStatus();
+        switch (repeatStatus) {
+            case PlayerConstants.NoRepeatPlaying:
+                // switch to repeat one song
+                playingParam.setRepeatStatus(PlayerConstants.RepeatOneSong);
+                break;
+            case PlayerConstants.RepeatOneSong:
+                // switch to repeat song list
+                playingParam.setRepeatStatus(PlayerConstants.RepeatAllSongs);
+                break;
+            case PlayerConstants.RepeatAllSongs:
+                // switch to no repeat
+                playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
+                break;
+        }
         presentView.setImageButtonStatus();
     }
 
