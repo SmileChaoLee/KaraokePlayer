@@ -83,19 +83,6 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         return presentView;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
-        super.initializeVariables(savedInstanceState, callingIntent);
-        if (savedInstanceState == null) {
-            videoTrackIndicesList = new ArrayList<>();
-            audioTrackIndicesList = new ArrayList<>();
-        } else {
-            videoTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
-            audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
-        }
-    }
-
     public void attachPlayerViews(VLCVideoLayout videoVLCPlayerView, @Nullable DisplayManager dm, boolean enableSUBTITLES, boolean use_TEXTURE_VIEW) {
         vlcPlayer.attachViews(videoVLCPlayerView, dm, enableSUBTITLES, use_TEXTURE_VIEW);
     }
@@ -245,6 +232,25 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         // update the duration on controller UI
         float duration = vlcPlayer.getLength();
         presentView.update_Player_duration_seekbar(duration);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        super.initializeVariables(savedInstanceState, callingIntent);
+        if (savedInstanceState == null) {
+            videoTrackIndicesList = new ArrayList<>();
+            audioTrackIndicesList = new ArrayList<>();
+        } else {
+            videoTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
+            audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+        }
+    }
+
+    @Override
+    public boolean isSeekable() {
+        boolean result = super.isSeekable();
+        return result;
     }
 
     @Override

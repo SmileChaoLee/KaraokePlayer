@@ -8,11 +8,4 @@
     android:background="@android:color/black"
     tools:context=".MainActivity">
 
-    <LinearLayout
-        android:id="@+id/playerFragmentLayout"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

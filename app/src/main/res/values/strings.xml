@@ -54,4 +54,5 @@
     <string name="vocalString">Vocal</string>
     <string name="titileEmptyString">Title is empty</string>
     <string name="filepathEmptyString">File path is empty</string>
+    <string name="notSeekableSongString">Unable to forward and backward</string>
 </resources>

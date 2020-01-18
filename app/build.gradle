@@ -44,7 +44,7 @@ android {
                 exclude "**/PlaySingleSongActivity.java"
                 // exclude "**/ExternalStorageUtil.java"
 
-                // exclude "**/ExoPlayerFragment.java"
+                exclude "**/ExoPlayerFragment.java"
                 // exclude "**/PlayerBaseActivity.java"
                 // exclude "**/ExoPlayerPresenter.java"
                 // exclude "**/ExoPlayerEventListener.java"
@@ -59,9 +59,9 @@ android {
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"
-                // exclude "**/fragment_exoplayer.xml"
+                exclude "**/fragment_exoplayer.xml"
+                exclude "**/exoplayer_audio_controller_layout.xml"
                 // exclude "**/player_audio_controller_layout.xml"
-                // exclude "**/exoplayer_audio_controller_layout.xml"
             }
         }
     }

@@ -7,29 +7,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
-import com.smile.karaokeplayer.Fragments.VLCPlayerFragment;
-import com.smile.smilelibraries.Models.ExitAppTimer;
-import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-// public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
-public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -40,66 +26,38 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
     private String accessExternalStoragePermissionDeniedString;
     private boolean hasPermissionForExternalStorage;
 
-    private Fragment playerFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(TAG, "onCreate() is called");
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, null);
-        Log.d(TAG, "defaultTextFontSize = " + defaultTextFontSize);
-        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        Log.d(TAG, "textFontSize = " + textFontSize);
-        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        Log.d(TAG, "fontScale = " + fontScale);
-        toastTextSize = 0.7f * textFontSize;
-
-        Intent callingIntent = getIntent();
-
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        int playerFragmentLayoutId = R.id.playerFragmentLayout;
-        LinearLayout playerFragmentLayout = findViewById(playerFragmentLayoutId);
-
-        FragmentManager fmManager = getSupportFragmentManager();
-        FragmentTransaction ft = fmManager.beginTransaction();
-
-        String fragmentTag = CommonConstants.PlayerFragmentTag;
-        playerFragment = fmManager.findFragmentByTag(fragmentTag);
-        if (playerFragment == null) {
-            // playerFragment = ExoPlayerFragment.newInstance(callingIntent);
-            playerFragment = VLCPlayerFragment.newInstance(callingIntent);
-            ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
-        } else {
-            ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
-        }
-        ft.addToBackStack(fragmentTag);
-        if (playerFragment.isStateSaved()) {
-            ft.commitAllowingStateLoss();
-        } else {
-            ft.commit();
-        }
-
-        hasPermissionForExternalStorage = true;
+        hasPermissionForExternalStorage = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+            } else {
+                hasPermissionForExternalStorage = true;
             }
         }
 
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(SmileApplication.AppContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        toastTextSize = 0.7f * textFontSize;
+
+        super.onCreate(savedInstanceState);
+
+        if (hasPermissionForExternalStorage) {
+            startPlayerActivity();
+        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
+    private void startPlayerActivity() {
+        // Intent callingIntent = getIntent();
+        Intent startPlayerActivityIntent = new Intent(this, ExoPlayerActivity.class);
+        // startPlayerActivityIntent.putExtra("CallingIntent", callingIntent);
+        startActivity(startPlayerActivityIntent);
+        returnToPrevious();   // exit the MainActivity immediately
     }
 
     @Override
@@ -134,12 +92,7 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
                 hasPermissionForExternalStorage = true;
             }
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.d(TAG,"MainActivity-->onSaveInstanceState() is called.");
-        super.onSaveInstanceState(outState);
+        startPlayerActivity();
     }
 
     @Override
@@ -150,53 +103,15 @@ public class MainActivity extends AppCompatActivity implements VLCPlayerFragment
 
     @Override
     public void onBackPressed() {
-        ExitAppTimer exitAppTimer = ExitAppTimer.getInstance(1000); // singleton class
-        if (exitAppTimer.canExit()) {
-            showAdAndExitActivity();
-        } else {
-            exitAppTimer.start();
-            ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-        }
-
         Log.d(TAG, "onBackPressed() is called");
+        returnToPrevious();
     }
 
     private void returnToPrevious() {
+        Log.d(TAG, "returnToPrevious() is called");
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
         // setResult(Activity.RESULT_OK);   // no bundle data
         finish();
-    }
-
-    private void showAdAndExitActivity() {
-        returnToPrevious();
-        if (SmileApplication.InterstitialAd != null) {
-            // free version
-            int entryPoint = 0; //  no used
-            ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
-                            , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
-                        @Override
-                        public void executeAfterDismissAds(int endPoint) {
-                            // returnToPrevious();
-                        }
-                    });
-            showAdAsyncTask.execute();
-        } else {
-            // returnToPrevious();
-        }
-    }
-
-    @Override
-    public void setSupportActionBarForFragment(Toolbar toolbar) {
-        setSupportActionBar(toolbar);
-    }
-    @Override
-    public ActionBar getSupportActionBarForFragment() {
-        return getSupportActionBar();
-    }
-    @Override
-    public void onExitFragment() {
-        showAdAndExitActivity();
     }
 }

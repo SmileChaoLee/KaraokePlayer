@@ -22,7 +22,6 @@ import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Fragments.ExoPlayerFragment;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
@@ -35,7 +34,7 @@ import java.util.List;
 
 public class SongListActivity extends AppCompatActivity {
 
-    private static final String TAG = ".SongListActivity";
+    private static final String TAG = "SongListActivity";
     private static final int ADD_ONE_SONG_TO_PLAY_LIST = 1;
     private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
     private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
@@ -45,6 +44,7 @@ public class SongListActivity extends AppCompatActivity {
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
+    private Intent playerBaseActivityIntent;
     private ArrayList<SongInfo> mSongList = new ArrayList<>();
     private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
@@ -58,6 +58,7 @@ public class SongListActivity extends AppCompatActivity {
         toastTextSize = 0.8f * textFontSize;
 
         Intent callingIntent = getIntent();
+        playerBaseActivityIntent = callingIntent.getParcelableExtra("PlayerBaseActivityIntent");
 
         songListSQLite = new SongListSQLite(SmileApplication.AppContext);
 
@@ -268,16 +269,16 @@ public class SongListActivity extends AppCompatActivity {
                 songListSize = mSongListInAdapter.size();
             }
             if (songListSize > 0) {
-                final SongInfo songInfo = mSongListInAdapter.get(position);
+                final SongInfo singleSongInfo = mSongListInAdapter.get(position);
 
-                titleNameTextView.setText(songInfo.getSongName());
-                filePathTextView.setText(songInfo.getFilePath());
-                musicTrackTextView.setText(String.valueOf(songInfo.getMusicTrackNo()));
-                musicChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getMusicChannel()));
-                vocalTrackTextView.setText(String.valueOf(songInfo.getVocalTrackNo()));
-                vocalChannelTextView.setText(SmileApplication.audioChannelMap.get(songInfo.getVocalChannel()));
+                titleNameTextView.setText(singleSongInfo.getSongName());
+                filePathTextView.setText(singleSongInfo.getFilePath());
+                musicTrackTextView.setText(String.valueOf(singleSongInfo.getMusicTrackNo()));
+                musicChannelTextView.setText(SmileApplication.audioChannelMap.get(singleSongInfo.getMusicChannel()));
+                vocalTrackTextView.setText(String.valueOf(singleSongInfo.getVocalTrackNo()));
+                vocalChannelTextView.setText(SmileApplication.audioChannelMap.get(singleSongInfo.getVocalChannel()));
 
-                boolean inPlaylist = (songInfo.getIncluded().equals("1"));
+                boolean inPlaylist = (singleSongInfo.getIncluded().equals("1"));
                 includedPlaylistCheckBox.setChecked(inPlaylist);
                 includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -285,8 +286,8 @@ public class SongListActivity extends AppCompatActivity {
                         includedPlaylistCheckBox.setChecked(isChecked);
                         includedPlaylistCheckBox.jumpDrawablesToCurrentState();
                         String included = isChecked ? "1" : "0";
-                        songInfo.setIncluded(included);
-                        songListSQLite.updateOneSongFromSongList(songInfo);
+                        singleSongInfo.setIncluded(included);
+                        songListSQLite.updateOneSongFromSongList(singleSongInfo);
                     }
                 });
 
@@ -295,7 +296,7 @@ public class SongListActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent editIntent = new Intent(context, SongDataActivity.class);
                         editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
-                        editIntent.putExtra("SongInfo", songInfo);
+                        editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
                         startActivityForResult(editIntent, EDIT_ONE_SONG_TO_PLAY_LIST);
                     }
                 });
@@ -305,7 +306,7 @@ public class SongListActivity extends AppCompatActivity {
                     public void onClick(View view) {
                         Intent deleteIntent = new Intent(context, SongDataActivity.class);
                         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
-                        deleteIntent.putExtra("SongInfo", songInfo);
+                        deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
                         startActivityForResult(deleteIntent, DELETE_ONE_SONG_TO_PLAY_LIST);
                     }
                 });
@@ -314,11 +315,11 @@ public class SongListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // play this item (media file)
-                        // Intent playOneSongIntent = new Intent(getApplicationContext(), PlaySingleSongActivity.class);
-                        Intent playOneSongIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        // Intent playOneSongIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        Intent playOneSongIntent = new Intent(playerBaseActivityIntent);
                         Bundle extras = new Bundle();
                         extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                        extras.putParcelable("SongInfo", songInfo);
+                        extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                         playOneSongIntent.putExtras(extras);
                         startActivityForResult(playOneSongIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
                     }

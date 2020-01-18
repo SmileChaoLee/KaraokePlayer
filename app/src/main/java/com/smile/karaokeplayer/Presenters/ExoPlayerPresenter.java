@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -36,7 +37,9 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
 import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
+import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
+import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -104,21 +107,6 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
 
     public PresentView getPresentView() {
         return presentView;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
-        super.initializeVariables(savedInstanceState, callingIntent);
-        if (savedInstanceState == null) {
-            videoTrackIndicesList = new ArrayList<>();
-            audioTrackIndicesList = new ArrayList<>();
-            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
-        } else {
-            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
-            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
-            trackSelectorParameters = savedInstanceState.getParcelable(PlayerConstants.TrackSelectorParametersState);
-        }
     }
 
     public void initExoPlayer() {
@@ -364,6 +352,28 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
         };
         tempHandler.postDelayed(tempRunnable, 200); // delay 200ms
         //
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        super.initializeVariables(savedInstanceState, callingIntent);
+        if (savedInstanceState == null) {
+            videoTrackIndicesList = new ArrayList<>();
+            audioTrackIndicesList = new ArrayList<>();
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
+        } else {
+            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
+            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+            trackSelectorParameters = savedInstanceState.getParcelable(PlayerConstants.TrackSelectorParametersState);
+        }
+    }
+
+    @Override
+    public boolean isSeekable() {
+        super.isSeekable();
+        boolean result = exoPlayer.isCurrentWindowSeekable();
+        return result;
     }
 
     @Override

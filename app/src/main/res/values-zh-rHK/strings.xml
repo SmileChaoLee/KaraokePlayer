@@ -55,4 +55,5 @@
     <string name="vocalString">伴唱</string>
     <string name="titileEmptyString">抬頭是空白</string>
     <string name="filepathEmptyString">檔案路徑是空白</string>
+    <string name="notSeekableSongString">無法前進或後退</string>
 </resources>

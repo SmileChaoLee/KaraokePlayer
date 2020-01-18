@@ -66,8 +66,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
-    private String accessExternalStoragePermissionDeniedString;
-    private boolean hasPermissionForExternalStorage;
 
     protected LinearLayout playerViewLinearLayout;
     protected Toolbar supportToolbar;  // use customized ToolBar
@@ -138,15 +136,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
-
-        hasPermissionForExternalStorage = true;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
-            }
-        }
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(getApplicationContext(), defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
@@ -265,19 +254,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                hasPermissionForExternalStorage = false;
-                ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
-            } else {
-                hasPermissionForExternalStorage = true;
-            }
-        }
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "onCreateOptionsMenu() is called");
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -339,6 +315,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(this, SongListActivity.class);
+                songListIntent.putExtra("PlayerBaseActivityIntent", getIntent());
                 startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:

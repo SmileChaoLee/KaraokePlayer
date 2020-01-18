@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.PresentView{
 

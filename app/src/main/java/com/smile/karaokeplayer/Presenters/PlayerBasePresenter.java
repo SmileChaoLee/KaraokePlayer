@@ -164,6 +164,10 @@ public class PlayerBasePresenter {
     }
 
     public void onDurationSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!isSeekable()) {
+            return;
+        }
+
         Log.d(TAG, "fromuser = " + fromUser);
         Log.d(TAG, "progress = " + progress);
         float positionTime = progress / 1000.0f;   // seconds
@@ -175,6 +179,10 @@ public class PlayerBasePresenter {
             setPlayerTime(progress);
         }
         playingParam.setCurrentAudioPosition(progress);
+    }
+
+    public boolean isSeekable() {
+        return true;
     }
 
     public void setPlayerTime(int progress) {
