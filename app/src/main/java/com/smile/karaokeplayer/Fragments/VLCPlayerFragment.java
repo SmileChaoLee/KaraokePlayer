@@ -77,8 +77,8 @@ import java.util.ArrayList;
 public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.PresentView{
 
     private static final String TAG = new String(".VLCPlayerFragment");
-    private static final boolean USE_TEXTURE_VIEW = false;
     private static final boolean ENABLE_SUBTITLES = true;
+    private static final boolean USE_TEXTURE_VIEW = false;
 
     private VLCPlayerPresenter mPresenter;
     private float textFontSize;
@@ -725,13 +725,11 @@ public class VLCPlayerFragment extends Fragment implements VLCPlayerPresenter.Pr
                 playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
 
                 Uri mediaUri = orgMediaUri;
-                if (useFilePicker) {
-                    String filePath = ExternalStorageUtil.getUriRealPath(callingContext, orgMediaUri);
-                    if (filePath != null) {
-                        if (!filePath.isEmpty()) {
-                            File songFile = new File(filePath);
-                            mediaUri = Uri.fromFile(songFile);
-                        }
+                String filePath = ExternalStorageUtil.getUriRealPath(callingContext, orgMediaUri);
+                if (filePath != null) {
+                    if (!filePath.isEmpty()) {
+                        File songFile = new File(filePath);
+                        mediaUri = Uri.fromFile(songFile);
                     }
                 }
 

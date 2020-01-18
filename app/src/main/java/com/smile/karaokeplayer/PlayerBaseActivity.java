@@ -161,8 +161,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
             returnToPrevious();
             return;
         }
-        // Intent callingIntent = getIntent();
-        // mPresenter.initializeVariables(savedInstanceState, callingIntent);
 
         final PlayingParameters playingParam = mPresenter.getPlayingParam();
 

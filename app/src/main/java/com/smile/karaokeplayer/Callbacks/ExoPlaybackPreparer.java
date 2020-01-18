@@ -110,7 +110,7 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
     }
 
     @Override
-    public boolean onCommand(Player player, ControlDispatcher controlDispatcher, String command, Bundle extras, ResultReceiver cb) {
+    public synchronized boolean onCommand(Player player, ControlDispatcher controlDispatcher, String command, Bundle extras, ResultReceiver cb) {
         return false;
     }
 }

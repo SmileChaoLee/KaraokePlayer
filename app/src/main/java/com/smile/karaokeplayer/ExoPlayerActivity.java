@@ -30,13 +30,6 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
         setPlayerBasePresenter(mPresenter);   // set presenter to PlayBasePresenter object
 
-        ExoPlayerPresenter exoPlayerPresenter = new ExoPlayerPresenter(this, this);
-        PlayerBasePresenter playerBasePresenter = exoPlayerPresenter;
-
-        playerBasePresenter = new PlayerBasePresenter(this, this);
-        exoPlayerPresenter = (ExoPlayerPresenter) playerBasePresenter;
-        exoPlayerPresenter.initExoPlayer();
-
         super.onCreate(savedInstanceState);
 
         mPresenter.initExoPlayer();   // must be before volumeSeekBar settings

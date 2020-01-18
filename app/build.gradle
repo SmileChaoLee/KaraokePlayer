@@ -51,14 +51,14 @@ android {
                 // exclude "**/ExoPlaybackPreparer.java"
                 // exclude "**/ExoMediaControllerCallback.java"
 
-                // exclude "**/VLCPlayerFragment.java"
+                exclude "**/VLCPlayerFragment.java"
                 // exclude "**/VLCPlayerPresenter.java"
                 // exclude "**/VLCPlayerEventListener.java"
                 // exclude "**/VLCMediaSessionCallback.java"
                 // exclude "**/VLCMediaControllerCallback.java"
             }
             res {
-                // exclude "**/fragment_vlcplayer.xml"
+                exclude "**/fragment_vlcplayer.xml"
                 // exclude "**/fragment_exoplayer.xml"
                 // exclude "**/player_audio_controller_layout.xml"
                 // exclude "**/exoplayer_audio_controller_layout.xml"

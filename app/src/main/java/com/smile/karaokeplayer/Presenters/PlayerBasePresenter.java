@@ -450,8 +450,16 @@ public class PlayerBasePresenter {
         startAutoPlay();
     }
 
+    public Uri getValidatedUri(Uri tempUri) {
+        return tempUri;
+    }
+
     public void playSelectedSongFromStorage(Uri tempUri) {
-        mediaUri = tempUri;
+        mediaUri = getValidatedUri(tempUri);
+        Log.i(TAG, "mediaUri = " + mediaUri.toString());
+        if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
+            return;
+        }
         playingParam.setCurrentVideoTrackIndexPlayed(0);
         int currentAudioRederer = 0;
         playingParam.setMusicAudioTrackIndex(currentAudioRederer);

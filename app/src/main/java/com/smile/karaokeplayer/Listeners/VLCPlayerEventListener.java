@@ -22,10 +22,10 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
     private final MediaPlayer vlcPlayer;
     private final float toastTextSize;
 
-    public VLCPlayerEventListener(Context context, VLCPlayerPresenter presenter, MediaPlayer mediaPlayer) {
+    public VLCPlayerEventListener(Context context, VLCPlayerPresenter presenter) {
         callingContext = context;
         mPresenter = presenter;
-        vlcPlayer = mediaPlayer;
+        vlcPlayer = mPresenter.getVlcPlayer();
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
         float textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
@@ -34,8 +34,6 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
     @Override
     public synchronized void onEvent(MediaPlayer.Event event) {
-
-        AppCompatSeekBar player_duration_seekbar = mPresenter.getPresentView().getPlayer_duration_seekbar();
         PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         switch(event.type) {
@@ -91,7 +89,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
             case MediaPlayer.Event.PositionChanged:
                 break;
             case MediaPlayer.Event.TimeChanged:
-                player_duration_seekbar.setProgress((int)vlcPlayer.getTime());
+                mPresenter.getPresentView().update_Player_duration_seekbar_progress((int)vlcPlayer.getTime());
                 break;
             case MediaPlayer.Event.EncounteredError:
                 Log.d(TAG, "vlcPlayer is EncounteredError event");

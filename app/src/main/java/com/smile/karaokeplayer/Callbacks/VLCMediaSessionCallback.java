@@ -30,24 +30,24 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+    public synchronized void onCommand(String command, Bundle extras, ResultReceiver cb) {
         super.onCommand(command, extras, cb);
     }
 
     @Override
-    public void onPrepare() {
+    public synchronized void onPrepare() {
         super.onPrepare();
         Log.d(TAG, "onPrepare() is called.");
     }
 
     @Override
-    public void onPrepareFromMediaId(String mediaId, Bundle extras) {
+    public synchronized void onPrepareFromMediaId(String mediaId, Bundle extras) {
         super.onPrepareFromMediaId(mediaId, extras);
         Log.d(TAG, "onPrepareFromMediaId() is called.");
     }
 
     @Override
-    public void onPrepareFromUri(Uri uri, Bundle extras) {
+    public synchronized void onPrepareFromUri(Uri uri, Bundle extras) {
         Log.d(TAG, "onPrepareFromUri() is called.");
         super.onPrepareFromUri(uri, extras);
 
@@ -96,10 +96,10 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onPlay() {
+    public synchronized void onPlay() {
         super.onPlay();
         Log.d(TAG, "onPlay() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaSessionCompat().getController();
+        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_PLAYING) {
@@ -111,22 +111,22 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onPlayFromMediaId(String mediaId, Bundle extras) {
+    public synchronized void onPlayFromMediaId(String mediaId, Bundle extras) {
         super.onPlayFromMediaId(mediaId, extras);
         Log.d(TAG, "onPlayFromMediaId() is called.");
     }
 
     @Override
-    public void onPlayFromUri(Uri uri, Bundle extras) {
+    public synchronized void onPlayFromUri(Uri uri, Bundle extras) {
         super.onPlayFromUri(uri, extras);
         Log.d(TAG, "onPlayFromUri() is called.");
     }
 
     @Override
-    public void onPause() {
+    public synchronized void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaSessionCompat().getController();
+        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_PAUSED) {
@@ -135,10 +135,10 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onStop() {
+    public synchronized void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaSessionCompat().getController();
+        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_STOPPED) {
@@ -147,14 +147,14 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     }
 
     @Override
-    public void onFastForward() {
+    public synchronized void onFastForward() {
         super.onFastForward();
         Log.d(TAG, "onFastForward() is called.");
         mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_FAST_FORWARDING);
     }
 
     @Override
-    public void onRewind() {
+    public synchronized void onRewind() {
         super.onRewind();
         Log.d(TAG, "onRewind() is called.");
         mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_REWINDING);
