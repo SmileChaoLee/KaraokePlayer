@@ -40,7 +40,10 @@ public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
                 Log.d(TAG, "PlaybackStateCompat.STATE_PLAYING");
+                mPresenter.startDurationSeekBarHandler();   // start updating duration seekbar
                 mPresenter.getPresentView().playButtonOffPauseButtonOn();
+                // set up a timer for supportToolbar's visibility
+                mPresenter.getPresentView().setTimerToHideSupportAndAudioController();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 Log.d(TAG, "PlaybackStateCompat.STATE_PAUSED");
@@ -49,6 +52,7 @@ public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
             case PlaybackStateCompat.STATE_STOPPED:
                 // when finished playing
                 Log.d(TAG, "PlaybackStateCompat.STATE_STOPPED");
+                mPresenter.getPresentView().update_Player_duration_seekbar_progress((int)mPresenter.getExoPlayer().getDuration());
                 mPresenter.getPresentView().playButtonOnPauseButtonOff();
                 break;
         }

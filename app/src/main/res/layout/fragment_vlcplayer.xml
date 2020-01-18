@@ -10,14 +10,10 @@
     <org.videolan.libvlc.util.VLCVideoLayout
         android:id="@+id/videoVLCPlayerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        android:layout_height="match_parent">
     </org.videolan.libvlc.util.VLCVideoLayout>
 
-    <include layout="@layout/vlcplayer_audio_controller_layout" />
+    <include layout="@layout/player_audio_controller_layout" />
 
     <include layout="@layout/banner_ads_toolbar_message_layout" />
 

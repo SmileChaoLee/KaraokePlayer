@@ -48,7 +48,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
             case Player.STATE_READY:
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
-                    mPresenter.findTracksForVideoAudio();
+                    mPresenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
                     playingParam = mPresenter.getPlayingParam();
                 }
 

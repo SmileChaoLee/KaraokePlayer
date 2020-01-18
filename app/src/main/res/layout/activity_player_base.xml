@@ -4,16 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.ExoPlayerFragment">
+    android:background="@android:color/transparent"
+    tools:context=".PlayerBaseActivity">
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/videoExoPlayerView"
+    <LinearLayout
+        android:id="@+id/playerViewLinearLayout"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/black"
-        app:use_artwork="true"
-        app:controller_layout_id="@layout/exoplayer_audio_controller_layout">
-    </com.google.android.exoplayer2.ui.PlayerView>
+        android:background="@android:color/black">
+    </LinearLayout>
+
+    <include layout="@layout/player_audio_controller_layout" />
 
     <include layout="@layout/banner_ads_toolbar_message_layout" />
 

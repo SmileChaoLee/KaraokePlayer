@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,6 +23,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Gravity;
@@ -39,8 +42,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
@@ -48,19 +49,20 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
-import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPresenter.PresentView{
+public class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
 
     private static final String TAG = new String("PlayerBaseActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
 
-    private ExoPlayerPresenter mPresenter;
+    private PlayerBasePresenter mPresenter;
+
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
@@ -68,9 +70,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     private boolean hasPermissionForExternalStorage;
 
     protected LinearLayout playerViewLinearLayout;
-    private Toolbar supportToolbar;  // use customized ToolBar
+    protected Toolbar supportToolbar;  // use customized ToolBar
     private ActionMenuView actionMenuView;
-    private VerticalSeekBar volumeSeekBar;
+    private LinearLayout audioControllerView;
+    protected VerticalSeekBar volumeSeekBar;
     private ImageButton volumeImageButton;
     private ImageButton previousMediaImageButton;
     private ImageButton playMediaImageButton;
@@ -78,13 +81,18 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     private ImageButton pauseMediaImageButton;
     private ImageButton stopMediaImageButton;
     private ImageButton nextMediaImageButton;
+
+    private TextView playingTimeTextView;
+    protected AppCompatSeekBar player_duration_seekbar;
+    private TextView durationTimeTextView;
+
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
 
-    private Menu mainMenu;
+    protected Menu mainMenu;
     // submenu of file
     private MenuItem autoPlayMenuItem;
     private MenuItem openMenuItem;
@@ -95,8 +103,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
 
-    private PlayerView videoExoPlayerView;
-
     private LinearLayout linearLayout_for_ads;
     private LinearLayout messageLinearLayout;
     private TextView bufferingStringTextView;
@@ -104,14 +110,34 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     private LinearLayout nativeAdsLinearLayout;
     private TextView nativeAdsStringTextView;
 
+    private final Handler controllerTimerHandler = new Handler(Looper.getMainLooper());
+    private final Runnable controllerTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            controllerTimerHandler.removeCallbacksAndMessages(null);
+            if (mPresenter != null) {
+                PlayingParameters playingParam = mPresenter.getPlayingParam();
+                if (playingParam != null) {
+                    if (playingParam.isMediaSourcePrepared()) {
+                        if (supportToolbar.getVisibility() == View.VISIBLE) {
+                            // hide supportToolbar
+                            hideSupportToolbarAndAudioController();
+                        }
+                    } else {
+                        showSupportToolbarAndAudioController();
+                    }
+                }
+            }
+        }
+    };
+
+    protected void setPlayerBasePresenter(PlayerBasePresenter presenter) {
+        mPresenter = presenter;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
-
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(getApplicationContext(), defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        toastTextSize = 0.7f * textFontSize;
 
         hasPermissionForExternalStorage = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -122,19 +148,31 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
             }
         }
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_exoplayer);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(getApplicationContext(), defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        toastTextSize = 0.7f * textFontSize;
 
-        Intent callingIntent = getIntent();
-        mPresenter = new ExoPlayerPresenter(this, this);
-        mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_player_base);
+
+        if (mPresenter == null) {
+            Log.d(TAG, "mPresenter is null so exit activity.");
+            returnToPrevious();
+            return;
+        }
+        // Intent callingIntent = getIntent();
+        // mPresenter.initializeVariables(savedInstanceState, callingIntent);
 
         final PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         // Video player view
-        // playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout);
-        videoExoPlayerView = findViewById(R.id.videoExoPlayerView);
-        videoExoPlayerView.setVisibility(View.VISIBLE);
+        playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout);
+        if (playerViewLinearLayout == null) {
+            Log.d(TAG, "playerViewLinearLayout is null");
+        } else {
+            Log.d(TAG, "playerViewLinearLayout is not null");
+        }
 
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
@@ -145,6 +183,15 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
+        actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
+        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+
+        audioControllerView = findViewById(R.id.audioControllerView);
         //
         volumeSeekBar = findViewById(R.id.volumeSeekBar);
         // get default height of volumeBar from dimen.xml
@@ -168,14 +215,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
-
-        actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
-        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
 
         linearLayout_for_ads = findViewById(R.id.linearLayout_for_ads);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
@@ -211,33 +250,20 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
         float durationTextSize = textFontSize * 0.6f;
-        TextView exo_position_TextView = findViewById(R.id.exo_position);
-        ScreenUtil.resizeTextSize(exo_position_TextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
+        playingTimeTextView = findViewById(R.id.playingTimeTextView);
+        playingTimeTextView.setText("000:00");
+        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
-        TextView exo_duration_TextView = findViewById(R.id.exo_duration);
-        ScreenUtil.resizeTextSize(exo_duration_TextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
+        player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
 
-        /*
-        mPresenter.initExoPlayer();   // must be before volumeSeekBar settings
-        videoExoPlayerView.setPlayer(mPresenter.getExoPlayer());
-        videoExoPlayerView.requestFocus();
-        mPresenter.initMediaSessionCompat();
-        */
+        durationTimeTextView = findViewById(R.id.durationTimeTextView);
+        durationTimeTextView.setText("000:00");
+        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         setImageButtonStatus();
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
         showNativeAds();
-
-        mPresenter.initExoPlayer();   // must be before volumeSeekBar settings
-        videoExoPlayerView.setPlayer(mPresenter.getExoPlayer());
-        videoExoPlayerView.requestFocus();
-        mPresenter.initMediaSessionCompat();
-
-        int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
-        volumeSeekBar.setProgressAndThumb(currentProgress);
-
-        mPresenter.playTheSongThatWasPlayedBeforeActivityRecreated();
     }
 
     @Override
@@ -438,7 +464,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         Log.d(TAG,"onSaveInstanceState() is called.");
-        mPresenter.onSaveInstanceState(outState);
+        mPresenter.saveInstanceState(outState);
         super.onSaveInstanceState(outState);
     }
 
@@ -482,8 +508,9 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
-        mPresenter.releaseMediaSessionCompat();
-        mPresenter.releaseExoPlayer();
+        if (mPresenter != null) {
+            mPresenter.releaseMediaSessionCompat();
+        }
     }
 
     @Override
@@ -525,7 +552,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
         }
     }
 
-    private void setButtonsPositionAndSize(Configuration config) {
+    public void setButtonsPositionAndSize(Configuration config) {
         int buttonMarginLeft = (int)(60.0f * fontScale);    // 60 pixels = 20dp on Nexus 5
         Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
         Point screenSize = ScreenUtil.getScreenSize(this);
@@ -722,34 +749,62 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
             }
         });
 
+        player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // update the duration on controller UI
+                mPresenter.onDurationSeekBarProgressChanged(seekBar, progress, fromUser);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
         supportToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int visibility = v.getVisibility();
                 if (visibility == View.VISIBLE) {
-                    videoExoPlayerView.hideController();
+                    // use custom toolbar
+                    hideSupportToolbarAndAudioController();
+                    Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.");
+                } else {
+                    // use custom toolbar
+                    showSupportToolbarAndAudioController();
+                    setTimerToHideSupportAndAudioController();
+                    Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.");
                 }
+                volumeSeekBar.setVisibility(View.INVISIBLE);
+
+                Log.d(TAG, "supportToolbar.onClick() is called.");
             }
         });
 
-        videoExoPlayerView.setControllerShowTimeoutMs(PlayerConstants.PlayerView_Timeout);
-        videoExoPlayerView.setControllerVisibilityListener(new PlayerControlView.VisibilityListener() {
+        playerViewLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onVisibilityChange(int visibility) {
-                if (visibility == View.VISIBLE) {
-                    // use custom toolbar
-                    supportToolbar.setVisibility(View.VISIBLE);
-                } else {
-                    // use custom toolbar
-                    supportToolbar.setVisibility(View.GONE);
-                    closeMenu(mainMenu);
-                }
-                volumeSeekBar.setVisibility(View.INVISIBLE);
+            public void onClick(View v) {
+                Log.d(TAG, "videoExoPlayerView.onClick() is called.");
+                supportToolbar.performClick();
             }
         });
     }
 
-    private void closeMenu(Menu menu) {
+
+    private void showSupportToolbarAndAudioController() {
+        supportToolbar.setVisibility(View.VISIBLE);
+        audioControllerView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSupportToolbarAndAudioController() {
+        supportToolbar.setVisibility(View.GONE);
+        audioControllerView.setVisibility(View.GONE);
+        closeMenu(mainMenu);
+    }
+
+    public void closeMenu(Menu menu) {
         if (menu == null) {
             return;
         }
@@ -818,6 +873,26 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
     }
 
     @Override
+    public void setPlayingTimeTextView(String durationString) {
+        playingTimeTextView.setText(durationString);
+    }
+
+    @Override
+    public void update_Player_duration_seekbar(float duration) {
+        player_duration_seekbar.setProgress(0);
+        player_duration_seekbar.setMax((int)duration);
+        duration /= 1000.0f;   // seconds
+        int minutes = (int)(duration / 60.0f);    // minutes
+        int seconds = (int)duration - (minutes * 60);
+        String durationString = String.format("%3d:%02d", minutes, seconds);
+        durationTimeTextView.setText(durationString);
+    }
+
+    public void update_Player_duration_seekbar_progress(int progress) {
+        player_duration_seekbar.setProgress(progress);
+    }
+
+    @Override
     public void showNativeAds() {
         // simulate showing native ad
         if (BuildConfig.DEBUG) {
@@ -860,6 +935,12 @@ public class PlayerBaseActivity extends AppCompatActivity implements ExoPlayerPr
                 subMenu.getItem(j).setVisible(false);
             }
         }
+    }
+
+    @Override
+    public void setTimerToHideSupportAndAudioController() {
+        controllerTimerHandler.removeCallbacksAndMessages(null);
+        controllerTimerHandler.postDelayed(controllerTimerRunnable, PlayerConstants.PlayerView_Timeout); // 10 seconds
     }
     //
 }

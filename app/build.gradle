@@ -59,7 +59,9 @@ android {
             }
             res {
                 // exclude "**/fragment_vlcplayer.xml"
-                // exclude "**/vlcplayer_audio_controller_layout.xml"
+                // exclude "**/fragment_exoplayer.xml"
+                // exclude "**/player_audio_controller_layout.xml"
+                // exclude "**/exoplayer_audio_controller_layout.xml"
             }
         }
     }

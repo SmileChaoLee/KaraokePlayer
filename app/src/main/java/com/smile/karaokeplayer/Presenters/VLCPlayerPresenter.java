@@ -546,9 +546,12 @@ public class VLCPlayerPresenter {
     }
 
     public void releaseMediaSessionCompat() {
-        mediaSessionCompat.setActive(false);
-        mediaSessionCompat.release();
-        mediaSessionCompat = null;
+
+        if (mediaSessionCompat != null) {
+            mediaSessionCompat.setActive(false);
+            mediaSessionCompat.release();
+            mediaSessionCompat = null;
+        }
         mediaTransportControls = null;
         if (mediaControllerCallback != null) {
             mediaControllerCompat.unregisterCallback(mediaControllerCallback);

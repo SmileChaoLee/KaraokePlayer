@@ -28,8 +28,8 @@ import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
-// public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
+// public class MainActivity extends AppCompatActivity implements ExoPlayerFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements VLCPlayerFragment.OnFragmentInteractionListener {
 
     private static final String TAG = new String(".MainActivity");
     private static final int PERMISSION_REQUEST_CODE = 0x11;
@@ -68,8 +68,8 @@ public class MainActivity extends AppCompatActivity implements ExoPlayerFragment
         String fragmentTag = CommonConstants.PlayerFragmentTag;
         playerFragment = fmManager.findFragmentByTag(fragmentTag);
         if (playerFragment == null) {
-            playerFragment = ExoPlayerFragment.newInstance(callingIntent);
-            // playerFragment = VLCPlayerFragment.newInstance(callingIntent);
+            // playerFragment = ExoPlayerFragment.newInstance(callingIntent);
+            playerFragment = VLCPlayerFragment.newInstance(callingIntent);
             ft.add(playerFragmentLayoutId, playerFragment, fragmentTag);
         } else {
             ft.replace(playerFragmentLayoutId, playerFragment, fragmentTag);
