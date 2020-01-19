@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 hasPermissionForExternalStorage = true;
             }
+        } else {
+            hasPermissionForExternalStorage = true;
         }
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(SmileApplication.AppContext, ScreenUtil.FontSize_Pixel_Type, null);
