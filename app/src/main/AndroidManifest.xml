@@ -44,6 +44,14 @@
             android:name=".PlayerBaseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
+        <activity
+            android:name=".ExoPlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
+        <activity
+            android:name=".VLCPlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
         <activity android:name=".SongListActivity" />
         <activity android:name=".SongDataActivity" />
     </application>

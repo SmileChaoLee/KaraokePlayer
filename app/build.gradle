@@ -41,27 +41,23 @@ android {
                 exclude "**/ChannelMappingAudioProcessor.java"
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/StereoVolumeProcessor.java"
-                exclude "**/PlaySingleSongActivity.java"
-                // exclude "**/ExternalStorageUtil.java"
 
-                exclude "**/ExoPlayerFragment.java"
-                // exclude "**/PlayerBaseActivity.java"
+                // exclude "**/ExoPlayerActivity.java"
                 // exclude "**/ExoPlayerPresenter.java"
                 // exclude "**/ExoPlayerEventListener.java"
                 // exclude "**/ExoPlaybackPreparer.java"
                 // exclude "**/ExoMediaControllerCallback.java"
 
-                exclude "**/VLCPlayerFragment.java"
-                // exclude "**/VLCPlayerPresenter.java"
-                // exclude "**/VLCPlayerEventListener.java"
-                // exclude "**/VLCMediaSessionCallback.java"
-                // exclude "**/VLCMediaControllerCallback.java"
+                exclude "**/VLCPlayerActivity.java"
+                exclude "**/VLCPlayerPresenter.java"
+                exclude "**/VLCPlayerEventListener.java"
+                exclude "**/VLCMediaSessionCallback.java"
+                exclude "**/VLCMediaControllerCallback.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"
                 exclude "**/fragment_exoplayer.xml"
                 exclude "**/exoplayer_audio_controller_layout.xml"
-                // exclude "**/player_audio_controller_layout.xml"
             }
         }
     }
@@ -107,7 +103,7 @@ dependencies {
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
 
-    implementation 'org.videolan.android:libvlc-all:3.1.12'
+    // implementation 'org.videolan.android:libvlc-all:3.1.12'
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-flac')

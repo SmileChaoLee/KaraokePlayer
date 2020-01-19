@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (hasPermissionForExternalStorage) {
             startPlayerActivity();
+            returnToPrevious();   // exit the MainActivity immediately
         }
     }
 
@@ -57,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         Intent startPlayerActivityIntent = new Intent(this, ExoPlayerActivity.class);
         // startPlayerActivityIntent.putExtra("CallingIntent", callingIntent);
         startActivity(startPlayerActivityIntent);
-        returnToPrevious();   // exit the MainActivity immediately
     }
 
     @Override
@@ -92,7 +92,11 @@ public class MainActivity extends AppCompatActivity {
                 hasPermissionForExternalStorage = true;
             }
         }
-        startPlayerActivity();
+
+        if (hasPermissionForExternalStorage) {
+            startPlayerActivity();
+        }
+        returnToPrevious();
     }
 
     @Override

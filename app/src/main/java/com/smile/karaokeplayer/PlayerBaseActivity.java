@@ -315,7 +315,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(this, SongListActivity.class);
-                songListIntent.putExtra("PlayerBaseActivityIntent", getIntent());
+                songListIntent.putExtra(PlayerConstants.PlayerBaseActivityIntent, getIntent());
                 startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
                 break;
             case R.id.open:

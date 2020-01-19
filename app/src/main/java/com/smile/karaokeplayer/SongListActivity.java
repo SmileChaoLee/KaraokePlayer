@@ -58,7 +58,7 @@ public class SongListActivity extends AppCompatActivity {
         toastTextSize = 0.8f * textFontSize;
 
         Intent callingIntent = getIntent();
-        playerBaseActivityIntent = callingIntent.getParcelableExtra("PlayerBaseActivityIntent");
+        playerBaseActivityIntent = callingIntent.getParcelableExtra(PlayerConstants.PlayerBaseActivityIntent);
 
         songListSQLite = new SongListSQLite(SmileApplication.AppContext);
 

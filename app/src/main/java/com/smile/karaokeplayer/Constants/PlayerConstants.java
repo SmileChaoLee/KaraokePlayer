@@ -33,5 +33,6 @@ public final class PlayerConstants {
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String IsPlaySingleSongState = "IsPlaySingleSong";
-    public static final String SongInfoState = "SongInfo";
+    public static final String SongInfoState = "SingleSongInfo";
+    public static final String PlayerBaseActivityIntent = "PlayerBaseActivityIntent";
 }
