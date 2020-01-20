@@ -42,7 +42,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                mPresenter.getPresentView().hideNativeAds();
+                mPresenter.getPresentView().hideInterstitialAd();
                 mPresenter.getPresentView().showBufferingMessage();
                 return;
             case Player.STATE_READY:
@@ -51,17 +51,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     mPresenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
                     playingParam = mPresenter.getPlayingParam();
                 }
-
                 playingParam.setMediaSourcePrepared(true);
-                int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
-
-                if (numberOfVideoTracks == 0) {
-                    // no video is being played, show native ads
-                    mPresenter.getPresentView().showNativeAds();
-                } else {
-                    // video is being played, hide native ads
-                    mPresenter.getPresentView().hideNativeAds();
-                }
                 break;
             case Player.STATE_ENDED:
                 // playing is finished
@@ -73,7 +63,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                         mPresenter.replayMedia();
                     } else {
-                        mPresenter.getPresentView().showNativeAds();
+                        mPresenter.getPresentView().showInterstitialAd();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
@@ -89,7 +79,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 }
                 if (!playingParam.isAutoPlay()) {
                     // not auto play
-                    mPresenter.getPresentView().showNativeAds();
+                    mPresenter.getPresentView().showInterstitialAd();
                 }
                 break;
         }
