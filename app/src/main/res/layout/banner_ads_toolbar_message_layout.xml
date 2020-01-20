@@ -57,7 +57,7 @@
             android:background="@android:color/transparent"
             android:textColor="@android:color/white"
             android:textAllCaps="false"
-            android:text="Show Native Ads">
+            android:text="">
         </TextView>
     </LinearLayout>
 
