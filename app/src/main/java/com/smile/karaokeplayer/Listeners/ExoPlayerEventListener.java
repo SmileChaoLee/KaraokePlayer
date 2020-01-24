@@ -34,7 +34,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
     @Override
     public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        Log.d(TAG, "onPlayerStateChanged is called.");
+        Log.d(TAG, "onPlayerStateChanged() is called.");
         Log.d(TAG, "Playback state = " + playbackState);
 
         PlayingParameters playingParam = mPresenter.getPlayingParam();
@@ -42,9 +42,9 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                mPresenter.getPresentView().hideInterstitialAd();
+                mPresenter.getPresentView().hideNativeAd();
                 mPresenter.getPresentView().showBufferingMessage();
-                return;
+                break;
             case Player.STATE_READY:
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
@@ -52,6 +52,18 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     playingParam = mPresenter.getPlayingParam();
                 }
                 playingParam.setMediaSourcePrepared(true);
+
+                int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
+                if (numberOfVideoTracks == 0) {
+                    // no video is being played, show native ads
+                    mPresenter.getPresentView().showNativeAd();
+                } else {
+                    // video is being played, hide native ads
+                    if (playWhenReady) {
+                        // playing
+                        mPresenter.getPresentView().hideNativeAd();
+                    }
+                }
                 break;
             case Player.STATE_ENDED:
                 // playing is finished
@@ -63,7 +75,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                         mPresenter.replayMedia();
                     } else {
-                        mPresenter.getPresentView().showInterstitialAd();
+                        mPresenter.getPresentView().showNativeAd();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
@@ -79,12 +91,10 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 }
                 if (!playingParam.isAutoPlay()) {
                     // not auto play
-                    mPresenter.getPresentView().showInterstitialAd();
+                    mPresenter.getPresentView().showNativeAd();
                 }
                 break;
         }
-
-        mPresenter.getPresentView().dismissBufferingMessage();
     }
 
     @Override

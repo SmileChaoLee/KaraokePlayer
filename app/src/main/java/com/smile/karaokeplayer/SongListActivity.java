@@ -122,7 +122,6 @@ public class SongListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // final SongInfo songInfo = data.getParcelableExtra("SongInfo");
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case ADD_ONE_SONG_TO_PLAY_LIST:

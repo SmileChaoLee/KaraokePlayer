@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
 import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 // import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 
 public class SongDataActivity extends AppCompatActivity {
 
-    private static final String TAG = new String(".SongDataActivity");
+    private static final String TAG = new String("SongDataActivity");
     private static final int SELECT_ONE_ONE_FILE_PATH = 1;
 
     private float textFontSize;
@@ -79,12 +80,12 @@ public class SongDataActivity extends AppCompatActivity {
                     break;
                 case CommonConstants.EditActionString:
                     // = "EDIT". Edit one record
-                    mSongInfo = callingIntent.getParcelableExtra("SongInfo");
+                    mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
                     actionButtonString = getString(R.string.saveString);
                     break;
                 case CommonConstants.DeleteActionString:
                     // = "DELETE". Delete one record
-                    mSongInfo = callingIntent.getParcelableExtra("SongInfo");
+                    mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
                     actionButtonString = getString(R.string.deleteString);
                     break;
                 default:
@@ -96,7 +97,7 @@ public class SongDataActivity extends AppCompatActivity {
             // not null, has savedInstanceState
             actionButtonString = savedInstanceState.getString("ActionButtonString");
             crudAction = savedInstanceState.getString(CommonConstants.CrudActionString);
-            mSongInfo = savedInstanceState.getParcelable("SongInfo");
+            mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
             Log.d(TAG, "savedInstanceState is not null.");
         }
 
@@ -249,7 +250,7 @@ public class SongDataActivity extends AppCompatActivity {
 
         setSongInfoFromInput(false);
 
-        outState.putParcelable("SongInfo", mSongInfo);
+        outState.putParcelable(PlayerConstants.SongInfoState, mSongInfo);
         outState.putString(CommonConstants.CrudActionString, crudAction);
         outState.putString("ActionButtonString", actionButtonString);
 
@@ -309,7 +310,7 @@ public class SongDataActivity extends AppCompatActivity {
 
         Intent returnIntent = new Intent();
         Bundle extras = new Bundle();
-        extras.putParcelable("SongInfo", mSongInfo);
+        extras.putParcelable(PlayerConstants.SongInfoState, mSongInfo);
         returnIntent.putExtras(extras);
 
         int resultYn = Activity.RESULT_OK;

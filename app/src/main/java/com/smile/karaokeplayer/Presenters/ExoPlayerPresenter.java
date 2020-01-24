@@ -483,41 +483,19 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
     }
 
     @Override
-    public void replayMedia() {
-        super.replayMedia();
-
-        if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
-            return;
-        }
-
-        long currentAudioPosition = 0;
-        playingParam.setCurrentAudioPosition(currentAudioPosition);
-        if (playingParam.isMediaSourcePrepared()) {
-            // song is playing, paused, or finished playing
-            // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
-            // because it will send Play.STATE_ENDED event after the playing has finished
-            // but the playing was stopped in the middle of playing then wo'nt send
-            // Play.STATE_ENDED event
-            // exoPlayer.setPlayWhenReady(false);
-            exoPlayer.seekTo(currentAudioPosition);
-            setProperAudioTrackAndChannel();
-            exoPlayer.retry();
-            exoPlayer.setPlayWhenReady(true);
-            Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");
-        } else {
-            // song was stopped by user
-            // mediaTransportControls.prepare();   // prepare and play
-            // Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
-            // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-            // pass the saved instance of playingParam to
-            // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-            Bundle playingParamOriginExtras = new Bundle();
-            playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and play
-            Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
-        }
-
-        Log.d(TAG, "replayMedia() is called.");
+    protected void specificPlayerReplayMedia(long currentAudioPosition) {
+        super.specificPlayerReplayMedia(currentAudioPosition);
+        // song is playing, paused, or finished playing
+        // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
+        // because it will send Play.STATE_ENDED event after the playing has finished
+        // but the playing was stopped in the middle of playing then wo'nt send
+        // Play.STATE_ENDED event
+        // exoPlayer.setPlayWhenReady(false);
+        exoPlayer.seekTo(currentAudioPosition);
+        setProperAudioTrackAndChannel();
+        exoPlayer.retry();
+        exoPlayer.setPlayWhenReady(true);
+        Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");
     }
 
     @Override

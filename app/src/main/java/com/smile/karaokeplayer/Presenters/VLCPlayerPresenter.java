@@ -328,28 +328,12 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public void replayMedia() {
-        super.replayMedia();
-
-        Log.d(TAG, "replayMedia() is called.");
-        if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
-            return;
-        }
-
-        long currentAudioPosition = 0;
-        playingParam.setCurrentAudioPosition(currentAudioPosition);
-        if (playingParam.isMediaSourcePrepared()) {
-            vlcPlayer.setTime(currentAudioPosition); // use time to set position
-            setProperAudioTrackAndChannel();
-            if (!vlcPlayer.isPlaying()) {
-                vlcPlayer.play();
-            }
-            Log.d(TAG, "replayMedia()--> vlcPlayer.seekTo(currentAudioPosition).");
-        } else {
-            Bundle playingParamOriginExtras = new Bundle();
-            playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);   // prepare and startPlay
-            Log.d(TAG, "replayMedia()--> mediaTransportControls.prepareFromUri().");
+    protected void specificPlayerReplayMedia(long currentAudioPosition) {
+        super.specificPlayerReplayMedia(currentAudioPosition);
+        vlcPlayer.setTime(currentAudioPosition); // use time to set position
+        setProperAudioTrackAndChannel();
+        if (!vlcPlayer.isPlaying()) {
+            vlcPlayer.play();
         }
     }
 

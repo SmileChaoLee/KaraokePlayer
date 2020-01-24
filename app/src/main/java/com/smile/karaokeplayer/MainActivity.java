@@ -115,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void returnToPrevious() {
         Log.d(TAG, "returnToPrevious() is called");
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
-        // setResult(Activity.RESULT_OK);   // no bundle data
         finish();
     }
 }

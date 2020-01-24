@@ -4,11 +4,20 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
 
 import com.facebook.ads.AudienceNetworkAds;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdLoader;
+import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
+import com.google.android.gms.ads.formats.NativeAdOptions;
+import com.google.android.gms.ads.formats.UnifiedNativeAd;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
 import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
@@ -17,6 +26,8 @@ import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingIntersti
 import java.util.LinkedHashMap;
 
 public class SmileApplication extends MultiDexApplication {
+
+    private static final String TAG = new String("SmileApplication");
 
     public static String leftChannelString;
     public static String rightChannelString;
@@ -62,9 +73,15 @@ public class SmileApplication extends MultiDexApplication {
         String googleAdMobAppID = getString(R.string.google_AdMobAppID);
         String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
         googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
-        MobileAds.initialize(AppContext, googleAdMobAppID);
-        googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
+        // MobileAds.initialize(AppContext, googleAdMobAppID);
+        MobileAds.initialize(AppContext, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                Log.d(TAG, "Google AdMob was initialized successfully.");
+            }
 
+        });
+        googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
         InterstitialAd = new ShowingInterstitialAdsUtil(facebookAds, googleInterstitialAd);
 
         final Handler adHandler = new Handler(Looper.getMainLooper());

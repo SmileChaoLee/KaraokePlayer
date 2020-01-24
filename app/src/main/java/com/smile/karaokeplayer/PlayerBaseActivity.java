@@ -7,13 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,6 +45,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
+import com.smile.karaokeplayer.Models.NativeTemplateAd;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
@@ -59,7 +58,6 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 public class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
 
     private static final String TAG = new String("PlayerBaseActivity");
-    private static final int PERMISSION_REQUEST_CODE = 0x11;
 
     private PlayerBasePresenter mPresenter;
 
@@ -90,6 +88,15 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
 
+    private LinearLayout linearLayout_for_bannerAds;
+    private AdView bannerAdView;
+    private TextView bufferingStringTextView;
+    private Animation animationText;
+    private FrameLayout nativeAdsFrameLayout;
+    private int nativeAdViewVisibility;
+    private NativeTemplateAd nativeTemplateAd;
+    private com.google.android.ads.nativetemplates.TemplateView nativeAdTemplateView;
+
     protected Menu mainMenu;
     // submenu of file
     private MenuItem autoPlayMenuItem;
@@ -100,13 +107,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private MenuItem leftChannelMenuItem;
     private MenuItem rightChannelMenuItem;
     private MenuItem stereoChannelMenuItem;
-
-    private LinearLayout linearLayout_for_ads;
-    private LinearLayout messageLinearLayout;
-    private TextView bufferingStringTextView;
-    private Animation animationText;
-    private LinearLayout nativeAdsLinearLayout;
-    private TextView nativeAdsStringTextView;
 
     private final Handler controllerTimerHandler = new Handler(Looper.getMainLooper());
     private final Runnable controllerTimerRunnable = new Runnable() {
@@ -141,6 +141,9 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         textFontSize = ScreenUtil.suitableFontSize(getApplicationContext(), defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         fontScale = ScreenUtil.suitableFontScale(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
+        Log.d(TAG, "textFontSize = " + textFontSize);
+        Log.d(TAG, "fontScale = " + fontScale);
+        Log.d(TAG, "toastTextSize = " + toastTextSize);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
@@ -155,11 +158,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
         // Video player view
         playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout);
-        if (playerViewLinearLayout == null) {
-            Log.d(TAG, "playerViewLinearLayout is null");
-        } else {
-            Log.d(TAG, "playerViewLinearLayout is not null");
-        }
 
         // use custom toolbar
         supportToolbar = findViewById(R.id.custom_toolbar);
@@ -171,12 +169,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         }
 
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout); // main menu
-        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
 
         audioControllerView = findViewById(R.id.audioControllerView);
         //
@@ -203,38 +195,35 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
-        linearLayout_for_ads = findViewById(R.id.linearLayout_for_ads);
+        linearLayout_for_bannerAds = findViewById(R.id.linearLayout_for_bannerAds);
         if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
             try {
-                AdView bannerAdView = new AdView(this);
+                bannerAdView = new AdView(this);
                 bannerAdView.setAdSize(AdSize.BANNER);
                 bannerAdView.setAdUnitId(SmileApplication.googleAdMobBannerID);
-                linearLayout_for_ads.addView(bannerAdView);
+                linearLayout_for_bannerAds.addView(bannerAdView);
                 AdRequest adRequest = new AdRequest.Builder().build();
                 bannerAdView.loadAd(adRequest);
-                linearLayout_for_ads.setGravity(Gravity.TOP);
-                linearLayout_for_ads.setVisibility(View.VISIBLE);
+                linearLayout_for_bannerAds.setGravity(Gravity.TOP);
+                linearLayout_for_bannerAds.setVisibility(View.VISIBLE);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {
-            linearLayout_for_ads.setVisibility(View.GONE);
+            linearLayout_for_bannerAds.setVisibility(View.GONE);
         }
 
         // message area
-        messageLinearLayout = findViewById(R.id.messageLinearLayout);
-        messageLinearLayout.setVisibility(View.GONE);
         bufferingStringTextView = findViewById(R.id.bufferingStringTextView);
+        // bufferingStringTextView.setVisibility(View.GONE);
+        dismissBufferingMessage();
+
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
         animationText.setStartOffset(0);
         animationText.setRepeatMode(Animation.REVERSE);
         animationText.setRepeatCount(Animation.INFINITE);
-
-        nativeAdsLinearLayout = findViewById(R.id.nativeAdsLinearLayout);
-        nativeAdsStringTextView = findViewById(R.id.nativeAdsStringTextView);
-        ScreenUtil.resizeTextSize(nativeAdsStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
         float durationTextSize = textFontSize * 0.6f;
         playingTimeTextView = findViewById(R.id.playingTimeTextView);
@@ -247,10 +236,84 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         durationTimeTextView.setText("000:00");
         ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
+        nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
+        nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
+
+        String nativeAdvancedId0 = "ca-app-pub-8354869049759576/7985456524";     // real ad unit id
+        // String nativeAdvancedId1 = "ca-app-pub-3940256099942544/6300978111";     // test ad unit id
+        // String nativeAdvancedId2 = "ca-app-pub-3940256099942544/2247696110";     // test ad unit id
+
+        /*
+        mNativeExpressAdView = new NativeExpressAdView(this);
+        mNativeExpressAdView.setAdSize(new AdSize(300, 200));
+        if (BuildConfig.DEBUG) {
+            mNativeExpressAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+        } else {
+            mNativeExpressAdView.setAdUnitId(nativeAdvancedId);
+        }
+        mNativeExpressAdView.setVisibility(View.VISIBLE);
+
+        VideoController mVideoController;
+
+        // Set its video options.
+        mNativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
+                .setStartMuted(true)
+                .build());
+
+        // The VideoController can be used to get lifecycle events and info about an ad's video
+        // asset. One will always be returned by getVideoController, even if the ad has no video
+        // asset.
+        mVideoController = mNativeExpressAdView.getVideoController();
+        mVideoController.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
+            @Override
+            public void onVideoEnd() {
+                Log.d(TAG, "Video playback is finished.");
+                super.onVideoEnd();
+            }
+        });
+
+        // Set an AdListener for the AdView, so the Activity can take action when an ad has finished
+        // loading.
+        mNativeExpressAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                if (mVideoController.hasVideoContent()) {
+                    Log.d(TAG, "Received an ad that contains a video asset.");
+                } else {
+                    Log.d(TAG, "Received an ad that does not contain a video asset.");
+                }
+            }
+        });
+
+        nativeAdsFrameLayout.addView(mNativeExpressAdView);
+        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
+        */
+
+        nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
+        nativeAdTemplateView.setVisibility(View.GONE);
+        nativeTemplateAd = new NativeTemplateAd(this, nativeAdvancedId0, nativeAdTemplateView);
+
         setImageButtonStatus();
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
-        showNativeAds();
+
+        showNativeAd();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (bannerAdView != null) {
+            bannerAdView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (bannerAdView != null) {
+            bannerAdView.pause();
+        }
     }
 
     @Override
@@ -481,11 +544,17 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
         if (mPresenter != null) {
             mPresenter.releaseMediaSessionCompat();
         }
+        if (bannerAdView != null) {
+            bannerAdView.destroy();
+        }
+        if (nativeTemplateAd != null) {
+            nativeTemplateAd.releaseNativeAd();
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -514,17 +583,174 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
             // free version
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
-                            , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
-                        @Override
-                        public void executeAfterDismissAds(int endPoint) {
-                            // returnToPrevious();
-                        }
-                    });
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint);
             showAdAsyncTask.execute();
-        } else {
-            // returnToPrevious();
         }
+    }
+
+
+    private void showSupportToolbarAndAudioController() {
+        supportToolbar.setVisibility(View.VISIBLE);
+        audioControllerView.setVisibility(View.VISIBLE);
+        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
+    }
+
+    private void hideSupportToolbarAndAudioController() {
+        supportToolbar.setVisibility(View.GONE);
+        audioControllerView.setVisibility(View.GONE);
+        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
+        closeMenu(mainMenu);
+    }
+
+    private void setOnClickEvents() {
+        volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
+        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                volumeSeekBar.setProgressAndThumb(i);
+                mPresenter.setAudioVolumeInsideVolumeSeekBar(i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        volumeImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int volumeSeekBarVisibility = volumeSeekBar.getVisibility();
+                if ( (volumeSeekBarVisibility == View.GONE) || (volumeSeekBarVisibility == View.INVISIBLE) ) {
+                    volumeSeekBar.setVisibility(View.VISIBLE);
+                    nativeAdsFrameLayout.setVisibility(View.GONE);
+                } else {
+                    volumeSeekBar.setVisibility(View.INVISIBLE);
+                    nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
+                }
+            }
+        });
+
+        previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.playPreviousSong();
+            }
+        });
+
+        playMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.startPlay();
+            }
+        });
+
+        pauseMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.pausePlay();
+            }
+        });
+
+        replayMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.replayMedia();
+            }
+        });
+
+        stopMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.stopPlay();
+            }
+        });
+
+        nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.playNextSong();
+            }
+        });
+
+        repeatImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.setRepeatSongStatus();
+            }
+        });
+
+        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.switchAudioToMusic();
+            }
+        });
+
+        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.switchAudioToVocal();
+            }
+        });
+
+        actionMenuImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                actionMenuView.showOverflowMenu();
+            }
+        });
+
+        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
+
+        player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // update the duration on controller UI
+                mPresenter.onDurationSeekBarProgressChanged(seekBar, progress, fromUser);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+        supportToolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int visibility = v.getVisibility();
+                if (visibility == View.VISIBLE) {
+                    // use custom toolbar
+                    hideSupportToolbarAndAudioController();
+                    Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.");
+                } else {
+                    // use custom toolbar
+                    showSupportToolbarAndAudioController();
+                    setTimerToHideSupportAndAudioController();
+                    Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.");
+                }
+                volumeSeekBar.setVisibility(View.INVISIBLE);
+
+                Log.d(TAG, "supportToolbar.onClick() is called.");
+            }
+        });
+
+        playerViewLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "videoExoPlayerView.onClick() is called.");
+                supportToolbar.performClick();
+            }
+        });
     }
 
     public void setButtonsPositionAndSize(Configuration config) {
@@ -621,162 +847,26 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         } else {
             volumeSeekBar.getLayoutParams().height = volumeSeekBarHeightForLandscape;
         }
-
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
-    }
 
-    private void setOnClickEvents() {
-        volumeSeekBar.setVisibility(View.INVISIBLE); // default is not showing
-        volumeSeekBar.setMax(PlayerConstants.MaxProgress);
-        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                volumeSeekBar.setProgressAndThumb(i);
-                mPresenter.setAudioVolumeInsideVolumeSeekBar(i);
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+        LinearLayout bannerAds_toobar_layout = findViewById(R.id.bannerAds_toobar_layout);
+        ConstraintLayout.LayoutParams bannerToolbarLayoutLP = (ConstraintLayout.LayoutParams)bannerAds_toobar_layout.getLayoutParams();
+        FrameLayout message_nativeAd_Layout = findViewById(R.id.message_nativeAd_Layout);
+        ConstraintLayout.LayoutParams messageNativeAdLayoutLP = (ConstraintLayout.LayoutParams)message_nativeAd_Layout.getLayoutParams();
+        float bannerToobarHeightPercent = bannerToolbarLayoutLP.matchConstraintPercentHeight;
+        Log.d(TAG, "bannerToobarHeightPercent = " + bannerToobarHeightPercent);
+        float heightPercent = 1.0f - bannerToobarHeightPercent - (imageButtonHeight*3.0f/screenSize.y);
+        Log.d(TAG, "heightPercent = " + heightPercent);
+        messageNativeAdLayoutLP.matchConstraintPercentHeight = ((int)(heightPercent*100.0f)) / 100.0f;
+        Log.d(TAG, "messageNativeAdLayoutLP.matchConstraintPercentHeight = " + messageNativeAdLayoutLP.matchConstraintPercentHeight);
 
-        volumeImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int visibility = volumeSeekBar.getVisibility();
-                if ( (visibility == View.GONE) || (visibility == View.INVISIBLE) ) {
-                    volumeSeekBar.setVisibility(View.VISIBLE);
-                } else {
-                    volumeSeekBar.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.playPreviousSong();
-            }
-        });
-
-        playMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.startPlay();
-            }
-        });
-
-        pauseMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.pausePlay();
-            }
-        });
-
-        replayMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.replayMedia();
-            }
-        });
-
-        stopMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.stopPlay();
-            }
-        });
-
-        nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.playNextSong();
-            }
-        });
-
-        repeatImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.setRepeatSongStatus();
-            }
-        });
-
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.switchAudioToMusic();
-            }
-        });
-
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.switchAudioToVocal();
-            }
-        });
-
-        actionMenuImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionMenuView.showOverflowMenu();
-            }
-        });
-
-        player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // update the duration on controller UI
-                mPresenter.onDurationSeekBarProgressChanged(seekBar, progress, fromUser);
-            }
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
-
-        supportToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int visibility = v.getVisibility();
-                if (visibility == View.VISIBLE) {
-                    // use custom toolbar
-                    hideSupportToolbarAndAudioController();
-                    Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.");
-                } else {
-                    // use custom toolbar
-                    showSupportToolbarAndAudioController();
-                    setTimerToHideSupportAndAudioController();
-                    Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.");
-                }
-                volumeSeekBar.setVisibility(View.INVISIBLE);
-
-                Log.d(TAG, "supportToolbar.onClick() is called.");
-            }
-        });
-
-        playerViewLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "videoExoPlayerView.onClick() is called.");
-                supportToolbar.performClick();
-            }
-        });
-    }
-
-
-    private void showSupportToolbarAndAudioController() {
-        supportToolbar.setVisibility(View.VISIBLE);
-        audioControllerView.setVisibility(View.VISIBLE);
-    }
-
-    private void hideSupportToolbarAndAudioController() {
-        supportToolbar.setVisibility(View.GONE);
-        audioControllerView.setVisibility(View.GONE);
-        closeMenu(mainMenu);
+        // setting the width and the margins for nativeAdTemplateView
+        layoutParams = (ViewGroup.MarginLayoutParams) nativeAdTemplateView.getLayoutParams();
+        // 6 buttons and 5 gaps
+        int nativeViewWidth = imageButtonHeight * 6 + buttonMarginLeft * 5;
+        layoutParams.width = nativeViewWidth;
+        layoutParams.setMargins(0, 0, 0, 0);
+        //
     }
 
     public void closeMenu(Menu menu) {
@@ -868,32 +958,44 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     }
 
     @Override
-    public void showNativeAds() {
-        // simulate showing native ad
-        if (BuildConfig.DEBUG) {
-            nativeAdsLinearLayout.setVisibility(View.VISIBLE);
+    public void showNativeAd() {
+        nativeAdViewVisibility = View.VISIBLE;
+        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
+        if (nativeTemplateAd != null) {
+            nativeTemplateAd.loadOneAd();
         }
     }
 
     @Override
-    public void hideNativeAds() {
-        // simulate hide native ad
-        Log.d(TAG, "hideNativeAds() is called.");
-        if (BuildConfig.DEBUG) {
-            nativeAdsLinearLayout.setVisibility(View.GONE);
-        }
+    public void hideNativeAd() {
+        Log.d(TAG, "hideNativeAd() is called.");
+        nativeAdViewVisibility = View.GONE;
+        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
     }
 
     @Override
     public void showBufferingMessage() {
-        messageLinearLayout.setVisibility(View.VISIBLE);
-        bufferingStringTextView.startAnimation(animationText);
+        bufferingStringTextView.setVisibility(View.VISIBLE);
+        if (animationText != null) {
+            bufferingStringTextView.startAnimation(animationText);
+        }
+        final Handler tHandler = new Handler(Looper.getMainLooper());
+        final Runnable tRunnable = new Runnable() {
+            @Override
+            public void run() {
+                tHandler.removeCallbacksAndMessages(null);
+                dismissBufferingMessage();
+            }
+        };
+        tHandler.postDelayed(tRunnable, 250);
     }
 
     @Override
     public void dismissBufferingMessage() {
-        messageLinearLayout.setVisibility(View.GONE);
-        animationText.cancel();
+        if (animationText != null) {
+            animationText.cancel();
+        }
+        bufferingStringTextView.setVisibility(View.GONE);
     }
 
     @Override

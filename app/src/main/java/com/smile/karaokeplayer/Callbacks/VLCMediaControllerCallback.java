@@ -45,7 +45,7 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                         if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                             mPresenter.replayMedia();
                         } else {
-                            mPresenter.getPresentView().showNativeAds();
+                            mPresenter.getPresentView().showNativeAd();
                         }
                     }
                 }
@@ -63,6 +63,15 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                         public void run() {
                             handler.removeCallbacksAndMessages(null);
                             mPresenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
+
+                            int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
+                            if (numberOfVideoTracks == 0) {
+                                // no video is being played, show native ads
+                                mPresenter.getPresentView().showNativeAd();
+                            } else {
+                                // video is being played, hide native ads
+                                mPresenter.getPresentView().hideNativeAd();
+                            }
                         }
                     };
                     handler.postDelayed(runnable, 500); // delay 0.5 seconds

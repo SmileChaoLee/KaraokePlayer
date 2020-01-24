@@ -33,8 +33,10 @@ public class PlayerBasePresenter {
     private final Context callingContext;
     private final PresentView presentView;
     private final Activity mActivity;
-    protected final float toastTextSize;
+    private final int maxNumberOfSongsPlayed = 5; // the point to enter showing ad
+    private int numberOfSongsPlayed;
 
+    protected final float toastTextSize;
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
 
@@ -54,10 +56,10 @@ public class PlayerBasePresenter {
         void setPlayingTimeTextView(String durationString);
         void update_Player_duration_seekbar(float duration);
         void update_Player_duration_seekbar_progress(int progress);
+        void showNativeAd();
+        void hideNativeAd();
         void showBufferingMessage();
         void dismissBufferingMessage();
-        void hideNativeAds();
-        void showNativeAds();
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
     }
@@ -161,15 +163,23 @@ public class PlayerBasePresenter {
             }
             singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
         }
+        numberOfSongsPlayed = 0;    // start from 0
+    }
+
+    public int getNumberOfSongsPlayed() {
+        return numberOfSongsPlayed;
+    }
+    public void setNumberOfSongsPlayed(int numberOfSongsPlayed) {
+        this.numberOfSongsPlayed = numberOfSongsPlayed;
+    }
+    public int getMaxNumberOfSongsPlayed() {
+        return maxNumberOfSongsPlayed;
     }
 
     public void onDurationSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (!isSeekable()) {
             return;
         }
-
-        Log.d(TAG, "fromuser = " + fromUser);
-        Log.d(TAG, "progress = " + progress);
         float positionTime = progress / 1000.0f;   // seconds
         int minutes = (int)(positionTime / 60.0f);    // minutes
         int seconds = (int)positionTime - (minutes * 60);
@@ -243,6 +253,18 @@ public class PlayerBasePresenter {
         }
     }
 
+    protected void playMediaFromUri(Uri uri) {
+        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
+        // pass the saved instance of playingParam to
+        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
+        Bundle playingParamOriginExtras = new Bundle();
+        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
+        if (mediaTransportControls != null) {
+            mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
+            numberOfSongsPlayed++;
+        }
+    }
+
     public void playSingleSong(SongInfo songInfo) {
         if (songInfo == null) {
             return;
@@ -287,14 +309,7 @@ public class PlayerBasePresenter {
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaSourcePrepared(false);
 
-        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-        // pass the saved instance of playingParam to
-        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-        Bundle playingParamOriginExtras = new Bundle();
-        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-        if (mediaTransportControls != null) {
-            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
-        }
+        playMediaFromUri(mediaUri);
     }
 
     public void startAutoPlay() {
@@ -481,15 +496,8 @@ public class PlayerBasePresenter {
         playingParam.setMediaSourcePrepared(false);
         // music or vocal is unknown
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
-        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-        // pass the saved instance of playingParam to
-        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
 
-        Bundle playingParamOriginExtras = new Bundle();
-        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-        if (mediaTransportControls != null) {
-            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
-        }
+        playMediaFromUri(mediaUri);
     }
 
     public void playTheSongThatWasPlayedBeforeActivityRecreated() {
@@ -509,14 +517,7 @@ public class PlayerBasePresenter {
             int playbackState = playingParam.getCurrentPlaybackState();
             Log.d(TAG, "onActivityCreated() --> playingParam.getCurrentPlaybackState() = " + playbackState);
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
-                // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-                // pass the saved instance of playingParam to
-                // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-                Bundle playingParamOriginExtras = new Bundle();
-                playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-                if (mediaTransportControls != null) {
-                    mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
-                }
+                playMediaFromUri(mediaUri);
             }
         }
     }
@@ -562,11 +563,11 @@ public class PlayerBasePresenter {
     }
 
     public void pausePlay() {
-        // if ( (mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
         if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
             // no media file opened or playing has been stopped
             if (mediaTransportControls != null) {
                 mediaTransportControls.pause();
+                presentView.showNativeAd();
             }
         }
     }
@@ -578,7 +579,6 @@ public class PlayerBasePresenter {
         } else {
             if (playingParam.getRepeatStatus() == PlayerConstants.NoRepeatPlaying) {
                 // no repeat playing
-                // if ((mediaSource != null) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
                 if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
                     // media file opened or playing has been stopped
                     if (mediaTransportControls != null) {
@@ -593,7 +593,32 @@ public class PlayerBasePresenter {
         Log.d(TAG, "stopPlay() is called.");
     }
 
+    protected void specificPlayerReplayMedia(long currentAudioPosition) {
+    }
+
     public void replayMedia() {
+        if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
+            return;
+        }
+
+        long currentAudioPosition = 0;
+        playingParam.setCurrentAudioPosition(currentAudioPosition);
+        if (playingParam.isMediaSourcePrepared()) {
+            // song is playing, paused, or finished playing
+            // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
+            // because it will send Play.STATE_ENDED event after the playing has finished
+            // but the playing was stopped in the middle of playing then wo'nt send
+            // Play.STATE_ENDED event
+            // exoPlayer.setPlayWhenReady(false);
+            specificPlayerReplayMedia(currentAudioPosition);
+        } else {
+            // song was stopped by user
+            // mediaTransportControls.prepare();   // prepare and play
+            // Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
+            playMediaFromUri(mediaUri);
+        }
+
+        Log.d(TAG, "replayMedia() is called.");
     }
 
     public void initMediaSessionCompat() {
@@ -626,4 +651,5 @@ public class PlayerBasePresenter {
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
     }
+
 }
