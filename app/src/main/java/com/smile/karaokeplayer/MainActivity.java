@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private void startPlayerActivity() {
         // Intent callingIntent = getIntent();
         Intent startPlayerActivityIntent = new Intent(this, ExoPlayerActivity.class);
+        // Intent startPlayerActivityIntent = new Intent(this, VLCPlayerActivity.class);
         // startPlayerActivityIntent.putExtra("CallingIntent", callingIntent);
         startActivity(startPlayerActivityIntent);
     }

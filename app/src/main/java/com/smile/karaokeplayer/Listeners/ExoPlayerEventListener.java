@@ -44,7 +44,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
             case Player.STATE_BUFFERING:
                 mPresenter.getPresentView().hideNativeAd();
                 mPresenter.getPresentView().showBufferingMessage();
-                break;
+                return;
             case Player.STATE_READY:
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
@@ -95,6 +95,8 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 }
                 break;
         }
+
+        mPresenter.getPresentView().dismissBufferingMessage();
     }
 
     @Override

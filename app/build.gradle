@@ -13,11 +13,11 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 132
-        versionName "1.32"
+        versionCode 133
+        versionName "1.33"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -42,17 +42,11 @@ android {
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/StereoVolumeProcessor.java"
 
-                // exclude "**/ExoPlayerActivity.java"
-                // exclude "**/ExoPlayerPresenter.java"
-                // exclude "**/ExoPlayerEventListener.java"
-                // exclude "**/ExoPlaybackPreparer.java"
-                // exclude "**/ExoMediaControllerCallback.java"
-
-                exclude "**/VLCPlayerActivity.java"
-                exclude "**/VLCPlayerPresenter.java"
-                exclude "**/VLCPlayerEventListener.java"
-                exclude "**/VLCMediaSessionCallback.java"
-                exclude "**/VLCMediaControllerCallback.java"
+                // exclude "**/VLCPlayerActivity.java"
+                // exclude "**/VLCPlayerPresenter.java"
+                // exclude "**/VLCPlayerEventListener.java"
+                // exclude "**/VLCMediaSessionCallback.java"
+                // exclude "**/VLCMediaControllerCallback.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"
@@ -100,17 +94,18 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:truth:1.3.0-alpha03'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-alpha03'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
-    implementation project(':NativeTemplatesAndroid-1.0.0')
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
 
-    // implementation 'org.videolan.android:libvlc-all:3.1.12'
+    implementation 'org.videolan.android:libvlc-all:3.1.12'
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-flac')
     implementation project(':extension-opus')
     implementation project(':extension-vp9')
     implementation project(':extension-av1')
+
+    implementation project(':NativeTemplatesAndroid-1.0.0')
 }
 
 apply plugin: 'com.google.gms.google-services'

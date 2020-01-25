@@ -45,21 +45,18 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 break;
             case MediaPlayer.Event.Playing:
                 Log.d(TAG, "vlcPlayer is being played.");
-                // moved to MediaControllerCallback
-                // playingParam.setMediaSourcePrepared(true);  // has been prepared
-                // getPlayingMediaInfoAndSetAudioActionSubMenu();
-                // mPresenter.getPresentView().dismissBufferingMessage();
+                mPresenter.getPresentView().dismissBufferingMessage();
                 mPresenter.getPresentView().hideNativeAd();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 break;
             case MediaPlayer.Event.Paused:
                 Log.d(TAG, "vlcPlayer is paused");
-                // mPresenter.getPresentView().dismissBufferingMessage();
+                mPresenter.getPresentView().dismissBufferingMessage();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_PAUSED);
                 break;
             case MediaPlayer.Event.Stopped:
                 Log.d(TAG, "vlcPlayer is stopped");
-                // mPresenter.getPresentView().dismissBufferingMessage();
+                mPresenter.getPresentView().dismissBufferingMessage();
                 mPresenter.getPresentView().showNativeAd();
                 // Because vlcPlayer will send a MediaPlayer.Event.Stopped
                 // after sending a MediaPlayer.Event.EndReached when finished playing
@@ -106,7 +103,6 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 }
                 break;
             default:
-                // showNativeAd();
                 break;
         }
     }

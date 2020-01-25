@@ -90,6 +90,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
     private LinearLayout linearLayout_for_bannerAds;
     private AdView bannerAdView;
+    private LinearLayout message_area_LinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
     private FrameLayout nativeAdsFrameLayout;
@@ -214,10 +215,9 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         }
 
         // message area
+        message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout);
+        message_area_LinearLayout.setVisibility(View.GONE);
         bufferingStringTextView = findViewById(R.id.bufferingStringTextView);
-        // bufferingStringTextView.setVisibility(View.GONE);
-        dismissBufferingMessage();
-
         ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         animationText = new AlphaAnimation(0.0f,1.0f);
         animationText.setDuration(500);
@@ -975,19 +975,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
     @Override
     public void showBufferingMessage() {
-        bufferingStringTextView.setVisibility(View.VISIBLE);
+        message_area_LinearLayout.setVisibility(View.VISIBLE);
         if (animationText != null) {
             bufferingStringTextView.startAnimation(animationText);
         }
-        final Handler tHandler = new Handler(Looper.getMainLooper());
-        final Runnable tRunnable = new Runnable() {
-            @Override
-            public void run() {
-                tHandler.removeCallbacksAndMessages(null);
-                dismissBufferingMessage();
-            }
-        };
-        tHandler.postDelayed(tRunnable, 250);
     }
 
     @Override
@@ -995,7 +986,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         if (animationText != null) {
             animationText.cancel();
         }
-        bufferingStringTextView.setVisibility(View.GONE);
+        message_area_LinearLayout.setVisibility(View.GONE);
     }
 
     @Override

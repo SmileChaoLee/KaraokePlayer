@@ -37,17 +37,23 @@
         app:layout_constraintHeight_percent="0.5"
         app:layout_constraintTop_toBottomOf="@id/bannerAds_toobar_layout">
 
-        <TextView
-            android:id="@+id/bufferingStringTextView"
+        <LinearLayout
+            android:id="@+id/message_area_LinearLayout"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white"
-            android:textAllCaps="false"
-            android:text="@string/bufferingString"
-            android:visibility="gone"
-            android:gravity="center">
-        </TextView>
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/bufferingStringTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                android:text="@string/bufferingString"
+                android:gravity="center">
+            </TextView>
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/nativeAdsFrameLayout"

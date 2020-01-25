@@ -106,7 +106,11 @@ public class NativeAdvancedAd {
         // If the app is using a MediaView, it should be
         // instantiated and passed to setMediaView. This view is a little different
         // in that the asset is populated automatically, so there's one less step.
-        MediaView mediaView = (MediaView) nativeAdView.findViewById(R.id.native_ad_media);
+
+        // MediaView mediaView = (MediaView) nativeAdView.findViewById(R.id.native_ad_media);
+        MediaView mediaView = new MediaView(mContext);
+        nativeAdView.addView(mediaView);
+
         nativeAdView.setMediaView(mediaView);
 
         // Call the UnifiedNativeAdView's setNativeAd method to register the
