@@ -13,11 +13,11 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        minSdkVersion 17
+        minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 133
-        versionName "1.33"
+        versionCode 134
+        versionName "1.34"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -42,11 +42,11 @@ android {
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/StereoVolumeProcessor.java"
 
-                // exclude "**/VLCPlayerActivity.java"
-                // exclude "**/VLCPlayerPresenter.java"
-                // exclude "**/VLCPlayerEventListener.java"
-                // exclude "**/VLCMediaSessionCallback.java"
-                // exclude "**/VLCMediaControllerCallback.java"
+                exclude "**/VLCPlayerActivity.java"
+                exclude "**/VLCPlayerPresenter.java"
+                exclude "**/VLCPlayerEventListener.java"
+                exclude "**/VLCMediaSessionCallback.java"
+                exclude "**/VLCMediaControllerCallback.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"
@@ -82,11 +82,11 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-mediasession:2.11.1'
 
     implementation 'com.facebook.android:audience-network-sdk:5.6.0'
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.google.firebase:firebase-ads:18.3.0'
 
-    implementation 'com.google.android.gms:play-services-measurement:17.2.1'
-    implementation 'com.google.android.gms:play-services-measurement-sdk:17.2.1'
+    implementation 'com.google.android.gms:play-services-measurement:17.2.2'
+    implementation 'com.google.android.gms:play-services-measurement-sdk:17.2.2'
 
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2-alpha03'
@@ -97,7 +97,7 @@ dependencies {
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
 
-    implementation 'org.videolan.android:libvlc-all:3.1.12'
+    // implementation 'org.videolan.android:libvlc-all:3.1.12'
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-flac')

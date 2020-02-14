@@ -957,13 +957,35 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         player_duration_seekbar.setProgress(progress);
     }
 
+    private final Handler showNativeAdTimerHandler = new Handler(Looper.getMainLooper());
+    private final Runnable showNativeAdTimerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            showNativeAdTimerHandler.removeCallbacksAndMessages(null);
+            if (mPresenter != null) {
+                PlayingParameters playingParam = mPresenter.getPlayingParam();
+                int playbackState = playingParam.getCurrentPlaybackState();
+                if (playbackState != PlaybackStateCompat.STATE_PLAYING) {
+                    // not playing (no media, pause, or stop)
+                    if (nativeTemplateAd != null) {
+                        Log.d(TAG, "Loading native ad.");
+                        nativeTemplateAd.loadOneAd();
+                        // delay 5 minutes
+                        showNativeAdTimerHandler.postDelayed(showNativeAdTimerRunnable, 300000);
+                    }
+                }
+            }
+        }
+    };
+
     @Override
     public void showNativeAd() {
         nativeAdViewVisibility = View.VISIBLE;
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
-        if (nativeTemplateAd != null) {
-            nativeTemplateAd.loadOneAd();
-        }
+        // if (nativeTemplateAd != null) {
+        //     nativeTemplateAd.loadOneAd();
+        // }
+        showNativeAdTimerHandler.post(showNativeAdTimerRunnable);
     }
 
     @Override
