@@ -963,16 +963,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         public void run() {
             showNativeAdTimerHandler.removeCallbacksAndMessages(null);
             if (mPresenter != null) {
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                int playbackState = playingParam.getCurrentPlaybackState();
-                if (playbackState != PlaybackStateCompat.STATE_PLAYING) {
-                    // not playing (no media, pause, or stop)
-                    if (nativeTemplateAd != null) {
-                        Log.d(TAG, "Loading native ad.");
-                        nativeTemplateAd.loadOneAd();
-                        // delay 5 minutes
-                        showNativeAdTimerHandler.postDelayed(showNativeAdTimerRunnable, 300000);
-                    }
+                if (nativeTemplateAd != null) {
+                    Log.d(TAG, "Loading native ad.");
+                    nativeTemplateAd.loadOneAd();
+                    showNativeAdTimerHandler.postDelayed(this, 300000); // 5 minutes
                 }
             }
         }
@@ -993,6 +987,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         Log.d(TAG, "hideNativeAd() is called.");
         nativeAdViewVisibility = View.GONE;
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
+        showNativeAdTimerHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
