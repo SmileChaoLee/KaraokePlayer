@@ -51,7 +51,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
-        mPresenter.playTheSongThatWasPlayedBeforeActivityRecreated();
+        mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
     }
 
     @Override

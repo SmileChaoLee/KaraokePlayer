@@ -294,6 +294,11 @@ public class PlayerBasePresenter {
         //     mediaUri = Uri.parse(filePath);
         // }
 
+        Log.i(TAG, "mediaUri = " + mediaUri.toString());
+        if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
+            return;
+        }
+
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
 
@@ -500,11 +505,9 @@ public class PlayerBasePresenter {
         playMediaFromUri(mediaUri);
     }
 
-    public void playTheSongThatWasPlayedBeforeActivityRecreated() {
-        // Uri mediaUri = mPresenter.getMediaUri();
+    public void playTheSongThatWasPlayedBeforeActivityCreated() {
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
-                // SongInfo singleSongInfo = mPresenter.getSingleSongInfo();
                 if (singleSongInfo == null) {
                     Log.d(TAG, "singleSongInfo is null");
                 } else {

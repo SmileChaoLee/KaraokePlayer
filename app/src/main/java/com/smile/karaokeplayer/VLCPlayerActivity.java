@@ -50,7 +50,7 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
         int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
-        mPresenter.playTheSongThatWasPlayedBeforeActivityRecreated();
+        mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
     }
 
     @Override

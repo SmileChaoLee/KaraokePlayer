@@ -87,11 +87,16 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                hasPermissionForExternalStorage = false;
-                ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+            int rLen = grantResults.length;
+            if (rLen>0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    hasPermissionForExternalStorage = false;
+                    ScreenUtil.showToast(this, accessExternalStoragePermissionDeniedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                } else {
+                    hasPermissionForExternalStorage = true;
+                }
             } else {
-                hasPermissionForExternalStorage = true;
+                hasPermissionForExternalStorage = false;
             }
         }
 
