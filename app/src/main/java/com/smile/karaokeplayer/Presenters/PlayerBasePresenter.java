@@ -294,7 +294,7 @@ public class PlayerBasePresenter {
         //     mediaUri = Uri.parse(filePath);
         // }
 
-        Log.i(TAG, "mediaUri = " + mediaUri.toString());
+        Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }

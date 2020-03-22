@@ -362,6 +362,8 @@ public class SongDataActivity extends AppCompatActivity {
         mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
 
+        /*
+        // removed on 2020-03-21 because it is not necessary
         if (title.isEmpty()) {
             isValid = false;
             if (hasMessage) {
@@ -369,6 +371,7 @@ public class SongDataActivity extends AppCompatActivity {
                         toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         }
+        */
         if (filePath.isEmpty()) {
             isValid = false;
             if (hasMessage) {
