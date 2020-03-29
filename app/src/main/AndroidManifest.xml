@@ -26,6 +26,12 @@
             android:name="firebase_crashlytics_collection_enabled"
             android:value="false" />
 
+        <receiver android:name="com.smile.karaokeplayer.Receivers.MyMediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            </intent-filter>
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
