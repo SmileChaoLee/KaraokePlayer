@@ -91,9 +91,12 @@ public final class ExternalStorageUtil {
                     Uri downloadUri = Uri.parse("content://downloads/public_downloads");
 
                     // Append download document id at uri end.
-                    Uri downloadUriAppendId = ContentUris.withAppendedId(downloadUri, Long.valueOf(documentId));
-
-                    ret = getImageRealPath(ctx.getContentResolver(), downloadUriAppendId, null);
+                    try {
+                        Uri downloadUriAppendId = ContentUris.withAppendedId(downloadUri, Long.valueOf(documentId));
+                        ret = getImageRealPath(ctx.getContentResolver(), downloadUriAppendId, null);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
 
                 } else if(isExternalStoreDoc(uriAuthority)) {
                     String idArr[] = documentId.split(":");

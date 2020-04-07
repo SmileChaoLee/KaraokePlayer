@@ -316,12 +316,16 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         super.getValidatedUri(tempUri);
 
         Uri resultUri = null;
-        String filePath = ExternalStorageUtil.getUriRealPath(callingContext, tempUri);
-        if (filePath != null) {
-            if (!filePath.isEmpty()) {
-                File songFile = new File(filePath);
-                resultUri = Uri.fromFile(songFile);
+        try {
+            String filePath = ExternalStorageUtil.getUriRealPath(callingContext, tempUri);
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    resultUri = Uri.fromFile(songFile);
+                }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
 
         return resultUri;

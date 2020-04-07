@@ -479,6 +479,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
 
     @Override
     public Uri getValidatedUri(Uri tempUri) {
+        Log.d(TAG, "ExoPlayerPresenter.java --> getValidatedUri() is called.");
         return super.getValidatedUri(tempUri);
     }
 

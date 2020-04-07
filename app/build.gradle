@@ -16,8 +16,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 141
-        versionName "1.41"
+        versionCode 142
+        versionName "1.42"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -47,6 +47,8 @@ android {
                 exclude "**/VLCPlayerEventListener.java"
                 exclude "**/VLCMediaSessionCallback.java"
                 exclude "**/VLCMediaControllerCallback.java"
+
+                // exclude "**/ExternalStorageUtil.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"

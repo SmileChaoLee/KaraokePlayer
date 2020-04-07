@@ -85,7 +85,7 @@ public class SongListActivity extends AppCompatActivity {
         exitSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showAdAndExitActivity();
+                returnToPrevious();
             }
         });
 
@@ -140,27 +140,7 @@ public class SongListActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        showAdAndExitActivity();
-    }
-
-    private void showAdAndExitActivity() {
         returnToPrevious();
-        if (SmileApplication.InterstitialAd != null) {
-            // free version
-            Log.d(TAG, "showAdAndExitActivity() --> Starting to show Ads");
-            int entryPoint = 0; //  no used
-            ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint
-                            , new ShowingInterstitialAdsUtil.AfterDismissFunctionOfShowAd() {
-                        @Override
-                        public void executeAfterDismissAds(int endPoint) {
-                            // returnToPrevious();
-                        }
-                    });
-            showAdAsyncTask.execute();
-        } else {
-            // returnToPrevious();
-        }
     }
 
     private void returnToPrevious() {

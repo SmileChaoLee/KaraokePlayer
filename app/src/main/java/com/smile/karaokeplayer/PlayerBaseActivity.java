@@ -531,12 +531,11 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
                         int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(mediaUri, takeFlags);
                     }
+                    mPresenter.playSelectedSongFromStorage(mediaUri);
                 } catch (Exception ex) {
                     Log.d(TAG, "Failed to add persistable permission of mediaUri");
                     ex.printStackTrace();
                 }
-
-                mPresenter.playSelectedSongFromStorage(mediaUri);
             }
             return;
         }

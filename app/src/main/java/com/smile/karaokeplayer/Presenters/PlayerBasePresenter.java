@@ -1,9 +1,12 @@
 package com.smile.karaokeplayer.Presenters;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.UriPermission;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -282,17 +285,34 @@ public class PlayerBasePresenter {
         // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
         // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
         // to let devices that are above (included) API 29 can still use external storage
-        mediaUri = null;
-        filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
-        if (filePath != null) {
-            if (!filePath.isEmpty()) {
-                File songFile = new File(filePath);
-                mediaUri = Uri.fromFile(songFile);
+        // mediaUri = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                ContentResolver contentResolver = callingContext.getContentResolver();
+                for (UriPermission perm : contentResolver.getPersistedUriPermissions()) {
+                    if (perm.getUri().equals(Uri.parse(filePath))) {
+                        Log.d(TAG, "playSingleSong() has URI permission");
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
-        // } else {
-        //     mediaUri = Uri.parse(filePath);
-        // }
+        mediaUri = getValidatedUri(Uri.parse(filePath));
+        /*
+        try {
+            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    mediaUri = Uri.fromFile(songFile);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        */
 
         Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
@@ -484,10 +504,11 @@ public class PlayerBasePresenter {
 
     public void playSelectedSongFromStorage(Uri tempUri) {
         mediaUri = getValidatedUri(tempUri);
-        Log.i(TAG, "mediaUri = " + mediaUri.toString());
+        Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }
+
         playingParam.setCurrentVideoTrackIndexPlayed(0);
         int currentAudioRederer = 0;
         playingParam.setMusicAudioTrackIndex(currentAudioRederer);

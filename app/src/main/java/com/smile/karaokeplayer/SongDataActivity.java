@@ -295,12 +295,11 @@ public class SongDataActivity extends AppCompatActivity {
                         int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(filePathUri, takeFlags);
                     }
+                    edit_filePathEditText.setText(filePathUri.toString());
                 } catch (Exception ex) {
                     Log.d(TAG, "Failed to add persistable permission of filePathUri");
                     ex.printStackTrace();
                 }
-
-                edit_filePathEditText.setText(filePathUri.toString());
             }
             return;
         }
