@@ -1,7 +1,5 @@
 package com.smile.karaokeplayer.Constants;
 
-import com.smile.smilelibraries.utilities.ScreenUtil;
-
 public final class CommonConstants {
     private CommonConstants() {
     }
