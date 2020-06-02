@@ -38,7 +38,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
             case MediaPlayer.Event.Buffering:
                 Log.d(TAG, "vlcPlayer is buffering.");
                 if (!vlcPlayer.isPlaying()) {
-                    mPresenter.getPresentView().hideNativeAd();
+                    mPresenter.getPresentView().hideNativeAndBannerAd();
                     mPresenter.getPresentView().showBufferingMessage();
                     mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_BUFFERING);
                 }
@@ -46,7 +46,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
             case MediaPlayer.Event.Playing:
                 Log.d(TAG, "vlcPlayer is being played.");
                 mPresenter.getPresentView().dismissBufferingMessage();
-                mPresenter.getPresentView().hideNativeAd();
+                mPresenter.getPresentView().hideNativeAndBannerAd();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_PLAYING);
                 break;
             case MediaPlayer.Event.Paused:
@@ -57,7 +57,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
             case MediaPlayer.Event.Stopped:
                 Log.d(TAG, "vlcPlayer is stopped");
                 mPresenter.getPresentView().dismissBufferingMessage();
-                mPresenter.getPresentView().showNativeAd();
+                mPresenter.getPresentView().showNativeAndBannerAd();
                 // Because vlcPlayer will send a MediaPlayer.Event.Stopped
                 // after sending a MediaPlayer.Event.EndReached when finished playing
                 // Avoid sending a MediaPlayer.Event.Stopped after finished playing
@@ -87,7 +87,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 break;
             case MediaPlayer.Event.EncounteredError:
                 Log.d(TAG, "vlcPlayer is EncounteredError event");
-                mPresenter.getPresentView().showNativeAd();
+                mPresenter.getPresentView().showNativeAndBannerAd();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
                 String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
                 if (playingParam.isAutoPlay()) {

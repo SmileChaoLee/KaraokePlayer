@@ -56,4 +56,5 @@
     <string name="titileEmptyString">抬頭是空白</string>
     <string name="filepathEmptyString">檔案路徑是空白</string>
     <string name="notSeekableSongString">無法前進或後退</string>
+    <string name="musicAndVocalNotSet">沒有設定音樂和人聲</string>
 </resources>

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -300,6 +301,43 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 }
                 closeDatabase();
             }
+    }
+
+    public SongInfo findOneSongByContentUri(Uri contentUri) {
+        SongInfo songInfo = null;
+        String songFilePath = "";
+        if (contentUri == null) {
+            return songInfo;
+        }
+        songFilePath = contentUri.toString();
+
+        openScoreDatabase();
+        if (songDatabase != null) {
+            try {
+                String whereClause = filePath + " = " + '"' + songFilePath + '"';
+                Cursor cur = songDatabase.query(tableName, null, whereClause, null, null, null, null);
+                if (cur != null) {
+                    if (cur.moveToFirst()) {
+                        Integer id = cur.getInt(0);
+                        String songName = cur.getString(1);
+                        String filePath = cur.getString(2);
+                        int musicTrackNo = cur.getInt(3);
+                        int musicChannel = cur.getInt(4);
+                        int vocalTrackNo = cur.getInt(5);
+                        int vocalChannel = cur.getInt(6);
+                        String included = cur.getString(7);
+                        songInfo = new SongInfo(id, songName, filePath, musicTrackNo, musicChannel, vocalTrackNo, vocalChannel, included);
+                    }
+                    cur.close();
+                }
+            } catch (SQLException ex) {
+                Log.d("TAG", "findOneSongByContentUri() exception.");
+                ex.printStackTrace();
+            }
+            closeDatabase();
+        }
+
+        return songInfo;
     }
 
     public void closeDatabase() {

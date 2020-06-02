@@ -21,12 +21,11 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
+import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
-import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class PlayerBasePresenter {
@@ -59,12 +58,13 @@ public class PlayerBasePresenter {
         void setPlayingTimeTextView(String durationString);
         void update_Player_duration_seekbar(float duration);
         void update_Player_duration_seekbar_progress(int progress);
-        void showNativeAd();
-        void hideNativeAd();
+        void showNativeAndBannerAd();
+        void hideNativeAndBannerAd();
         void showBufferingMessage();
         void dismissBufferingMessage();
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
+        void showMusicAndVocalIsNotSet();
     }
 
     public PlayerBasePresenter(Context context, PresentView presentView) {
@@ -230,6 +230,10 @@ public class PlayerBasePresenter {
     }
 
     public void switchAudioToVocal() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
         int vocalAudioTrackIndex = playingParam.getVocalAudioTrackIndex();
         int vocalAudioChannel = playingParam.getVocalAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);
@@ -237,6 +241,10 @@ public class PlayerBasePresenter {
     }
 
     public void switchAudioToMusic() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
         int musicAudioTrackIndex = playingParam.getMusicAudioTrackIndex();
         int musicAudioChannel = playingParam.getMusicAudioChannel();
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);
@@ -244,12 +252,16 @@ public class PlayerBasePresenter {
     }
 
     protected void setProperAudioTrackAndChannel() {
-        if (playingParam.isAutoPlay()) {
+        if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
+            switchAudioToVocal();
+            // removed on 2020-06-01
+            /*
             if (playingParam.isPlayingPublic()) {
                 switchAudioToVocal();
             } else {
                 switchAudioToMusic();
             }
+            */
         } else {
             // not auto playing media, means using open menu to open a media
             switchAudioToVocal();   // music and vocal are the same in this case
@@ -300,24 +312,13 @@ public class PlayerBasePresenter {
             }
         }
         mediaUri = getValidatedUri(Uri.parse(filePath));
-        /*
-        try {
-            filePath = ExternalStorageUtil.getUriRealPath(callingContext, Uri.parse(filePath));
-            if (filePath != null) {
-                if (!filePath.isEmpty()) {
-                    File songFile = new File(filePath);
-                    mediaUri = Uri.fromFile(songFile);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        */
 
         Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }
+
+        playingParam.setInSongList(true);
 
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
@@ -503,27 +504,45 @@ public class PlayerBasePresenter {
     }
 
     public void playSelectedSongFromStorage(Uri tempUri) {
+
         mediaUri = getValidatedUri(tempUri);
         Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }
 
-        playingParam.setCurrentVideoTrackIndexPlayed(0);
-        int currentAudioRederer = 0;
-        playingParam.setMusicAudioTrackIndex(currentAudioRederer);
-        playingParam.setVocalAudioTrackIndex(currentAudioRederer);
-        playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
-        playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
-        playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
-        playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-        playingParam.setCurrentAudioPosition(0);
-        playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-        playingParam.setMediaSourcePrepared(false);
-        // music or vocal is unknown
-        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
+        // searching song list for the information of tempUri
+        SongInfo songInfo = null;
+        SongListSQLite songListSQLite = new SongListSQLite(callingContext);
+        if (songListSQLite != null) {
+            songInfo = songListSQLite.findOneSongByContentUri(tempUri); // use the original Uri
+            songListSQLite.closeDatabase();
+            songListSQLite = null;
+        }
+        //
 
-        playMediaFromUri(mediaUri);
+        if (songInfo != null) {
+            Log.d(TAG, "Found this song on song list.");
+            playSingleSong(songInfo);
+        } else {
+            Log.d(TAG, "Could not find this song on song list.");
+            playingParam.setInSongList(false);
+            playingParam.setCurrentVideoTrackIndexPlayed(0);
+            int currentAudioRederer = 0;
+            playingParam.setMusicAudioTrackIndex(currentAudioRederer);
+            playingParam.setVocalAudioTrackIndex(currentAudioRederer);
+            playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
+            playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
+            playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
+            playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
+            playingParam.setCurrentAudioPosition(0);
+            playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
+            playingParam.setMediaSourcePrepared(false);
+            // music or vocal is unknown
+            playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
+
+            playMediaFromUri(mediaUri);
+        }
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
@@ -591,7 +610,7 @@ public class PlayerBasePresenter {
             // no media file opened or playing has been stopped
             if (mediaTransportControls != null) {
                 mediaTransportControls.pause();
-                presentView.showNativeAd();
+                presentView.showNativeAndBannerAd();
             }
         }
     }

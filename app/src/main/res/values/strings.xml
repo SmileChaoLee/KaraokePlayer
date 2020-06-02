@@ -55,4 +55,5 @@
     <string name="titileEmptyString">Title is empty</string>
     <string name="filepathEmptyString">File path is empty</string>
     <string name="notSeekableSongString">Unable to forward and backward</string>
+    <string name="musicAndVocalNotSet">No setting on Music or Vocal</string>
 </resources>

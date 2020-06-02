@@ -26,13 +26,14 @@ public class PlayingParameters implements Parcelable {
     private int musicOrVocalOrNoSetting;
     private int repeatStatus;
     private boolean isPlaySingleSong;
+    private boolean isInSongList;
 
     public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared,
                              int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
                              int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting,
-                             int repeatStatus, boolean isPlaySingleSong) {
+                             int repeatStatus, boolean isPlaySingleSong, boolean isInSongList) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaSourcePrepared = isMediaSourcePrepared;
@@ -50,6 +51,7 @@ public class PlayingParameters implements Parcelable {
         this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
         this.repeatStatus = repeatStatus;
         this.isPlaySingleSong = isPlaySingleSong;
+        this.isInSongList = isInSongList;
     }
 
     public PlayingParameters() {
@@ -186,9 +188,15 @@ public class PlayingParameters implements Parcelable {
     public boolean isPlaySingleSong() {
         return isPlaySingleSong;
     }
+    public boolean isInSongList() {
+        return isInSongList;
+    }
 
     public void setPlaySingleSong(boolean isPlaySingleSong) {
         this.isPlaySingleSong = isPlaySingleSong;
+    }
+    public void setInSongList(boolean isInSongList) {
+        this.isInSongList = isInSongList;
     }
 
     @Override
@@ -215,6 +223,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.musicOrVocalOrNoSetting);
         dest.writeInt(this.repeatStatus);
         dest.writeByte(this.isPlaySingleSong ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isInSongList ? (byte) 1 : (byte) 0);
     }
 
     protected PlayingParameters(Parcel in) {
@@ -235,6 +244,7 @@ public class PlayingParameters implements Parcelable {
         this.musicOrVocalOrNoSetting = in.readInt();
         this.repeatStatus = in.readInt();
         this.isPlaySingleSong = in.readByte() != 0;
+        this.isInSongList = in.readByte() != 0;
     }
 
     public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {
@@ -271,5 +281,6 @@ public class PlayingParameters implements Parcelable {
         setMusicOrVocalOrNoSetting(0); // no music and vocal setting
         setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         setPlaySingleSong(false);    // default
+        setInSongList(false);
     }
 }

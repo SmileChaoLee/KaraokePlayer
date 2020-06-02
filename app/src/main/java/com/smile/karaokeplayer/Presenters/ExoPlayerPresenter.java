@@ -312,11 +312,13 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
         } else {
             int audioChannel = CommonConstants.StereoChannel;  // default channel
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
-            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
+                Log.d(TAG, "Auto play or playing single song.");
             } else {
                 // for open media. do not know the music track and vocal track
+                Log.d(TAG, "Do not know the music track and vocal track.");
                 playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
                 playingParam.setMusicAudioChannel(audioChannel);
                 playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);

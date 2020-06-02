@@ -38,8 +38,11 @@ public class SmileApplication extends MultiDexApplication {
     public static Resources AppResources;
     public static Context AppContext;
 
-    public static String googleAdMobBannerID = "";
+
     public static ShowingInterstitialAdsUtil InterstitialAd;
+    public static String facebookBannerID = "";
+    public static String googleAdMobBannerID = "";
+    public static int AdProvider = ShowingInterstitialAdsUtil.FacebookAdProvider;    // default is Facebook Ad
 
     private static FacebookInterstitialAds facebookAds;
     private static GoogleAdMobInterstitial googleInterstitialAd;
@@ -66,14 +69,21 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
         AudienceNetworkAds.initialize(this);
-        String facebookPlacementID = new String("1712962715503258_1712963252169871");
-        facebookAds = new FacebookInterstitialAds(AppContext, facebookPlacementID);
+        String facebookInterstitialID = new String("1712962715503258_1712963252169871");
+        String testString = "";
+        // for debug mode
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            testString = "IMG_16_9_APP_INSTALL#";
+        }
+        facebookInterstitialID = testString + facebookInterstitialID;
+        //
+        facebookAds = new FacebookInterstitialAds(AppContext, facebookInterstitialID);
+        facebookBannerID = "1712962715503258_2019623008170559";
 
         // Google AdMob
         String googleAdMobAppID = getString(R.string.google_AdMobAppID);
         String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
         googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
-        // MobileAds.initialize(AppContext, googleAdMobAppID);
         MobileAds.initialize(AppContext, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {

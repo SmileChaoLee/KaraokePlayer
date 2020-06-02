@@ -192,9 +192,10 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             int audioTrackIndex = 1;    // default audio track index
             int audioChannel = CommonConstants.StereoChannel;
-            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+            if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
+                Log.d(TAG, "Auto play or playing single song.");
             } else {
                 for (int index = 0; index< audioTrackIndicesList.size(); index++) {
                     int audioId = audioTrackIndicesList.get(index);

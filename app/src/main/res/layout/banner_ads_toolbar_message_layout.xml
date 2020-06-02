@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent">
         <!-- the banner ads showing area -->
         <LinearLayout
-            android:id="@+id/linearLayout_for_bannerAds"
+            android:id="@+id/bannerLinearLayout"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

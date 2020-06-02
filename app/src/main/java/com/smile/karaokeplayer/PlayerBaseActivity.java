@@ -25,7 +25,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -40,9 +39,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.NativeTemplateAd;
@@ -52,6 +48,7 @@ import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
+import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -88,8 +85,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
 
-    private LinearLayout linearLayout_for_bannerAds;
-    private AdView bannerAdView;
+    private LinearLayout bannerLinearLayout;
+    private SetBannerAdViewForAdMobOrFacebook myBannerAdView;
+
+    // private AdView bannerAdView;
     private LinearLayout message_area_LinearLayout;
     private TextView bufferingStringTextView;
     private Animation animationText;
@@ -196,23 +195,19 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
-        linearLayout_for_bannerAds = findViewById(R.id.linearLayout_for_bannerAds);
-        if (!SmileApplication.googleAdMobBannerID.isEmpty()) {
-            try {
-                bannerAdView = new AdView(this);
-                bannerAdView.setAdSize(AdSize.BANNER);
-                bannerAdView.setAdUnitId(SmileApplication.googleAdMobBannerID);
-                linearLayout_for_bannerAds.addView(bannerAdView);
-                AdRequest adRequest = new AdRequest.Builder().build();
-                bannerAdView.loadAd(adRequest);
-                linearLayout_for_bannerAds.setGravity(Gravity.TOP);
-                linearLayout_for_bannerAds.setVisibility(View.VISIBLE);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        } else {
-            linearLayout_for_bannerAds.setVisibility(View.GONE);
+        bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
+        // bannerLinearLayout.setGravity(Gravity.TOP);
+
+        String testString = "";
+        // for debug mode
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            testString = "IMG_16_9_APP_INSTALL#";
         }
+        String facebookBannerID = testString + SmileApplication.facebookBannerID;
+        //
+        myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
+                , SmileApplication.googleAdMobBannerID, facebookBannerID);
+        myBannerAdView.showBannerAdViewFromAdMobOrFacebook(SmileApplication.AdProvider);
 
         // message area
         message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout);
@@ -297,22 +292,22 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
 
-        showNativeAd();
+        showNativeAndBannerAd();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (bannerAdView != null) {
-            bannerAdView.resume();
+        if (myBannerAdView != null) {
+            myBannerAdView.resume();
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (bannerAdView != null) {
-            bannerAdView.pause();
+        if (myBannerAdView != null) {
+            myBannerAdView.pause();
         }
     }
 
@@ -520,8 +515,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
             // Pull that URI using resultData.getData()
             if (data != null) {
                 Uri mediaUri = data.getData();
-                Log.i(TAG, "Uri: " + mediaUri.toString());
-
+                Log.i(TAG, "Uri: " + mediaUri);
                 if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) ) {
                     return;
                 }
@@ -547,8 +541,9 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         if (mPresenter != null) {
             mPresenter.releaseMediaSessionCompat();
         }
-        if (bannerAdView != null) {
-            bannerAdView.destroy();
+        if (myBannerAdView != null) {
+            myBannerAdView.destroy();
+            myBannerAdView = null;
         }
         if (nativeTemplateAd != null) {
             nativeTemplateAd.releaseNativeAd();
@@ -582,7 +577,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
             // free version
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint);
+                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint, SmileApplication.AdProvider);
             showAdAsyncTask.execute();
         }
     }
@@ -889,17 +884,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     public void setImageButtonStatus() {
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         boolean isAutoPlay = playingParam.isAutoPlay();
-        if ( isAutoPlay || playingParam.isPlaySingleSong() ) {
-            switchToMusicImageButton.setEnabled(true);
-            switchToMusicImageButton.setVisibility(View.VISIBLE);
-            switchToVocalImageButton.setEnabled(true);
-            switchToVocalImageButton.setVisibility(View.VISIBLE);
-        } else {
-            switchToMusicImageButton.setEnabled(false);
-            switchToMusicImageButton.setVisibility(View.GONE);
-            switchToVocalImageButton.setEnabled(false);
-            switchToVocalImageButton.setVisibility(View.GONE);
-        }
+        switchToMusicImageButton.setEnabled(true);
+        switchToMusicImageButton.setVisibility(View.VISIBLE);
+        switchToVocalImageButton.setEnabled(true);
+        switchToVocalImageButton.setVisibility(View.VISIBLE);
 
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();
@@ -952,6 +940,11 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         durationTimeTextView.setText(durationString);
     }
 
+    @Override
+    public void showMusicAndVocalIsNotSet() {
+        ScreenUtil.showToast(this, getString(R.string.musicAndVocalNotSet), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+    }
+
     public void update_Player_duration_seekbar_progress(int progress) {
         player_duration_seekbar.setProgress(progress);
     }
@@ -972,21 +965,23 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     };
 
     @Override
-    public void showNativeAd() {
+    public void showNativeAndBannerAd() {
+        Log.d(TAG, "showNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.VISIBLE;
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
-        // if (nativeTemplateAd != null) {
-        //     nativeTemplateAd.loadOneAd();
-        // }
         showNativeAdTimerHandler.post(showNativeAdTimerRunnable);
+
+        bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
     }
 
     @Override
-    public void hideNativeAd() {
-        Log.d(TAG, "hideNativeAd() is called.");
+    public void hideNativeAndBannerAd() {
+        Log.d(TAG, "hideNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.GONE;
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
         showNativeAdTimerHandler.removeCallbacksAndMessages(null);
+
+        bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
     }
 
     @Override
