@@ -8,9 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -37,11 +35,7 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
 import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
-import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.Utilities.ExternalStorageUtil;
-import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class ExoPlayerPresenter extends PlayerBasePresenter{

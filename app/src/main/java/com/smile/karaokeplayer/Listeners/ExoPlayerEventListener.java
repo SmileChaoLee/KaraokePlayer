@@ -1,7 +1,9 @@
 package com.smile.karaokeplayer.Listeners;
 
 import android.content.Context;
+import android.media.session.PlaybackState;
 import android.net.Uri;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -42,7 +44,9 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
         switch (playbackState) {
             case Player.STATE_BUFFERING:
-                mPresenter.getPresentView().hideNativeAndBannerAd();
+                if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) {
+                    mPresenter.getPresentView().hideNativeAndBannerAd();
+                }
                 mPresenter.getPresentView().showBufferingMessage();
                 return;
             case Player.STATE_READY:

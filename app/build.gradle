@@ -16,8 +16,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 29
         multiDexEnabled true
-        versionCode 144
-        versionName "1.44"
+        versionCode 145
+        versionName "1.45"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -48,7 +48,7 @@ android {
                 exclude "**/VLCMediaSessionCallback.java"
                 exclude "**/VLCMediaControllerCallback.java"
 
-                // exclude "**/ExternalStorageUtil.java"
+                exclude "**/ExternalStorageUtil.java"
             }
             res {
                 exclude "**/fragment_vlcplayer.xml"
@@ -98,6 +98,7 @@ dependencies {
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
+    implementation(name: 'NativeTemplatesModels-release', ext: 'aar')
 
     // implementation 'org.videolan.android:libvlc-all:3.1.12'
 
@@ -106,8 +107,6 @@ dependencies {
     implementation project(':extension-opus')
     implementation project(':extension-vp9')
     implementation project(':extension-av1')
-
-    implementation project(':NativeTemplatesAndroid-1.0.0')
 }
 
 apply plugin: 'com.google.gms.google-services'

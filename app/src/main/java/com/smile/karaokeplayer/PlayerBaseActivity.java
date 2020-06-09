@@ -41,11 +41,11 @@ import android.widget.Toast;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.NativeTemplateAd;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
+import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
@@ -87,6 +87,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
     private LinearLayout bannerLinearLayout;
     private SetBannerAdViewForAdMobOrFacebook myBannerAdView;
+    private GoogleAdMobNativeTemplate nativeTemplate;
 
     // private AdView bannerAdView;
     private LinearLayout message_area_LinearLayout;
@@ -94,7 +95,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private Animation animationText;
     private FrameLayout nativeAdsFrameLayout;
     private int nativeAdViewVisibility;
-    private NativeTemplateAd nativeTemplateAd;
     private com.google.android.ads.nativetemplates.TemplateView nativeAdTemplateView;
 
     protected Menu mainMenu;
@@ -285,8 +285,11 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         */
 
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
-        nativeAdTemplateView.setVisibility(View.GONE);
-        nativeTemplateAd = new NativeTemplateAd(this, nativeAdvancedId0, nativeAdTemplateView);
+
+        FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
+        nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
+        nativeTemplate = new GoogleAdMobNativeTemplate(this, nativeAdsFrameLayout
+                , nativeAdvancedId0, nativeAdTemplateView);
 
         setImageButtonStatus();
         setButtonsPositionAndSize(getResources().getConfiguration());
@@ -545,8 +548,8 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
             myBannerAdView.destroy();
             myBannerAdView = null;
         }
-        if (nativeTemplateAd != null) {
-            nativeTemplateAd.releaseNativeAd();
+        if (nativeTemplate != null) {
+            nativeTemplate.release();
         }
         super.onDestroy();
     }
@@ -949,27 +952,11 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         player_duration_seekbar.setProgress(progress);
     }
 
-    private final Handler showNativeAdTimerHandler = new Handler(Looper.getMainLooper());
-    private final Runnable showNativeAdTimerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            showNativeAdTimerHandler.removeCallbacksAndMessages(null);
-            if (mPresenter != null) {
-                if (nativeTemplateAd != null) {
-                    Log.d(TAG, "Loading native ad.");
-                    nativeTemplateAd.loadOneAd();
-                    showNativeAdTimerHandler.postDelayed(this, 300000); // 5 minutes
-                }
-            }
-        }
-    };
-
     @Override
     public void showNativeAndBannerAd() {
         Log.d(TAG, "showNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.VISIBLE;
-        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
-        showNativeAdTimerHandler.post(showNativeAdTimerRunnable);
+        nativeTemplate.showNativeAd();
 
         bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
     }
@@ -978,8 +965,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     public void hideNativeAndBannerAd() {
         Log.d(TAG, "hideNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.GONE;
-        nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
-        showNativeAdTimerHandler.removeCallbacksAndMessages(null);
+        nativeTemplate.hideNativeAd();
 
         bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
     }

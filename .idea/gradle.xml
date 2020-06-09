@@ -17,7 +17,6 @@
             <option value="$PROJECT_DIR$/extensions/flac" />
             <option value="$PROJECT_DIR$/extensions/opus" />
             <option value="$PROJECT_DIR$/extensions/vp9" />
-            <option value="$PROJECT_DIR$/nativetemplates" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
