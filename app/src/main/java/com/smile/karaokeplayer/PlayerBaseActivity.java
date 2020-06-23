@@ -592,7 +592,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         }
     }
 
-
     private void showSupportToolbarAndAudioController() {
         supportToolbar.setVisibility(View.VISIBLE);
         audioControllerView.setVisibility(View.VISIBLE);

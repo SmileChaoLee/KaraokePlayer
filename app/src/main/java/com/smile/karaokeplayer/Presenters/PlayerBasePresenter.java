@@ -280,6 +280,14 @@ public class PlayerBasePresenter {
         }
     }
 
+    private void setPlayingParameters(SongInfo songInfo) {
+        playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
+        playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+        playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
+        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
+        playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+    }
+
     public void playSingleSong(SongInfo songInfo) {
         if (songInfo == null) {
             return;
@@ -320,17 +328,11 @@ public class PlayerBasePresenter {
 
         playingParam.setInSongList(true);
 
+        setPlayingParameters(songInfo);
+
         playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
-
-        playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
-        playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
-
-        playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
-        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
-        playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
         playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
-
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaSourcePrepared(false);
@@ -517,7 +519,6 @@ public class PlayerBasePresenter {
         if (songListSQLite != null) {
             songInfo = songListSQLite.findOneSongByContentUri(tempUri); // use the original Uri
             songListSQLite.closeDatabase();
-            songListSQLite = null;
         }
         //
 

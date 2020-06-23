@@ -16,8 +16,8 @@ android {
         minSdkVersion 16
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 145
-        versionName "1.45"
+        versionCode 150
+        versionName "1.50"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -32,18 +32,6 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    sourceSets {
-        main {
-            java {
-                exclude "**/ChannelMappingAudioProcessor.java"
-                exclude "**/ResamplingAudioProcessor.java"
-                exclude "**/StereoVolumeProcessor.java"
-
-                exclude "**/ExternalStorageUtil.java"
-            }
         }
     }
 
@@ -69,8 +57,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
-    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.5'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.5'
 
     implementation 'com.facebook.android:audience-network-sdk:5.6.0'
     implementation 'com.google.firebase:firebase-core:17.4.3'
