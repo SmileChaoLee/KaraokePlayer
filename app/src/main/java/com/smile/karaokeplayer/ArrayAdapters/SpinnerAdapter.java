@@ -17,7 +17,7 @@ import java.util.List;
 
 public class SpinnerAdapter extends ArrayAdapter {
 
-    private static final String TAG = new String(".ArrayAdapters.SpinnerAdapter");
+    private static final String TAG = "ArrayAdapters.SpinnerAdapter";
     private final Context mContext;
     private final Activity mActivity;
     private final int mResourceId;

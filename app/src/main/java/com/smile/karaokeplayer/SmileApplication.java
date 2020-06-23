@@ -44,8 +44,8 @@ public class SmileApplication extends MultiDexApplication {
     public static String googleAdMobBannerID = "";
     public static int AdProvider = ShowingInterstitialAdsUtil.FacebookAdProvider;    // default is Facebook Ad
 
-    private static FacebookInterstitialAds facebookAds;
-    private static GoogleAdMobInterstitial googleInterstitialAd;
+    public static FacebookInterstitialAds facebookAds;
+    public static GoogleAdMobInterstitial googleInterstitialAd;
 
     @Override
     public void onCreate() {
@@ -92,7 +92,6 @@ public class SmileApplication extends MultiDexApplication {
 
         });
         googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
-        InterstitialAd = new ShowingInterstitialAdsUtil(facebookAds, googleInterstitialAd);
 
         final Handler adHandler = new Handler(Looper.getMainLooper());
         final Runnable adRunnable = new Runnable() {

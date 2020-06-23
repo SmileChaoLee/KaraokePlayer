@@ -40,7 +40,7 @@ import java.util.ArrayList;
 
 public class ExoPlayerPresenter extends PlayerBasePresenter{
 
-    private static final String TAG = new String("ExoPlayerPresenter");
+    private static final String TAG = "ExoPlayerPresenter";
 
     private final Context callingContext;
     private final PresentView presentView;

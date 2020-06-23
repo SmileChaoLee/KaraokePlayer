@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 
 public class StereoVolumeAudioProcessor extends BaseAudioProcessor {
 
-    private static final String TAG = new String(".StereoVolumeAudioProcessor");
+    private static final String TAG = "StereoVolumeAudioProcessor";
     private static final int maxChannels = 16;
     private float[] volume;
     public static final int LEFT_SPEAKER = 0;

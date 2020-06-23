@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 public class SongDataActivity extends AppCompatActivity {
 
-    private static final String TAG = new String("SongDataActivity");
+    private static final String TAG = "SongDataActivity";
     private static final int SELECT_ONE_ONE_FILE_PATH = 1;
 
     private float textFontSize;

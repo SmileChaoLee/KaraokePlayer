@@ -13,7 +13,7 @@ import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
 
-    private static final String TAG = new String("VLCMediaControllerCallback");
+    private static final String TAG = "VLCMediaControllerCallback";
     private final VLCPlayerPresenter mPresenter;
 
     public VLCMediaControllerCallback(VLCPlayerPresenter presenter) {

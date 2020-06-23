@@ -18,7 +18,7 @@ import org.videolan.libvlc.MediaPlayer;
 
 public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 
-    private static final String TAG = new String("VLCMediaSessionCallback");
+    private static final String TAG = "VLCMediaSessionCallback";
     private final VLCPlayerPresenter mPresenter;
     private final LibVLC mLibVLC;
     private final MediaPlayer vlcPlayer;

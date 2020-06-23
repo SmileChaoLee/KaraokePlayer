@@ -19,7 +19,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerEventListener implements Player.EventListener {
 
-    private static final String TAG = new String("ExoPlayerEventListener");
+    private static final String TAG = "ExoPlayerEventListener";
     private final Context callingContext;
     private final ExoPlayerPresenter mPresenter;
     private final float toastTextSize;

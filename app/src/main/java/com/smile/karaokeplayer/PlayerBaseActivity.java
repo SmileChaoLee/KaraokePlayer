@@ -54,7 +54,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
 
-    private static final String TAG = new String("PlayerBaseActivity");
+    private static final String TAG = "PlayerBaseActivity";
 
     private PlayerBasePresenter mPresenter;
 
@@ -136,6 +136,8 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
+
+        SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(getApplicationContext(), defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
@@ -579,9 +581,9 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         if (SmileApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
-            ShowingInterstitialAdsUtil.ShowAdAsyncTask showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowAdAsyncTask(entryPoint, SmileApplication.AdProvider);
-            showAdAsyncTask.execute();
+            ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
+                    SmileApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, SmileApplication.AdProvider);
+            showAdAsyncTask.startShowAd();
         }
     }
 
@@ -946,6 +948,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     @Override
     public void showMusicAndVocalIsNotSet() {
         ScreenUtil.showToast(this, getString(R.string.musicAndVocalNotSet), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+        Log.d(TAG, "showMusicAndVocalIsNotSet is called.");
     }
 
     public void update_Player_duration_seekbar_progress(int progress) {

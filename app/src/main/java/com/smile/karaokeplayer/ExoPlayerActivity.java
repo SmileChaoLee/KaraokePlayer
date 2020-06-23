@@ -14,7 +14,7 @@ import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.PresentView{
 
-    private static final String TAG = new String("ExoPlayerActivity");
+    private static final String TAG = "ExoPlayerActivity";
 
     private ExoPlayerPresenter mPresenter;
     private PlayerView videoExoPlayerView;

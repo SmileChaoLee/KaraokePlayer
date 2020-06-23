@@ -16,7 +16,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = new String(".MainActivity");
+    private static final String TAG = ".MainActivity";
     private static final int PERMISSION_REQUEST_CODE = 0x11;
 
     private float textFontSize;

@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class SongListSQLite extends SQLiteOpenHelper {
 
-    private static final String TAG = new String(".SongListSQLite");
+    private static final String TAG = "SongListSQLite";
 
     private static final String _id = new String("id");
     private static final String songName = new String("songName");

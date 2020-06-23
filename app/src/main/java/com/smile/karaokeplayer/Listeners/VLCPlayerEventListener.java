@@ -14,7 +14,7 @@ import org.videolan.libvlc.MediaPlayer;
 
 public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
-    private static final String TAG = new String("VLCPlayerEventListener");
+    private static final String TAG = "VLCPlayerEventListener";
     private final Context callingContext;
     private final VLCPlayerPresenter mPresenter;
     private final MediaPlayer vlcPlayer;

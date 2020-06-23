@@ -10,7 +10,7 @@ import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
 
-    private static final String TAG = new String("ExoMediaControllerCallback");
+    private static final String TAG = "ExoMediaControllerCallback";
     private final ExoPlayerPresenter mPresenter;
 
     public ExoMediaControllerCallback(ExoPlayerPresenter presenter) {

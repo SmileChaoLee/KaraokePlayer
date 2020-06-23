@@ -4,7 +4,7 @@ public final class PlayerConstants {
     private PlayerConstants() {
     }
 
-    public static final String LOG_TAG = new String("MediaSessionCompatTag");
+    public static final String LOG_TAG = "MediaSessionCompatTag";
     public static final String PlayingParamOrigin = "PlayingParamOrigin";
     public static final String PlayingParamState = "PlayingParam";
     public static final String TrackSelectorParametersState = "TrackSelectorParameters";

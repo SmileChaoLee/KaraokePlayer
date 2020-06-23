@@ -15,7 +15,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPresenter.PresentView{
 
-    private static final String TAG = new String("VLCPlayerActivity");
+    private static final String TAG = "VLCPlayerActivity";
     private static final boolean ENABLE_SUBTITLES = true;
     private static final boolean USE_TEXTURE_VIEW = false;
 

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public class PlayerBasePresenter {
 
-    private static final String TAG = new String("PlayerBasePresenter");
+    private static final String TAG = "PlayerBasePresenter";
 
     private final Context callingContext;
     private final PresentView presentView;

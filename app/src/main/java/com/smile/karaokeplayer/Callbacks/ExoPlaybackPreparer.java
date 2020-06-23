@@ -27,7 +27,7 @@ import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderF
 
 public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
 
-    private static final String TAG = new String("ExoPlaybackPreparer");
+    private static final String TAG = "ExoPlaybackPreparer";
     private final Context callingContext;
     private final ExoPlayerPresenter mPresenter;
 

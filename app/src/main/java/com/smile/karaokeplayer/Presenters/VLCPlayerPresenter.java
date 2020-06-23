@@ -39,7 +39,7 @@ import java.util.ArrayList;
 
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 
-    private static final String TAG = new String("VLCPlayerPresenter");
+    private static final String TAG = "VLCPlayerPresenter";
 
     private final PresentView presentView;
     private final Context callingContext;

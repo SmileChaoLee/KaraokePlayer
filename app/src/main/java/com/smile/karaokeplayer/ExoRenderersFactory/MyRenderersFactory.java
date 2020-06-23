@@ -9,7 +9,7 @@ import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcess
 
 public class MyRenderersFactory extends DefaultRenderersFactory {
 
-    private static final String TAG = new String(".ExoRenderersFactory.MyRenderersFactory");
+    private static final String TAG = "MyRenderersFactory";
 
     // Customized AudioProcessor
     private final StereoVolumeAudioProcessor stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
