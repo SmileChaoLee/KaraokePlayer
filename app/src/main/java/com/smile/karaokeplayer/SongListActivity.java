@@ -42,7 +42,6 @@ public class SongListActivity extends AppCompatActivity {
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
-    private Intent playerBaseActivityIntent;
     private ArrayList<SongInfo> mSongList = new ArrayList<>();
     private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
@@ -55,9 +54,6 @@ public class SongListActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
-        Intent callingIntent = getIntent();
-        playerBaseActivityIntent = callingIntent.getParcelableExtra(PlayerConstants.PlayerBaseActivityIntent);
-
         songListSQLite = new SongListSQLite(SmileApplication.AppContext);
 
         super.onCreate(savedInstanceState);
@@ -67,7 +63,7 @@ public class SongListActivity extends AppCompatActivity {
         TextView songListStringTextView = findViewById(R.id.songListStringTextView);
         ScreenUtil.resizeTextSize(songListStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
-        Button addSongListButton = (Button)findViewById(R.id.addSongListButton);
+        Button addSongListButton = findViewById(R.id.addSongListButton);
         ScreenUtil.resizeTextSize(addSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         addSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,13 +288,16 @@ public class SongListActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         // play this item (media file)
-                        // Intent playOneSongIntent = new Intent(getApplicationContext(), MainActivity.class);
-                        Intent playOneSongIntent = new Intent(playerBaseActivityIntent);
-                        Bundle extras = new Bundle();
-                        extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                        extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
-                        playOneSongIntent.putExtras(extras);
-                        startActivityForResult(playOneSongIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
+                        Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
+                        if (callingIntent != null) {
+                            Intent playerBaseActivityIntent = callingIntent.getParcelableExtra(PlayerConstants.PlayerBaseActivityIntent);
+                            Bundle extras = new Bundle();
+                            extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+                            extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
+                            playerBaseActivityIntent.putExtras(extras);
+                            startActivityForResult(playerBaseActivityIntent, PLAY_ONE_SONG_IN_PLAY_LIST);
+                        }
+                        Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
                     }
                 });
             }

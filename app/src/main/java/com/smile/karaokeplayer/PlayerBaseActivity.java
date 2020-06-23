@@ -378,8 +378,13 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
                 break;
             case R.id.songList:
                 Intent songListIntent = new Intent(this, SongListActivity.class);
-                songListIntent.putExtra(PlayerConstants.PlayerBaseActivityIntent, getIntent());
-                startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
+                Class childClass = getClass();
+                Log.d(TAG, "childClass = " + childClass);
+                if (childClass != null) {
+                    Intent playerBaseActivityIntent = new Intent(getApplicationContext(), childClass);
+                    songListIntent.putExtra(PlayerConstants.PlayerBaseActivityIntent, playerBaseActivityIntent);
+                    startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
+                }
                 break;
             case R.id.open:
                 if (!playingParam.isAutoPlay()) {

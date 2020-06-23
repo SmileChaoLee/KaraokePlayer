@@ -42,18 +42,7 @@ android {
                 exclude "**/ResamplingAudioProcessor.java"
                 exclude "**/StereoVolumeProcessor.java"
 
-                exclude "**/VLCPlayerActivity.java"
-                exclude "**/VLCPlayerPresenter.java"
-                exclude "**/VLCPlayerEventListener.java"
-                exclude "**/VLCMediaSessionCallback.java"
-                exclude "**/VLCMediaControllerCallback.java"
-
                 exclude "**/ExternalStorageUtil.java"
-            }
-            res {
-                exclude "**/fragment_vlcplayer.xml"
-                exclude "**/fragment_exoplayer.xml"
-                exclude "**/exoplayer_audio_controller_layout.xml"
             }
         }
     }
@@ -99,8 +88,6 @@ dependencies {
 
     implementation(name: 'smilelibraries-release', ext: 'aar')
     implementation(name: 'NativeTemplatesModels-release', ext: 'aar')
-
-    // implementation 'org.videolan.android:libvlc-all:3.1.12'
 
     implementation project(':extension-ffmpeg')
     implementation project(':extension-flac')
