@@ -54,8 +54,8 @@ import java.nio.ByteBuffer;
   // the constructor does not initialize fields: tempBuffer
   // call to flacInit() not allowed on the given receiver.
   @SuppressWarnings({
-    "nullness:initialization.fields.uninitialized",
-    "nullness:method.invocation.invalid"
+          "nullness:initialization.fields.uninitialized",
+          "nullness:method.invocation.invalid"
   })
   public FlacDecoderJni() throws FlacDecoderException {
     if (!FlacLibrary.isAvailable()) {
@@ -139,8 +139,8 @@ import java.nio.ByteBuffer;
         // the buffer of the input. Do another read to reduce the number of calls to this method
         // from the native code.
         read +=
-            readFromExtractorInput(
-                extractorInput, tempBuffer, read, /* length= */ byteCount - read);
+                readFromExtractorInput(
+                        extractorInput, tempBuffer, read, /* length= */ byteCount - read);
       }
       byteCount = read;
       target.put(tempBuffer, 0, byteCount);
@@ -167,7 +167,7 @@ import java.nio.ByteBuffer;
    * @param retryPosition If any error happens, the input will be rewound to {@code retryPosition}.
    */
   public void decodeSampleWithBacktrackPosition(ByteBuffer output, long retryPosition)
-      throws InterruptedException, IOException, FlacFrameDecodeException {
+          throws InterruptedException, IOException, FlacFrameDecodeException {
     try {
       decodeSample(output);
     } catch (IOException e) {
@@ -184,12 +184,12 @@ import java.nio.ByteBuffer;
   /** Decodes and consumes the next sample from the FLAC stream into the given byte buffer. */
   @SuppressWarnings("ByteBufferBackingArray")
   public void decodeSample(ByteBuffer output)
-      throws IOException, InterruptedException, FlacFrameDecodeException {
+          throws IOException, InterruptedException, FlacFrameDecodeException {
     output.clear();
     int frameSize =
-        output.isDirect()
-            ? flacDecodeToBuffer(nativeDecoderContext, output)
-            : flacDecodeToArray(nativeDecoderContext, output.array());
+            output.isDirect()
+                    ? flacDecodeToBuffer(nativeDecoderContext, output)
+                    : flacDecodeToArray(nativeDecoderContext, output.array());
     if (frameSize < 0) {
       if (!isDecoderAtEndOfInput()) {
         throw new FlacFrameDecodeException("Cannot decode FLAC frame", frameSize);
@@ -239,9 +239,9 @@ import java.nio.ByteBuffer;
     }
     SeekPoint firstSeekPoint = new SeekPoint(seekPoints[0], seekPoints[1]);
     SeekPoint secondSeekPoint =
-        seekPoints[2] == seekPoints[0]
-            ? firstSeekPoint
-            : new SeekPoint(seekPoints[2], seekPoints[3]);
+            seekPoints[2] == seekPoints[0]
+                    ? firstSeekPoint
+                    : new SeekPoint(seekPoints[2], seekPoints[3]);
     return new SeekMap.SeekPoints(firstSeekPoint, secondSeekPoint);
   }
 
@@ -272,8 +272,8 @@ import java.nio.ByteBuffer;
   }
 
   private int readFromExtractorInput(
-      ExtractorInput extractorInput, byte[] tempBuffer, int offset, int length)
-      throws IOException, InterruptedException {
+          ExtractorInput extractorInput, byte[] tempBuffer, int offset, int length)
+          throws IOException, InterruptedException {
     int read = extractorInput.read(tempBuffer, offset, length);
     if (read == C.RESULT_END_OF_INPUT) {
       endOfExtractorInput = true;
@@ -285,13 +285,13 @@ import java.nio.ByteBuffer;
   private native long flacInit();
 
   private native FlacStreamMetadata flacDecodeMetadata(long context)
-      throws IOException, InterruptedException;
+          throws IOException, InterruptedException;
 
   private native int flacDecodeToBuffer(long context, ByteBuffer outputBuffer)
-      throws IOException, InterruptedException;
+          throws IOException, InterruptedException;
 
   private native int flacDecodeToArray(long context, byte[] outputArray)
-      throws IOException, InterruptedException;
+          throws IOException, InterruptedException;
 
   private native long flacGetDecodePosition(long context);
 

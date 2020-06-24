@@ -49,9 +49,9 @@ public class LibopusAudioRenderer extends SimpleDecoderAudioRenderer {
    * @param audioProcessors Optional {@link AudioProcessor}s that will process audio before output.
    */
   public LibopusAudioRenderer(
-      @Nullable Handler eventHandler,
-      @Nullable AudioRendererEventListener eventListener,
-      AudioProcessor... audioProcessors) {
+          @Nullable Handler eventHandler,
+          @Nullable AudioRendererEventListener eventListener,
+          AudioProcessor... audioProcessors) {
     super(eventHandler, eventListener, audioProcessors);
   }
 
@@ -73,26 +73,26 @@ public class LibopusAudioRenderer extends SimpleDecoderAudioRenderer {
    */
   @Deprecated
   public LibopusAudioRenderer(
-      @Nullable Handler eventHandler,
-      @Nullable AudioRendererEventListener eventListener,
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
-      boolean playClearSamplesWithoutKeys,
-      AudioProcessor... audioProcessors) {
+          @Nullable Handler eventHandler,
+          @Nullable AudioRendererEventListener eventListener,
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
+          boolean playClearSamplesWithoutKeys,
+          AudioProcessor... audioProcessors) {
     super(eventHandler, eventListener, null, drmSessionManager, playClearSamplesWithoutKeys,
-        audioProcessors);
+            audioProcessors);
   }
 
   @Override
   @FormatSupport
   protected int supportsFormatInternal(
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
     boolean drmIsSupported =
-        format.drmInitData == null
-            || OpusLibrary.matchesExpectedExoMediaCryptoType(format.exoMediaCryptoType)
-            || (format.exoMediaCryptoType == null
-                && supportsFormatDrm(drmSessionManager, format.drmInitData));
+            format.drmInitData == null
+                    || OpusLibrary.matchesExpectedExoMediaCryptoType(format.exoMediaCryptoType)
+                    || (format.exoMediaCryptoType == null
+                    && supportsFormatDrm(drmSessionManager, format.drmInitData));
     if (!OpusLibrary.isAvailable()
-        || !MimeTypes.AUDIO_OPUS.equalsIgnoreCase(format.sampleMimeType)) {
+            || !MimeTypes.AUDIO_OPUS.equalsIgnoreCase(format.sampleMimeType)) {
       return FORMAT_UNSUPPORTED_TYPE;
     } else if (!supportsOutput(format.channelCount, C.ENCODING_PCM_16BIT)) {
       return FORMAT_UNSUPPORTED_SUBTYPE;
@@ -105,16 +105,16 @@ public class LibopusAudioRenderer extends SimpleDecoderAudioRenderer {
 
   @Override
   protected OpusDecoder createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
-      throws OpusDecoderException {
+          throws OpusDecoderException {
     int initialInputBufferSize =
-        format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
+            format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
     OpusDecoder decoder =
-        new OpusDecoder(
-            NUM_BUFFERS,
-            NUM_BUFFERS,
-            initialInputBufferSize,
-            format.initializationData,
-            mediaCrypto);
+            new OpusDecoder(
+                    NUM_BUFFERS,
+                    NUM_BUFFERS,
+                    initialInputBufferSize,
+                    format.initializationData,
+                    mediaCrypto);
     channelCount = decoder.getChannelCount();
     sampleRate = decoder.getSampleRate();
     return decoder;
@@ -123,17 +123,17 @@ public class LibopusAudioRenderer extends SimpleDecoderAudioRenderer {
   @Override
   protected Format getOutputFormat() {
     return Format.createAudioSampleFormat(
-        /* id= */ null,
-        MimeTypes.AUDIO_RAW,
-        /* codecs= */ null,
-        Format.NO_VALUE,
-        Format.NO_VALUE,
-        channelCount,
-        sampleRate,
-        C.ENCODING_PCM_16BIT,
-        /* initializationData= */ null,
-        /* drmInitData= */ null,
-        /* selectionFlags= */ 0,
-        /* language= */ null);
+            /* id= */ null,
+            MimeTypes.AUDIO_RAW,
+            /* codecs= */ null,
+            Format.NO_VALUE,
+            Format.NO_VALUE,
+            channelCount,
+            sampleRate,
+            C.ENCODING_PCM_16BIT,
+            /* initializationData= */ null,
+            /* drmInitData= */ null,
+            /* selectionFlags= */ 0,
+            /* language= */ null);
   }
 }

@@ -57,14 +57,14 @@ public final class FfmpegAudioRenderer extends SimpleDecoderAudioRenderer {
    * @param audioProcessors Optional {@link AudioProcessor}s that will process audio before output.
    */
   public FfmpegAudioRenderer(
-      @Nullable Handler eventHandler,
-      @Nullable AudioRendererEventListener eventListener,
-      AudioProcessor... audioProcessors) {
+          @Nullable Handler eventHandler,
+          @Nullable AudioRendererEventListener eventListener,
+          AudioProcessor... audioProcessors) {
     this(
-        eventHandler,
-        eventListener,
-        new DefaultAudioSink(/* audioCapabilities= */ null, audioProcessors),
-        /* enableFloatOutput= */ false);
+            eventHandler,
+            eventListener,
+            new DefaultAudioSink(/* audioCapabilities= */ null, audioProcessors),
+            /* enableFloatOutput= */ false);
   }
 
   /**
@@ -78,28 +78,27 @@ public final class FfmpegAudioRenderer extends SimpleDecoderAudioRenderer {
    *     adjustment.
    */
   public FfmpegAudioRenderer(
-      @Nullable Handler eventHandler,
-      @Nullable AudioRendererEventListener eventListener,
-      AudioSink audioSink,
-      boolean enableFloatOutput) {
+          @Nullable Handler eventHandler,
+          @Nullable AudioRendererEventListener eventListener,
+          AudioSink audioSink,
+          boolean enableFloatOutput) {
     super(
-        eventHandler,
-        eventListener,
-        /* drmSessionManager= */ null,
-        /* playClearSamplesWithoutKeys= */ false,
-        audioSink);
+            eventHandler,
+            eventListener,
+            /* drmSessionManager= */ null,
+            /* playClearSamplesWithoutKeys= */ false,
+            audioSink);
     this.enableFloatOutput = enableFloatOutput;
   }
 
   @Override
   @FormatSupport
   protected int supportsFormatInternal(
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
     Assertions.checkNotNull(format.sampleMimeType);
     if (!FfmpegLibrary.isAvailable()) {
       return FORMAT_UNSUPPORTED_TYPE;
-    } else if (!FfmpegLibrary.supportsFormat(format.sampleMimeType, format.pcmEncoding)
-        || !isOutputSupported(format)) {
+    } else if (!FfmpegLibrary.supportsFormat(format.sampleMimeType) || !isOutputSupported(format)) {
       return FORMAT_UNSUPPORTED_SUBTYPE;
     } else if (!supportsFormatDrm(drmSessionManager, format.drmInitData)) {
       return FORMAT_UNSUPPORTED_DRM;
@@ -116,12 +115,12 @@ public final class FfmpegAudioRenderer extends SimpleDecoderAudioRenderer {
 
   @Override
   protected FfmpegDecoder createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
-      throws FfmpegDecoderException {
+          throws FfmpegDecoderException {
     int initialInputBufferSize =
-        format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
+            format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
     decoder =
-        new FfmpegDecoder(
-            NUM_BUFFERS, NUM_BUFFERS, initialInputBufferSize, format, shouldUseFloatOutput(format));
+            new FfmpegDecoder(
+                    NUM_BUFFERS, NUM_BUFFERS, initialInputBufferSize, format, shouldUseFloatOutput(format));
     return decoder;
   }
 
@@ -132,23 +131,23 @@ public final class FfmpegAudioRenderer extends SimpleDecoderAudioRenderer {
     int sampleRate = decoder.getSampleRate();
     @C.PcmEncoding int encoding = decoder.getEncoding();
     return Format.createAudioSampleFormat(
-        /* id= */ null,
-        MimeTypes.AUDIO_RAW,
-        /* codecs= */ null,
-        Format.NO_VALUE,
-        Format.NO_VALUE,
-        channelCount,
-        sampleRate,
-        encoding,
-        Collections.emptyList(),
-        /* drmInitData= */ null,
-        /* selectionFlags= */ 0,
-        /* language= */ null);
+            /* id= */ null,
+            MimeTypes.AUDIO_RAW,
+            /* codecs= */ null,
+            Format.NO_VALUE,
+            Format.NO_VALUE,
+            channelCount,
+            sampleRate,
+            encoding,
+            Collections.emptyList(),
+            /* drmInitData= */ null,
+            /* selectionFlags= */ 0,
+            /* language= */ null);
   }
 
   private boolean isOutputSupported(Format inputFormat) {
     return shouldUseFloatOutput(inputFormat)
-        || supportsOutput(inputFormat.channelCount, C.ENCODING_PCM_16BIT);
+            || supportsOutput(inputFormat.channelCount, C.ENCODING_PCM_16BIT);
   }
 
   private boolean shouldUseFloatOutput(Format inputFormat) {
@@ -160,8 +159,8 @@ public final class FfmpegAudioRenderer extends SimpleDecoderAudioRenderer {
       case MimeTypes.AUDIO_RAW:
         // For raw audio, output in 32-bit float encoding if the bit depth is > 16-bit.
         return inputFormat.pcmEncoding == C.ENCODING_PCM_24BIT
-            || inputFormat.pcmEncoding == C.ENCODING_PCM_32BIT
-            || inputFormat.pcmEncoding == C.ENCODING_PCM_FLOAT;
+                || inputFormat.pcmEncoding == C.ENCODING_PCM_32BIT
+                || inputFormat.pcmEncoding == C.ENCODING_PCM_FLOAT;
       case MimeTypes.AUDIO_AC3:
         // AC-3 is always 16-bit, so there is no point outputting in 32-bit float encoding.
         return false;

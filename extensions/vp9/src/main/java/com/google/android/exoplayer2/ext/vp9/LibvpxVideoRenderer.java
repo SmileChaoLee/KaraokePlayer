@@ -92,17 +92,17 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
    *     invocations of {@link VideoRendererEventListener#onDroppedFrames(int, long)}.
    */
   public LibvpxVideoRenderer(
-      long allowedJoiningTimeMs,
-      @Nullable Handler eventHandler,
-      @Nullable VideoRendererEventListener eventListener,
-      int maxDroppedFramesToNotify) {
+          long allowedJoiningTimeMs,
+          @Nullable Handler eventHandler,
+          @Nullable VideoRendererEventListener eventListener,
+          int maxDroppedFramesToNotify) {
     this(
-        allowedJoiningTimeMs,
-        eventHandler,
-        eventListener,
-        maxDroppedFramesToNotify,
-        /* drmSessionManager= */ null,
-        /* playClearSamplesWithoutKeys= */ false);
+            allowedJoiningTimeMs,
+            eventHandler,
+            eventListener,
+            maxDroppedFramesToNotify,
+            /* drmSessionManager= */ null,
+            /* playClearSamplesWithoutKeys= */ false);
   }
 
   /**
@@ -127,22 +127,22 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
   @Deprecated
   @SuppressWarnings("deprecation")
   public LibvpxVideoRenderer(
-      long allowedJoiningTimeMs,
-      @Nullable Handler eventHandler,
-      @Nullable VideoRendererEventListener eventListener,
-      int maxDroppedFramesToNotify,
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
-      boolean playClearSamplesWithoutKeys) {
+          long allowedJoiningTimeMs,
+          @Nullable Handler eventHandler,
+          @Nullable VideoRendererEventListener eventListener,
+          int maxDroppedFramesToNotify,
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
+          boolean playClearSamplesWithoutKeys) {
     this(
-        allowedJoiningTimeMs,
-        eventHandler,
-        eventListener,
-        maxDroppedFramesToNotify,
-        drmSessionManager,
-        playClearSamplesWithoutKeys,
-        getRuntime().availableProcessors(),
-        /* numInputBuffers= */ 4,
-        /* numOutputBuffers= */ 4);
+            allowedJoiningTimeMs,
+            eventHandler,
+            eventListener,
+            maxDroppedFramesToNotify,
+            drmSessionManager,
+            playClearSamplesWithoutKeys,
+            getRuntime().availableProcessors(),
+            /* numInputBuffers= */ 4,
+            /* numOutputBuffers= */ 4);
   }
 
   /**
@@ -159,23 +159,23 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
    */
   @SuppressWarnings("deprecation")
   public LibvpxVideoRenderer(
-      long allowedJoiningTimeMs,
-      @Nullable Handler eventHandler,
-      @Nullable VideoRendererEventListener eventListener,
-      int maxDroppedFramesToNotify,
-      int threads,
-      int numInputBuffers,
-      int numOutputBuffers) {
+          long allowedJoiningTimeMs,
+          @Nullable Handler eventHandler,
+          @Nullable VideoRendererEventListener eventListener,
+          int maxDroppedFramesToNotify,
+          int threads,
+          int numInputBuffers,
+          int numOutputBuffers) {
     this(
-        allowedJoiningTimeMs,
-        eventHandler,
-        eventListener,
-        maxDroppedFramesToNotify,
-        /* drmSessionManager= */ null,
-        /* playClearSamplesWithoutKeys= */ false,
-        threads,
-        numInputBuffers,
-        numOutputBuffers);
+            allowedJoiningTimeMs,
+            eventHandler,
+            eventListener,
+            maxDroppedFramesToNotify,
+            /* drmSessionManager= */ null,
+            /* playClearSamplesWithoutKeys= */ false,
+            threads,
+            numInputBuffers,
+            numOutputBuffers);
   }
 
   /**
@@ -202,22 +202,22 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
    */
   @Deprecated
   public LibvpxVideoRenderer(
-      long allowedJoiningTimeMs,
-      @Nullable Handler eventHandler,
-      @Nullable VideoRendererEventListener eventListener,
-      int maxDroppedFramesToNotify,
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
-      boolean playClearSamplesWithoutKeys,
-      int threads,
-      int numInputBuffers,
-      int numOutputBuffers) {
+          long allowedJoiningTimeMs,
+          @Nullable Handler eventHandler,
+          @Nullable VideoRendererEventListener eventListener,
+          int maxDroppedFramesToNotify,
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager,
+          boolean playClearSamplesWithoutKeys,
+          int threads,
+          int numInputBuffers,
+          int numOutputBuffers) {
     super(
-        allowedJoiningTimeMs,
-        eventHandler,
-        eventListener,
-        maxDroppedFramesToNotify,
-        drmSessionManager,
-        playClearSamplesWithoutKeys);
+            allowedJoiningTimeMs,
+            eventHandler,
+            eventListener,
+            maxDroppedFramesToNotify,
+            drmSessionManager,
+            playClearSamplesWithoutKeys);
     this.threads = threads;
     this.numInputBuffers = numInputBuffers;
     this.numOutputBuffers = numOutputBuffers;
@@ -226,15 +226,15 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
   @Override
   @Capabilities
   protected int supportsFormatInternal(
-      @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
+          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
     if (!VpxLibrary.isAvailable() || !MimeTypes.VIDEO_VP9.equalsIgnoreCase(format.sampleMimeType)) {
       return RendererCapabilities.create(FORMAT_UNSUPPORTED_TYPE);
     }
     boolean drmIsSupported =
-        format.drmInitData == null
-            || VpxLibrary.matchesExpectedExoMediaCryptoType(format.exoMediaCryptoType)
-            || (format.exoMediaCryptoType == null
-                && supportsFormatDrm(drmSessionManager, format.drmInitData));
+            format.drmInitData == null
+                    || VpxLibrary.matchesExpectedExoMediaCryptoType(format.exoMediaCryptoType)
+                    || (format.exoMediaCryptoType == null
+                    && supportsFormatDrm(drmSessionManager, format.drmInitData));
     if (!drmIsSupported) {
       return RendererCapabilities.create(FORMAT_UNSUPPORTED_DRM);
     }
@@ -246,14 +246,14 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
           VideoDecoderInputBuffer,
           ? extends VideoDecoderOutputBuffer,
           ? extends VideoDecoderException>
-      createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
+  createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
           throws VideoDecoderException {
     TraceUtil.beginSection("createVpxDecoder");
     int initialInputBufferSize =
-        format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
+            format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
     VpxDecoder decoder =
-        new VpxDecoder(
-            numInputBuffers, numOutputBuffers, initialInputBufferSize, mediaCrypto, threads);
+            new VpxDecoder(
+                    numInputBuffers, numOutputBuffers, initialInputBufferSize, mediaCrypto, threads);
     this.decoder = decoder;
     TraceUtil.endSection();
     return decoder;
@@ -261,21 +261,21 @@ public class LibvpxVideoRenderer extends SimpleDecoderVideoRenderer {
 
   @Override
   protected void renderOutputBuffer(
-      VideoDecoderOutputBuffer outputBuffer, long presentationTimeUs, Format outputFormat)
-      throws VideoDecoderException {
+          VideoDecoderOutputBuffer outputBuffer, long presentationTimeUs, Format outputFormat)
+          throws VideoDecoderException {
     if (frameMetadataListener != null) {
       frameMetadataListener.onVideoFrameAboutToBeRendered(
-          presentationTimeUs, System.nanoTime(), outputFormat, /* mediaFormat= */ null);
+              presentationTimeUs, System.nanoTime(), outputFormat, /* mediaFormat= */ null);
     }
     super.renderOutputBuffer(outputBuffer, presentationTimeUs, outputFormat);
   }
 
   @Override
   protected void renderOutputBufferToSurface(VideoDecoderOutputBuffer outputBuffer, Surface surface)
-      throws VpxDecoderException {
+          throws VpxDecoderException {
     if (decoder == null) {
       throw new VpxDecoderException(
-          "Failed to render output buffer to surface: decoder is not initialized.");
+              "Failed to render output buffer to surface: decoder is not initialized.");
     }
     decoder.renderToSurface(outputBuffer, surface);
     outputBuffer.release();

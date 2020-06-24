@@ -32,7 +32,7 @@ import java.util.List;
  * FFmpeg audio decoder.
  */
 /* package */ final class FfmpegDecoder extends
-    SimpleDecoder<DecoderInputBuffer, SimpleOutputBuffer, FfmpegDecoderException> {
+        SimpleDecoder<DecoderInputBuffer, SimpleOutputBuffer, FfmpegDecoderException> {
 
   // Output buffer sizes when decoding PCM mu-law streams, which is the maximum FFmpeg outputs.
   private static final int OUTPUT_BUFFER_SIZE_16BIT = 65536;
@@ -53,25 +53,23 @@ import java.util.List;
   private volatile int sampleRate;
 
   public FfmpegDecoder(
-      int numInputBuffers,
-      int numOutputBuffers,
-      int initialInputBufferSize,
-      Format format,
-      boolean outputFloat)
-      throws FfmpegDecoderException {
+          int numInputBuffers,
+          int numOutputBuffers,
+          int initialInputBufferSize,
+          Format format,
+          boolean outputFloat)
+          throws FfmpegDecoderException {
     super(new DecoderInputBuffer[numInputBuffers], new SimpleOutputBuffer[numOutputBuffers]);
     if (!FfmpegLibrary.isAvailable()) {
       throw new FfmpegDecoderException("Failed to load decoder native libraries.");
     }
     Assertions.checkNotNull(format.sampleMimeType);
-    codecName =
-        Assertions.checkNotNull(
-            FfmpegLibrary.getCodecName(format.sampleMimeType, format.pcmEncoding));
+    codecName = Assertions.checkNotNull(FfmpegLibrary.getCodecName(format.sampleMimeType));
     extraData = getExtraData(format.sampleMimeType, format.initializationData);
     encoding = outputFloat ? C.ENCODING_PCM_FLOAT : C.ENCODING_PCM_16BIT;
     outputBufferSize = outputFloat ? OUTPUT_BUFFER_SIZE_32BIT : OUTPUT_BUFFER_SIZE_16BIT;
     nativeContext =
-        ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount);
+            ffmpegInitialize(codecName, extraData, outputFloat, format.sampleRate, format.channelCount);
     if (nativeContext == 0) {
       throw new FfmpegDecoderException("Initialization failed.");
     }
@@ -100,7 +98,7 @@ import java.util.List;
 
   @Override
   protected @Nullable FfmpegDecoderException decode(
-      DecoderInputBuffer inputBuffer, SimpleOutputBuffer outputBuffer, boolean reset) {
+          DecoderInputBuffer inputBuffer, SimpleOutputBuffer outputBuffer, boolean reset) {
     if (reset) {
       nativeContext = ffmpegReset(nativeContext, extraData);
       if (nativeContext == 0) {
@@ -145,16 +143,12 @@ import java.util.List;
     nativeContext = 0;
   }
 
-  /**
-   * Returns the channel count of output audio. May only be called after {@link #decode}.
-   */
+  /** Returns the channel count of output audio. */
   public int getChannelCount() {
     return channelCount;
   }
 
-  /**
-   * Returns the sample rate of output audio. May only be called after {@link #decode}.
-   */
+  /** Returns the sample rate of output audio. */
   public int getSampleRate() {
     return sampleRate;
   }
@@ -217,14 +211,14 @@ import java.util.List;
   }
 
   private native long ffmpegInitialize(
-      String codecName,
-      @Nullable byte[] extraData,
-      boolean outputFloat,
-      int rawSampleRate,
-      int rawChannelCount);
+          String codecName,
+          @Nullable byte[] extraData,
+          boolean outputFloat,
+          int rawSampleRate,
+          int rawChannelCount);
 
   private native int ffmpegDecode(long context, ByteBuffer inputData, int inputSize,
-      ByteBuffer outputData, int outputSize);
+                                  ByteBuffer outputData, int outputSize);
   private native int ffmpegGetChannelCount(long context);
   private native int ffmpegGetSampleRate(long context);
 

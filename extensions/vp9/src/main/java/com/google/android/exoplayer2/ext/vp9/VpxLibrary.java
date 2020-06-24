@@ -45,7 +45,7 @@ public final class VpxLibrary {
    * @param libraries The names of the Vpx native libraries.
    */
   public static void setLibraries(
-      Class<? extends ExoMediaCrypto> exoMediaCryptoType, String... libraries) {
+          Class<? extends ExoMediaCrypto> exoMediaCryptoType, String... libraries) {
     LOADER.setLibraries(libraries);
     VpxLibrary.exoMediaCryptoType = exoMediaCryptoType;
   }
@@ -78,7 +78,7 @@ public final class VpxLibrary {
   public static boolean isHighBitDepthSupported() {
     String config = getBuildConfig();
     int indexHbd = config != null
-        ? config.indexOf("--enable-vp9-highbitdepth") : -1;
+            ? config.indexOf("--enable-vp9-highbitdepth") : -1;
     return indexHbd >= 0;
   }
 
@@ -87,7 +87,7 @@ public final class VpxLibrary {
    * protected content.
    */
   public static boolean matchesExpectedExoMediaCryptoType(
-      @Nullable Class<? extends ExoMediaCrypto> exoMediaCryptoType) {
+          @Nullable Class<? extends ExoMediaCrypto> exoMediaCryptoType) {
     return Util.areEqual(VpxLibrary.exoMediaCryptoType, exoMediaCryptoType);
   }
 

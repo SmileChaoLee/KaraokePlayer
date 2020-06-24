@@ -45,7 +45,7 @@ public final class OpusLibrary {
    * @param libraries The names of the Opus native libraries.
    */
   public static void setLibraries(
-      Class<? extends ExoMediaCrypto> exoMediaCryptoType, String... libraries) {
+          Class<? extends ExoMediaCrypto> exoMediaCryptoType, String... libraries) {
     LOADER.setLibraries(libraries);
     OpusLibrary.exoMediaCryptoType = exoMediaCryptoType;
   }
@@ -68,7 +68,7 @@ public final class OpusLibrary {
    * protected content.
    */
   public static boolean matchesExpectedExoMediaCryptoType(
-      @Nullable Class<? extends ExoMediaCrypto> exoMediaCryptoType) {
+          @Nullable Class<? extends ExoMediaCrypto> exoMediaCryptoType) {
     return Util.areEqual(OpusLibrary.exoMediaCryptoType, exoMediaCryptoType);
   }
 
