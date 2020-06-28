@@ -148,51 +148,6 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
 
-        // ChromeCast Context
-        try {
-            mCastContext = CastContext.getSharedInstance(this);
-        } catch (RuntimeException e) {
-            Throwable cause = e.getCause();
-            while (cause != null) {
-                if (cause instanceof DynamiteModule.LoadingException) {
-                    Log.d(TAG, "Failed to get Cast context. Try updating Google Play Services and restart the app.");
-                }
-                cause = cause.getCause();
-            }
-            // Unknown error. We propagate it.
-            Log.d(TAG, "Failed to get Cast context. Unknown error.");
-        }
-        if (mCastContext != null) {
-            mCastContext.addCastStateListener(new CastStateListener() {
-                @Override
-                public void onCastStateChanged(int i) {
-                    switch (i) {
-                        case CastState.NO_DEVICES_AVAILABLE:
-                            Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
-                            mMediaRouteButton.setVisibility(View.GONE);
-                            break;
-                        case CastState.NOT_CONNECTED:
-                            Log.d(TAG, "CastState is NOT_CONNECTED.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        case CastState.CONNECTING:
-                            Log.d(TAG, "CastState is CONNECTING.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        case CastState.CONNECTED:
-                            Log.d(TAG, "CastState is CONNECTED.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            Log.d(TAG, "CastState is unknown.");
-                            mMediaRouteButton.setVisibility(View.GONE);
-                            break;
-                    }
-                    Log.d(TAG, "onCastStateChanged() is called.");
-                }
-            });
-        }
-
         SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(getApplicationContext(), ScreenUtil.FontSize_Pixel_Type, null);
@@ -254,6 +209,50 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
 
         mMediaRouteButton = findViewById(R.id.media_route_button);
         CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), mMediaRouteButton);
+        // ChromeCast Context
+        try {
+            mCastContext = CastContext.getSharedInstance(this);
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof DynamiteModule.LoadingException) {
+                    Log.d(TAG, "Failed to get Cast context. Try updating Google Play Services and restart the app.");
+                }
+                cause = cause.getCause();
+            }
+            // Unknown error. We propagate it.
+            Log.d(TAG, "Failed to get Cast context. Unknown error.");
+        }
+        if (mCastContext != null) {
+            mCastContext.addCastStateListener(new CastStateListener() {
+                @Override
+                public void onCastStateChanged(int i) {
+                    switch (i) {
+                        case CastState.NO_DEVICES_AVAILABLE:
+                            Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
+                            mMediaRouteButton.setVisibility(View.GONE);
+                            break;
+                        case CastState.NOT_CONNECTED:
+                            Log.d(TAG, "CastState is NOT_CONNECTED.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTING:
+                            Log.d(TAG, "CastState is CONNECTING.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTED:
+                            Log.d(TAG, "CastState is CONNECTED.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            Log.d(TAG, "CastState is unknown.");
+                            mMediaRouteButton.setVisibility(View.GONE);
+                            break;
+                    }
+                    Log.d(TAG, "onCastStateChanged() is called.");
+                }
+            });
+        }
 
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
@@ -892,9 +891,12 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         // layoutParams.height = imageButtonHeight;
         // layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+        // the following drawable is to customize the image of MediaRouteButton
+        // setRemoteIndicatorDrawable(Drawable d)
         Bitmap mediaRouteButtonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cast);
         Drawable mediaRouteButtonDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(mediaRouteButtonBitmap, imageButtonHeight, imageButtonHeight, true));
         mMediaRouteButton.setRemoteIndicatorDrawable(mediaRouteButtonDrawable);
+        //
 
         layoutParams = (ViewGroup.MarginLayoutParams) actionMenuImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;

@@ -11,6 +11,22 @@
         <item name="android:textSize">72px</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAllCaps">false</item>
+
+        <!-- the followings are for chrome cast -->
+
+        <!-- mediaRouteTheme -->
+        <item name="mediaRouteTheme">@style/CustomMediaRouterTheme</item>
+        <!-- or add CustomMediaRouterTheme to android:theme of MediaRouteButton in layout-->
+
+        <!-- the following three theme work only we have mediaRouteTheme settings in AppTheme-->
+        <!-- or put mediaRouteTheme in the android:theme of MediaRouteButton in layout -->
+        <!-- -->
+        <item name="castIntroOverlayStyle">@style/CustomCastIntroOverlay</item>
+        <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
+        <item name="castExpandedControllerStyle">@style/CustomCastExpandedController</item>
+        <!-- -->
+
+        <!-- the end of themes of chrome cast-->
     </style>
 
     <style name="menu_text_style" parent="@android:style/Theme.Translucent" >
@@ -76,12 +92,63 @@
         <item name="android:background">@drawable/main_menuitem_background_color</item>
     </style>
 
-    <!-- Have not used the CustomMediaRouterTheme yet -->
+    <!-- the followings are for chrome cast -->
+
+    <!-- MediaRouteButton theme -->
     <style name="CustomMediaRouterTheme" parent="Theme.MediaRouter">
         <item name="mediaRouteButtonStyle">@style/CustomMediaRouteButtonStyle</item>
     </style>
     <style name="CustomMediaRouteButtonStyle" parent="Widget.MediaRouter.Light.MediaRouteButton">
         <item name="mediaRouteButtonTint">@color/white</item>
+        <item name="background">@color/red</item>
     </style>
+    <!-- end of MediaRouteButton theme -->
+
     <!-- -->
+    <style name="CustomCastIntroOverlay" parent="CastIntroOverlay">
+        <item name="castButtonTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Button</item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Title</item>
+    </style>
+    <style name="TextAppearance.CustomCastIntroOverlay.Button" parent="android:style/TextAppearance">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    <style name="TextAppearance.CustomCastIntroOverlay.Title" parent="android:style/TextAppearance.Large">
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    <!-- the end of -->
+
+    <!-- CastMiniController theme -->
+    <style name="CustomCastMiniController" parent="CastMiniController">
+        <item name="castShowImageThumbnail">true</item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="castSubtitleTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="castBackground">#FFFFFF</item>
+        <item name="castProgressBarColor">#FFFFFF</item>
+        <item name="castPlayButtonDrawable">@drawable/cast_ic_mini_controller_play</item>
+        <item name="castPauseButtonDrawable">@drawable/cast_ic_mini_controller_pause</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_mini_controller_stop</item>
+        <item name="castLargePlayButtonDrawable">@drawable/cast_ic_mini_controller_play_large</item>
+        <item name="castLargePauseButtonDrawable">@drawable/cast_ic_mini_controller_pause_large</item>
+        <item name="castLargeStopButtonDrawable">@drawable/cast_ic_mini_controller_stop_large</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_mini_controller_skip_prev</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_mini_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/cast_ic_mini_controller_rewind30</item>
+        <item name="castForward30ButtonDrawable">@drawable/cast_ic_mini_controller_forward30</item>
+        <item name="castMuteToggleButtonDrawable">@drawable/cast_ic_mini_controller_mute</item>
+        <item name="castClosedCaptionsButtonDrawable">@drawable/cast_ic_mini_controller_closed_caption</item>
+    </style>
+    <!-- the end of CastMiniController -->
+
+    <!-- CastExpandedController theme -->
+    <style name="CustomCastExpandedController" parent="CastExpandedController">
+        <item name="castButtonColor">@null</item>
+        <item name="castPlayButtonDrawable">@drawable/cast_ic_expanded_controller_play</item>
+        <item name="castPauseButtonDrawable">@drawable/cast_ic_expanded_controller_pause</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_expanded_controller_stop</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_expanded_controller_skip_previous</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_expanded_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/cast_ic_expanded_controller_rewind30</item>
+        <item name="castForward30ButtonDrawable">@drawable/cast_ic_expanded_controller_forward30</item>
+    </style>
+    <!-- the end of CastExpandedController -->
 </resources>
