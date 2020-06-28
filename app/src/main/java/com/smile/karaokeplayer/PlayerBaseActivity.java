@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
+import androidx.mediarouter.app.MediaRouteButton;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -39,6 +40,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -82,6 +89,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
+
+    private CastContext mCastContext;
+    private MediaRouteButton mMediaRouteButton;
+
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
 
@@ -136,6 +147,51 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
+
+        // ChromeCast Context
+        try {
+            mCastContext = CastContext.getSharedInstance(this);
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof DynamiteModule.LoadingException) {
+                    Log.d(TAG, "Failed to get Cast context. Try updating Google Play Services and restart the app.");
+                }
+                cause = cause.getCause();
+            }
+            // Unknown error. We propagate it.
+            Log.d(TAG, "Failed to get Cast context. Unknown error.");
+        }
+        if (mCastContext != null) {
+            mCastContext.addCastStateListener(new CastStateListener() {
+                @Override
+                public void onCastStateChanged(int i) {
+                    switch (i) {
+                        case CastState.NO_DEVICES_AVAILABLE:
+                            Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
+                            mMediaRouteButton.setVisibility(View.GONE);
+                            break;
+                        case CastState.NOT_CONNECTED:
+                            Log.d(TAG, "CastState is NOT_CONNECTED.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTING:
+                            Log.d(TAG, "CastState is CONNECTING.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTED:
+                            Log.d(TAG, "CastState is CONNECTED.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            Log.d(TAG, "CastState is unknown.");
+                            mMediaRouteButton.setVisibility(View.GONE);
+                            break;
+                    }
+                    Log.d(TAG, "onCastStateChanged() is called.");
+                }
+            });
+        }
 
         SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
 
@@ -195,6 +251,10 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         repeatImageButton = findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
+
+        mMediaRouteButton = findViewById(R.id.media_route_button);
+        CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), mMediaRouteButton);
+
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
@@ -827,6 +887,14 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         layoutParams.height = imageButtonHeight;
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) mMediaRouteButton.getLayoutParams();
+        // layoutParams.height = imageButtonHeight;
+        // layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+        Bitmap mediaRouteButtonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cast);
+        Drawable mediaRouteButtonDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(mediaRouteButtonBitmap, imageButtonHeight, imageButtonHeight, true));
+        mMediaRouteButton.setRemoteIndicatorDrawable(mediaRouteButtonDrawable);
 
         layoutParams = (ViewGroup.MarginLayoutParams) actionMenuImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;

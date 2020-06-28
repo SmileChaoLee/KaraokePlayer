@@ -75,4 +75,13 @@
         -->
         <item name="android:background">@drawable/main_menuitem_background_color</item>
     </style>
+
+    <!-- Have not used the CustomMediaRouterTheme yet -->
+    <style name="CustomMediaRouterTheme" parent="Theme.MediaRouter">
+        <item name="mediaRouteButtonStyle">@style/CustomMediaRouteButtonStyle</item>
+    </style>
+    <style name="CustomMediaRouteButtonStyle" parent="Widget.MediaRouter.Light.MediaRouteButton">
+        <item name="mediaRouteButtonTint">@color/white</item>
+    </style>
+    <!-- -->
 </resources>
