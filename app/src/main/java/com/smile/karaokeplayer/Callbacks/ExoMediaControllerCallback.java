@@ -1,5 +1,6 @@
 package com.smile.karaokeplayer.Callbacks;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -17,6 +18,7 @@ public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
         mPresenter = presenter;
     }
 
+    @SuppressLint("LongLogTag")
     @Override
     public synchronized void onPlaybackStateChanged(PlaybackStateCompat state) {
         super.onPlaybackStateChanged(state);

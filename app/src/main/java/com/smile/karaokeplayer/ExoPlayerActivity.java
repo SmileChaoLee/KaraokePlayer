@@ -1,23 +1,37 @@
 package com.smile.karaokeplayer;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ext.cast.CastPlayer;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.PresentView{
-
     private static final String TAG = "ExoPlayerActivity";
 
     private ExoPlayerPresenter mPresenter;
+    private SimpleExoPlayer exoPlayer;
     private PlayerView videoExoPlayerView;
+    private CastPlayer castPlayer;
+    // private PlayerControlView castControlView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +45,11 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
         super.onCreate(savedInstanceState);
 
-        mPresenter.initExoPlayer();   // must be before volumeSeekBar settings
+        mPresenter.initExoPlayerAndCastPlayer();   // must be before volumeSeekBar settings
         mPresenter.initMediaSessionCompat();
+
+        exoPlayer = mPresenter.getExoPlayer();
+        castPlayer = mPresenter.getCastPlayer();
 
         // Video player view
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
@@ -43,7 +60,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         playerViewLinearLayout.addView(videoExoPlayerView);
 
         videoExoPlayerView.setVisibility(View.VISIBLE);
-        videoExoPlayerView.setPlayer(mPresenter.getExoPlayer());
+        videoExoPlayerView.setPlayer(exoPlayer);
         videoExoPlayerView.setUseArtwork(true);
         videoExoPlayerView.setUseController(false);
         videoExoPlayerView.requestFocus();
@@ -52,6 +69,9 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
+
+        // castControlView.setPlayer(castPlayer);
+        mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
     }
 
     @Override
@@ -59,6 +79,22 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
         mPresenter.releaseMediaSessionCompat();
-        mPresenter.releaseExoPlayer();
+        mPresenter.releaseExoPlayerAndCastPlayer();
+        videoExoPlayerView.setPlayer(null);
+    }
+
+    @Override
+    public void setCurrentPlayerToPlayerView() {
+        Player currentPlayer = mPresenter.getCurrentPlayer();
+        if (currentPlayer == exoPlayer) {
+            // videoExoPlayerView.setVisibility(View.VISIBLE);
+            // videoExoPlayerView.setPlayer(exoPlayer);
+            // castControlView.hide();
+            Log.d(TAG, "Current player is exoPlayer." );
+        } else /* currentPlayer == castPlayer */ {
+            // videoExoPlayerView.setVisibility(View.INVISIBLE);
+            // castControlView.show();
+            Log.d(TAG, "Current player is castPlayer." );
+        }
     }
 }

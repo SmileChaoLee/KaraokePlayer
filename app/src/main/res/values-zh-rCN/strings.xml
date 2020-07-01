@@ -57,4 +57,8 @@
     <string name="filepathEmptyString">档案路径是空白</string>
     <string name="notSeekableSongString">无法前进或後退</string>
     <string name="musicAndVocalNotSet">沒有設定音樂和人聲</string>
+    <string name="no_chromecast_devices_avaiable">沒有ChromeCast設備</string>
+    <string name="chromecast_not_connected">Chromecast还未连线</string>
+    <string name="chromecast_is_connecting">Chromecast连线中</string>
+    <string name="chromecast_is_connected">Chromecaste已连线</string>
 </resources>

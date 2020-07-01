@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -25,10 +27,9 @@ import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
-
 import java.util.ArrayList;
 
-public class PlayerBasePresenter {
+public abstract class PlayerBasePresenter {
 
     private static final String TAG = "PlayerBasePresenter";
 
@@ -39,6 +40,7 @@ public class PlayerBasePresenter {
     private int numberOfSongsPlayed;
 
     protected final float toastTextSize;
+    protected final CastContext castContext;
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
 
@@ -65,18 +67,34 @@ public class PlayerBasePresenter {
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
+        void setCurrentPlayerToPlayerView();
     }
 
     public PlayerBasePresenter(Context context, PresentView presentView) {
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
+        CastContext _castContext;
+        try {
+            _castContext = CastContext.getSharedInstance(callingContext);
+        } catch (RuntimeException e) {
+            _castContext = null;
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                if (cause instanceof DynamiteModule.LoadingException) {
+                    Log.d(TAG, "Failed to get CastContext. Try updating Google Play Services and restart the app.");
+                }
+                cause = cause.getCause();
+            }
+            // Unknown error. We propagate it.
+            Log.d(TAG, "Failed to get CastContext. Unknown error.");
+        }
+        castContext = _castContext;
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
         float textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
     }
-
 
     public SongInfo getSingleSongInfo() {
         return singleSongInfo;
@@ -129,6 +147,9 @@ public class PlayerBasePresenter {
 
     public PresentView getPresentView() {
         return presentView;
+    }
+    public CastContext getCastContext() {
+        return castContext;
     }
 
     public void initializePlayingParam() {
@@ -198,14 +219,9 @@ public class PlayerBasePresenter {
         return true;
     }
 
-    public void setPlayerTime(int progress) {
-    }
-
-    public void setAudioVolume(float volume) {
-    }
-
-    public void setAudioVolumeInsideVolumeSeekBar(int i) {
-    }
+    public abstract void setPlayerTime(int progress);
+    public abstract void setAudioVolume(float volume);
+    public abstract void setAudioVolumeInsideVolumeSeekBar(int i);
 
     public int setCurrentProgressForVolumeSeekBar() {
         return 0;
@@ -226,8 +242,7 @@ public class PlayerBasePresenter {
         setAudioVolume(playingParam.getCurrentVolume());
     }
 
-    public void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
-    }
+    public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
 
     public void switchAudioToVocal() {
         if (!playingParam.isInSongList()) {
@@ -320,6 +335,25 @@ public class PlayerBasePresenter {
             }
         }
         mediaUri = getValidatedUri(Uri.parse(filePath));
+
+        // testing code
+        /*
+        Uri resultUri = null;
+        try {
+            filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
+            if (filePath != null) {
+                if (!filePath.isEmpty()) {
+                    File songFile = new File(filePath);
+                    resultUri = Uri.fromFile(songFile);
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        Log.d(TAG, "PlayerBasePresenter-->resultUri = " + resultUri);
+        mediaUri = resultUri;
+        //  end of testing code
+        */
 
         Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
@@ -637,8 +671,7 @@ public class PlayerBasePresenter {
         Log.d(TAG, "stopPlay() is called.");
     }
 
-    protected void specificPlayerReplayMedia(long currentAudioPosition) {
-    }
+    protected abstract void specificPlayerReplayMedia(long currentAudioPosition);
 
     public void replayMedia() {
         if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
@@ -695,5 +728,4 @@ public class PlayerBasePresenter {
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
     }
-
 }

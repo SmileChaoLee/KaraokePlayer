@@ -9,4 +9,5 @@
     <dimen name="duration_seekbar_thumb_size">42dp</dimen>
     <dimen name="duration_pressed_seekbar_thumb_size">42dp</dimen>
     <dimen name="duration_progress_background_width">16dp</dimen>
+    <dimen name="MediaRouterThemeTextSize">128dp</dimen>
 </resources>

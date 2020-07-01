@@ -40,12 +40,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.cast.framework.CastStateListener;
-import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -59,7 +57,14 @@ import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdM
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
+public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
+
+    /*
+    // testing code
+    private static final int PERMISSION_REQUEST_CODE = 0x11;
+    private boolean hasPermissionForExternalStorage;
+    // the end of testing code
+    */
 
     private static final String TAG = "PlayerBaseActivity";
 
@@ -90,8 +95,8 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
 
-    private CastContext mCastContext;
     private MediaRouteButton mMediaRouteButton;
+    private CastContext castContext;
 
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
@@ -147,6 +152,20 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
+        /*
+        // testing code
+        hasPermissionForExternalStorage = false;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Log.d(TAG, "Asking the permission beaacuse of api level.");
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "Asking the permission.");
+                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+            }
+        }
+        // the end of testing code
+        */
 
         SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
 
@@ -206,54 +225,8 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         repeatImageButton = findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
-
         mMediaRouteButton = findViewById(R.id.media_route_button);
-        CastButtonFactory.setUpMediaRouteButton(getApplicationContext(), mMediaRouteButton);
-        // ChromeCast Context
-        try {
-            mCastContext = CastContext.getSharedInstance(this);
-        } catch (RuntimeException e) {
-            Throwable cause = e.getCause();
-            while (cause != null) {
-                if (cause instanceof DynamiteModule.LoadingException) {
-                    Log.d(TAG, "Failed to get Cast context. Try updating Google Play Services and restart the app.");
-                }
-                cause = cause.getCause();
-            }
-            // Unknown error. We propagate it.
-            Log.d(TAG, "Failed to get Cast context. Unknown error.");
-        }
-        if (mCastContext != null) {
-            mCastContext.addCastStateListener(new CastStateListener() {
-                @Override
-                public void onCastStateChanged(int i) {
-                    switch (i) {
-                        case CastState.NO_DEVICES_AVAILABLE:
-                            Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
-                            mMediaRouteButton.setVisibility(View.GONE);
-                            break;
-                        case CastState.NOT_CONNECTED:
-                            Log.d(TAG, "CastState is NOT_CONNECTED.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        case CastState.CONNECTING:
-                            Log.d(TAG, "CastState is CONNECTING.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        case CastState.CONNECTED:
-                            Log.d(TAG, "CastState is CONNECTED.");
-                            mMediaRouteButton.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            Log.d(TAG, "CastState is unknown.");
-                            mMediaRouteButton.setVisibility(View.GONE);
-                            break;
-                    }
-                    Log.d(TAG, "onCastStateChanged() is called.");
-                }
-            });
-        }
-
+        CastButtonFactory.setUpMediaRouteButton(this, mMediaRouteButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
@@ -357,7 +330,32 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         setOnClickEvents();
 
         showNativeAndBannerAd();
+
+        castContext = mPresenter.getCastContext();
+        addCastContextListener();
     }
+
+    /*
+    // testing code
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            int rLen = grantResults.length;
+            if (rLen > 0) {
+                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                    hasPermissionForExternalStorage = false;
+                    ScreenUtil.showToast(this, "Permission Denied", 60, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                } else {
+                    hasPermissionForExternalStorage = true;
+                }
+            } else {
+                hasPermissionForExternalStorage = false;
+            }
+        }
+    }
+    // the end of testing code
+    */
 
     @Override
     protected void onResume() {
@@ -594,6 +592,26 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
                         int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                         getContentResolver().takePersistableUriPermission(mediaUri, takeFlags);
                     }
+
+                    // testing code
+                    /*
+                    Uri resultUri = null;
+                    try {
+                        String filePath = ExternalStorageUtil.getUriRealPath(this, mediaUri);
+                        if (filePath != null) {
+                            if (!filePath.isEmpty()) {
+                                File songFile = new File(filePath);
+                                resultUri = Uri.fromFile(songFile);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    Log.d(TAG, "resultUri = " + resultUri);
+                    mediaUri = resultUri;
+                    //  end of testing code
+                    */
+
                     mPresenter.playSelectedSongFromStorage(mediaUri);
                 } catch (Exception ex) {
                     Log.d(TAG, "Failed to add persistable permission of mediaUri");
@@ -809,7 +827,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         playerViewLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "videoExoPlayerView.onClick() is called.");
+                Log.d(TAG, "playerViewLinearLayout.onClick() is called.");
                 supportToolbar.performClick();
             }
         });
@@ -887,6 +905,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
+        // MediaRouteButton View
         layoutParams = (ViewGroup.MarginLayoutParams) mMediaRouteButton.getLayoutParams();
         // layoutParams.height = imageButtonHeight;
         // layoutParams.width = imageButtonHeight;
@@ -1025,6 +1044,7 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         Log.d(TAG, "showMusicAndVocalIsNotSet is called.");
     }
 
+    @Override
     public void update_Player_duration_seekbar_progress(int progress) {
         player_duration_seekbar.setProgress(progress);
     }
@@ -1085,4 +1105,44 @@ public class PlayerBaseActivity extends AppCompatActivity implements PlayerBaseP
         controllerTimerHandler.postDelayed(controllerTimerRunnable, PlayerConstants.PlayerView_Timeout); // 10 seconds
     }
     //
+
+    // methods for ChromeCast
+    private void addCastContextListener() {
+        // ChromeCast Context
+        if (castContext != null) {
+            castContext.addCastStateListener(new CastStateListener() {
+                @Override
+                public void onCastStateChanged(int i) {
+                    switch (i) {
+                        case CastState.NO_DEVICES_AVAILABLE:
+                            Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
+                            ScreenUtil.showToast(getApplicationContext(), getString(R.string.no_chromecast_devices_avaiable), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                            mMediaRouteButton.setVisibility(View.GONE);
+                            break;
+                        case CastState.NOT_CONNECTED:
+                            Log.d(TAG, "CastState is NOT_CONNECTED.");
+                            ScreenUtil.showToast(getApplicationContext(), getString(R.string.chromecast_not_connected), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTING:
+                            Log.d(TAG, "CastState is CONNECTING.");
+                            ScreenUtil.showToast(getApplicationContext(), getString(R.string.chromecast_is_connecting), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        case CastState.CONNECTED:
+                            Log.d(TAG, "CastState is CONNECTED.");
+                            ScreenUtil.showToast(getApplicationContext(), getString(R.string.chromecast_is_connected), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            Log.d(TAG, "CastState is unknown.");
+                            mMediaRouteButton.setVisibility(View.VISIBLE);
+                            break;
+                    }
+                    Log.d(TAG, "onCastStateChanged() is called.");
+                }
+            });
+        }
+    }
+    // end of ChromeCast methods
 }

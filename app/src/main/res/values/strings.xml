@@ -56,4 +56,8 @@
     <string name="filepathEmptyString">File path is empty</string>
     <string name="notSeekableSongString">Unable to forward and backward</string>
     <string name="musicAndVocalNotSet">No setting on Music or Vocal</string>
+    <string name="no_chromecast_devices_avaiable">No ChromeCast devices available</string>
+    <string name="chromecast_not_connected">Chromecast is not connected</string>
+    <string name="chromecast_is_connecting">Chromecast is connecting</string>
+    <string name="chromecast_is_connected">Chromecast is connected</string>
 </resources>
