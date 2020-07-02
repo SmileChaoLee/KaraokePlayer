@@ -15,14 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
-import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.PresentView{
     private static final String TAG = "ExoPlayerActivity";
@@ -31,7 +28,6 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     private SimpleExoPlayer exoPlayer;
     private PlayerView videoExoPlayerView;
     private CastPlayer castPlayer;
-    // private PlayerControlView castControlView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +66,9 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
 
-        // castControlView.setPlayer(castPlayer);
-        mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
+        if (castPlayer != null && exoPlayer != null) {
+            mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
+        }
     }
 
     @Override
@@ -86,6 +83,10 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     @Override
     public void setCurrentPlayerToPlayerView() {
         Player currentPlayer = mPresenter.getCurrentPlayer();
+        if (currentPlayer == null) {
+            return;
+        }
+
         if (currentPlayer == exoPlayer) {
             // videoExoPlayerView.setVisibility(View.VISIBLE);
             // videoExoPlayerView.setPlayer(exoPlayer);

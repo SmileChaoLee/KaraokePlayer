@@ -128,30 +128,32 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
         mExoPlayerEventListener = new ExoPlayerEventListener(callingContext, this);
         exoPlayer.addListener(mExoPlayerEventListener);
 
-        castPlayer = new CastPlayer(castContext);
-        // castPlayer.addListener(mExoPlayerEventListener); // add different listener later
-        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
-            @Override
-            public synchronized void onCastSessionAvailable() {
-                Log.d(TAG, "onCastSessionAvailable() is called.");
-                if (mediaUri == null) {
-                    Log.d(TAG, "Stopped casting because mediaUri is null");
-                    Log.d(TAG, "Set current player back to exoPlayer");
-                    MediaRouter mRouter = MediaRouter.getInstance(callingContext);  // singleton
-                    mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
-                    return;
+        if (castContext != null) {
+            castPlayer = new CastPlayer(castContext);
+            // castPlayer.addListener(mExoPlayerEventListener); // add different listener later
+            castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
+                @Override
+                public synchronized void onCastSessionAvailable() {
+                    Log.d(TAG, "onCastSessionAvailable() is called.");
+                    if (mediaUri == null) {
+                        Log.d(TAG, "Stopped casting because mediaUri is null");
+                        Log.d(TAG, "Set current player back to exoPlayer");
+                        MediaRouter mRouter = MediaRouter.getInstance(callingContext);  // singleton
+                        mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
+                        return;
+                    }
+                    setCurrentPlayer(castPlayer);
+                    Log.d(TAG, "Set current player to castPlayer");
                 }
-                setCurrentPlayer(castPlayer);
-                Log.d(TAG, "Set current player to castPlayer");
-            }
 
-            @Override
-            public void onCastSessionUnavailable() {
-                Log.d(TAG, "onCastSessionUnavailable() is called.");
-                setCurrentPlayer(exoPlayer);
-                Log.d(TAG, "Set current player to exoPlayer");
-            }
-        });
+                @Override
+                public void onCastSessionUnavailable() {
+                    Log.d(TAG, "onCastSessionUnavailable() is called.");
+                    setCurrentPlayer(exoPlayer);
+                    Log.d(TAG, "Set current player to exoPlayer");
+                }
+            });
+        }
 
         mCurrentPlayer = exoPlayer; // default is playing video on Android device
 
@@ -587,11 +589,15 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
 
     public synchronized void setCurrentPlayer(Player currentPlayer) {
 
-        if (mediaUri == null) {
+        if (currentPlayer == null || mCurrentPlayer == null ) {
             return;
         }
 
         if (mCurrentPlayer == currentPlayer) {
+            return;
+        }
+
+        if (mediaUri == null) {
             return;
         }
 

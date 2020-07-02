@@ -74,20 +74,23 @@ public abstract class PlayerBasePresenter {
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
-        CastContext _castContext;
-        try {
-            _castContext = CastContext.getSharedInstance(callingContext);
-        } catch (RuntimeException e) {
-            _castContext = null;
-            Throwable cause = e.getCause();
-            while (cause != null) {
-                if (cause instanceof DynamiteModule.LoadingException) {
-                    Log.d(TAG, "Failed to get CastContext. Try updating Google Play Services and restart the app.");
+
+        CastContext _castContext = null;
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            try {
+                _castContext = CastContext.getSharedInstance(callingContext);
+            } catch (RuntimeException e) {
+                _castContext = null;
+                Throwable cause = e.getCause();
+                while (cause != null) {
+                    if (cause instanceof DynamiteModule.LoadingException) {
+                        Log.d(TAG, "Failed to get CastContext. Try updating Google Play Services and restart the app.");
+                    }
+                    cause = cause.getCause();
                 }
-                cause = cause.getCause();
+                // Unknown error. We propagate it.
+                Log.d(TAG, "Failed to get CastContext. Unknown error.");
             }
-            // Unknown error. We propagate it.
-            Log.d(TAG, "Failed to get CastContext. Unknown error.");
         }
         castContext = _castContext;
 
