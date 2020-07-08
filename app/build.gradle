@@ -35,14 +35,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            java {
-                exclude "**/ExternalStorageUtil.java"
-            }
-        }
-    }
-
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'

@@ -340,6 +340,8 @@ public abstract class PlayerBasePresenter {
         mediaUri = getValidatedUri(Uri.parse(filePath));
 
         // testing code
+        // the following codes need android.permission.READ_EXTERNAL_STORAGE
+        // and android.permission.WRITE_EXTERNAL_STORAGE
         /*
         Uri resultUri = null;
         try {
