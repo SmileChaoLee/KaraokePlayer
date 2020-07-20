@@ -329,7 +329,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
 
-        showNativeAndBannerAd();
+        showNativeAd();
 
         castContext = mPresenter.getCastContext();
         addCastContextListener();
@@ -1052,21 +1052,19 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     }
 
     @Override
-    public void showNativeAndBannerAd() {
-        Log.d(TAG, "showNativeAndBannerAd() is called.");
+    public void showNativeAd() {
+        Log.d(TAG, "showNativeAd() is called.");
         nativeAdViewVisibility = View.VISIBLE;
         nativeTemplate.showNativeAd();
-
-        bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
+        // bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
     }
 
     @Override
-    public void hideNativeAndBannerAd() {
-        Log.d(TAG, "hideNativeAndBannerAd() is called.");
+    public void hideNativeAd() {
+        Log.d(TAG, "hideNativeAd() is called.");
         nativeAdViewVisibility = View.GONE;
         nativeTemplate.hideNativeAd();
-
-        bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
+        // bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
     }
 
     @Override

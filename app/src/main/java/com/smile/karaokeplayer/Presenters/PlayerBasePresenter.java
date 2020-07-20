@@ -60,8 +60,8 @@ public abstract class PlayerBasePresenter {
         void setPlayingTimeTextView(String durationString);
         void update_Player_duration_seekbar(float duration);
         void update_Player_duration_seekbar_progress(int progress);
-        void showNativeAndBannerAd();
-        void hideNativeAndBannerAd();
+        void showNativeAd();
+        void hideNativeAd();
         void showBufferingMessage();
         void dismissBufferingMessage();
         void buildAudioTrackMenuItem(int audioTrackNumber);
@@ -650,7 +650,7 @@ public abstract class PlayerBasePresenter {
             // no media file opened or playing has been stopped
             if (mediaTransportControls != null) {
                 mediaTransportControls.pause();
-                presentView.showNativeAndBannerAd();
+                presentView.showNativeAd();
             }
         }
     }

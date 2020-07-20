@@ -1,7 +1,6 @@
 package com.smile.karaokeplayer.Listeners;
 
 import android.content.Context;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -45,7 +44,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
         switch (playbackState) {
             case Player.STATE_BUFFERING:
                 if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) {
-                    mPresenter.getPresentView().hideNativeAndBannerAd();
+                    mPresenter.getPresentView().hideNativeAd();
                 }
                 mPresenter.getPresentView().showBufferingMessage();
                 return;
@@ -60,12 +59,12 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
                 if (numberOfVideoTracks == 0) {
                     // no video is being played, show native ads
-                    mPresenter.getPresentView().showNativeAndBannerAd();
+                    mPresenter.getPresentView().showNativeAd();
                 } else {
                     // video is being played, hide native ads
                     if (playWhenReady) {
                         // playing
-                        mPresenter.getPresentView().hideNativeAndBannerAd();
+                        mPresenter.getPresentView().hideNativeAd();
                     }
                 }
                 break;
@@ -79,7 +78,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                         mPresenter.replayMedia();
                     } else {
-                        mPresenter.getPresentView().showNativeAndBannerAd();
+                        mPresenter.getPresentView().showNativeAd();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
@@ -95,7 +94,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 }
                 if (!playingParam.isAutoPlay()) {
                     // not auto play
-                    mPresenter.getPresentView().showNativeAndBannerAd();
+                    mPresenter.getPresentView().showNativeAd();
                 }
                 break;
         }
