@@ -15,7 +15,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 
-public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.PresentView{
+public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
 
     private ExoPlayerPresenter mPresenter;
@@ -73,6 +73,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         videoExoPlayerView.setPlayer(null);
     }
 
+    // implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
     @Override
     public void setCurrentPlayerToPlayerView() {
         Player currentPlayer = mPresenter.getCurrentPlayer();
@@ -91,11 +92,12 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
             Log.d(TAG, "Current player is castPlayer." );
         }
     }
+    // end of implementing methods of PlayerBasePresenter.BasePresentView
 
-    // implementing abstract methods of super class
-
+    // implement abstract methods of super class
     @Override
     protected PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
+    // end of implementing methods of super class
 }

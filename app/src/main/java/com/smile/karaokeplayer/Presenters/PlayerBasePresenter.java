@@ -35,7 +35,7 @@ public abstract class PlayerBasePresenter {
     private static final String TAG = "PlayerBasePresenter";
 
     private final Context callingContext;
-    private final PresentView presentView;
+    private final BasePresentView presentView;
     private final Activity mActivity;
     private final int maxNumberOfSongsPlayed = 5; // the point to enter showing ad
     private int numberOfSongsPlayed;
@@ -44,6 +44,7 @@ public abstract class PlayerBasePresenter {
     protected final float fontScale;
     protected final float toastTextSize;
     protected final CastContext castContext;
+    protected BaseCastStateListener baseCastStateListener;
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
 
@@ -56,7 +57,7 @@ public abstract class PlayerBasePresenter {
     protected boolean canShowNotSupportedFormat;
     protected SongInfo singleSongInfo;    // when playing single song in songs list
 
-    public interface PresentView {
+    public interface BasePresentView {
         void setImageButtonStatus();
         void playButtonOnPauseButtonOff();
         void playButtonOffPauseButtonOn();
@@ -70,11 +71,11 @@ public abstract class PlayerBasePresenter {
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
-        void setCurrentPlayerToPlayerView();
         void setMediaRouteButtonVisible(boolean isVisible);
     }
 
-    public PlayerBasePresenter(Context context, PresentView presentView) {
+    public PlayerBasePresenter(Context context, BasePresentView presentView) {
+        Log.d(TAG, "PlayerBasePresenter() constructor is called.");
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
@@ -86,6 +87,7 @@ public abstract class PlayerBasePresenter {
 
         CastContext _castContext = null;
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
             try {
                 _castContext = CastContext.getSharedInstance(callingContext);
             } catch (RuntimeException e) {
@@ -102,10 +104,9 @@ public abstract class PlayerBasePresenter {
             }
         }
         castContext = _castContext;
+        Log.d(TAG, "castContext is " + castContext);
 
-        if (castContext != null) {
-            castContext.addCastStateListener(new BaseCastStateListener(callingContext, this));
-        }
+        baseCastStateListener = new BaseCastStateListener(callingContext, this);
     }
 
     public float getTextFontSize() {
@@ -167,7 +168,7 @@ public abstract class PlayerBasePresenter {
         this.playingParam = playingParam;
     }
 
-    public PresentView getPresentView() {
+    public BasePresentView getPresentView() {
         return presentView;
     }
     public CastContext getCastContext() {
@@ -751,5 +752,22 @@ public abstract class PlayerBasePresenter {
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
+    }
+
+    // ChromeCast methods
+    public void addBaseCastStateListener() {
+        Log.d(TAG, "addBaseCastStateListener() is called.");
+        if (castContext != null) {
+            castContext.addCastStateListener(baseCastStateListener);
+            Log.d(TAG, "castContext.addCastStateListener(baseCastStateListener)");
+        }
+
+    }
+    public void removeBaseCastStateListener() {
+        Log.d(TAG, "removeBaseCastStateListener() is called.");
+        if (castContext != null) {
+            castContext.removeCastStateListener(baseCastStateListener);
+            Log.d(TAG, "castContext.removeCastStateListener(baseCastStateListener)");
+        }
     }
 }

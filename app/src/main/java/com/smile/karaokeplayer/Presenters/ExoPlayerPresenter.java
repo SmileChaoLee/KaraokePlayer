@@ -45,12 +45,12 @@ import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
 import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
 import java.util.ArrayList;
 
-public class ExoPlayerPresenter extends PlayerBasePresenter{
+public class ExoPlayerPresenter extends PlayerBasePresenter {
 
     private static final String TAG = "ExoPlayerPresenter";
 
     private final Context callingContext;
-    private final PresentView presentView;
+    private final ExoPlayerPresentView presentView;
     private final Activity mActivity;
 
     private MediaControllerCompat mediaControllerCompat;
@@ -70,9 +70,6 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
     private ArrayList<Integer[]> videoTrackIndicesList = new ArrayList<>();
     private ArrayList<Integer[]> audioTrackIndicesList = new ArrayList<>();
 
-    public interface PresentView extends PlayerBasePresenter.PresentView {
-    }
-
     private final Handler durationSeekBarHandler = new Handler(Looper.getMainLooper());
     private final Runnable durationSeekBarRunnable = new Runnable() {
         @Override
@@ -88,7 +85,11 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
         }
     };
 
-    public ExoPlayerPresenter(Context context, PresentView presentView) {
+    public interface ExoPlayerPresentView extends PlayerBasePresenter.BasePresentView {
+        void setCurrentPlayerToPlayerView();
+    }
+
+    public ExoPlayerPresenter(Context context, ExoPlayerPresentView presentView) {
         super(context, presentView);
         this.callingContext = context;
         this.presentView = presentView;
@@ -107,10 +108,6 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
     }
     public void setVideoTrackIndicesList(ArrayList<Integer[]> videoTrackIndicesList) {
         this.videoTrackIndicesList = videoTrackIndicesList;
-    }
-
-    public PresentView getPresentView() {
-        return presentView;
     }
 
     public void initExoPlayerAndCastPlayer() {
@@ -601,7 +598,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter{
             return;
         }
 
-        // View management.
+        // Player View management.
         presentView.setCurrentPlayerToPlayerView();
 
         // Player state management.

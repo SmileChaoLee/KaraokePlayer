@@ -54,7 +54,7 @@ import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdM
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.PresentView{
+public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
 
     /*
     // testing code
@@ -346,6 +346,14 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     */
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        if (mPresenter != null) {
+            mPresenter.addBaseCastStateListener();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (myBannerAdView != null) {
@@ -358,6 +366,14 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         super.onPause();
         if (myBannerAdView != null) {
             myBannerAdView.pause();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mPresenter != null) {
+            mPresenter.removeBaseCastStateListener();
         }
     }
 
@@ -966,7 +982,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         menu.close();
     }
 
-    // implement ExoPlayerPresenter.PresentView
+    // implementing PlayerBasePresenter.BasePresentView
 
     @Override
     public void setImageButtonStatus() {
@@ -1102,4 +1118,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
             mMediaRouteButton.setVisibility(View.GONE);
         }
     }
+
+    // end of implementing PlayerBasePresenter.BasePresentView
 }
