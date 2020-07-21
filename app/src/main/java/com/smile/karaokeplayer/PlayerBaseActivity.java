@@ -41,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -217,6 +218,11 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
         mMediaRouteButton = findViewById(R.id.media_route_button);
+        if (SmileApplication.currentCastState == CastState.NO_DEVICES_AVAILABLE) {
+            setMediaRouteButtonVisible(false);
+        } else {
+            setMediaRouteButtonVisible(true);
+        }
         CastButtonFactory.setUpMediaRouteButton(this, mMediaRouteButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
@@ -347,6 +353,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     @Override
     protected void onStart() {
+        Log.d(TAG,"onStart() is called.");
         super.onStart();
         if (mPresenter != null) {
             mPresenter.addBaseCastStateListener();
@@ -355,6 +362,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     @Override
     protected void onResume() {
+        Log.d(TAG,"onResume() is called.");
         super.onResume();
         if (myBannerAdView != null) {
             myBannerAdView.resume();
@@ -363,6 +371,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     @Override
     protected void onPause() {
+        Log.d(TAG,"onPause() is called.");
         super.onPause();
         if (myBannerAdView != null) {
             myBannerAdView.pause();
@@ -371,6 +380,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     @Override
     protected void onStop() {
+        Log.d(TAG,"onStop() is called.");
         super.onStop();
         if (mPresenter != null) {
             mPresenter.removeBaseCastStateListener();
@@ -438,7 +448,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 mPresenter.setAutoPlayStatusAndAction();
                 break;
             case R.id.songList:
-                Intent songListIntent = new Intent(this, SongListActivity.class);
+                Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
                 Class childClass = getClass();
                 Log.d(TAG, "childClass = " + childClass);
                 if (childClass != null) {

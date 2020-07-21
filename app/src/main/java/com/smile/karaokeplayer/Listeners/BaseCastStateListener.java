@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class BaseCastStateListener implements com.google.android.gms.cast.framework.CastStateListener {
@@ -25,6 +26,7 @@ public class BaseCastStateListener implements com.google.android.gms.cast.framew
     @SuppressLint("LongLogTag")
     @Override
     public void onCastStateChanged(int i) {
+        SmileApplication.currentCastState = i;
         switch (i) {
             case CastState.NO_DEVICES_AVAILABLE:
                 Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");

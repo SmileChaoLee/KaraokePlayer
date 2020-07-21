@@ -12,6 +12,7 @@ import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
 import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
@@ -40,6 +41,8 @@ public class SmileApplication extends MultiDexApplication {
 
     public static FacebookInterstitialAds facebookAds;
     public static GoogleAdMobInterstitial googleInterstitialAd;
+
+    public static int currentCastState = CastState.NO_DEVICES_AVAILABLE;
 
     @Override
     public void onCreate() {

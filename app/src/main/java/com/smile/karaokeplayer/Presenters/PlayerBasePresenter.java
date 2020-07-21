@@ -171,9 +171,6 @@ public abstract class PlayerBasePresenter {
     public BasePresentView getPresentView() {
         return presentView;
     }
-    public CastContext getCastContext() {
-        return castContext;
-    }
 
     public void initializePlayingParam() {
         playingParam = new PlayingParameters();
