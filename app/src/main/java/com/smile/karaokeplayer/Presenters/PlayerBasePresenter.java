@@ -21,6 +21,7 @@ import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
+import com.smile.karaokeplayer.Listeners.BaseCastStateListener;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -39,6 +40,8 @@ public abstract class PlayerBasePresenter {
     private final int maxNumberOfSongsPlayed = 5; // the point to enter showing ad
     private int numberOfSongsPlayed;
 
+    protected final float textFontSize;
+    protected final float fontScale;
     protected final float toastTextSize;
     protected final CastContext castContext;
     protected MediaSessionCompat mediaSessionCompat;
@@ -68,12 +71,18 @@ public abstract class PlayerBasePresenter {
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
         void setCurrentPlayerToPlayerView();
+        void setMediaRouteButtonVisible(boolean isVisible);
     }
 
     public PlayerBasePresenter(Context context, PresentView presentView) {
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
+
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        toastTextSize = 0.7f * textFontSize;
 
         CastContext _castContext = null;
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
@@ -94,9 +103,19 @@ public abstract class PlayerBasePresenter {
         }
         castContext = _castContext;
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
-        float textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        toastTextSize = 0.7f * textFontSize;
+        if (castContext != null) {
+            castContext.addCastStateListener(new BaseCastStateListener(callingContext, this));
+        }
+    }
+
+    public float getTextFontSize() {
+        return textFontSize;
+    }
+    public float getFontScale() {
+        return fontScale;
+    }
+    public float getToastTextSize() {
+        return toastTextSize;
     }
 
     public SongInfo getSingleSongInfo() {

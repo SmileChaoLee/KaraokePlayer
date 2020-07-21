@@ -26,10 +26,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
     public ExoPlayerEventListener(Context context, ExoPlayerPresenter presenter) {
         callingContext = context;
         mPresenter = presenter;
-
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
-        float textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        toastTextSize = 0.7f * textFontSize;
+        toastTextSize = mPresenter.getToastTextSize();
     }
 
     @Override
