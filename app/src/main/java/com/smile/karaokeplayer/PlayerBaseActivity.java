@@ -326,6 +326,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
 
+        mPresenter.addBaseCastStateListener();
+
         showNativeAd();
     }
 
@@ -355,9 +357,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     protected void onStart() {
         Log.d(TAG,"onStart() is called.");
         super.onStart();
-        if (mPresenter != null) {
-            mPresenter.addBaseCastStateListener();
-        }
     }
 
     @Override
@@ -382,9 +381,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     protected void onStop() {
         Log.d(TAG,"onStop() is called.");
         super.onStop();
-        if (mPresenter != null) {
-            mPresenter.removeBaseCastStateListener();
-        }
     }
 
     @Override
@@ -643,6 +639,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         Log.d(TAG,"onDestroy() is called.");
         if (mPresenter != null) {
             mPresenter.releaseMediaSessionCompat();
+            mPresenter.removeBaseCastStateListener();
         }
         if (myBannerAdView != null) {
             myBannerAdView.destroy();
