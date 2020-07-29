@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.AppCompatSeekBar;
 import androidx.appcompat.widget.Toolbar;
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -392,8 +394,13 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         mainMenu = actionMenuView.getMenu();
         getMenuInflater().inflate(R.menu.menu_main, mainMenu);
 
-        // according to the above explanations, the following statement will fit every situation
-        ScreenUtil.resizeMenuTextSize(mainMenu, fontScale);
+        // final Context wrapper = new ContextThemeWrapper(this, R.style.menu_text_style);
+        // or
+        final int popupThemeId = supportToolbar.getPopupTheme();
+        final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
+
+        // ScreenUtil.buildActionViewClassMenu(this, wrapper, mainMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+        ScreenUtil.resizeMenuTextIconSize(wrapper, mainMenu, fontScale);
 
         // submenu of file
         autoPlayMenuItem = mainMenu.findItem(R.id.autoPlay);
