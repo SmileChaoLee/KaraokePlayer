@@ -4,7 +4,6 @@ public final class CommonConstants {
     private CommonConstants() {
     }
 
-    public static final String PrivacyPolicyUrl = "http://ec2-13-59-195-3.us-east-2.compute.amazonaws.com/PrivacyPolicy";
     public static final int LeftChannel = 0;
     public static final int RightChannel = 1;
     public static final int StereoChannel = 2;

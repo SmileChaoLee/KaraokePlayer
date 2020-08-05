@@ -467,7 +467,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 }
                 break;
             case R.id.privacyPolicy:
-                PrivacyPolicyUtil.startPrivacyPolicyActivity(this, CommonConstants.PrivacyPolicyUrl, PlayerConstants.PrivacyPolicyActivityRequestCode);
+                PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
                 showAdAndExitActivity();
