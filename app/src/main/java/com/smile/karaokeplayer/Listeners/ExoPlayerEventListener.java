@@ -41,7 +41,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
         switch (playbackState) {
             case Player.STATE_BUFFERING:
                 if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) {
-                    mPresenter.getPresentView().hideNativeAd();
+                    mPresenter.getPresentView().hideNativeAndBannerAd();
                 }
                 mPresenter.getPresentView().showBufferingMessage();
                 return;
@@ -56,12 +56,12 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
                 if (numberOfVideoTracks == 0) {
                     // no video is being played, show native ads
-                    mPresenter.getPresentView().showNativeAd();
+                    mPresenter.getPresentView().showNativeAndBannerAd();
                 } else {
                     // video is being played, hide native ads
                     if (playWhenReady) {
                         // playing
-                        mPresenter.getPresentView().hideNativeAd();
+                        mPresenter.getPresentView().hideNativeAndBannerAd();
                     }
                 }
                 break;
@@ -75,7 +75,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
                         mPresenter.replayMedia();
                     } else {
-                        mPresenter.getPresentView().showNativeAd();
+                        mPresenter.getPresentView().showNativeAndBannerAd();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
@@ -91,7 +91,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 }
                 if (!playingParam.isAutoPlay()) {
                     // not auto play
-                    mPresenter.getPresentView().showNativeAd();
+                    mPresenter.getPresentView().showNativeAndBannerAd();
                 }
                 break;
         }

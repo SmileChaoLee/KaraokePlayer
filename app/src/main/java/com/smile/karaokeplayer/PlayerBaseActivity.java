@@ -268,57 +268,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
 
         String nativeAdvancedId0 = "ca-app-pub-8354869049759576/7985456524";     // real ad unit id
-        // String nativeAdvancedId1 = "ca-app-pub-3940256099942544/6300978111";     // test ad unit id
-        // String nativeAdvancedId2 = "ca-app-pub-3940256099942544/2247696110";     // test ad unit id
-
-        /*
-        mNativeExpressAdView = new NativeExpressAdView(this);
-        mNativeExpressAdView.setAdSize(new AdSize(300, 200));
-        if (BuildConfig.DEBUG) {
-            mNativeExpressAdView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-        } else {
-            mNativeExpressAdView.setAdUnitId(nativeAdvancedId);
-        }
-        mNativeExpressAdView.setVisibility(View.VISIBLE);
-
-        VideoController mVideoController;
-
-        // Set its video options.
-        mNativeExpressAdView.setVideoOptions(new VideoOptions.Builder()
-                .setStartMuted(true)
-                .build());
-
-        // The VideoController can be used to get lifecycle events and info about an ad's video
-        // asset. One will always be returned by getVideoController, even if the ad has no video
-        // asset.
-        mVideoController = mNativeExpressAdView.getVideoController();
-        mVideoController.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
-            @Override
-            public void onVideoEnd() {
-                Log.d(TAG, "Video playback is finished.");
-                super.onVideoEnd();
-            }
-        });
-
-        // Set an AdListener for the AdView, so the Activity can take action when an ad has finished
-        // loading.
-        mNativeExpressAdView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                if (mVideoController.hasVideoContent()) {
-                    Log.d(TAG, "Received an ad that contains a video asset.");
-                } else {
-                    Log.d(TAG, "Received an ad that does not contain a video asset.");
-                }
-            }
-        });
-
-        nativeAdsFrameLayout.addView(mNativeExpressAdView);
-        mNativeExpressAdView.loadAd(new AdRequest.Builder().build());
-        */
-
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
-
         FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
         nativeTemplate = new GoogleAdMobNativeTemplate(this, nativeAdsFrameLayout
@@ -330,7 +280,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
         mPresenter.addBaseCastStateListener();
 
-        showNativeAd();
+        showNativeAndBannerAd();
     }
 
     /*
@@ -1070,19 +1020,19 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     }
 
     @Override
-    public void showNativeAd() {
-        Log.d(TAG, "showNativeAd() is called.");
+    public void showNativeAndBannerAd() {
+        Log.d(TAG, "showNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.VISIBLE;
         nativeTemplate.showNativeAd();
-        // bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
+        bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
     }
 
     @Override
-    public void hideNativeAd() {
-        Log.d(TAG, "hideNativeAd() is called.");
+    public void hideNativeAndBannerAd() {
+        Log.d(TAG, "hideNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.GONE;
         nativeTemplate.hideNativeAd();
-        // bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
+        bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
     }
 
     @Override

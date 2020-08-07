@@ -10,14 +10,13 @@ android {
         }
     }
     compileSdkVersion 30
-    // buildToolsVersion '30.0.0'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
         minSdkVersion 16
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 152
-        versionName "1.52"
+        versionCode 153
+        versionName "1.53"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
