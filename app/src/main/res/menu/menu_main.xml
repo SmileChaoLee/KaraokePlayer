@@ -4,41 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity" >
 
-    <item android:id="@+id/file"
-        android:title="@string/fileString"
+    <item android:id="@+id/autoPlay"
+        android:title="@string/autoPlayString"
         android:orderInCategory="1"
+        android:checkable="true"
+        android:visible="true"
         app:showAsAction="never">
-        <menu>
-            <item android:id="@+id/autoPlay"
-                android:title="@string/autoPlayString"
-                android:orderInCategory="1"
-                android:checkable="true"
-                android:visible="true"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/songList"
-                android:title="@string/songListString"
-                android:orderInCategory="2"
-                android:checkable="false"
-                android:visible="true"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/open"
-                android:title="@string/openString"
-                android:orderInCategory="3"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/privacyPolicy"
-                android:title="@string/privacyPolicyString"
-                android:orderInCategory="4"
-                app:showAsAction="never">
-            </item>
-        </menu>
     </item>
-
+    <item android:id="@+id/songList"
+        android:title="@string/songListString"
+        android:orderInCategory="2"
+        android:checkable="false"
+        android:visible="true"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/open"
+        android:title="@string/openString"
+        android:orderInCategory="3"
+        app:showAsAction="never">
+    </item>
     <item android:id="@+id/audioTrack"
         android:title="@string/audioTrackString"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         app:showAsAction="never">
         <menu>
             <item
@@ -99,10 +86,9 @@
             </item>
         </menu>
     </item>
-
     <item android:id="@+id/channel"
         android:title="@string/channelString"
-        android:orderInCategory="4"
+        android:orderInCategory="5"
         app:showAsAction="never">
         <menu>
             <item android:id="@+id/leftChannel"
@@ -122,10 +108,14 @@
             </item>
         </menu>
     </item>
-
+    <item android:id="@+id/privacyPolicy"
+        android:title="@string/privacyPolicyString"
+        android:orderInCategory="6"
+        app:showAsAction="never">
+    </item>
     <item android:id="@+id/exit"
         android:title="@string/exitString"
-        android:orderInCategory="5"
+        android:orderInCategory="7"
         app:showAsAction="never">
     </item>
 

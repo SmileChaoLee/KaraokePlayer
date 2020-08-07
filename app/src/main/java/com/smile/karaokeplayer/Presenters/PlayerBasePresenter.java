@@ -26,6 +26,7 @@ import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;
@@ -37,8 +38,6 @@ public abstract class PlayerBasePresenter {
     private final Context callingContext;
     private final BasePresentView presentView;
     private final Activity mActivity;
-    private final int maxNumberOfSongsPlayed = 5; // the point to enter showing ad
-    private int numberOfSongsPlayed;
 
     protected final float textFontSize;
     protected final float fontScale;
@@ -72,6 +71,7 @@ public abstract class PlayerBasePresenter {
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
         void setMediaRouteButtonVisible(boolean isVisible);
+        void showInterstitialAd(boolean isReturnToPrevious);
     }
 
     public PlayerBasePresenter(Context context, BasePresentView presentView) {
@@ -207,17 +207,6 @@ public abstract class PlayerBasePresenter {
             }
             singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
         }
-        numberOfSongsPlayed = 0;    // start from 0
-    }
-
-    public int getNumberOfSongsPlayed() {
-        return numberOfSongsPlayed;
-    }
-    public void setNumberOfSongsPlayed(int numberOfSongsPlayed) {
-        this.numberOfSongsPlayed = numberOfSongsPlayed;
-    }
-    public int getMaxNumberOfSongsPlayed() {
-        return maxNumberOfSongsPlayed;
     }
 
     public void onDurationSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -311,7 +300,6 @@ public abstract class PlayerBasePresenter {
         playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
         if (mediaTransportControls != null) {
             mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
-            numberOfSongsPlayed++;
         }
     }
 
@@ -431,7 +419,7 @@ public abstract class PlayerBasePresenter {
                         // no repeat
                         if ( (publicNextSongIndex >= publicSongListSize) || (publicNextSongIndex<0) ) {
                             // stop playing
-                            playingParam.setAutoPlay(false);
+                            // playingParam.setAutoPlay(false); // this statement is in stopPlay() method
                             stopPlay();
                             stillPlayNext = false;  // stop here and do not go to next
                         }
@@ -600,6 +588,8 @@ public abstract class PlayerBasePresenter {
 
             playMediaFromUri(mediaUri);
         }
+        // one more open. only for select songs
+        playingParam.setNumOfPlayedSongs(playingParam.getNumOfPlayedSongs()+1);
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
@@ -673,24 +663,25 @@ public abstract class PlayerBasePresenter {
     }
 
     public void stopPlay() {
-        if (playingParam.isAutoPlay()) {
-            // auto play
-            startAutoPlay();
-        } else {
-            if (playingParam.getRepeatStatus() == PlayerConstants.NoRepeatPlaying) {
-                // no repeat playing
-                if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
-                    // media file opened or playing has been stopped
-                    if (mediaTransportControls != null) {
-                        mediaTransportControls.stop();
+        Log.d(TAG, "stopPlay() is called.");
+        if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
+            // media file opened or playing has been stopped
+            if (mediaTransportControls != null) {
+                Log.d(TAG, "stopPlay() ---> mediaTransportControls.stop() is called.");
+                mediaTransportControls.stop();
+                if (playingParam.isPlaySingleSong()) {
+                    presentView.showInterstitialAd(true);
+                } else if (playingParam.isAutoPlay()) {
+                    presentView.showInterstitialAd(false);
+                } else {
+                    if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
+                        presentView.showInterstitialAd(false);
+                        playingParam.setNumOfPlayedSongs(0);
                     }
-                    Log.d(TAG, "stopPlay() ---> mediaTransportControls.stop() is called.");
                 }
-            } else {
-                replayMedia();
             }
         }
-        Log.d(TAG, "stopPlay() is called.");
+        playingParam.setAutoPlay(false);    // no auto playing song list
     }
 
     protected abstract void specificPlayerReplayMedia(long currentAudioPosition);

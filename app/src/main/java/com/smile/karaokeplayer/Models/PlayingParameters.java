@@ -27,13 +27,15 @@ public class PlayingParameters implements Parcelable {
     private int repeatStatus;
     private boolean isPlaySingleSong;
     private boolean isInSongList;
+    private int numOfPlayedSongs;
 
     public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaSourcePrepared,
                              int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
                              int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting,
-                             int repeatStatus, boolean isPlaySingleSong, boolean isInSongList) {
+                             int repeatStatus, boolean isPlaySingleSong, boolean isInSongList,
+                             int numOfPlayedSongs) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaSourcePrepared = isMediaSourcePrepared;
@@ -52,6 +54,7 @@ public class PlayingParameters implements Parcelable {
         this.repeatStatus = repeatStatus;
         this.isPlaySingleSong = isPlaySingleSong;
         this.isInSongList = isInSongList;
+        this.numOfPlayedSongs = numOfPlayedSongs;
     }
 
     public PlayingParameters() {
@@ -60,7 +63,6 @@ public class PlayingParameters implements Parcelable {
     public int getCurrentPlaybackState() {
         return currentPlaybackState;
     }
-
     public void setCurrentPlaybackState(int currentPlaybackState) {
         this.currentPlaybackState = currentPlaybackState;
     }
@@ -68,7 +70,6 @@ public class PlayingParameters implements Parcelable {
     public boolean isAutoPlay() {
         return isAutoPlay;
     }
-
     public void setAutoPlay(boolean autoPlay) {
         isAutoPlay = autoPlay;
     }
@@ -76,7 +77,6 @@ public class PlayingParameters implements Parcelable {
     public boolean isMediaSourcePrepared() {
         return isMediaSourcePrepared;
     }
-
     public void setMediaSourcePrepared(boolean mediaSourcePrepared) {
         isMediaSourcePrepared = mediaSourcePrepared;
     }
@@ -84,7 +84,6 @@ public class PlayingParameters implements Parcelable {
     public int getCurrentVideoTrackIndexPlayed() {
         return currentVideoTrackIndexPlayed;
     }
-
     public void setCurrentVideoTrackIndexPlayed(int currentVideoTrackIndexPlayed) {
         this.currentVideoTrackIndexPlayed = currentVideoTrackIndexPlayed;
     }
@@ -92,7 +91,6 @@ public class PlayingParameters implements Parcelable {
     public int getMusicAudioChannel() {
         return musicAudioChannel;
     }
-
     public void setMusicAudioChannel(int musicAudioChannel) {
         this.musicAudioChannel = musicAudioChannel;
     }
@@ -100,7 +98,6 @@ public class PlayingParameters implements Parcelable {
     public int getVocalAudioChannel() {
         return vocalAudioChannel;
     }
-
     public void setVocalAudioChannel(int vocalAudioChannel) {
         this.vocalAudioChannel = vocalAudioChannel;
     }
@@ -108,7 +105,6 @@ public class PlayingParameters implements Parcelable {
     public int getCurrentChannelPlayed() {
         return currentChannelPlayed;
     }
-
     public void setCurrentChannelPlayed(int currentChannelPlayed) {
         this.currentChannelPlayed = currentChannelPlayed;
     }
@@ -116,7 +112,6 @@ public class PlayingParameters implements Parcelable {
     public int getMusicAudioTrackIndex() {
         return musicAudioTrackIndex;
     }
-
     public void setMusicAudioTrackIndex(int musicAudioTrackIndex) {
         this.musicAudioTrackIndex = musicAudioTrackIndex;
     }
@@ -124,7 +119,6 @@ public class PlayingParameters implements Parcelable {
     public int getVocalAudioTrackIndex() {
         return vocalAudioTrackIndex;
     }
-
     public void setVocalAudioTrackIndex(int vocalAudioTrackIndex) {
         this.vocalAudioTrackIndex = vocalAudioTrackIndex;
     }
@@ -132,7 +126,6 @@ public class PlayingParameters implements Parcelable {
     public int getCurrentAudioTrackIndexPlayed() {
         return currentAudioTrackIndexPlayed;
     }
-
     public void setCurrentAudioTrackIndexPlayed(int currentAudioTrackIndexPlayed) {
         this.currentAudioTrackIndexPlayed = currentAudioTrackIndexPlayed;
     }
@@ -140,7 +133,6 @@ public class PlayingParameters implements Parcelable {
     public long getCurrentAudioPosition() {
         return currentAudioPosition;
     }
-
     public void setCurrentAudioPosition(long currentAudioPosition) {
         this.currentAudioPosition = currentAudioPosition;
     }
@@ -148,7 +140,6 @@ public class PlayingParameters implements Parcelable {
     public float getCurrentVolume() {
         return currentVolume;
     }
-
     public void setCurrentVolume(float currentVolume) {
         this.currentVolume = currentVolume;
     }
@@ -156,7 +147,6 @@ public class PlayingParameters implements Parcelable {
     public int getPublicNextSongIndex() {
         return publicNextSongIndex;
     }
-
     public void setPublicNextSongIndex(int publicNextSongIndex) {
         this.publicNextSongIndex = publicNextSongIndex;
     }
@@ -164,7 +154,6 @@ public class PlayingParameters implements Parcelable {
     public boolean isPlayingPublic() {
         return isPlayingPublic;
     }
-
     public void setPlayingPublic(boolean playingPublic) {
         isPlayingPublic = playingPublic;
     }
@@ -180,7 +169,6 @@ public class PlayingParameters implements Parcelable {
     public int getRepeatStatus() {
         return repeatStatus;
     }
-
     public void setRepeatStatus(int repeatStatus) {
         this.repeatStatus = repeatStatus;
     }
@@ -188,15 +176,22 @@ public class PlayingParameters implements Parcelable {
     public boolean isPlaySingleSong() {
         return isPlaySingleSong;
     }
-    public boolean isInSongList() {
-        return isInSongList;
-    }
-
     public void setPlaySingleSong(boolean isPlaySingleSong) {
         this.isPlaySingleSong = isPlaySingleSong;
     }
+
+    public boolean isInSongList() {
+        return isInSongList;
+    }
     public void setInSongList(boolean isInSongList) {
         this.isInSongList = isInSongList;
+    }
+
+    public int getNumOfPlayedSongs() {
+        return numOfPlayedSongs;
+    }
+    public void setNumOfPlayedSongs(int numOfPlayedSongs) {
+        this.numOfPlayedSongs = numOfPlayedSongs;
     }
 
     @Override
@@ -224,6 +219,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.repeatStatus);
         dest.writeByte(this.isPlaySingleSong ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isInSongList ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.numOfPlayedSongs);
     }
 
     protected PlayingParameters(Parcel in) {
@@ -245,6 +241,7 @@ public class PlayingParameters implements Parcelable {
         this.repeatStatus = in.readInt();
         this.isPlaySingleSong = in.readByte() != 0;
         this.isInSongList = in.readByte() != 0;
+        this.numOfPlayedSongs = in.readInt();
     }
 
     public static final Creator<PlayingParameters> CREATOR = new Creator<PlayingParameters>() {

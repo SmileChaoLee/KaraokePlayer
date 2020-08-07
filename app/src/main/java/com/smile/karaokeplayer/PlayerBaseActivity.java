@@ -365,11 +365,15 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         if (playingParam.isPlaySingleSong()) {
-            MenuItem fileMenuItem = mainMenu.findItem(R.id.file);
-            fileMenuItem.setVisible(false);
+            autoPlayMenuItem.setVisible(false);
+            MenuItem songListMenuItem = mainMenu.findItem(R.id.songList);
+            songListMenuItem.setVisible(false);
+            openMenuItem.setVisible(false);
             audioTrackMenuItem.setVisible(false);
             MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
             channelMenuItem.setVisible(false);
+            MenuItem privacyPolicyMenuItem = mainMenu.findItem(R.id.privacyPolicy);
+            privacyPolicyMenuItem.setVisible(false);
         }
 
         return super.onCreateOptionsMenu(menu);
@@ -386,16 +390,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
         int id = item.getItemId();
         switch (id) {
-            case R.id.file:
-                autoPlayMenuItem.setCheckable(true);
-                if (playingParam.isAutoPlay()) {
-                    autoPlayMenuItem.setChecked(true);
-                    openMenuItem.setEnabled(false);
-                } else {
-                    autoPlayMenuItem.setChecked(false);
-                    openMenuItem.setEnabled(true);
-                }
-                break;
             case R.id.autoPlay:
                 // item.isChecked() return the previous value
                 mPresenter.setAutoPlayStatusAndAction();
@@ -420,7 +414,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
-                showAdAndExitActivity();
+                showInterstitialAd(true);
                 break;
             case R.id.audioTrack:
                 // if there are audio tracks
@@ -612,7 +606,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     public void onBackPressed() {
         ExitAppTimer exitAppTimer = ExitAppTimer.getInstance(1000); // singleton class
         if (exitAppTimer.canExit()) {
-            showAdAndExitActivity();
+            showInterstitialAd(true);
         } else {
             exitAppTimer.start();
             ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
@@ -626,17 +620,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
         // setResult(Activity.RESULT_OK);   // no bundle data
         finish();
-    }
-
-    private void showAdAndExitActivity() {
-        returnToPrevious();
-        if (SmileApplication.InterstitialAd != null) {
-            // free version
-            int entryPoint = 0; //  no used
-            ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, SmileApplication.AdProvider);
-            showAdAsyncTask.startShowAd();
-        }
     }
 
     private void showSupportToolbarAndAudioController() {
@@ -750,6 +733,14 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
             @Override
             public void onClick(View v) {
                 actionMenuView.showOverflowMenu();
+                PlayingParameters playingParam = mPresenter.getPlayingParam();
+                if (playingParam.isAutoPlay()) {
+                    autoPlayMenuItem.setChecked(true);
+                    openMenuItem.setEnabled(false);
+                } else {
+                    autoPlayMenuItem.setChecked(false);
+                    openMenuItem.setEnabled(true);
+                }
             }
         });
 
@@ -759,6 +750,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 return onOptionsItemSelected(item);
             }
         });
+
 
         player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -1080,6 +1072,20 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
             mMediaRouteButton.setVisibility(View.VISIBLE);
         } else {
             mMediaRouteButton.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showInterstitialAd(boolean isReturnToPrevious) {
+        if (isReturnToPrevious) {
+            returnToPrevious();
+        }
+        if (SmileApplication.InterstitialAd != null) {
+            // free version
+            int entryPoint = 0; //  no used
+            ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
+                    SmileApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, SmileApplication.AdProvider);
+            showAdAsyncTask.startShowAd();
         }
     }
 

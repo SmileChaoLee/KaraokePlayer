@@ -10,10 +10,12 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerEventListener implements Player.EventListener {
@@ -76,6 +78,14 @@ public class ExoPlayerEventListener implements Player.EventListener {
                         mPresenter.replayMedia();
                     } else {
                         mPresenter.getPresentView().showNativeAndBannerAd();
+                        if (!playingParam.isAutoPlay() && !playingParam.isPlaySingleSong()
+                                && (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying)) {
+                            // not auto playing, not playing single song, not repeat
+                            if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
+                                mPresenter.getPresentView().showInterstitialAd(false);
+                                playingParam.setNumOfPlayedSongs(0);
+                            }
+                        }
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");

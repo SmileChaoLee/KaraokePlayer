@@ -24,6 +24,7 @@ public class SmileApplication extends MultiDexApplication {
 
     private static final String TAG = new String("SmileApplication");
 
+    public static final int maxNumOfPlayedSongsBeforeAd = 3;  // show ad after playing 3 songs
     public static String leftChannelString;
     public static String rightChannelString;
     public static String stereoChannelString;
@@ -32,7 +33,6 @@ public class SmileApplication extends MultiDexApplication {
 
     public static Resources AppResources;
     public static Context AppContext;
-
 
     public static ShowingInterstitialAdsUtil InterstitialAd;
     public static String facebookBannerID = "";
