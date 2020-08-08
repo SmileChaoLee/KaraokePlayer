@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.AudioProcessor_implement;
+package com.smile.karaokeplayer.AudioProcessors;
 
 import android.util.Log;
 

@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
+import com.smile.karaokeplayer.AudioProcessors.StereoVolumeAudioProcessor;
 
 public class MyRenderersFactory extends DefaultRenderersFactory {
 

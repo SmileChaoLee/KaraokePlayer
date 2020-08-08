@@ -36,7 +36,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.MediaQueueItem;
-import com.smile.karaokeplayer.AudioProcessor_implement.StereoVolumeAudioProcessor;
+import com.smile.karaokeplayer.AudioProcessors.StereoVolumeAudioProcessor;
 import com.smile.karaokeplayer.Callbacks.ExoMediaControllerCallback;
 import com.smile.karaokeplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
