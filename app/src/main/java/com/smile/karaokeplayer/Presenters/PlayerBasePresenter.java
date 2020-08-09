@@ -16,12 +16,8 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.gms.cast.framework.CastContext;
-import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Listeners.BaseCastStateListener;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
@@ -42,8 +38,6 @@ public abstract class PlayerBasePresenter {
     protected final float textFontSize;
     protected final float fontScale;
     protected final float toastTextSize;
-    protected final CastContext castContext;
-    protected BaseCastStateListener baseCastStateListener;
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
 
@@ -84,29 +78,6 @@ public abstract class PlayerBasePresenter {
         textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
-
-        CastContext _castContext = null;
-        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
-            Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
-            try {
-                _castContext = CastContext.getSharedInstance(callingContext);
-            } catch (RuntimeException e) {
-                _castContext = null;
-                Throwable cause = e.getCause();
-                while (cause != null) {
-                    if (cause instanceof DynamiteModule.LoadingException) {
-                        Log.d(TAG, "Failed to get CastContext. Try updating Google Play Services and restart the app.");
-                    }
-                    cause = cause.getCause();
-                }
-                // Unknown error. We propagate it.
-                Log.d(TAG, "Failed to get CastContext. Unknown error.");
-            }
-        }
-        castContext = _castContext;
-        Log.d(TAG, "castContext is " + castContext);
-
-        baseCastStateListener = new BaseCastStateListener(callingContext, this);
     }
 
     public float getTextFontSize() {
@@ -325,10 +296,6 @@ public abstract class PlayerBasePresenter {
             return;
         }
 
-        // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-        // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
-        // to let devices that are above (included) API 29 can still use external storage
-        // mediaUri = null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 ContentResolver contentResolver = callingContext.getContentResolver();
@@ -345,6 +312,9 @@ public abstract class PlayerBasePresenter {
         mediaUri = getValidatedUri(Uri.parse(filePath));
 
         // testing code
+        // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+        // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
+        // to let devices that are above (included) API 29 can still use external storage
         // the following codes need android.permission.READ_EXTERNAL_STORAGE
         // and android.permission.WRITE_EXTERNAL_STORAGE
         /*
@@ -751,22 +721,5 @@ public abstract class PlayerBasePresenter {
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
-    }
-
-    // ChromeCast methods
-    public void addBaseCastStateListener() {
-        Log.d(TAG, "addBaseCastStateListener() is called.");
-        if (castContext != null) {
-            castContext.addCastStateListener(baseCastStateListener);
-            Log.d(TAG, "castContext.addCastStateListener(baseCastStateListener)");
-        }
-
-    }
-    public void removeBaseCastStateListener() {
-        Log.d(TAG, "removeBaseCastStateListener() is called.");
-        if (castContext != null) {
-            castContext.removeCastStateListener(baseCastStateListener);
-            Log.d(TAG, "castContext.removeCastStateListener(baseCastStateListener)");
-        }
     }
 }

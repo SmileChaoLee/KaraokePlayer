@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
+
 import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.Player;
@@ -43,7 +44,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         // Video player view
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.CENTER;
-        videoExoPlayerView = new com.google.android.exoplayer2.ui.PlayerView(this);
+        videoExoPlayerView = new PlayerView(this);
         videoExoPlayerView.setLayoutParams(layoutParams);
         videoExoPlayerView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
         playerViewLinearLayout.addView(videoExoPlayerView);
@@ -59,6 +60,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
 
+        mPresenter.addBaseCastStateListener();
         if (castPlayer != null && exoPlayer != null) {
             mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
         }
@@ -68,8 +70,11 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
-        mPresenter.releaseMediaSessionCompat();
-        mPresenter.releaseExoPlayerAndCastPlayer();
+        if (mPresenter != null) {
+            mPresenter.releaseMediaSessionCompat();
+            mPresenter.releaseExoPlayerAndCastPlayer();
+            mPresenter.removeBaseCastStateListener();
+        }
         videoExoPlayerView.setPlayer(null);
     }
 

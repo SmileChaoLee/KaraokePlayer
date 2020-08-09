@@ -7,6 +7,7 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import com.smile.karaokeplayer.Models.PlayingParameters;
+
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {

@@ -36,13 +36,17 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.MediaQueueItem;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.AudioProcessors.StereoVolumeAudioProcessor;
 import com.smile.karaokeplayer.Callbacks.ExoMediaControllerCallback;
 import com.smile.karaokeplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
+import com.smile.karaokeplayer.Listeners.BaseCastStateListener;
 import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
+
 import java.util.ArrayList;
 
 public class ExoPlayerPresenter extends PlayerBasePresenter {
@@ -52,6 +56,8 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     private final Context callingContext;
     private final ExoPlayerPresentView presentView;
     private final Activity mActivity;
+    private final CastContext castContext;
+    private BaseCastStateListener baseCastStateListener;
 
     private MediaControllerCompat mediaControllerCompat;
     private ExoMediaControllerCallback mediaControllerCallback;
@@ -94,6 +100,29 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
+
+        CastContext _castContext = null;
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
+            try {
+                _castContext = CastContext.getSharedInstance(callingContext);
+            } catch (RuntimeException e) {
+                _castContext = null;
+                Throwable cause = e.getCause();
+                while (cause != null) {
+                    if (cause instanceof DynamiteModule.LoadingException) {
+                        Log.d(TAG, "Failed to get CastContext. Try updating Google Play Services and restart the app.");
+                    }
+                    cause = cause.getCause();
+                }
+                // Unknown error. We propagate it.
+                Log.d(TAG, "Failed to get CastContext. Unknown error.");
+            }
+        }
+        castContext = _castContext;
+        Log.d(TAG, "castContext is " + castContext);
+
+        baseCastStateListener = new BaseCastStateListener(callingContext, this);
     }
 
     public ArrayList<Integer[]> getAudioTrackIndicesList() {
@@ -667,6 +696,23 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
             Log.d(TAG, "windowIndex != C.INDEX_UNSET");
             currentPlayer.seekTo(playbackPositionMs);
             currentPlayer.setPlayWhenReady(playWhenReady);
+        }
+    }
+
+    // ChromeCast methods
+    public void addBaseCastStateListener() {
+        Log.d(TAG, "addBaseCastStateListener() is called.");
+        if (castContext != null) {
+            castContext.addCastStateListener(baseCastStateListener);
+            Log.d(TAG, "castContext.addCastStateListener(baseCastStateListener)");
+        }
+
+    }
+    public void removeBaseCastStateListener() {
+        Log.d(TAG, "removeBaseCastStateListener() is called.");
+        if (castContext != null) {
+            castContext.removeCastStateListener(baseCastStateListener);
+            Log.d(TAG, "castContext.removeCastStateListener(baseCastStateListener)");
         }
     }
 }

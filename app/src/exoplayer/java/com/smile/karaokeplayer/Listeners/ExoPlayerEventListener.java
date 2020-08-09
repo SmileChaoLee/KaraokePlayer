@@ -14,7 +14,6 @@ import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerEventListener implements Player.EventListener {

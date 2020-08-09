@@ -18,6 +18,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -149,20 +150,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
-        /*
-        // testing code
-        hasPermissionForExternalStorage = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            Log.d(TAG, "Asking the permission beaacuse of api level.");
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Log.d(TAG, "Asking the permission.");
-                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
-            }
-        }
-        // the end of testing code
-        */
 
         SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
 
@@ -259,6 +246,13 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            Log.d(TAG, "BuildConfig.DEBUG");
+            Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.FLAVOR = " + com.smile.karaokeplayer.BuildConfig.FLAVOR );
+            if (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase().equals("vlcplayer")) {
+                player_duration_seekbar.setBackgroundColor(Color.BLUE);
+            }
+        }
 
         durationTimeTextView = findViewById(R.id.durationTimeTextView);
         durationTimeTextView.setText("000:00");
@@ -278,32 +272,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
 
-        mPresenter.addBaseCastStateListener();
-
         showNativeAndBannerAd();
     }
-
-    /*
-    // testing code
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            int rLen = grantResults.length;
-            if (rLen > 0) {
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    hasPermissionForExternalStorage = false;
-                    ScreenUtil.showToast(this, "Permission Denied", 60, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
-                } else {
-                    hasPermissionForExternalStorage = true;
-                }
-            } else {
-                hasPermissionForExternalStorage = false;
-            }
-        }
-    }
-    // the end of testing code
-    */
 
     @Override
     protected void onStart() {
@@ -590,7 +560,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         Log.d(TAG,"onDestroy() is called.");
         if (mPresenter != null) {
             mPresenter.releaseMediaSessionCompat();
-            mPresenter.removeBaseCastStateListener();
         }
         if (myBannerAdView != null) {
             myBannerAdView.destroy();
