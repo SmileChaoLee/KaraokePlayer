@@ -3,7 +3,7 @@
     <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
 
     <string name="fileString">File</string>
-    <string name="accessExternalStoragePermissionDeniedString"></string>
+    <string name="accessExternalStoragePermissionDeniedString">Storage Permission Denied</string>
     <string name="noReadableExternalStorageString">No readable external storage</string>
     <string name="autoPlayString">Auto Play</string>
     <string name="openString">Open</string>
