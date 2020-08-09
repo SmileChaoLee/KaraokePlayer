@@ -77,14 +77,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
                         mPresenter.replayMedia();
                     } else {
                         mPresenter.getPresentView().showNativeAndBannerAd();
-                        if (!playingParam.isAutoPlay() && !playingParam.isPlaySingleSong()
-                                && (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying)) {
-                            // not auto playing, not playing single song, not repeat
-                            if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
-                                mPresenter.getPresentView().showInterstitialAd(false);
-                                playingParam.setNumOfPlayedSongs(0);
-                            }
-                        }
+                        mPresenter.mayShowInterstitialAd();
                     }
                 }
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");

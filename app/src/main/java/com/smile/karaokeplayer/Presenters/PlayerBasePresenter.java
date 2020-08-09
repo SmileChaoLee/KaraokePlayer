@@ -732,6 +732,17 @@ public abstract class PlayerBasePresenter {
         return mediaTransportControls;
     }
 
+    public void mayShowInterstitialAd() {
+        if (!playingParam.isAutoPlay() && !playingParam.isPlaySingleSong()
+                && (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying)) {
+            // not auto playing, not playing single song, not repeat
+            if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
+                presentView.showInterstitialAd(false);
+                playingParam.setNumOfPlayedSongs(0);
+            }
+        }
+    }
+
     public void saveInstanceState(@NonNull Bundle outState) {
         outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);
         outState.putInt(PlayerConstants.NumberOfAudioTracksState, numberOfAudioTracks);
