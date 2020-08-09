@@ -12,7 +12,7 @@ android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 30
         multiDexEnabled true
         versionCode 153
@@ -31,6 +31,18 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main {
+            java {
+                // exclude "**/VLCPlayerActivity.java"
+                // exclude "**/VLCPlayerPresenter.java"
+                // exclude "**/VLCPlayerEventListener.java"
+                // exclude "**/VLCMediaSessionCallback.java"
+                // exclude "**/VLCMediaControllerCallback.java"
+            }
         }
     }
 
@@ -82,6 +94,9 @@ dependencies {
     implementation project(':extension-opus')
     implementation project(':extension-vp9')
     implementation project(':extension-av1')
+
+    implementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    // implementation 'org.videolan.android:libvlc-all:3.1.12'
 }
 
 apply plugin: 'com.google.gms.google-services'
