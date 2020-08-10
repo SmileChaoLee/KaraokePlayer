@@ -1,11 +1,11 @@
-package com.smile.karaokeplayer.ExoRenderersFactory;
+package exoplayer.ExoRenderersFactory;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.audio.AudioProcessor;
-import com.smile.karaokeplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
 
 public class MyRenderersFactory extends DefaultRenderersFactory {
 

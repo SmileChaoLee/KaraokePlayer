@@ -1,8 +1,10 @@
-package com.smile.karaokeplayer;
+package vlcplayer;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,11 +17,14 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
+import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.util.VLCVideoLayout;
+
+import vlcplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPresenter.VLCPlayerPresentView{
 
@@ -33,14 +38,15 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
     private VLCPlayerPresenter mPresenter;
     private VLCVideoLayout videoVLCPlayerView;
 
-    @Override
-    protected PlayerBasePresenter getPlayerBasePresenter() {
-        return mPresenter;
-    }
+    // private static final AudioManager audioManager
+    //          = (AudioManager) SmileApplication.AppContext.getSystemService(Context.AUDIO_SERVICE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
+
+        // set volume control stream to STREAM_MUSIC
+        // setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         mPresenter = new VLCPlayerPresenter(this, this);
 
@@ -62,7 +68,7 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
 
         videoVLCPlayerView.setVisibility(View.VISIBLE);
 
-        int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
+        int currentProgress = mPresenter.getCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
@@ -134,4 +140,11 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
             mPresenter.releaseVLCPlayer();
         }
     }
+
+    // implement abstract methods of super class
+    @Override
+    protected PlayerBasePresenter getPlayerBasePresenter() {
+        return mPresenter;
+    }
+    // end of implementing methods of super class
 }

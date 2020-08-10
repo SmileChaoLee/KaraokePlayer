@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer;
+package exoplayer;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +13,9 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.Presenters.ExoPlayerPresenter;
+
+import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
@@ -55,7 +57,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         videoExoPlayerView.setUseController(false);
         videoExoPlayerView.requestFocus();
 
-        int currentProgress = mPresenter.setCurrentProgressForVolumeSeekBar();
+        int currentProgress = mPresenter.getCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();

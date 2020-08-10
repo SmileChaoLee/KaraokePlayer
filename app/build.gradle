@@ -10,12 +10,13 @@ android {
         }
     }
     compileSdkVersion 30
+    // buildToolsVersion '30.0.0'
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 153
-        versionName "1.53"
+        versionCode 155
+        versionName "1.55"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -50,7 +51,10 @@ android {
 
     sourceSets {
         main {
-            java.srcDir "src/main/java"
+            java {
+                srcDir "src/main/java"
+                exclude "**/MainActivity.java"
+            }
             manifest {
                 srcFile "src/main/AndroidManifest.xml"
             }
@@ -118,9 +122,9 @@ dependencies {
     exoplayerImplementation project(':extension-av1')
 
     vlcplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
-    // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
 }
 
-// apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'

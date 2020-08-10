@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Callbacks;
+package exoplayer.Callbacks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -20,7 +20,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.Presenters.ExoPlayerPresenter;
 
 import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
 import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;

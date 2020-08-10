@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Callbacks;
+package vlcplayer.Callbacks;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,11 +10,13 @@ import android.util.Log;
 
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
+import org.videolan.libvlc.interfaces.IMedia;
+
+import vlcplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 
@@ -82,7 +84,8 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                 case PlaybackStateCompat.STATE_PLAYING:
                 case PlaybackStateCompat.STATE_NONE:
                     // start playing when ready or just start new playing
-                    final Media mediaSource = new Media(mLibVLC, uri);
+                    // final Media mediaSource = new Media(mLibVLC, uri);   // libvlc version 3.1.12
+                    final IMedia mediaSource = new Media(mLibVLC, uri);
                     vlcPlayer.setMedia(mediaSource);
                     vlcPlayer.play();
                     mediaSource.release();

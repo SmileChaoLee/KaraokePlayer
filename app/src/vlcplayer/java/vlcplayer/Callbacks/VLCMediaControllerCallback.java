@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Callbacks;
+package vlcplayer.Callbacks;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -10,7 +10,8 @@ import android.util.Log;
 
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
+
+import vlcplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
 

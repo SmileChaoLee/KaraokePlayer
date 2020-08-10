@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Listeners;
+package vlcplayer.Listeners;
 
 import android.content.Context;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -6,11 +6,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Presenters.VLCPlayerPresenter;
 import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.MediaPlayer;
+
+import vlcplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 

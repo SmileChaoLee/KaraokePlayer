@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Callbacks;
+package exoplayer.Callbacks;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.smile.karaokeplayer.Models.PlayingParameters;
 
-import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
 

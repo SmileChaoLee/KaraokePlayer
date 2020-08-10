@@ -5,7 +5,7 @@
 
     <application>
         <activity
-            android:name=".ExoPlayerActivity"
+            android:name="exoplayer.ExoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

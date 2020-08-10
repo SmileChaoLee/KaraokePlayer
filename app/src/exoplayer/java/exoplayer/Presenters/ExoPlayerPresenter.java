@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Presenters;
+package exoplayer.Presenters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -38,14 +38,15 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.dynamite.DynamiteModule;
-import com.smile.karaokeplayer.AudioProcessors.StereoVolumeAudioProcessor;
-import com.smile.karaokeplayer.Callbacks.ExoMediaControllerCallback;
-import com.smile.karaokeplayer.Callbacks.ExoPlaybackPreparer;
+import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.Callbacks.ExoMediaControllerCallback;
+import exoplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.ExoRenderersFactory.MyRenderersFactory;
-import com.smile.karaokeplayer.Listeners.BaseCastStateListener;
-import com.smile.karaokeplayer.Listeners.ExoPlayerEventListener;
+import exoplayer.ExoRenderersFactory.MyRenderersFactory;
+import exoplayer.Listeners.BaseCastStateListener;
+import exoplayer.Listeners.ExoPlayerEventListener;
+import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 
 import java.util.ArrayList;
 
@@ -503,8 +504,8 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public int setCurrentProgressForVolumeSeekBar() {
-        int currentProgress = super.setCurrentProgressForVolumeSeekBar();
+    public int getCurrentProgressForVolumeSeekBar() {
+        int currentProgress;
         float currentVolume = playingParam.getCurrentVolume();
         if ( currentVolume >= 1.0f) {
             currentProgress = PlayerConstants.MaxProgress;

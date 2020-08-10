@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Listeners;
+package exoplayer.Listeners;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 

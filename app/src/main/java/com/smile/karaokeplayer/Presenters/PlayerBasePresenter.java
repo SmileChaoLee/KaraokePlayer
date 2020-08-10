@@ -202,10 +202,7 @@ public abstract class PlayerBasePresenter {
     public abstract void setPlayerTime(int progress);
     public abstract void setAudioVolume(float volume);
     public abstract void setAudioVolumeInsideVolumeSeekBar(int i);
-
-    public int setCurrentProgressForVolumeSeekBar() {
-        return 0;
-    }
+    public abstract int getCurrentProgressForVolumeSeekBar();
 
     public void playLeftChannel() {
         playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);

@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Presenters;
+package vlcplayer.Presenters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,11 +11,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.smile.karaokeplayer.Callbacks.VLCMediaControllerCallback;
-import com.smile.karaokeplayer.Callbacks.VLCMediaSessionCallback;
+
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Listeners.VLCPlayerEventListener;
+import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.smilelibraries.utilities.ExternalStorageUtil;
 
 import org.videolan.libvlc.LibVLC;
@@ -28,6 +27,10 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 import java.io.File;
 import java.util.ArrayList;
 
+import vlcplayer.Callbacks.VLCMediaControllerCallback;
+import vlcplayer.Callbacks.VLCMediaSessionCallback;
+import vlcplayer.Listeners.VLCPlayerEventListener;
+
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 
     private static final String TAG = "VLCPlayerPresenter";
@@ -35,6 +38,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     private final VLCPlayerPresentView presentView;
     private final Context callingContext;
     private final Activity mActivity;
+    private final int vlcMaxVolume = 100;
 
     private MediaControllerCompat mediaControllerCompat;
     private VLCMediaControllerCallback mediaControllerCallback;
@@ -46,7 +50,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     private ArrayList<Integer> videoTrackIndicesList;
     private ArrayList<Integer> audioTrackIndicesList;
 
-    public interface VLCPlayerPresentView extends PlayerBasePresenter.BasePresentView {
+    public interface VLCPlayerPresentView extends BasePresentView {
     }
 
     public VLCPlayerPresenter(Context context, VLCPlayerPresentView presentView) {
@@ -83,9 +87,9 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     }
 
     public void initVLCPlayer() {
-        final ArrayList<String> args = new ArrayList<>();
-        args.add("-vvv");
-        mLibVLC = new LibVLC(callingContext, args);
+        // final ArrayList<String> args = new ArrayList<>();
+        // args.add("-vvv");
+        // mLibVLC = new LibVLC(callingContext, args);
         mLibVLC = new LibVLC(callingContext);
         vlcPlayer = new MediaPlayer(mLibVLC);
         vlcPlayer.setEventListener(new VLCPlayerEventListener(callingContext, this));
@@ -178,7 +182,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
-            int audioTrackIdPlayed = vlcPlayer.getAudioTrack();
+            int audioTrackIdPlayed = vlcPlayer.getAudioTrack(); // currently played audio track
             Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             int audioTrackIndex = 1;    // default audio track index
@@ -208,10 +212,13 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
             IMedia media = vlcPlayer.getMedia();    // for version above 3.3.0
             int trackCount = media.getTrackCount();
             for (int i=0; i<trackCount; i++) {
-                Media.Track track = media.getTrack(i);
-                if (track.type == Media.Track.Type.Audio) {
+                // Media.Track track = media.getTrack(i);   // for version 3.1.12
+                // if (track.type == Media.Track.Type.Audio) {  // for version 3.1.12
+                IMedia.Track track = media.getTrack(i);
+                if (track.type == IMedia.Track.Type.Audio) {
                     // audio
-                    Media.AudioTrack audioTrack = (Media.AudioTrack)track;
+                    IMedia.AudioTrack audioTrack = (IMedia.AudioTrack)track;
+                    Log.d(TAG, "audioTrack id = " + track.id);
                     Log.d(TAG, "audioTrack.channels = " + audioTrack.channels);
                     Log.d(TAG, "audioTrack.rate = " + audioTrack.rate);
                 }
@@ -267,14 +274,34 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
                 leftVolume = rightVolume;
                 break;
         }
-        int vlcMaxVolume = 100;
         vlcPlayer.setVolume((int) (volume * vlcMaxVolume));
         playingParam.setCurrentVolume(volume);
     }
 
     @Override
     public void setAudioVolumeInsideVolumeSeekBar(int i) {
+        // needed to put inside the presenter
+        float currentVolume = 1.0f;
+        if (i < PlayerConstants.MaxProgress) {
+            currentVolume = (float)i / (float)PlayerConstants.MaxProgress;
+        }
+        playingParam.setCurrentVolume(currentVolume);
+        setAudioVolume(currentVolume);
+        //
+    }
 
+    @Override
+    public int getCurrentProgressForVolumeSeekBar() {
+        int currentProgress;
+        float currentVolume = playingParam.getCurrentVolume();
+        if ( currentVolume >= 1.0f) {
+            currentProgress = PlayerConstants.MaxProgress;
+        } else {
+            // percentage of 100
+            currentProgress = (int) (currentVolume * PlayerConstants.MaxProgress);
+        }
+
+        return currentProgress;
     }
 
     @Override

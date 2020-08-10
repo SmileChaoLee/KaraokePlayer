@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Listeners;
+package exoplayer.Listeners;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
