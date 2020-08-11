@@ -38,15 +38,9 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
     private VLCPlayerPresenter mPresenter;
     private VLCVideoLayout videoVLCPlayerView;
 
-    // private static final AudioManager audioManager
-    //          = (AudioManager) SmileApplication.AppContext.getSystemService(Context.AUDIO_SERVICE);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
-
-        // set volume control stream to STREAM_MUSIC
-        // setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
         mPresenter = new VLCPlayerPresenter(this, this);
 

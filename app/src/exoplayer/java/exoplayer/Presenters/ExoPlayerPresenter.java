@@ -498,7 +498,6 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         if (i < PlayerConstants.MaxProgress) {
             currentVolume = (float)(1.0f - (Math.log(PlayerConstants.MaxProgress - i) / Math.log(PlayerConstants.MaxProgress)));
         }
-        playingParam.setCurrentVolume(currentVolume);
         setAudioVolume(currentVolume);
         //
     }

@@ -39,7 +39,7 @@ public class KaraokePlayerInstrumentedTest {
     private static final String TAG ="KaraokePlayerInstrumentedTest";
     private static Context appContext;
     private static Resources appResources;
-    private MainActivity mainActivity;
+    // private MainActivity mainActivity;
     private String appPackageName = "com.smile.karaokeplayer";
 
     @BeforeClass
@@ -49,16 +49,11 @@ public class KaraokePlayerInstrumentedTest {
         System.out.println("Initializing before all test cases. One time running.");
     }
 
-    // do use the following because AndroidJUnit4.class is deprecated
-    // start using androidx.test.ext.junit.runners.AndroidJUnit4;
-    @Rule
-    public ActivityTestRule<MainActivity> mainActivityTestRule = new ActivityTestRule<>(MainActivity.class);
-
     @Before
     public void test_PreRun() {
         // appContext = myActivityTestRule.getActivity();
         // appResources = appContext.getResources();
-        mainActivity = mainActivityTestRule.getActivity();
+        // mainActivity = mainActivityTestRule.getActivity();
         Espresso.closeSoftKeyboard();
         System.out.println("Setting up before each test case.");
     }
@@ -70,7 +65,7 @@ public class KaraokePlayerInstrumentedTest {
 
     @Test
     public void test_FileSubmenu() {
-        onView(withId(R.id.file)).perform(click());
+        // onView(withId(R.id.file)).perform(click());
         onView(withText(R.string.autoPlayString)).check(matches(isDisplayed()));
         onView(withText(R.string.openString)).check(matches(isDisplayed()));
         onView(withText(R.string.closeString)).check(matches(isDisplayed()));
@@ -82,7 +77,7 @@ public class KaraokePlayerInstrumentedTest {
 
     @Test
     public void test_PrivacyPolicy() {
-        onView(withId(R.id.file)).perform(click());
+        // onView(withId(R.id.file)).perform(click());
         // test PrivacyPolicy MenuItem of File menu
         onData(CoreMatchers.anything())
                 .inRoot(RootMatchers.isPlatformPopup()) // isPlatformPopup() == is in PopupWindow

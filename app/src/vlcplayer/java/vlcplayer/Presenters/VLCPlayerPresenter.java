@@ -3,6 +3,7 @@ package vlcplayer.Presenters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -18,7 +19,6 @@ import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.smilelibraries.utilities.ExternalStorageUtil;
 
 import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.DisplayManager;
@@ -38,6 +38,9 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     private final VLCPlayerPresentView presentView;
     private final Context callingContext;
     private final Activity mActivity;
+    private final AudioManager audioManager;
+    private final int mStreamType = AudioManager.STREAM_MUSIC;
+
     private final int vlcMaxVolume = 100;
 
     private MediaControllerCompat mediaControllerCompat;
@@ -58,6 +61,9 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         this.callingContext = context;
         this.presentView = presentView;
         this.mActivity = (Activity)(this.presentView);
+        this.audioManager = (AudioManager) callingContext.getSystemService(Context.AUDIO_SERVICE);
+        // set volume control stream to STREAM_MUSIC
+        mActivity.setVolumeControlStream(mStreamType);
     }
 
     public ArrayList<Integer> getAudioTrackIndicesList() {
@@ -276,6 +282,14 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         }
         vlcPlayer.setVolume((int) (volume * vlcMaxVolume));
         playingParam.setCurrentVolume(volume);
+
+        /*
+        // added on 2020-08-10 for testing
+        // works
+        int maxStreamVolume = audioManager.getStreamMaxVolume(mStreamType);
+        audioManager.setStreamVolume(mStreamType, (int) (volume * maxStreamVolume),0);
+        //
+        */
     }
 
     @Override
@@ -285,7 +299,6 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         if (i < PlayerConstants.MaxProgress) {
             currentVolume = (float)i / (float)PlayerConstants.MaxProgress;
         }
-        playingParam.setCurrentVolume(currentVolume);
         setAudioVolume(currentVolume);
         //
     }
