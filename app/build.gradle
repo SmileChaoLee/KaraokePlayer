@@ -19,6 +19,85 @@ android {
         versionName "1.55"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
+
+        applicationId "com.smile.karaokeplayer"
+        manifestPlaceholders = [package_name: "com.smile.karaokeplayer"]
+    }
+
+    flavorDimensions("player")
+    productFlavors {
+        exoplayer {
+            dimension("player")
+            minSdkVersion 16
+            manifestPlaceholders = [flavorLegacyExternalStorage: "false"
+                                    , appName: "@string/app_name"]
+        }
+        vlcplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
+                                    , appName: "@string/app_name"]
+        }
+
+        videoplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
+                                    , appName: "@string/app_name_video_player"
+                                    , package_name: "com.smile.videoplayer"]
+            applicationId = "com.smile.videoplayer"
+
+        }
+
+        musicplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
+                                    , appName: "@string/app_name_music_player"]
+            applicationId "com.smile.musicplayer"
+        }
+    }
+
+    sourceSets {
+        main {
+            java.srcDir("src/main/java")
+            resources.srcDir("src/main/rec")
+            manifest {
+                srcFile "src/main/AndroidManifest.xml"
+            }
+        }
+        exoplayer {
+            // java.srcDirs += "src/exoplayer/java"
+            // resources.srcDirs += "src/exoplayer/res"
+            // or
+            // res.srcDirs += "src/exoplayer/res"
+            manifest {
+                srcFile "src/exoplayer/AndroidManifest.xml"
+            }
+        }
+        vlcplayer {
+            // java.srcDirs += "src/common/java"
+            // resources.srcDirs += "src/vlcplayer/res"
+            manifest {
+                srcFile "src/vlcplayer/AndroidManifest.xml"
+            }
+        }
+
+        videoplayer {
+            java.srcDirs += "src/vlcplayer/java"
+            resources.srcDirs += "src/vlcplayer/res"
+            manifest {
+                srcFile "src/vlcplayer/AndroidManifest.xml"
+            }
+        }
+
+        musicplayer {
+            java.srcDirs += "src/vlcplayer/java"
+            resources.srcDirs += "src/vlcplayer/res"
+            manifest {
+                srcFile "src/vlcplayer/AndroidManifest.xml"
+            }
+        }
     }
 
     buildTypes {
@@ -32,76 +111,6 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    flavorDimensions("player")
-    productFlavors {
-        exoplayer {
-            dimension("player")
-            minSdkVersion 16
-            manifestPlaceholders = [flavorLegacyExternalStorage: "false", appName: "@string/app_name"]
-        }
-        vlcplayer {
-            dimension("player")
-            minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name"]
-        }
-
-        videoplayer {
-            dimension("player")
-            minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name_video_player"]
-            applicationId "com.smile.videoplayer"
-        }
-
-        musicplayer {
-            dimension("player")
-            minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name_music_player"]
-            applicationId "com.smile.musicplayer"
-        }
-    }
-
-    sourceSets {
-        main {
-            java.srcDir "src/main/java"
-            resources.srcDir("src/main/rec")
-            manifest {
-                srcFile "src/main/AndroidManifest.xml"
-            }
-        }
-        exoplayer {
-            java.srcDirs += "scr/exoplayer/java"
-            resources.srcDirs += "scr/exoplayer/res"
-            // or
-            // res.srcDirs += "scr/exoplayer/res"
-            manifest {
-                srcFile "src/exoplayer/AndroidManifest.xml"
-            }
-        }
-        vlcplayer {
-            java.srcDirs += "scr/vlcplayer/java"
-            resources.srcDirs += "scr/vlcplayer/res"
-            manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
-            }
-        }
-
-        videoplayer {
-            java.srcDirs += "scr/vlcplayer/java"
-            resources.srcDirs += "scr/vlcplayer/res"
-            manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
-            }
-        }
-
-        musicplayer {
-            java.srcDirs += "scr/vlcplayer/java"
-            resources.srcDirs += "scr/vlcplayer/res"
-            manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
-            }
         }
     }
 

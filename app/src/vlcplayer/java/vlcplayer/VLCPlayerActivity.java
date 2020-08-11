@@ -1,10 +1,8 @@
 package vlcplayer;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +17,6 @@ import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.util.VLCVideoLayout;

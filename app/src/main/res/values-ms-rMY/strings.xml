@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smile Karaoke</string>
-    <string name="app_name_video_palyer">Smile VPlayer</string>
-    <string name="app_name_music_palyer">Smile MPlayer</string>
+    <string name="app_name_video_player">Smile VPlayer</string>
+    <string name="app_name_music_player">Smile MPlayer</string>
     <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
 
     <string name="fileString">Fail</string>

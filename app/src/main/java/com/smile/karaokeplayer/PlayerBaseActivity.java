@@ -332,6 +332,20 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
             privacyPolicyMenuItem.setVisible(false);
         }
 
+        //
+        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
+            case "exoplayer" :
+                break;
+            case "vlcplayer" :
+                break;
+            case "musicplayer" :
+                audioTrackMenuItem.setVisible(false);
+            case "videoplayer" :
+                MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
+                channelMenuItem.setVisible(false);
+                break;
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
