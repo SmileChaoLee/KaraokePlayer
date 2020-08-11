@@ -140,5 +140,15 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
     protected PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
+
+    @Override
+    protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
+
+    }
+
+    @Override
+    public void setMediaRouteButtonVisible(boolean isVisible) {
+
+    }
     // end of implementing methods of super class
 }

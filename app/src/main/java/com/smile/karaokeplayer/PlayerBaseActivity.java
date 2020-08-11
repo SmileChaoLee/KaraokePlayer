@@ -96,8 +96,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     private ImageButton switchToMusicImageButton;
     private ImageButton switchToVocalImageButton;
 
-    private MediaRouteButton mMediaRouteButton;
-
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
 
@@ -146,6 +144,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     };
 
     protected abstract PlayerBasePresenter getPlayerBasePresenter();
+    protected abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,13 +205,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         repeatImageButton = findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
-        mMediaRouteButton = findViewById(R.id.media_route_button);
-        if (SmileApplication.currentCastState == CastState.NO_DEVICES_AVAILABLE) {
-            setMediaRouteButtonVisible(false);
-        } else {
-            setMediaRouteButtonVisible(true);
-        }
-        CastButtonFactory.setUpMediaRouteButton(this, mMediaRouteButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
@@ -247,9 +239,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
         player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
-            Log.d(TAG, "BuildConfig.DEBUG");
             Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.FLAVOR = " + com.smile.karaokeplayer.BuildConfig.FLAVOR );
-            if (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase().equals("vlcplayer")) {
+            if (!com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase().equals("exoplayer")) {
                 player_duration_seekbar.setBackgroundColor(Color.BLUE);
             }
         }
@@ -273,6 +264,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setOnClickEvents();
 
         showNativeAndBannerAd();
+
+        Log.d(TAG,"onCreate() is finished.");
     }
 
     @Override
@@ -836,17 +829,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
-        // MediaRouteButton View
-        layoutParams = (ViewGroup.MarginLayoutParams) mMediaRouteButton.getLayoutParams();
-        // layoutParams.height = imageButtonHeight;
-        // layoutParams.width = imageButtonHeight;
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
-        // the following drawable is to customize the image of MediaRouteButton
-        // setRemoteIndicatorDrawable(Drawable d)
-        Bitmap mediaRouteButtonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cast);
-        Drawable mediaRouteButtonDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(mediaRouteButtonBitmap, imageButtonHeight, imageButtonHeight, true));
-        mMediaRouteButton.setRemoteIndicatorDrawable(mediaRouteButtonDrawable);
-        //
+        setMediaRouteButtonView(buttonMarginLeft, imageButtonHeight);
 
         layoutParams = (ViewGroup.MarginLayoutParams) actionMenuImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;
@@ -1032,16 +1015,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     public void setTimerToHideSupportAndAudioController() {
         controllerTimerHandler.removeCallbacksAndMessages(null);
         controllerTimerHandler.postDelayed(controllerTimerRunnable, PlayerConstants.PlayerView_Timeout); // 10 seconds
-    }
-
-
-    @Override
-    public void setMediaRouteButtonVisible(boolean isVisible) {
-        if (isVisible) {
-            mMediaRouteButton.setVisibility(View.VISIBLE);
-        } else {
-            mMediaRouteButton.setVisibility(View.GONE);
-        }
     }
 
     @Override

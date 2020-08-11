@@ -21,20 +21,6 @@ android {
         signingConfig signingConfigs.release
     }
 
-    flavorDimensions("player")
-    productFlavors {
-        exoplayer {
-            dimension("player")
-            minSdkVersion 16
-            manifestPlaceholders = [flavorLegacyExternalStorage: "false"]
-        }
-        vlcplayer {
-            dimension("player")
-            minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"]
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -49,24 +35,70 @@ android {
         }
     }
 
+    flavorDimensions("player")
+    productFlavors {
+        exoplayer {
+            dimension("player")
+            minSdkVersion 16
+            manifestPlaceholders = [flavorLegacyExternalStorage: "false", appName: "@string/app_name"]
+        }
+        vlcplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name"]
+        }
+
+        videoplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name_video_player"]
+            applicationId "com.smile.videoplayer"
+        }
+
+        musicplayer {
+            dimension("player")
+            minSdkVersion 17
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true", appName: "@string/app_name_music_player"]
+            applicationId "com.smile.musicplayer"
+        }
+    }
+
     sourceSets {
         main {
-            java {
-                srcDir "src/main/java"
-                exclude "**/MainActivity.java"
-            }
+            java.srcDir "src/main/java"
+            resources.srcDir("src/main/rec")
             manifest {
                 srcFile "src/main/AndroidManifest.xml"
             }
         }
         exoplayer {
             java.srcDirs += "scr/exoplayer/java"
+            resources.srcDirs += "scr/exoplayer/res"
+            // or
+            // res.srcDirs += "scr/exoplayer/res"
             manifest {
                 srcFile "src/exoplayer/AndroidManifest.xml"
             }
         }
         vlcplayer {
             java.srcDirs += "scr/vlcplayer/java"
+            resources.srcDirs += "scr/vlcplayer/res"
+            manifest {
+                srcFile "src/vlcplayer/AndroidManifest.xml"
+            }
+        }
+
+        videoplayer {
+            java.srcDirs += "scr/vlcplayer/java"
+            resources.srcDirs += "scr/vlcplayer/res"
+            manifest {
+                srcFile "src/vlcplayer/AndroidManifest.xml"
+            }
+        }
+
+        musicplayer {
+            java.srcDirs += "scr/vlcplayer/java"
+            resources.srcDirs += "scr/vlcplayer/res"
             manifest {
                 srcFile "src/vlcplayer/AndroidManifest.xml"
             }
@@ -125,6 +157,14 @@ dependencies {
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+
+    videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    videoplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
+    videoplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+
+    musicplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    musicplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
+    musicplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 }
 
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'

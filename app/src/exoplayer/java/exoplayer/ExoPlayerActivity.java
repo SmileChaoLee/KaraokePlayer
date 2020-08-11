@@ -1,13 +1,19 @@
 package exoplayer;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.core.content.ContextCompat;
+import androidx.mediarouter.app.MediaRouteButton;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -15,8 +21,12 @@ import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import exoplayer.Presenters.ExoPlayerPresenter;
 
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.R;
+import com.smile.karaokeplayer.SmileApplication;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
@@ -24,6 +34,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     private ExoPlayerPresenter mPresenter;
     private SimpleExoPlayer exoPlayer;
     private PlayerView videoExoPlayerView;
+    private MediaRouteButton mMediaRouteButton;
     private CastPlayer castPlayer;
 
     @Override
@@ -66,6 +77,8 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         if (castPlayer != null && exoPlayer != null) {
             mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
         }
+
+        Log.d(TAG,"onCreate() is finished.");
     }
 
     @Override
@@ -81,6 +94,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     }
 
     // implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
+
     @Override
     public void setCurrentPlayerToPlayerView() {
         Player currentPlayer = mPresenter.getCurrentPlayer();
@@ -106,5 +120,39 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     protected PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
+
+    @Override
+    protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
+        // MediaRouteButton View
+        mMediaRouteButton = findViewById(R.id.media_route_button);
+        if (SmileApplication.currentCastState == CastState.NO_DEVICES_AVAILABLE) {
+            setMediaRouteButtonVisible(false);
+        } else {
+            setMediaRouteButtonVisible(true);
+        }
+        CastButtonFactory.setUpMediaRouteButton(this, mMediaRouteButton);
+
+        ViewGroup.MarginLayoutParams layoutParams;
+        layoutParams = (ViewGroup.MarginLayoutParams) mMediaRouteButton.getLayoutParams();
+        // layoutParams.height = imageButtonHeight;
+        // layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
+        // the following drawable is to customize the image of MediaRouteButton
+        // setRemoteIndicatorDrawable(Drawable d)
+        Bitmap mediaRouteButtonBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cast);
+        Drawable mediaRouteButtonDrawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(mediaRouteButtonBitmap, imageButtonHeight, imageButtonHeight, true));
+        mMediaRouteButton.setRemoteIndicatorDrawable(mediaRouteButtonDrawable);
+        //
+    }
+
+    @Override
+    public void setMediaRouteButtonVisible(boolean isVisible) {
+        if (isVisible) {
+            mMediaRouteButton.setVisibility(View.VISIBLE);
+        } else {
+            mMediaRouteButton.setVisibility(View.GONE);
+        }
+    }
+
     // end of implementing methods of super class
 }

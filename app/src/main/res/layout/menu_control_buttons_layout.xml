@@ -40,16 +40,7 @@
         android:src="@drawable/vocal_imagebutton_source"
         android:background="@drawable/main_menuitem_background_color">
     </ImageButton>
-    <androidx.mediarouter.app.MediaRouteButton
-        android:id="@+id/media_route_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:padding="0dp"
-        android:mediaRouteTypes="user"
-        android:background="@drawable/main_menuitem_background_color"
-        android:visibility="gone">
-    </androidx.mediarouter.app.MediaRouteButton>
+    <include layout="@layout/media_route_button_layout" />
     <ImageButton
         android:id="@+id/actionMenuImageButton"
         android:layout_width="wrap_content"
