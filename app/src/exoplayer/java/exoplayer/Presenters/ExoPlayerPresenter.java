@@ -44,7 +44,7 @@ import exoplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import exoplayer.ExoRenderersFactory.MyRenderersFactory;
-import exoplayer.Listeners.BaseCastStateListener;
+import exoplayer.Listeners.ExoPlayerCastStateListener;
 import exoplayer.Listeners.ExoPlayerEventListener;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 
@@ -58,7 +58,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     private final ExoPlayerPresentView presentView;
     private final Activity mActivity;
     private final CastContext castContext;
-    private BaseCastStateListener baseCastStateListener;
+    private ExoPlayerCastStateListener exoPlayerCastStateListener;
 
     private MediaControllerCompat mediaControllerCompat;
     private ExoMediaControllerCallback mediaControllerCallback;
@@ -123,7 +123,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         castContext = _castContext;
         Log.d(TAG, "castContext is " + castContext);
 
-        baseCastStateListener = new BaseCastStateListener(callingContext, this);
+        exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
     }
 
     public ArrayList<Integer[]> getAudioTrackIndicesList() {
@@ -138,6 +138,10 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     }
     public void setVideoTrackIndicesList(ArrayList<Integer[]> videoTrackIndicesList) {
         this.videoTrackIndicesList = videoTrackIndicesList;
+    }
+
+    public ExoPlayerPresentView getPresentView() {
+        return presentView;
     }
 
     public void initExoPlayerAndCastPlayer() {
@@ -703,7 +707,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     public void addBaseCastStateListener() {
         Log.d(TAG, "addBaseCastStateListener() is called.");
         if (castContext != null) {
-            castContext.addCastStateListener(baseCastStateListener);
+            castContext.addCastStateListener(exoPlayerCastStateListener);
             Log.d(TAG, "castContext.addCastStateListener(baseCastStateListener)");
         }
 
@@ -711,7 +715,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     public void removeBaseCastStateListener() {
         Log.d(TAG, "removeBaseCastStateListener() is called.");
         if (castContext != null) {
-            castContext.removeCastStateListener(baseCastStateListener);
+            castContext.removeCastStateListener(exoPlayerCastStateListener);
             Log.d(TAG, "castContext.removeCastStateListener(baseCastStateListener)");
         }
     }

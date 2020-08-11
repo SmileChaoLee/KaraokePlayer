@@ -64,7 +64,6 @@ public abstract class PlayerBasePresenter {
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
-        void setMediaRouteButtonVisible(boolean isVisible);
         void showInterstitialAd(boolean isReturnToPrevious);
     }
 

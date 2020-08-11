@@ -60,15 +60,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
 
-    /*
-    // testing code
-    private static final int PERMISSION_REQUEST_CODE = 0x11;
-    private boolean hasPermissionForExternalStorage;
-    // the end of testing code
-    */
-
     private static final String TAG = "PlayerBaseActivity";
-
     private PlayerBasePresenter mPresenter;
 
     protected float textFontSize;
@@ -145,6 +137,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     protected abstract PlayerBasePresenter getPlayerBasePresenter();
     protected abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
+    public abstract void setMediaRouteButtonVisible(boolean isVisible);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
