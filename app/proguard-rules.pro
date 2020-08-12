@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# the following is for solving E/VLC/JNI/VLCObject: FindClass(org/videolan/libvlc/Media$Track) failed
+-keep class org.videolan.** { *; }
