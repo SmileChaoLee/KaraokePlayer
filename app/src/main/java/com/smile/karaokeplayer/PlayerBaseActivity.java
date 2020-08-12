@@ -242,7 +242,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
 
-        String nativeAdvancedId0 = "ca-app-pub-8354869049759576/7985456524";     // real ad unit id
+        String nativeAdvancedId0 = SmileApplication.googleAdMobNativeID;     // real ad unit id
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
         FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);

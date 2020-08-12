@@ -3,7 +3,6 @@
     <string name="app_name">Smile Karaoke</string>
     <string name="app_name_video_player">Smile VPlayer</string>
     <string name="app_name_music_player">Smile MPlayer</string>
-    <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
 
     <string name="fileString">Fail</string>
     <string name="accessExternalStoragePermissionDeniedString">Storage Permission Denied</string>

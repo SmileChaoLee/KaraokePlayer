@@ -21,7 +21,7 @@ android {
         signingConfig signingConfigs.release
 
         applicationId "com.smile.karaokeplayer"
-        manifestPlaceholders = [package_name: "com.smile.karaokeplayer"]
+        manifestPlaceholders = [google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
     }
 
     flavorDimensions("player")
@@ -42,19 +42,19 @@ android {
         videoplayer {
             dimension("player")
             minSdkVersion 17
+            applicationId = "com.smile.videoplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true"
                                     , appName: "@string/app_name_video_player"
-                                    , package_name: "com.smile.videoplayer"]
-            applicationId = "com.smile.videoplayer"
-
+                                    , google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
         }
 
         musicplayer {
             dimension("player")
             minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , appName: "@string/app_name_music_player"]
             applicationId "com.smile.musicplayer"
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
+                                    , appName: "@string/app_name_music_player"
+                                    , google_AdMobAppID: "ca-app-pub-8354869049759576~3279561070"]
         }
     }
 

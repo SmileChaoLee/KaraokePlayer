@@ -34,6 +34,7 @@ public class SmileApplication extends MultiDexApplication {
     public static ShowingInterstitialAdsUtil InterstitialAd;
     public static String facebookBannerID = "";
     public static String googleAdMobBannerID = "";
+    public static String googleAdMobNativeID = "";
     public static int AdProvider = ShowingInterstitialAdsUtil.FacebookAdProvider;    // default is Facebook Ad
 
     public static FacebookInterstitialAds facebookAds;
@@ -60,24 +61,57 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(rightChannelString, CommonConstants.RightChannel);
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
+        // String facebookInterstitialID = new String("1712962715503258_1712963252169871");
+        // facebookBannerID = "1712962715503258_2019623008170559";
+        // String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
+        // googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
+
+        String facebookInterstitialID = "";
+        String googleAdMobAppID = "";
+        String googleAdMobInterstitialID = "";
+        switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
+            case "com.smile.karaokeplayer":
+                facebookInterstitialID = "1712962715503258_1712963252169871";
+                facebookBannerID = "1712962715503258_2019623008170559";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~5549171584";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/7985456524";
+                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
+                break;
+            case "com.smile.videoplayer":
+                facebookInterstitialID = "";
+                facebookBannerID = "";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/7715939032";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/2158051096";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044";
+                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
+                break;
+            case "com.smile.musicplayer":
+                facebookInterstitialID = "";
+                facebookBannerID = "";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/6835662705";
+                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
+                break;
+        }
+
         AudienceNetworkAds.initialize(this);
-        String facebookInterstitialID = new String("1712962715503258_1712963252169871");
         String testString = "";
         // for debug mode
-        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
+
+        // facebook
         facebookInterstitialID = testString + facebookInterstitialID;
-        //
         facebookAds = new FacebookInterstitialAds(AppContext, facebookInterstitialID);
-        facebookBannerID = "1712962715503258_2019623008170559";
 
-        // Google AdMob
-        String googleAdMobAppID = getString(R.string.google_AdMobAppID);
-        String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
-        googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
+        // google
         MobileAds.initialize(AppContext, initializationStatus -> Log.d(TAG, "Google AdMob was initialized successfully."));
-
         googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
 
         final Handler adHandler = new Handler(Looper.getMainLooper());

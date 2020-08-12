@@ -3,7 +3,6 @@
     <string name="app_name">微笑卡拉OK</string>
     <string name="app_name_video_player">微笑视频播放器</string>
     <string name="app_name_music_player">微笑音乐播放器</string>
-    <string name="google_AdMobAppID">ca-app-pub-8354869049759576~5549171584</string>
 
     <string name="fileString">档案</string>
     <string name="accessExternalStoragePermissionDeniedString">存取外部储存装置被拒绝</string>
