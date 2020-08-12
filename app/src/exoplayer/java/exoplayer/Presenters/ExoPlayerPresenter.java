@@ -37,6 +37,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
 import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
 import exoplayer.Callbacks.ExoMediaControllerCallback;
@@ -68,7 +69,10 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     private DefaultTrackSelector trackSelector;
     private DefaultTrackSelector.Parameters trackSelectorParameters;
     private SimpleExoPlayer exoPlayer;
+
     private CastPlayer castPlayer;
+    private int currentCastState;
+
     private ExoPlayerEventListener mExoPlayerEventListener;
     private Player mCurrentPlayer;
     private int currentItemIndex;
@@ -121,6 +125,8 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
             }
         }
         castContext = _castContext;
+        currentCastState = CastState.NO_DEVICES_AVAILABLE;
+
         Log.d(TAG, "castContext is " + castContext);
 
         exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
@@ -215,6 +221,13 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
 
     public CastPlayer getCastPlayer() {
         return castPlayer;
+    }
+
+    public int getCurrentCastState() {
+        return currentCastState;
+    }
+    public void setCurrentCastState(int currentCastState) {
+        this.currentCastState = currentCastState;
     }
 
     private boolean selectAudioTrack(Integer[] trackIndicesCombination) {

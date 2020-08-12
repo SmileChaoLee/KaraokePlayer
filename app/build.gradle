@@ -164,16 +164,12 @@ dependencies {
 
     vlcplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
-    vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
-    vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+    // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
+    // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
     videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
-    videoplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
-    videoplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 
     musicplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
-    musicplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
-    musicplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 }
 
 // apply plugin: 'com.google.gms.google-services'

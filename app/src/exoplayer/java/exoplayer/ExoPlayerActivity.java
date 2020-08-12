@@ -125,7 +125,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
     protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
         // MediaRouteButton View
         mMediaRouteButton = findViewById(R.id.media_route_button);
-        if (SmileApplication.currentCastState == CastState.NO_DEVICES_AVAILABLE) {
+        if (mPresenter.getCurrentCastState() == CastState.NO_DEVICES_AVAILABLE) {
             setMediaRouteButtonVisible(false);
         } else {
             setMediaRouteButtonVisible(true);

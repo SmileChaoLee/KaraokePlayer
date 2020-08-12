@@ -1,0 +1,155 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- no Status Bar -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="colorPrimary">@android:color/black</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">72px</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+
+        <!-- the followings are for chrome cast -->
+
+        <!-- mediaRouteTheme -->
+        <item name="mediaRouteTheme">@style/CustomMediaRouterTheme</item>
+        <!-- or add CustomMediaRouterTheme to android:theme of MediaRouteButton in layout-->
+        <!-- if we do that then MediaRouteChooserDialog will not be affected. That would be wrong -->
+
+        <item name="castIntroOverlayStyle">@style/CustomCastIntroOverlay</item>
+        <item name="castMiniControllerStyle">@style/CustomCastMiniController</item>
+        <item name="castExpandedControllerStyle">@style/CustomCastExpandedController</item>
+        <!-- -->s
+        <!-- the end of themes of chrome cast-->
+    </style>
+
+    <style name="menu_text_style" parent="@android:style/Theme.Translucent" >
+        <item name="contentInsetStart">0dp</item>
+        <item name="contentInsetEnd">0dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@drawable/main_menuitem_color</item>
+        <item name="android:textSize">60px</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:itemBackground">@drawable/main_menuitem_background_color</item>
+        <item name="android:layout_marginLeft">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:itemPadding">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:listPreferredItemHeightSmall">?android:layout_height</item> <!-- works for API >= 21 -->
+        <item name="listPreferredItemHeightSmall">?android:layout_height</item> <!-- works for API under 21 -->
+        <item name="android:dropDownListViewStyle">@style/PopupMenuListViewStyle</item>
+    </style>
+
+    <style name="PopupMenuListViewStyle">
+        <item name="android:divider">@android:color/darker_gray</item>
+        <item name="android:dividerHeight">2dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="CustomToolbarTheme" parent="@android:style/Theme.Translucent">
+        <item name="actionMenuTextColor">@drawable/main_menuitem_color</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:actionButtonStyle">@style/CustomActionButtonStyle</item>
+        <item name="actionButtonStyle">@style/CustomActionButtonStyle</item>
+        <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
+        <item name="actionOverflowButtonStyle">@style/CustomActionOverflowButtonStyle</item>
+    </style>
+
+    <style name="CustomActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
+        <!-- makes MenuItems in ActionBar, Toolbar, and Button not be capitalized automatically.
+        this style can be put in main AppThem or the themes of ActionBar or Toolbar
+        using item of <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
+        -->
+        <item name="android:textSize">@dimen/actionButtonTextSize</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:background">@drawable/main_menuitem_background_color</item>
+    </style>
+
+    <style name="CustomOverflowMenuStyle" parent="Widget.AppCompat.PopupMenu.Overflow">
+        <!-- Required for pre-Lollipop (before API 21.) -->
+        <item name="overlapAnchor">true</item>
+        <item name="android:popupBackground">@drawable/popupmenu_background</item>
+    </style>
+
+    <style name="CustomActionOverflowButtonStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <!--
+        Already put the icon programmatically (in ExoPlayerFragment.java)
+        <item name="android:src">@mipmap/circle_and_three_dots</item>
+        -->
+        <item name="android:background">@drawable/main_menuitem_background_color</item>
+    </style>
+
+    <!-- the followings are for chrome cast -->
+
+    <!-- MediaRouteButton theme -->
+    <style name="CustomMediaRouterTheme" parent="Theme.MediaRouter">
+        <!-- Required for pre-Lollipop (before API 21.) -->
+        <item name="mediaRouteButtonStyle">@style/CustomMediaRouteButtonStyle</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:textSize">@dimen/MediaRouterThemeTextSize</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+    <style name="CustomMediaRouteButtonStyle" parent="Widget.MediaRouter.Light.MediaRouteButton">
+        <item name="mediaRouteButtonTint">@color/white</item>
+    </style>
+    <!-- end of MediaRouteButton theme -->
+
+    <!-- CastIntroOverlay theme -->
+    <style name="CustomCastIntroOverlay" parent="CastIntroOverlay">
+        <item name="castButtonTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Button</item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.CustomCastIntroOverlay.Title</item>
+    </style>
+    <style name="TextAppearance.CustomCastIntroOverlay.Button" parent="android:style/TextAppearance">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <style name="TextAppearance.CustomCastIntroOverlay.Title" parent="android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/white</item>
+    </style>
+    <!-- end of CastIntroOverlay theme -->
+
+    <!-- CastMiniController theme -->
+    <style name="CustomCastMiniController" parent="CastMiniController">
+        <item name="castShowImageThumbnail">true</item>
+        <item name="castTitleTextAppearance">@style/TextAppearance.AppCompat.Subhead</item>
+        <item name="castSubtitleTextAppearance">@style/TextAppearance.AppCompat.Caption</item>
+        <item name="castBackground">@color/white</item>
+        <item name="castProgressBarColor">@color/white</item>
+        <item name="castPlayButtonDrawable">@drawable/cast_ic_mini_controller_play</item>
+        <item name="castPauseButtonDrawable">@drawable/cast_ic_mini_controller_pause</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_mini_controller_stop</item>
+        <item name="castLargePlayButtonDrawable">@drawable/cast_ic_mini_controller_play_large</item>
+        <item name="castLargePauseButtonDrawable">@drawable/cast_ic_mini_controller_pause_large</item>
+        <item name="castLargeStopButtonDrawable">@drawable/cast_ic_mini_controller_stop_large</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_mini_controller_skip_prev</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_mini_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/cast_ic_mini_controller_rewind30</item>
+        <item name="castForward30ButtonDrawable">@drawable/cast_ic_mini_controller_forward30</item>
+        <item name="castMuteToggleButtonDrawable">@drawable/cast_ic_mini_controller_mute</item>
+        <item name="castClosedCaptionsButtonDrawable">@drawable/cast_ic_mini_controller_closed_caption</item>
+    </style>
+    <!-- the end of CastMiniController -->
+
+    <!-- CastExpandedController theme -->
+    <style name="CustomCastExpandedController" parent="CastExpandedController">
+        <item name="castButtonColor">@null</item>
+        <item name="castPlayButtonDrawable">@drawable/cast_ic_expanded_controller_play</item>
+        <item name="castPauseButtonDrawable">@drawable/cast_ic_expanded_controller_pause</item>
+        <item name="castStopButtonDrawable">@drawable/cast_ic_expanded_controller_stop</item>
+        <item name="castSkipPreviousButtonDrawable">@drawable/cast_ic_expanded_controller_skip_previous</item>
+        <item name="castSkipNextButtonDrawable">@drawable/cast_ic_expanded_controller_skip_next</item>
+        <item name="castRewind30ButtonDrawable">@drawable/cast_ic_expanded_controller_rewind30</item>
+        <item name="castForward30ButtonDrawable">@drawable/cast_ic_expanded_controller_forward30</item>
+    </style>
+    <!-- the end of CastExpandedController -->
+</resources>

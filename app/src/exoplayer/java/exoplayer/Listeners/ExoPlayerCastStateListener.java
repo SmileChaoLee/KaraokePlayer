@@ -31,7 +31,7 @@ public class ExoPlayerCastStateListener implements com.google.android.gms.cast.f
     @SuppressLint("LongLogTag")
     @Override
     public void onCastStateChanged(int i) {
-        SmileApplication.currentCastState = i;
+        mPresenter.setCurrentCastState(i);
         switch (i) {
             case CastState.NO_DEVICES_AVAILABLE:
                 Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");
