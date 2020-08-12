@@ -172,4 +172,4 @@ dependencies {
     musicplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
 }
 
-// apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'

@@ -80,8 +80,10 @@ public class SmileApplication extends MultiDexApplication {
                 Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
                 break;
             case "com.smile.videoplayer":
-                facebookInterstitialID = "";
-                facebookBannerID = "";
+                // Token: EAAEN04aiEXUBAHBQwZBZB4gmWOueuRTEZCHMCAWOHZBB7hjavIuXgKELNvtfcIGCJV72zkohipkSZALG51WCXX6xbN3oUy84i8NrIvuc44RTfypgdcyOTnaPyM1W4JZBjQvDGuWsCRGmbusWaZCKmWt5iCkhQklOKeZC4Edx6FDIGTUUiHMKURzS
+                // App ID: 633653050588487
+                facebookInterstitialID = "296677124739445_296678328072658";
+                facebookBannerID = "296677124739445_296687284738429";
                 googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060";
                 googleAdMobInterstitialID = "ca-app-pub-8354869049759576/7715939032";
                 googleAdMobBannerID = "ca-app-pub-8354869049759576/2158051096";
@@ -89,8 +91,10 @@ public class SmileApplication extends MultiDexApplication {
                 Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
                 break;
             case "com.smile.musicplayer":
-                facebookInterstitialID = "";
-                facebookBannerID = "";
+                // Token: EAAFARZAONXXYBAK09XFusSFgrK4un2ykcXGG3xjwlRaHZCUzr5ZAJIM6mz2ZC7DcKQAGWMFtinkg9p6BeV41YB7Ttr8m90YJu8mhUZCsJnmdffp8uNGiNZC73rErjkHZBS2tWn2mZBOCHf96AYlhZCqfki10UKI5uZBqDX8LQPwmqrEZBku5QLLEGHQ
+                // App ID: 3006486769578153
+                facebookInterstitialID = "352142549146998_352142985813621";
+                facebookBannerID = "352142549146998_352146195813300";
                 googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
                 googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
                 googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
