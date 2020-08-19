@@ -310,7 +310,10 @@ public abstract class PlayerBasePresenter {
 
         boolean stillPlayNext = true;
         int repeatStatus = playingParam.getRepeatStatus();
-        int publicSongListSize = publicSongList.size();
+        int publicSongListSize = 0;
+        if (publicSongList != null) {
+            publicSongListSize = publicSongList.size();
+        }
         int publicNextSongIndex = playingParam.getPublicNextSongIndex();
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
@@ -390,6 +393,12 @@ public abstract class PlayerBasePresenter {
             return;
         }
         int publicSongListSize = publicSongList.size();
+        if (publicSongListSize == 1) {
+            // only file in the play list
+            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPreviousSongString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            return;
+        }
         int nextIndex = playingParam.getPublicNextSongIndex();
         int repeatStatus = playingParam.getRepeatStatus();
         nextIndex = nextIndex - 2;
@@ -427,6 +436,12 @@ public abstract class PlayerBasePresenter {
             return;
         }
         int publicSongListSize = publicSongList.size();
+        if (publicSongListSize == 1) {
+            // only file in the play list
+            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noNextSongString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            return;
+        }
         int nextIndex = playingParam.getPublicNextSongIndex();
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
