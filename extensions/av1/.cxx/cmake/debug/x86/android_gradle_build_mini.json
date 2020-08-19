@@ -1,0 +1,409 @@
+{
+  "buildFiles": [
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_install.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/meta/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_targets.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1.pc.template",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/copts/GENERATED_AbseilCopts.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/dsp/libgav1_dsp.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/cmake/CpuFeaturesConfig.cmake.in",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_options.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/examples/libgav1_examples.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_variables.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_flags.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/utils/libgav1_utils.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/utility/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/memory/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_cpu_detection.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMake/AbseilHelpers.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/copts/AbseilConfigureCopts.cmake",
+    "/Users/chaolee/Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_intrinsics.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/libgav1_decoder.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/cmake/CpuFeaturesNdkCompatConfig.cmake.in",
+    "/Users/chaolee/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_build_definitions.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_helpers.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMake/AbseilInstallDirs.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1-config.cmake.template",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/algorithm/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/ndk_compat/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_sanitizer.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" clean"
+  ],
+  "buildTargetsCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "absl_raw_logging_internal-Debug-x86": {
+      "artifactName": "absl_raw_logging_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_raw_logging_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_raw_logging_internal.a"
+    },
+    "absl_flags_usage-Debug-x86": {
+      "artifactName": "absl_flags_usage",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_usage",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_usage.a"
+    },
+    "ndk_compat-Debug-x86": {
+      "artifactName": "ndk_compat",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" ndk_compat",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/cpu_features/ndk_compat/libndk_compat.a"
+    },
+    "absl_malloc_internal-Debug-x86": {
+      "artifactName": "absl_malloc_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_malloc_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_malloc_internal.a"
+    },
+    "absl_bad_optional_access-Debug-x86": {
+      "artifactName": "absl_bad_optional_access",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_bad_optional_access",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/types/libabsl_absl_bad_optional_access.a"
+    },
+    "absl_strings-Debug-x86": {
+      "artifactName": "absl_strings",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_strings",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/strings/libabsl_absl_strings.a"
+    },
+    "absl_strings_internal-Debug-x86": {
+      "artifactName": "absl_strings_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_strings_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/strings/libabsl_absl_strings_internal.a"
+    },
+    "absl_random_internal_distribution_test_util-Debug-x86": {
+      "artifactName": "absl_random_internal_distribution_test_util",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_distribution_test_util",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_distribution_test_util.a"
+    },
+    "absl_hash-Debug-x86": {
+      "artifactName": "absl_hash",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_hash",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/hash/libabsl_absl_hash.a"
+    },
+    "absl_random_internal_randen_hwaes_impl-Debug-x86": {
+      "artifactName": "absl_random_internal_randen_hwaes_impl",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_randen_hwaes_impl",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_randen_hwaes_impl.a"
+    },
+    "absl_dynamic_annotations-Debug-x86": {
+      "artifactName": "absl_dynamic_annotations",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_dynamic_annotations",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_dynamic_annotations.a"
+    },
+    "absl_graphcycles_internal-Debug-x86": {
+      "artifactName": "absl_graphcycles_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_graphcycles_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/synchronization/libabsl_absl_graphcycles_internal.a"
+    },
+    "absl_failure_signal_handler-Debug-x86": {
+      "artifactName": "absl_failure_signal_handler",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_failure_signal_handler",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_failure_signal_handler.a"
+    },
+    "absl_raw_hash_set-Debug-x86": {
+      "artifactName": "absl_raw_hash_set",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_raw_hash_set",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/container/libabsl_absl_raw_hash_set.a"
+    },
+    "absl_log_severity-Debug-x86": {
+      "artifactName": "absl_log_severity",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_log_severity",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_log_severity.a"
+    },
+    "absl_flags-Debug-x86": {
+      "artifactName": "absl_flags",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags.a"
+    },
+    "absl_city-Debug-x86": {
+      "artifactName": "absl_city",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_city",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/hash/libabsl_absl_city.a"
+    },
+    "absl_periodic_sampler-Debug-x86": {
+      "artifactName": "absl_periodic_sampler",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_periodic_sampler",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_periodic_sampler.a"
+    },
+    "absl_flags_parse-Debug-x86": {
+      "artifactName": "absl_flags_parse",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_parse",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_parse.a"
+    },
+    "absl_leak_check_disable-Debug-x86": {
+      "artifactName": "absl_leak_check_disable",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_leak_check_disable",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_leak_check_disable.a"
+    },
+    "absl_random_internal_pool_urbg-Debug-x86": {
+      "artifactName": "absl_random_internal_pool_urbg",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_pool_urbg",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_pool_urbg.a"
+    },
+    "absl_random_seed_gen_exception-Debug-x86": {
+      "artifactName": "absl_random_seed_gen_exception",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_seed_gen_exception",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_seed_gen_exception.a"
+    },
+    "libgav1_static-Debug-x86": {
+      "artifactName": "libgav1_static",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" libgav1_static",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/libgav1/libgav1.a"
+    },
+    "absl_symbolize-Debug-x86": {
+      "artifactName": "absl_symbolize",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_symbolize",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_symbolize.a"
+    },
+    "absl_random_internal_randen_hwaes-Debug-x86": {
+      "artifactName": "absl_random_internal_randen_hwaes",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_randen_hwaes",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_randen_hwaes.a"
+    },
+    "absl_time_zone-Debug-x86": {
+      "artifactName": "absl_time_zone",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_time_zone",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/time/libabsl_absl_time_zone.a"
+    },
+    "absl_flags_internal-Debug-x86": {
+      "artifactName": "absl_flags_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_internal.a"
+    },
+    "absl_synchronization-Debug-x86": {
+      "artifactName": "absl_synchronization",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_synchronization",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/synchronization/libabsl_absl_synchronization.a"
+    },
+    "absl_base-Debug-x86": {
+      "artifactName": "absl_base",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_base",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_base.a"
+    },
+    "gav1JNI-Debug-x86": {
+      "artifactName": "gav1JNI",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" gav1JNI",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/libs/x86/libgav1JNI.so"
+    },
+    "absl_flags_config-Debug-x86": {
+      "artifactName": "absl_flags_config",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_config",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_config.a"
+    },
+    "absl_flags_registry-Debug-x86": {
+      "artifactName": "absl_flags_registry",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_registry",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_registry.a"
+    },
+    "absl_time-Debug-x86": {
+      "artifactName": "absl_time",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_time",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/time/libabsl_absl_time.a"
+    },
+    "absl_flags_marshalling-Debug-x86": {
+      "artifactName": "absl_flags_marshalling",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_marshalling",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_marshalling.a"
+    },
+    "absl_leak_check-Debug-x86": {
+      "artifactName": "absl_leak_check",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_leak_check",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_leak_check.a"
+    },
+    "absl_civil_time-Debug-x86": {
+      "artifactName": "absl_civil_time",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_civil_time",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/time/libabsl_absl_civil_time.a"
+    },
+    "absl_random_internal_randen_slow-Debug-x86": {
+      "artifactName": "absl_random_internal_randen_slow",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_randen_slow",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_randen_slow.a"
+    },
+    "absl_bad_any_cast_impl-Debug-x86": {
+      "artifactName": "absl_bad_any_cast_impl",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_bad_any_cast_impl",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/types/libabsl_absl_bad_any_cast_impl.a"
+    },
+    "absl_random_internal_seed_material-Debug-x86": {
+      "artifactName": "absl_random_internal_seed_material",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_seed_material",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_seed_material.a"
+    },
+    "list_cpu_features-Debug-x86": {
+      "artifactName": "list_cpu_features",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" list_cpu_features",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/cpu_features/list_cpu_features"
+    },
+    "absl_throw_delegate-Debug-x86": {
+      "artifactName": "absl_throw_delegate",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_throw_delegate",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_throw_delegate.a"
+    },
+    "absl_spinlock_wait-Debug-x86": {
+      "artifactName": "absl_spinlock_wait",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_spinlock_wait",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_spinlock_wait.a"
+    },
+    "absl_debugging_internal-Debug-x86": {
+      "artifactName": "absl_debugging_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_debugging_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_debugging_internal.a"
+    },
+    "absl_stacktrace-Debug-x86": {
+      "artifactName": "absl_stacktrace",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_stacktrace",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_stacktrace.a"
+    },
+    "absl_random_internal_randen-Debug-x86": {
+      "artifactName": "absl_random_internal_randen",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_internal_randen",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_internal_randen.a"
+    },
+    "absl_bad_variant_access-Debug-x86": {
+      "artifactName": "absl_bad_variant_access",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_bad_variant_access",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/types/libabsl_absl_bad_variant_access.a"
+    },
+    "cpu_features-Debug-x86": {
+      "artifactName": "cpu_features",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" cpu_features",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/cpu_features/libcpu_features.a"
+    },
+    "absl_demangle_internal-Debug-x86": {
+      "artifactName": "absl_demangle_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_demangle_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_demangle_internal.a"
+    },
+    "absl_examine_stack-Debug-x86": {
+      "artifactName": "absl_examine_stack",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_examine_stack",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/debugging/libabsl_absl_examine_stack.a"
+    },
+    "absl_exponential_biased-Debug-x86": {
+      "artifactName": "absl_exponential_biased",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_exponential_biased",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_exponential_biased.a"
+    },
+    "absl_flags_usage_internal-Debug-x86": {
+      "artifactName": "absl_flags_usage_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_usage_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_usage_internal.a"
+    },
+    "absl_hashtablez_sampler-Debug-x86": {
+      "artifactName": "absl_hashtablez_sampler",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_hashtablez_sampler",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/container/libabsl_absl_hashtablez_sampler.a"
+    },
+    "absl_flags_program_name-Debug-x86": {
+      "artifactName": "absl_flags_program_name",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_flags_program_name",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/flags/libabsl_absl_flags_program_name.a"
+    },
+    "absl_int128-Debug-x86": {
+      "artifactName": "absl_int128",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_int128",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/numeric/libabsl_absl_int128.a"
+    },
+    "absl_str_format_internal-Debug-x86": {
+      "artifactName": "absl_str_format_internal",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_str_format_internal",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/strings/libabsl_absl_str_format_internal.a"
+    },
+    "gav1_decode-Debug-x86": {
+      "artifactName": "gav1_decode",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" gav1_decode",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/libgav1/gav1_decode"
+    },
+    "absl_scoped_set_env-Debug-x86": {
+      "artifactName": "absl_scoped_set_env",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_scoped_set_env",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/base/libabsl_absl_scoped_set_env.a"
+    },
+    "absl_random_distributions-Debug-x86": {
+      "artifactName": "absl_random_distributions",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_distributions",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_distributions.a"
+    },
+    "absl_random_seed_sequences-Debug-x86": {
+      "artifactName": "absl_random_seed_sequences",
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86\" absl_random_seed_sequences",
+      "abi": "x86",
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/abseil/absl/random/libabsl_absl_random_seed_sequences.a"
+    }
+  }
+}

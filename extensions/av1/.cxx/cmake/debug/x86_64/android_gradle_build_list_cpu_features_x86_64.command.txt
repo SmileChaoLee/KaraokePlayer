@@ -1,0 +1,7 @@
+Executable : /Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja
+arguments : 
+-C
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86_64
+list_cpu_features
+jvmArgs : 
+

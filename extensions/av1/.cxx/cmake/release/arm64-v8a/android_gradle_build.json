@@ -1,0 +1,2454 @@
+{
+  "stringTable": {
+    "0": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a",
+    "1": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DSTACK_LINE_READER_BUFFER_SIZE=1024 -Dgav1JNI_EXPORTS -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -std=gnu++11",
+    "2": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DSTACK_LINE_READER_BUFFER_SIZE=1024 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/internal -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -std=gnu99",
+    "3": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DSTACK_LINE_READER_BUFFER_SIZE=1024 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIE -std=gnu99",
+    "4": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DHAVE_DLFCN_H -DHAVE_STRONG_GETAUXVAL -DSTACK_LINE_READER_BUFFER_SIZE=1024 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/internal -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -std=gnu99",
+    "5": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DSTACK_LINE_READER_BUFFER_SIZE=1024 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/internal -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -std=gnu99",
+    "6": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DLIBGAV1_CMAKE=1 -DLIBGAV1_ENABLE_NEON=1 -DLIBGAV1_ENABLE_SSE4_1=0 -DLIBGAV1_FLAGS_SRCDIR=\"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1\" -DLIBGAV1_FLAGS_TMPDIR=\"/tmp\" -DLIBGAV1_MAX_BITDEPTH=10 -D__CLANG_SUPPORT_DYN_ANNOTATION__ -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src -I. -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googlemock/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googletest/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googletest -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIE -Wmissing-prototypes -Wshorten-64-to-32 -fno-stack-protector -Wall -Wextra -Wmissing-declarations -Wno-sign-compare -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11",
+    "7": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DLIBGAV1_CMAKE=1 -DLIBGAV1_ENABLE_NEON=1 -DLIBGAV1_ENABLE_SSE4_1=0 -DLIBGAV1_FLAGS_SRCDIR=\"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1\" -DLIBGAV1_FLAGS_TMPDIR=\"/tmp\" -DLIBGAV1_MAX_BITDEPTH=10 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src -I. -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googlemock/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googletest/include -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/googletest/googletest -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -Wmissing-prototypes -Wshorten-64-to-32 -fno-stack-protector -Wall -Wextra -Wmissing-declarations -Wno-sign-compare -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11",
+    "8": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -DLIBGAV1_CMAKE=1 -DLIBGAV1_ENABLE_NEON=1 -DLIBGAV1_ENABLE_SSE4_1=0 -DLIBGAV1_FLAGS_SRCDIR=\"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1\" -DLIBGAV1_FLAGS_TMPDIR=\"/tmp\" -DLIBGAV1_MAX_BITDEPTH=10 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1 -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src -I. -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -Wmissing-prototypes -Wshorten-64-to-32 -fno-stack-protector -Wall -Wextra -Wmissing-declarations -Wno-sign-compare -fvisibility=hidden -fvisibility-inlines-hidden -std=gnu++11",
+    "9": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -Wall -Wextra -Weverything -Wno-c++98-compat-pedantic -Wno-conversion -Wno-covered-switch-default -Wno-deprecated -Wno-disabled-macro-expansion -Wno-double-promotion -Wno-comma -Wno-extra-semi -Wno-extra-semi-stmt -Wno-packed -Wno-padded -Wno-sign-compare -Wno-float-conversion -Wno-float-equal -Wno-format-nonliteral -Wno-gcc-compat -Wno-global-constructors -Wno-exit-time-destructors -Wno-non-modular-include-in-module -Wno-old-style-cast -Wno-range-loop-analysis -Wno-reserved-id-macro -Wno-shorten-64-to-32 -Wno-switch-enum -Wno-thread-safety-negative -Wno-unknown-warning-option -Wno-unreachable-code -Wno-unused-macros -Wno-weak-vtables -Wno-zero-as-null-pointer-constant -Wbitfield-enum-conversion -Wbool-conversion -Wconstant-conversion -Wenum-conversion -Wint-conversion -Wliteral-conversion -Wnon-literal-null-conversion -Wnull-conversion -Wobjc-literal-conversion -Wno-sign-conversion -Wstring-conversion -std=gnu++11",
+    "10": "--target=aarch64-none-linux-android21 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot -D__CLANG_SUPPORT_DYN_ANNOTATION__ -I/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -O2 -DNDEBUG -fPIC -Wall -Wextra -Weverything -Wno-c++98-compat-pedantic -Wno-conversion -Wno-covered-switch-default -Wno-deprecated -Wno-disabled-macro-expansion -Wno-double-promotion -Wno-comma -Wno-extra-semi -Wno-extra-semi-stmt -Wno-packed -Wno-padded -Wno-sign-compare -Wno-float-conversion -Wno-float-equal -Wno-format-nonliteral -Wno-gcc-compat -Wno-global-constructors -Wno-exit-time-destructors -Wno-non-modular-include-in-module -Wno-old-style-cast -Wno-range-loop-analysis -Wno-reserved-id-macro -Wno-shorten-64-to-32 -Wno-switch-enum -Wno-thread-safety-negative -Wno-unknown-warning-option -Wno-unreachable-code -Wno-unused-macros -Wno-weak-vtables -Wno-zero-as-null-pointer-constant -Wbitfield-enum-conversion -Wbool-conversion -Wconstant-conversion -Wenum-conversion -Wint-conversion -Wliteral-conversion -Wnon-literal-null-conversion -Wnull-conversion -Wobjc-literal-conversion -Wno-sign-conversion -Wstring-conversion -std=gnu++11",
+    "11": "null"
+  },
+  "buildFiles": [
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_install.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/meta/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_targets.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1.pc.template",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/copts/GENERATED_AbseilCopts.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/dsp/libgav1_dsp.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/cmake/CpuFeaturesConfig.cmake.in",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_options.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/examples/libgav1_examples.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_variables.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_flags.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/utils/libgav1_utils.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/utility/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/memory/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_cpu_detection.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMake/AbseilHelpers.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/copts/AbseilConfigureCopts.cmake",
+    "/Users/chaolee/Library/Android/sdk/ndk-bundle/build/cmake/platforms.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_intrinsics.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/libgav1_decoder.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/cmake/CpuFeaturesNdkCompatConfig.cmake.in",
+    "/Users/chaolee/Library/Android/sdk/ndk-bundle/build/cmake/android.toolchain.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_build_definitions.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_helpers.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMake/AbseilInstallDirs.cmake",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1-config.cmake.template",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/algorithm/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/ndk_compat/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/CMakeLists.txt",
+    "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/cmake/libgav1_sanitizer.cmake"
+  ],
+  "cleanCommands": [
+    "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" clean"
+  ],
+  "buildTargetsCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "libgav1_static-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" libgav1_static",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "libgav1_static",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/decoder.cc",
+          "flagsOrdinal": 8,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/average_blend.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/cdef.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/constants.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/convolve.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/distance_weighted_blend.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/dsp.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/film_grain.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/intra_edge.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/intrapred.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/inverse_transform.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/loop_filter.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/loop_restoration.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/mask_blend.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/obmc.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/warp.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/weight_mask.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/average_blend_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/cdef_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/convolve_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/distance_weighted_blend_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/film_grain_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intra_edge_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_cfl_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_directional_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_filter_intra_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_smooth_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/inverse_transform_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/loop_filter_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/loop_restoration_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/mask_blend_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/obmc_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/warp_neon.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/average_blend_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/convolve_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/distance_weighted_blend_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intra_edge_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_cfl_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_smooth_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/inverse_transform_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/loop_filter_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/loop_restoration_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/obmc_sse4.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/buffer_pool.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/decoder_impl.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/decoder_scratch_buffer.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/internal_frame_buffer_list.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/loop_filter_mask.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/loop_restoration_info.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/motion_vector.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/obu_parser.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/post_filter.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/prediction_mask.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/quantizer.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/reconstruction.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/residual_buffer_pool.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/status_code.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/symbol_decoder_context.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/threading_strategy.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/mode_info.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/palette.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/partition.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/transform_size.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/prediction.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/tile.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/version.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/warp_prediction.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_decoder.dir/src/yuv_buffer.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/bit_reader.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/block_parameters_holder.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/constants.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/cpu.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/entropy_decoder.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/executor.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/logging.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/parameter_tree.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/raw_bit_reader.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/segmentation.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/segmentation_map.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_utils.dir/src/utils/threadpool.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/decoder.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/decoder_buffer.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/decoder_settings.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/frame_buffer.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/status_code.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/symbol_visibility.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/src/gav1/version.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/libgav1.a"
+    },
+    "absl_bad_variant_access-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_bad_variant_access",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_bad_variant_access",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_variant_access.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_variant_access.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/types/libabsl_absl_bad_variant_access.a"
+    },
+    "absl_random_distributions-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_distributions",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_distributions",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/discrete_distribution.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/gaussian_distribution.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/bernoulli_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/beta_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/discrete_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/distribution_format_traits.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/distributions.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/exponential_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/gaussian_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/log_uniform_int_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/poisson_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/uniform_int_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/uniform_real_distribution.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/zipf_distribution.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_distributions.a"
+    },
+    "absl_periodic_sampler-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_periodic_sampler",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_periodic_sampler",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/periodic_sampler.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/periodic_sampler.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_periodic_sampler.a"
+    },
+    "absl_str_format_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_str_format_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_str_format_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/arg.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/bind.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/extension.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/output.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/parser.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/arg.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/bind.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/checker.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/extension.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/float_conversion.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/output.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_format/parser.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/strings/libabsl_absl_str_format_internal.a"
+    },
+    "absl_flags-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/flag.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/declare.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/flag.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags.a"
+    },
+    "absl_demangle_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_demangle_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_demangle_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/demangle.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/demangle.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_demangle_internal.a"
+    },
+    "absl_flags_usage_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_usage_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_usage_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/usage.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/usage.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_usage_internal.a"
+    },
+    "absl_flags_program_name-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_program_name",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_program_name",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/program_name.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/program_name.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_program_name.a"
+    },
+    "absl_time-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_time",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_time",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/get_current_time_chrono.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/get_current_time_posix.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/civil_time.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/clock.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/duration.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/format.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/time.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/civil_time.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/clock.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/time.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/time/libabsl_absl_time.a"
+    },
+    "absl_debugging_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_debugging_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_debugging_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/vdso_support.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/address_is_readable.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/elf_mem_image.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/vdso_support.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_debugging_internal.a"
+    },
+    "absl_random_internal_randen-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_randen",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_randen",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_randen.a"
+    },
+    "absl_random_internal_randen_hwaes_impl-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_randen_hwaes_impl",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_randen_hwaes_impl",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_hwaes.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_hwaes.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_randen_hwaes_impl.a"
+    },
+    "gav1JNI-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" gav1JNI",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "gav1JNI",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/gav1_jni.cc",
+          "flagsOrdinal": 1,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/libs/arm64-v8a/libgav1JNI.so"
+    },
+    "absl_scoped_set_env-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_scoped_set_env",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_scoped_set_env",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/scoped_set_env.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/scoped_set_env.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_scoped_set_env.a"
+    },
+    "absl_hashtablez_sampler-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_hashtablez_sampler",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_hashtablez_sampler",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler_force_weak_definition.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/internal/hashtablez_sampler.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/container/libabsl_absl_hashtablez_sampler.a"
+    },
+    "absl_stacktrace-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_stacktrace",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_stacktrace",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_aarch64-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_arm-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_generic-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_powerpc-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_unimplemented-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_win32-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_x86-inl.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/stacktrace.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/stacktrace.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/stacktrace_config.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_stacktrace.a"
+    },
+    "cpu_features-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" cpu_features",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "cpu_features",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/filesystem.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/stack_line_reader.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/string_view.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/hwcaps.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/unix_features_aggregator.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/src/cpuinfo_aarch64.c",
+          "flagsOrdinal": 5,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpu_features_macros.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpu_features_cache_info.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpuinfo_aarch64.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/libcpu_features.a"
+    },
+    "absl_dynamic_annotations-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_dynamic_annotations",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_dynamic_annotations",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/dynamic_annotations.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/dynamic_annotations.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_dynamic_annotations.a"
+    },
+    "absl_symbolize-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_symbolize",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_symbolize",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/symbolize_elf.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/symbolize_unimplemented.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/symbolize_win32.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/symbolize.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/symbolize.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/symbolize.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_symbolize.a"
+    },
+    "absl_raw_logging_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_raw_logging_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_raw_logging_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/raw_logging.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/raw_logging.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_raw_logging_internal.a"
+    },
+    "absl_exponential_biased-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_exponential_biased",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_exponential_biased",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/exponential_biased.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/exponential_biased.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_exponential_biased.a"
+    },
+    "absl_examine_stack-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_examine_stack",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_examine_stack",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/examine_stack.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/internal/examine_stack.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_examine_stack.a"
+    },
+    "absl_strings-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_strings",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_strings",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/ascii.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/charconv.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/escaping.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/charconv_bigint.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/charconv_parse.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/memutil.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/match.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/numbers.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_cat.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_replace.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_split.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/string_view.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/substitute.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/charconv_bigint.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/charconv_parse.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/memutil.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/stl_type_traits.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_join_internal.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/str_split_internal.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/ascii.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/charconv.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/escaping.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/match.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/numbers.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_cat.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_join.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_replace.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/str_split.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/string_view.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/strip.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/substitute.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/strings/libabsl_absl_strings.a"
+    },
+    "absl_flags_marshalling-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_marshalling",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_marshalling",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/marshalling.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/marshalling.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_marshalling.a"
+    },
+    "absl_leak_check-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_leak_check",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_leak_check",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/leak_check.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/leak_check.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_leak_check.a"
+    },
+    "absl_raw_hash_set-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_raw_hash_set",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_raw_hash_set",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/internal/raw_hash_set.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/container/internal/raw_hash_set.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/container/libabsl_absl_raw_hash_set.a"
+    },
+    "absl_random_internal_randen_slow-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_randen_slow",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_randen_slow",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_slow.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_slow.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_randen_slow.a"
+    },
+    "absl_civil_time-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_civil_time",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_civil_time",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/civil_time_detail.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/civil_time.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/civil_time_detail.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/time/libabsl_absl_civil_time.a"
+    },
+    "absl_random_internal_distribution_test_util-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_distribution_test_util",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_distribution_test_util",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/chi_square.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/distribution_test_util.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/chi_square.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/distribution_test_util.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_distribution_test_util.a"
+    },
+    "absl_time_zone-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_time_zone",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_time_zone",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_format.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_lookup.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/zone_info_source.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_fixed.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_if.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_impl.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_posix.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/tzfile.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/time_zone.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/include/cctz/zone_info_source.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/time/libabsl_absl_time_zone.a"
+    },
+    "absl_flags_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/flag.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/flag.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_internal.a"
+    },
+    "absl_bad_any_cast_impl-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_bad_any_cast_impl",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_bad_any_cast_impl",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_any_cast.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_any_cast.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/types/libabsl_absl_bad_any_cast_impl.a"
+    },
+    "absl_graphcycles_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_graphcycles_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_graphcycles_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/synchronization/libabsl_absl_graphcycles_internal.a"
+    },
+    "list_cpu_features-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" list_cpu_features",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "list_cpu_features",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/src/utils/list_cpu_features.c",
+          "flagsOrdinal": 3,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/list_cpu_features"
+    },
+    "absl_malloc_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_malloc_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_malloc_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/low_level_alloc.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/direct_mmap.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/low_level_alloc.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_malloc_internal.a"
+    },
+    "absl_flags_config-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_config",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_config",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/usage_config.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/config.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/usage_config.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_config.a"
+    },
+    "ndk_compat-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" ndk_compat",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "ndk_compat",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/ndk_compat/cpu-features.c",
+          "flagsOrdinal": 5,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/src/cpuinfo_aarch64.c",
+          "flagsOrdinal": 5,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/filesystem.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/stack_line_reader.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/utils.dir/src/string_view.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/hwcaps.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/unix_features_aggregator.c.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/ndk_compat/cpu-features.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpu_features_macros.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpu_features_cache_info.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/cpu_features/include/cpuinfo_aarch64.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/cpu_features/ndk_compat/libndk_compat.a"
+    },
+    "absl_random_internal_randen_hwaes-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_randen_hwaes",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_randen_hwaes",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_detect.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_detect.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/randen_hwaes.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_randen_hwaes.a"
+    },
+    "absl_random_seed_sequences-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_seed_sequences",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_seed_sequences",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/seed_sequences.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/seed_sequences.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_seed_sequences.a"
+    },
+    "absl_hash-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_hash",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_hash",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/internal/hash.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/internal/hash.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/hash.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/hash/libabsl_absl_hash.a"
+    },
+    "absl_leak_check_disable-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_leak_check_disable",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_leak_check_disable",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/leak_check_disable.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_leak_check_disable.a"
+    },
+    "absl_city-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_city",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_city",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/internal/city.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/hash/internal/city.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/hash/libabsl_absl_city.a"
+    },
+    "absl_int128-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_int128",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_int128",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/int128_have_intrinsic.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/int128_no_intrinsic.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/int128.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/numeric/int128.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/numeric/libabsl_absl_int128.a"
+    },
+    "absl_random_seed_gen_exception-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_seed_gen_exception",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_seed_gen_exception",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/seed_gen_exception.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/seed_gen_exception.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_seed_gen_exception.a"
+    },
+    "absl_bad_optional_access-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_bad_optional_access",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_bad_optional_access",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_optional_access.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/types/bad_optional_access.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/types/libabsl_absl_bad_optional_access.a"
+    },
+    "absl_log_severity-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_log_severity",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_log_severity",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/log_severity.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/log_severity.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_log_severity.a"
+    },
+    "absl_random_internal_seed_material-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_seed_material",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_seed_material",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/seed_material.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/seed_material.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_seed_material.a"
+    },
+    "absl_random_internal_pool_urbg-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_random_internal_pool_urbg",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_random_internal_pool_urbg",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/pool_urbg.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/random/internal/pool_urbg.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/random/libabsl_absl_random_internal_pool_urbg.a"
+    },
+    "gav1_decode-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" gav1_decode",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "gav1_decode",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader_constants.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader_factory.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_file_reader.dir/examples/ivf_parser.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/CMakeFiles/libgav1_file_writer.dir/examples/file_writer.cc.o",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/examples/gav1_decode.cc",
+          "flagsOrdinal": 6,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/libgav1/gav1_decode"
+    },
+    "absl_flags_registry-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_registry",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_registry",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/registry.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/type_erased.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/registry.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/type_erased.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_registry.a"
+    },
+    "absl_flags_parse-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_parse",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_parse",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/parse.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/internal/parse.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/parse.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_parse.a"
+    },
+    "absl_failure_signal_handler-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_failure_signal_handler",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_failure_signal_handler",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/failure_signal_handler.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/debugging/failure_signal_handler.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/debugging/libabsl_absl_failure_signal_handler.a"
+    },
+    "absl_throw_delegate-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_throw_delegate",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_throw_delegate",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/throw_delegate.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/throw_delegate.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_throw_delegate.a"
+    },
+    "absl_flags_usage-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_flags_usage",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_flags_usage",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/usage.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/flags/usage.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/flags/libabsl_absl_flags_usage.a"
+    },
+    "absl_base-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_base",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_base",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/cycleclock.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/sysinfo.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/thread_identity.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/call_once.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/casts.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/cycleclock.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/low_level_scheduling.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/per_thread_tls.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/sysinfo.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/thread_identity.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/tsan_mutex_interface.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/unscaledcycleclock.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_base.a"
+    },
+    "absl_strings_internal-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_strings_internal",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_strings_internal",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/ostringstream.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/utf8.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/char_map.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/ostringstream.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/resize_uninitialized.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/strings/internal/utf8.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/strings/libabsl_absl_strings_internal.a"
+    },
+    "absl_synchronization-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_synchronization",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_synchronization",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/mutex_nonprod.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/barrier.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/blocking_counter.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/waiter.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/notification.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/mutex.cc",
+          "flagsOrdinal": 10,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/barrier.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/blocking_counter.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/internal/waiter.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/mutex.h",
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/synchronization/notification.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/synchronization/libabsl_absl_synchronization.a"
+    },
+    "absl_spinlock_wait-Release-arm64-v8a": {
+      "buildCommand": "/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja -C \"/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a\" absl_spinlock_wait",
+      "buildType": "release",
+      "toolchain": "1029130112",
+      "abi": "arm64-v8a",
+      "artifactName": "absl_spinlock_wait",
+      "files": [
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_wait.cc",
+          "flagsOrdinal": 9,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_akaros.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_linux.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_posix.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        },
+        {
+          "src": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_win32.inc",
+          "flagsOrdinal": 11,
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "headers": [
+        {
+          "header": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/base/internal/spinlock_wait.h",
+          "workingDirectoryOrdinal": 0
+        }
+      ],
+      "output": "/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/abseil/absl/base/libabsl_absl_spinlock_wait.a"
+    }
+  },
+  "toolchains": {
+    "1029130112": {
+      "cCompilerExecutable": "/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+      "cppCompilerExecutable": "/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++"
+    }
+  },
+  "cFileExtensions": [
+    "c"
+  ],
+  "cppFileExtensions": [
+    "cc"
+  ]
+}

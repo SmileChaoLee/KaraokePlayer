@@ -1,0 +1,200 @@
+ninja: Entering directory `/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/armeabi-v7a'
+[1/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/cpu.cc.o
+[2/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/constants.cc.o
+[3/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/bit_reader.cc.o
+[4/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/executor.cc.o
+[5/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/entropy_decoder.cc.o
+[6/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/segmentation.cc.o
+[7/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/block_parameters_holder.cc.o
+[8/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/raw_bit_reader.cc.o
+[9/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/parameter_tree.cc.o
+[10/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/segmentation_map.cc.o
+[11/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/constants.cc.o
+[12/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/average_blend.cc.o
+[13/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/cdef.cc.o
+[14/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/logging.cc.o
+[15/161] Building CXX object libgav1/CMakeFiles/gav1_decode.dir/examples/gav1_decode.cc.o
+[16/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/distance_weighted_blend.cc.o
+[17/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/convolve.cc.o
+[18/161] Building CXX object libgav1/CMakeFiles/libgav1_utils.dir/src/utils/threadpool.cc.o
+[19/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/intra_edge.cc.o
+[20/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/dsp.cc.o
+[21/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/loop_filter.cc.o
+[22/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/loop_restoration.cc.o
+[23/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/mask_blend.cc.o
+[24/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/film_grain.cc.o
+[25/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/obmc.cc.o
+[26/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/warp.cc.o
+[27/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/average_blend_neon.cc.o
+[28/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/inverse_transform.cc.o
+[29/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/weight_mask.cc.o
+[30/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/cdef_neon.cc.o
+[31/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/distance_weighted_blend_neon.cc.o
+[32/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intra_edge_neon.cc.o
+[33/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/intrapred.cc.o
+[34/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_filter_intra_neon.cc.o
+[35/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_directional_neon.cc.o
+[36/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_cfl_neon.cc.o
+[37/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/loop_filter_neon.cc.o
+[38/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_smooth_neon.cc.o
+[39/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/intrapred_neon.cc.o
+[40/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/film_grain_neon.cc.o
+[41/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/mask_blend_neon.cc.o
+[42/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/obmc_neon.cc.o
+[43/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/average_blend_sse4.cc.o
+[44/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/convolve_sse4.cc.o
+[45/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/loop_restoration_neon.cc.o
+[46/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/distance_weighted_blend_sse4.cc.o
+[47/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intra_edge_sse4.cc.o
+[48/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_sse4.cc.o
+[49/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/warp_neon.cc.o
+[50/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_cfl_sse4.cc.o
+[51/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/convolve_neon.cc.o
+[52/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/intrapred_smooth_sse4.cc.o
+[53/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/inverse_transform_sse4.cc.o
+[54/161] Building CXX object libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader_constants.cc.o
+[55/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/loop_filter_sse4.cc.o
+[56/161] Building CXX object libgav1/CMakeFiles/libgav1_file_reader.dir/examples/ivf_parser.cc.o
+[57/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/loop_restoration_sse4.cc.o
+[58/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/x86/obmc_sse4.cc.o
+[59/161] Building CXX object libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader_factory.cc.o
+[60/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/decoder_scratch_buffer.cc.o
+[61/161] Building CXX object libgav1/CMakeFiles/libgav1_file_reader.dir/examples/file_reader.cc.o
+[62/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/buffer_pool.cc.o
+[63/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/internal_frame_buffer_list.cc.o
+[64/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/loop_restoration_info.cc.o
+[65/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/loop_filter_mask.cc.o
+[66/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/prediction_mask.cc.o
+[67/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/quantizer.cc.o
+[68/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/reconstruction.cc.o
+[69/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/decoder_impl.cc.o
+[70/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/motion_vector.cc.o
+[71/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/status_code.cc.o
+[72/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/symbol_decoder_context.cc.o
+[73/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/residual_buffer_pool.cc.o
+[74/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/threading_strategy.cc.o
+[75/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/obu_parser.cc.o
+[76/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/post_filter.cc.o
+[77/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/partition.cc.o
+[78/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/transform_size.cc.o
+[79/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/mode_info.cc.o
+[80/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/version.cc.o
+[81/161] Building CXX object libgav1/CMakeFiles/libgav1_dsp.dir/src/dsp/arm/inverse_transform_neon.cc.o
+[82/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/bitstream/palette.cc.o
+[83/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/yuv_buffer.cc.o
+[84/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/warp_prediction.cc.o
+[85/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/prediction.cc.o
+[86/161] Building CXX object abseil/absl/base/CMakeFiles/absl_base.dir/internal/cycleclock.cc.o
+[87/161] Building CXX object libgav1/CMakeFiles/libgav1_static.dir/src/decoder.cc.o
+[88/161] Building CXX object abseil/absl/base/CMakeFiles/absl_throw_delegate.dir/internal/throw_delegate.cc.o
+[89/161] Building CXX object abseil/absl/base/CMakeFiles/absl_base.dir/internal/unscaledcycleclock.cc.o
+[90/161] Building CXX object abseil/absl/base/CMakeFiles/absl_dynamic_annotations.dir/dynamic_annotations.cc.o
+[91/161] Building CXX object libgav1/CMakeFiles/libgav1_file_writer.dir/examples/file_writer.cc.o
+[92/161] Linking CXX static library abseil/absl/base/libabsl_absl_dynamic_annotations.a
+[93/161] Building CXX object abseil/absl/base/CMakeFiles/absl_spinlock_wait.dir/internal/spinlock_wait.cc.o
+[94/161] Linking CXX static library abseil/absl/base/libabsl_absl_spinlock_wait.a
+[95/161] Building CXX object abseil/absl/base/CMakeFiles/absl_base.dir/internal/spinlock.cc.o
+[96/161] Building CXX object abseil/absl/base/CMakeFiles/absl_base.dir/internal/thread_identity.cc.o
+[97/161] Building CXX object abseil/absl/base/CMakeFiles/absl_base.dir/internal/sysinfo.cc.o
+[98/161] Building C object cpu_features/CMakeFiles/cpu_features.dir/src/cpuinfo_arm.c.o
+[99/161] Building CXX object abseil/absl/base/CMakeFiles/absl_log_severity.dir/log_severity.cc.o
+[100/161] Building CXX object abseil/absl/base/CMakeFiles/absl_raw_logging_internal.dir/internal/raw_logging.cc.o
+[101/161] Building C object cpu_features/CMakeFiles/list_cpu_features.dir/src/utils/list_cpu_features.c.o
+[102/161] Linking CXX static library abseil/absl/base/libabsl_absl_log_severity.a
+[103/161] Building C object cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/hwcaps.c.o
+[104/161] Building C object cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/unix_features_aggregator.c.o
+[105/161] Linking CXX static library abseil/absl/base/libabsl_absl_raw_logging_internal.a
+[106/161] Building C object cpu_features/CMakeFiles/utils.dir/src/filesystem.c.o
+[107/161] Building C object cpu_features/CMakeFiles/utils.dir/src/stack_line_reader.c.o
+[108/161] Linking CXX static library abseil/absl/base/libabsl_absl_throw_delegate.a
+[109/161] Linking CXX static library abseil/absl/base/libabsl_absl_base.a
+[110/161] Building C object cpu_features/CMakeFiles/utils.dir/src/string_view.c.o
+[111/161] Linking C static library cpu_features/libcpu_features.a
+[112/161] Linking C executable cpu_features/list_cpu_features
+[113/161] Building CXX object CMakeFiles/gav1JNI.dir/gav1_jni.cc.o
+[114/161] Building CXX object libgav1/CMakeFiles/libgav1_decoder.dir/src/tile/tile.cc.o
+[115/161] Building CXX object abseil/absl/numeric/CMakeFiles/absl_int128.dir/int128.cc.o
+[116/161] Linking CXX static library abseil/absl/numeric/libabsl_absl_int128.a
+[117/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/extension.cc.o
+[118/161] Linking CXX static library libgav1/libgav1.a
+[119/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/arg.cc.o
+[120/161] Linking CXX shared library /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/libs/armeabi-v7a/libgav1JNI.so
+[121/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings_internal.dir/internal/utf8.cc.o
+[122/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/float_conversion.cc.o
+[123/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/output.cc.o
+[124/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/bind.cc.o
+[125/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings_internal.dir/internal/ostringstream.cc.o
+[126/161] Linking CXX static library abseil/absl/strings/libabsl_absl_strings_internal.a
+[127/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_str_format_internal.dir/internal/str_format/parser.cc.o
+[128/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time.dir/format.cc.o
+[129/161] Building CXX object abseil/absl/time/CMakeFiles/absl_civil_time.dir/internal/cctz/src/civil_time_detail.cc.o
+[130/161] Linking CXX static library abseil/absl/time/libabsl_absl_civil_time.a
+[131/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time.dir/time.cc.o
+[132/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time.dir/duration.cc.o
+[133/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_fixed.cc.o
+[134/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_if.cc.o
+[135/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_format.cc.o
+[136/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_lookup.cc.o
+[137/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_libc.cc.o
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc:166:22: warning: declaration shadows a local variable [-Wshadow]
+        if (std::tm* tmp = local_time(&lo, &tm)) {
+                     ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc:156:18: note: previous declaration is here
+    if (std::tm* tmp = local_time(&mid, &tm)) {
+                 ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc:84:6: warning: unused function template 'tm_gmtoff' [-Wunused-template]
+auto tm_gmtoff(const T& tm) -> decltype(tm.__tm_gmtoff) {
+     ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_libc.cc:100:6: warning: unused function template 'tm_zone' [-Wunused-template]
+auto tm_zone(const T& tm) -> decltype(tm.__tm_zone) {
+     ^
+3 warnings generated.
+[138/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_posix.cc.o
+[139/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/zone_info_source.cc.o
+[140/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_impl.cc.o
+[141/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/ascii.cc.o
+[142/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/internal/charconv_parse.cc.o
+[143/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/internal/memutil.cc.o
+[144/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time_zone.dir/internal/cctz/src/time_zone_info.cc.o
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:644:10: warning: declaration shadows a local variable [-Wshadow]
+    long pos = ftell(fp);
+         ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:618:21: note: previous declaration is here
+  const std::size_t pos = (name.compare(0, 5, "file:") == 0) ? 5 : 0;
+                    ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:721:35: warning: declaration shadows a local variable [-Wshadow-uncaptured-local]
+      name, [](const std::string& name) -> std::unique_ptr<ZoneInfoSource> {
+                                  ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:709:44: note: previous declaration is here
+bool TimeZoneInfo::Load(const std::string& name) {
+                                           ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:722:18: warning: declaration shadows a local variable [-Wshadow-uncaptured-local]
+        if (auto zip = FileZoneInfoSource::Open(name)) return zip;
+                 ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:720:8: note: previous declaration is here
+  auto zip = cctz_extension::zone_info_source_factory(
+       ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:723:18: warning: declaration shadows a local variable [-Wshadow-uncaptured-local]
+        if (auto zip = AndroidZoneInfoSource::Open(name)) return zip;
+                 ^
+/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/src/main/jni/libgav1/third_party/abseil-cpp/absl/time/internal/cctz/src/time_zone_info.cc:720:8: note: previous declaration is here
+  auto zip = cctz_extension::zone_info_source_factory(
+       ^
+4 warnings generated.
+[145/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/charconv.cc.o
+[146/161] Linking CXX static library abseil/absl/time/libabsl_absl_time_zone.a
+[147/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/internal/charconv_bigint.cc.o
+[148/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/escaping.cc.o
+[149/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/match.cc.o
+[150/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/str_cat.cc.o
+[151/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/str_replace.cc.o
+[152/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/str_split.cc.o
+[153/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/string_view.cc.o
+[154/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/numbers.cc.o
+[155/161] Building CXX object abseil/absl/strings/CMakeFiles/absl_strings.dir/substitute.cc.o
+[156/161] Linking CXX static library abseil/absl/strings/libabsl_absl_strings.a
+[157/161] Linking CXX static library abseil/absl/strings/libabsl_absl_str_format_internal.a
+[158/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time.dir/clock.cc.o
+[159/161] Building CXX object abseil/absl/time/CMakeFiles/absl_time.dir/civil_time.cc.o
+[160/161] Linking CXX static library abseil/absl/time/libabsl_absl_time.a
+[161/161] Linking CXX executable libgav1/gav1_decode

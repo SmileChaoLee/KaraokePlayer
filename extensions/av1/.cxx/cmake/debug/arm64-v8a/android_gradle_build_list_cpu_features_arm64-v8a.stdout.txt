@@ -1,0 +1,10 @@
+ninja: Entering directory `/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/arm64-v8a'
+[1/9] Building C object cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/unix_features_aggregator.c.o
+[2/9] Building C object cpu_features/CMakeFiles/cpu_features.dir/src/cpuinfo_aarch64.c.o
+[3/9] Building C object cpu_features/CMakeFiles/unix_based_hardware_detection.dir/src/hwcaps.c.o
+[4/9] Building C object cpu_features/CMakeFiles/list_cpu_features.dir/src/utils/list_cpu_features.c.o
+[5/9] Building C object cpu_features/CMakeFiles/utils.dir/src/stack_line_reader.c.o
+[6/9] Building C object cpu_features/CMakeFiles/utils.dir/src/filesystem.c.o
+[7/9] Building C object cpu_features/CMakeFiles/utils.dir/src/string_view.c.o
+[8/9] Linking C static library cpu_features/libcpu_features.a
+[9/9] Linking C executable cpu_features/list_cpu_features

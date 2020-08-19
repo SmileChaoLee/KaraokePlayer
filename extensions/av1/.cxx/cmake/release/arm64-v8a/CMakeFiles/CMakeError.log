@@ -1,0 +1,22 @@
+Performing C++ SOURCE FILE Test libgav1_all_cxx_flags_pass failed with the following output:
+Change Dir: /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/CMakeFiles/CMakeTmp
+
+Run Build Command:"/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja" "cmTC_c9a39"
+[1/2] Building CXX object CMakeFiles/cmTC_c9a39.dir/src.cxx.o
+warning: unknown warning option '-Wstack-usage=196608' [-Wunknown-warning-option]
+1 warning generated.
+[2/2] Linking CXX executable cmTC_c9a39
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test cxx_flag_test_passed failed with the following output:
+Change Dir: /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/release/arm64-v8a/CMakeFiles/CMakeTmp
+
+Run Build Command:"/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja" "cmTC_8360f"
+[1/2] Building CXX object CMakeFiles/cmTC_8360f.dir/src.cxx.o
+warning: unknown warning option '-Wstack-usage=196608' [-Wunknown-warning-option]
+1 warning generated.
+[2/2] Linking CXX executable cmTC_8360f
+
+Source file was:
+int main() { return 0; }

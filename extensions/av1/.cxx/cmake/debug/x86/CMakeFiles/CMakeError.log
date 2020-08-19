@@ -1,0 +1,28 @@
+Determining if the getauxval exist failed with the following output:
+Change Dir: /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/CMakeFiles/CMakeTmp
+
+Run Build Command:"/Users/chaolee/Library/Android/sdk/cmake/3.10.2.4988404/bin/ninja" "cmTC_f94bd"
+[1/2] Building C object CMakeFiles/cmTC_f94bd.dir/CheckSymbolExists.c.o
+FAILED: CMakeFiles/cmTC_f94bd.dir/CheckSymbolExists.c.o 
+/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang --target=i686-none-linux-android16 --gcc-toolchain=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/chaolee/Library/Android/sdk/ndk-bundle/toolchains/llvm/prebuilt/darwin-x86_64/sysroot   -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security   -fPIE -o CMakeFiles/cmTC_f94bd.dir/CheckSymbolExists.c.o   -c CheckSymbolExists.c
+CheckSymbolExists.c:8:19: error: use of undeclared identifier 'getauxval'
+  return ((int*)(&getauxval))[argc];
+                  ^
+1 error generated.
+ninja: build stopped: subcommand failed.
+
+File /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/av1/.cxx/cmake/debug/x86/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <sys/auxv.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef getauxval
+  return ((int*)(&getauxval))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
