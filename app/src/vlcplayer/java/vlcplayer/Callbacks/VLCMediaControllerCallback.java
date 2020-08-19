@@ -7,8 +7,6 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-
-import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 
 import vlcplayer.Presenters.VLCPlayerPresenter;
@@ -36,21 +34,12 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
         int currentState = state.getState();
         switch (currentState) {
             case PlaybackStateCompat.STATE_NONE:
-                // initial state and when playing is stopped by user
+                // initial state or playing is finished
                 Log.d(TAG, "PlaybackStateCompat.STATE_NONE");
                 if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
                     Log.d(TAG, "MediaControllerCallback--> Song was finished.");
-                    if (playingParam.isAutoPlay()) {
-                        // start playing next video from list
-                        mPresenter.startAutoPlay();
-                    } else {
-                        // end of playing
-                        if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
-                            mPresenter.replayMedia();
-                        } else {
-                            mPresenter.getPresentView().showNativeAndBannerAd();
-                        }
-                    }
+                    mPresenter.getPresentView().showNativeAndBannerAd();
+                    mPresenter.startAutoPlay(); // added on 2020-08-16
                 }
                 mPresenter.getPresentView().playButtonOnPauseButtonOff();
                 break;

@@ -45,7 +45,8 @@
     <string name="musicChannelWithColonString">音乐声道:</string>
     <string name="vocalChannelWithColonString">人声声道:</string>
     <string name="includedPlaylistColonString">在播放清单中:</string>
-    <string name="addString">增加</string>
+    <string name="addOneString">新增</string>
+    <string name="addManyString">新增多数</string>
     <string name="editString">修改</string>
     <string name="deleteString">删除</string>
     <string name="noPlaylistString">没有播放清单</string>
@@ -58,8 +59,11 @@
     <string name="filepathEmptyString">档案路径是空白</string>
     <string name="notSeekableSongString">无法前进或後退</string>
     <string name="musicAndVocalNotSet">沒有設定音樂和人聲</string>
+    <string name="noPreviousSongString">沒有上一首</string>
+    <string name="noNextSongString">沒有下一首</string>
     <string name="no_chromecast_devices_avaiable">沒有ChromeCast設備</string>
     <string name="chromecast_not_connected">Chromecast还未连线</string>
     <string name="chromecast_is_connecting">Chromecast连线中</string>
     <string name="chromecast_is_connected">Chromecaste已连线</string>
+    <string name="guessedAudioTrackValue">音轨设置是猜测的,\n需要再确认</string>
 </resources>

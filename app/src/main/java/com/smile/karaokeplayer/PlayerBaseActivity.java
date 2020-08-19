@@ -22,7 +22,6 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,13 +46,15 @@ import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
+import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
+
+import java.util.ArrayList;
 
 public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
 
@@ -372,10 +373,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 }
                 break;
             case R.id.open:
-                if (!playingParam.isAutoPlay()) {
-                    // isMediaSourcePrepared = false;
-                    DataOrContentAccessUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE);
-                }
+                ContentUriAccessUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE, false);
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -499,56 +497,12 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
-
         if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            // The document selected by the user won't be returned in the intent.
-            // Instead, a URI to that document will be contained in the return intent
-            // provided to this method as a parameter.
-            // Pull that URI using resultData.getData()
-            if (data != null) {
-                Uri mediaUri = data.getData();
-                Log.i(TAG, "Uri: " + mediaUri);
-                if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) ) {
-                    return;
-                }
-
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(mediaUri, takeFlags);
-                    }
-
-                    // testing code
-                    // the following codes need android.permission.READ_EXTERNAL_STORAGE
-                    // and android.permission.WRITE_EXTERNAL_STORAGE
-                    /*
-                    Uri resultUri = null;
-                    try {
-                        String filePath = ExternalStorageUtil.getUriRealPath(this, mediaUri);
-                        if (filePath != null) {
-                            if (!filePath.isEmpty()) {
-                                File songFile = new File(filePath);
-                                resultUri = Uri.fromFile(songFile);
-                            }
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    Log.d(TAG, "resultUri = " + resultUri);
-                    mediaUri = resultUri;
-                    //  end of testing code
-                    */
-
-                    mPresenter.playSelectedSongFromStorage(mediaUri);
-                } catch (Exception ex) {
-                    Log.d(TAG, "Failed to add persistable permission of mediaUri");
-                    ex.printStackTrace();
-                }
+            ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
+            if (uris.size()>0) {
+                // There are files selected
+                mPresenter.playSelectedUrisFromStorage(uris);
             }
-            return;
         }
     }
 
@@ -702,10 +656,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 PlayingParameters playingParam = mPresenter.getPlayingParam();
                 if (playingParam.isAutoPlay()) {
                     autoPlayMenuItem.setChecked(true);
-                    openMenuItem.setEnabled(false);
                 } else {
                     autoPlayMenuItem.setChecked(false);
-                    openMenuItem.setEnabled(true);
                 }
             }
         });
@@ -899,7 +851,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     @Override
     public void setImageButtonStatus() {
         PlayingParameters playingParam = mPresenter.getPlayingParam();
-        boolean isAutoPlay = playingParam.isAutoPlay();
+        // boolean isAutoPlay = playingParam.isAutoPlay();
         switchToMusicImageButton.setEnabled(true);
         switchToMusicImageButton.setVisibility(View.VISIBLE);
         switchToVocalImageButton.setEnabled(true);

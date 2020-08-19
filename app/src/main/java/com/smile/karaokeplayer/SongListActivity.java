@@ -3,6 +3,7 @@ package com.smile.karaokeplayer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +26,7 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
+import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class SongListActivity extends AppCompatActivity {
     private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
     private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
     private static final int PLAY_ONE_SONG_IN_PLAY_LIST = 4;
+    private static final int ADD_MULTIPLE_SONGS_TO_PLAY_LIST = 5;
 
     private SongListSQLite songListSQLite;
     private float textFontSize;
@@ -54,7 +58,7 @@ public class SongListActivity extends AppCompatActivity {
         fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
-        songListSQLite = new SongListSQLite(SmileApplication.AppContext);
+        songListSQLite = new SongListSQLite(getApplicationContext());
 
         super.onCreate(savedInstanceState);
 
@@ -63,14 +67,24 @@ public class SongListActivity extends AppCompatActivity {
         TextView songListStringTextView = findViewById(R.id.songListStringTextView);
         ScreenUtil.resizeTextSize(songListStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
-        Button addSongListButton = findViewById(R.id.addSongListButton);
-        ScreenUtil.resizeTextSize(addSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        addSongListButton.setOnClickListener(new View.OnClickListener() {
+        Button addoneSongListButton = findViewById(R.id.addOneSongListButton);
+        ScreenUtil.resizeTextSize(addoneSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        addoneSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent addIntent = new Intent(SongListActivity.this, SongDataActivity.class);
                 addIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.AddActionString);
                 startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
+            }
+        });
+
+        Button addSongsListButton = findViewById(R.id.addSongsListButton);
+        ScreenUtil.resizeTextSize(addSongsListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        addSongsListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // selecting multiple files. Can be single
+                ContentUriAccessUtil.selectFileToOpen(SongListActivity.this, ADD_MULTIPLE_SONGS_TO_PLAY_LIST, false);
             }
         });
 
@@ -119,6 +133,37 @@ public class SongListActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             switch (requestCode) {
                 case ADD_ONE_SONG_TO_PLAY_LIST:
+                    break;
+                case ADD_MULTIPLE_SONGS_TO_PLAY_LIST:
+                    ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
+                    // this activity allows only one file selected
+                    if (uris.size()>0) {
+                        // There are files selected
+                        SongInfo mSongInfo;
+                        String uriString;
+                        for (int i=0; i<uris.size(); i++) {
+                            Uri uri = uris.get(i);
+                            if (uri!=null && !Uri.EMPTY.equals(uri)) {
+                                uriString = uri.toString();
+                                // check if this file is already in database
+                                if (songListSQLite.findOneSongByUriString(uriString) == null) {
+                                    // not exist
+                                    mSongInfo = new SongInfo();
+                                    mSongInfo.setSongName("");
+                                    mSongInfo.setFilePath(uriString);
+                                    mSongInfo.setMusicTrackNo(1);   // guess
+                                    mSongInfo.setMusicChannel(CommonConstants.RightChannel);    // guess
+                                    mSongInfo.setVocalTrackNo(1);   // guess
+                                    mSongInfo.setVocalChannel(CommonConstants.LeftChannel); // guess
+                                    mSongInfo.setIncluded("1"); // guess
+                                    songListSQLite.addSongToSongList(mSongInfo);
+                                }
+                            }
+                        }
+                        songListSQLite.closeDatabase();
+                        ScreenUtil.showToast(this, getString(R.string.guessedAudioTrackValue)
+                            , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                    }
                     break;
                 case EDIT_ONE_SONG_TO_PLAY_LIST:
                     break;

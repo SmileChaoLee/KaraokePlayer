@@ -45,7 +45,8 @@
     <string name="musicChannelWithColonString">Saluran muzik:</string>
     <string name="vocalChannelWithColonString">Saluran lantang:</string>
     <string name="includedPlaylistColonString">Dalam Senarai Main:</string>
-    <string name="addString">Tambah</string>
+    <string name="addOneString">Tambah</string>
+    <string name="addManyString">Tambah banyak</string>
     <string name="editString">Mengedit</string>
     <string name="deleteString">Padam</string>
     <string name="noPlaylistString">Tiada senarai</string>
@@ -58,8 +59,11 @@
     <string name="filepathEmptyString">File path is empty</string>
     <string name="notSeekableSongString">Unable to forward and backward</string>
     <string name="musicAndVocalNotSet">No setting on Music or Vocal</string>
+    <string name="noPreviousSongString">No previous</string>
+    <string name="noNextSongString">No next</string>
     <string name="no_chromecast_devices_avaiable">No ChromeCast devices available</string>
     <string name="chromecast_not_connected">Chromecast is not connected</string>
     <string name="chromecast_is_connecting">Chromecast is connecting</string>
     <string name="chromecast_is_connected">Chromecast is connected</string>
+    <string name="guessedAudioTrackValue">Audio tracks are guessed values,\nNeed to confirm.</string>
 </resources>

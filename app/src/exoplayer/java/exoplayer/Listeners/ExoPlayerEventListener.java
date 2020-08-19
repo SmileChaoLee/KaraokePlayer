@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import exoplayer.Presenters.ExoPlayerPresenter;
 import com.smile.karaokeplayer.R;
@@ -67,18 +66,8 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 break;
             case Player.STATE_ENDED:
                 // playing is finished
-                if (playingParam.isAutoPlay()) {
-                    // start playing next video from list
-                    mPresenter.startAutoPlay();
-                } else {
-                    // end of playing
-                    if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
-                        mPresenter.replayMedia();
-                    } else {
-                        mPresenter.getPresentView().showNativeAndBannerAd();
-                        mPresenter.mayShowInterstitialAd();
-                    }
-                }
+                mPresenter.getPresentView().showNativeAndBannerAd();
+                mPresenter.startAutoPlay(); // added on 2020-08-16
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
                 break;
             case Player.STATE_IDLE:
@@ -90,10 +79,10 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     playingParam.setMediaSourcePrepared(false);
                     Log.d(TAG, "Song was stopped by user (by stopPlay()).");
                 }
-                if (!playingParam.isAutoPlay()) {
+                // if (!playingParam.isAutoPlay()) {
                     // not auto play
                     mPresenter.getPresentView().showNativeAndBannerAd();
-                }
+                // }
                 break;
         }
 
@@ -129,18 +118,12 @@ public class ExoPlayerEventListener implements Player.EventListener {
         PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
-        if (playingParam.isAutoPlay()) {
-            // go to next one in the list
-            if (mPresenter.isCanShowNotSupportedFormat()) {
-                // only show once
-                mPresenter.setCanShowNotSupportedFormat(false);
-                ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-            }
-            mPresenter.startAutoPlay();
-        } else {
+        if (mPresenter.isCanShowNotSupportedFormat()) {
+            // only show once
+            mPresenter.setCanShowNotSupportedFormat(false);
             ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
-
+        mPresenter.startAutoPlay();
         mPresenter.setMediaUri(null);
     }
 

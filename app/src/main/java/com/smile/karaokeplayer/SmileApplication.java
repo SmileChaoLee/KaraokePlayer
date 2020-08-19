@@ -69,7 +69,7 @@ public class SmileApplication extends MultiDexApplication {
         String facebookInterstitialID = "";
         String googleAdMobAppID = "";
         String googleAdMobInterstitialID = "";
-        switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
+        switch (BuildConfig.APPLICATION_ID) {
             case "com.smile.karaokeplayer":
                 facebookInterstitialID = "1712962715503258_1712963252169871";
                 facebookBannerID = "1712962715503258_2019623008170559";

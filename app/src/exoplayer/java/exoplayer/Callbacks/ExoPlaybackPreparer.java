@@ -60,7 +60,10 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
 
     @Override
     public synchronized void onPrepareFromUri(Uri uri, boolean playWhenReady, Bundle extras) {
-        Log.d(TAG, "Uri = " + uri);
+        Log.d(TAG, "ExoPlaybackPreparer.onPrepareFromUri()->Uri = " + uri);
+        if (uri == null) {
+            return;
+        }
 
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         SimpleExoPlayer exoPlayer = mPresenter.getExoPlayer();
@@ -72,7 +75,13 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         playingParam.setMediaSourcePrepared(false);
 
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
+
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+        Log.d(TAG, "ExoPlaybackPreparer.onPrepareFromUri()->mediaSource = " + mediaSource);
+        if (mediaSource == null) {
+            return;
+        }
+        
         exoPlayer.prepare(mediaSource);
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         int playbackState = playbackState = playingParam.getCurrentPlaybackState();

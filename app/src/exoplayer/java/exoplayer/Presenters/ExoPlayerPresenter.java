@@ -383,7 +383,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         if (numberOfVideoTracks == 0) {
             playingParam.setCurrentVideoTrackIndexPlayed(PlayerConstants.NoVideoTrack);
         } else {
-            Log.d(TAG, "audioTrackIdPlayed = " + videoTrackIdPlayed);
+            Log.d(TAG, "videoTrackIdPlayed = " + videoTrackIdPlayed);
             if (videoTrackIdPlayed < 0) {
                 videoTrackIdPlayed = 1;
             }
@@ -405,12 +405,27 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
             } else {
                 // for open media. do not know the music track and vocal track
                 Log.d(TAG, "Do not know the music track and vocal track.");
-                playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
-                playingParam.setMusicAudioChannel(audioChannel);
-                playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
-                playingParam.setVocalAudioChannel(audioChannel);
-                playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIdPlayed);
+                // guess
+                audioTrackIdPlayed = 1;
+                if (numberOfAudioTracks >= 2) {
+                    // more than 2 audio tracks
+                    audioChannel = CommonConstants.StereoChannel;
+                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setVocalAudioChannel(audioChannel);
+                    playingParam.setMusicAudioTrackIndex(2);
+                    playingParam.setMusicAudioChannel(audioChannel);
+                } else {
+                    // only one track
+                    audioChannel = CommonConstants.LeftChannel;
+                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setVocalAudioChannel(audioChannel);
+                    playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
+                }
             }
+
+            Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
+            Log.d(TAG, "audioChannel = " + audioChannel);
 
             if (audioTrackIdPlayed < 0) {
                 audioTrackIdPlayed = 1;
@@ -550,9 +565,10 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
 
             Integer[] trackIndicesCombination = audioTrackIndicesList.get(indexInArrayList);
             selectAudioTrack(trackIndicesCombination);
-            playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
 
-            // select audio channel
+            // set audio track
+            playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
+            // set audio channel
             playingParam.setCurrentChannelPlayed(audioChannel);
             setAudioVolume(playingParam.getCurrentVolume());
         }
@@ -573,7 +589,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         // Play.STATE_ENDED event
         // exoPlayer.setPlayWhenReady(false);
         exoPlayer.seekTo(currentAudioPosition);
-        setProperAudioTrackAndChannel();
+        switchAudioToVocal();
         exoPlayer.retry();
         exoPlayer.setPlayWhenReady(true);
         Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");

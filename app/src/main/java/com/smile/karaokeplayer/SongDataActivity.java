@@ -3,7 +3,6 @@ package com.smile.karaokeplayer;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -26,6 +25,7 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
+import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 public class SongDataActivity extends AppCompatActivity {
 
     private static final String TAG = "SongDataActivity";
-    private static final int SELECT_ONE_ONE_FILE_PATH = 1;
+    private static final int SELECT_FILES = 1;
 
     private float textFontSize;
     private float fontScale;
@@ -75,7 +75,7 @@ public class SongDataActivity extends AppCompatActivity {
                 case CommonConstants.AddActionString:
                     // add one record
                     mSongInfo = new SongInfo();
-                    actionButtonString = getString(R.string.addString);
+                    actionButtonString = getString(R.string.addOneString);
                     break;
                 case CommonConstants.EditActionString:
                     // = "EDIT". Edit one record
@@ -145,7 +145,7 @@ public class SongDataActivity extends AppCompatActivity {
         edit_selectFilePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectFilePath();
+                selectFilePath(crudAction);
             }
         });
 
@@ -194,7 +194,7 @@ public class SongDataActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final boolean isValid = setSongInfoFromInput(true);
-                SongListSQLite songListSQLite = new SongListSQLite(SmileApplication.AppContext);
+                SongListSQLite songListSQLite = new SongListSQLite(getApplicationContext());
                 long databaseResult = -1;
                 switch (crudAction.toUpperCase()) {
                     case CommonConstants.AddActionString:
@@ -275,31 +275,25 @@ public class SongDataActivity extends AppCompatActivity {
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
         // response to some other intent, and the code below shouldn't run at all.
 
-        if (requestCode == SELECT_ONE_ONE_FILE_PATH && resultCode == Activity.RESULT_OK) {
+        if (requestCode == SELECT_FILES && resultCode == Activity.RESULT_OK) {
             // The document selected by the user won't be returned in the intent.
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
-            Uri filePathUri = null;
-            if (data != null) {
-                filePathUri = data.getData();
-                Log.i(TAG, "Filepath Uri: " + filePathUri);
-
-                if ( (filePathUri == null) || (Uri.EMPTY.equals(filePathUri)) ) {
-                    return;
-                }
-
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        int takeFlags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        getContentResolver().takePersistableUriPermission(filePathUri, takeFlags);
-                    }
-                    edit_filePathEditText.setText(filePathUri.toString());
-                } catch (Exception ex) {
-                    Log.d(TAG, "Failed to add persistable permission of filePathUri");
-                    ex.printStackTrace();
-                }
+            ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
+            // this activity allows only one file selected
+            switch (uris.size()) {
+                case 0:
+                    // no files selected
+                    break;
+                case 1:
+                    // single file selected
+                default:
+                    // multiple files selected
+                    edit_filePathEditText.setText(uris.get(0).toString());
+                    break;
             }
+
             return;
         }
     }
@@ -317,18 +311,18 @@ public class SongDataActivity extends AppCompatActivity {
         finish();
     }
 
-    private void selectFilePath() {
+    private void selectFilePath(String crudAction) {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
-        Intent intent;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        boolean isSingleFile;
+        if (crudAction.equalsIgnoreCase(CommonConstants.AddActionString)) {
+            // can be multiple files
+            isSingleFile = false;
         } else {
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            // only single file
+            isSingleFile = true;
         }
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("*/*");
-        startActivityForResult(intent, SELECT_ONE_ONE_FILE_PATH);
+        ContentUriAccessUtil.selectFileToOpen(this, SELECT_FILES, true);
     }
 
     private boolean setSongInfoFromInput(boolean hasMessage) {
@@ -360,16 +354,6 @@ public class SongDataActivity extends AppCompatActivity {
         mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
 
-        /*
-        // removed on 2020-03-21 because it is not necessary
-        if (title.isEmpty()) {
-            isValid = false;
-            if (hasMessage) {
-                ScreenUtil.showToast(getApplicationContext(), getString(R.string.titileEmptyString),
-                        toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-            }
-        }
-        */
         if (filePath.isEmpty()) {
             isValid = false;
             if (hasMessage) {

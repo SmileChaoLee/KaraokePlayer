@@ -23,7 +23,6 @@ public class PlayingParameters implements Parcelable {
     private float currentVolume;
     private int publicNextSongIndex;
     private boolean isPlayingPublic;
-    private int musicOrVocalOrNoSetting;
     private int repeatStatus;
     private boolean isPlaySingleSong;
     private boolean isInSongList;
@@ -33,7 +32,7 @@ public class PlayingParameters implements Parcelable {
                              int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
-                             int publicSongIndex, boolean isPlayingPublic, int musicOrVocalOrNoSetting,
+                             int publicSongIndex, boolean isPlayingPublic,
                              int repeatStatus, boolean isPlaySingleSong, boolean isInSongList,
                              int numOfPlayedSongs) {
         this.currentPlaybackState = currentPlaybackState;
@@ -50,7 +49,6 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = currentVolume;
         this.publicNextSongIndex = publicSongIndex;
         this.isPlayingPublic = isPlayingPublic;
-        this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
         this.repeatStatus = repeatStatus;
         this.isPlaySingleSong = isPlaySingleSong;
         this.isInSongList = isInSongList;
@@ -158,14 +156,6 @@ public class PlayingParameters implements Parcelable {
         isPlayingPublic = playingPublic;
     }
 
-    public int getMusicOrVocalOrNoSetting() {
-        return musicOrVocalOrNoSetting;
-    }
-
-    public void setMusicOrVocalOrNoSetting(int musicOrVocalOrNoSetting) {
-        this.musicOrVocalOrNoSetting = musicOrVocalOrNoSetting;
-    }
-
     public int getRepeatStatus() {
         return repeatStatus;
     }
@@ -215,7 +205,6 @@ public class PlayingParameters implements Parcelable {
         dest.writeFloat(this.currentVolume);
         dest.writeInt(this.publicNextSongIndex);
         dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
-        dest.writeInt(this.musicOrVocalOrNoSetting);
         dest.writeInt(this.repeatStatus);
         dest.writeByte(this.isPlaySingleSong ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isInSongList ? (byte) 1 : (byte) 0);
@@ -237,7 +226,6 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = in.readFloat();
         this.publicNextSongIndex = in.readInt();
         this.isPlayingPublic = in.readByte() != 0;
-        this.musicOrVocalOrNoSetting = in.readInt();
         this.repeatStatus = in.readInt();
         this.isPlaySingleSong = in.readByte() != 0;
         this.isInSongList = in.readByte() != 0;
@@ -275,7 +263,6 @@ public class PlayingParameters implements Parcelable {
         setPublicNextSongIndex(0);
         setPlayingPublic(true);
 
-        setMusicOrVocalOrNoSetting(0); // no music and vocal setting
         setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         setPlaySingleSong(false);    // default
         setInSongList(false);

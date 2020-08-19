@@ -22,8 +22,7 @@ import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
-import com.smile.karaokeplayer.Utilities.DataOrContentAccessUtil;
+import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;
 
@@ -225,10 +224,7 @@ public abstract class PlayerBasePresenter {
             // not in the database and show message
             presentView.showMusicAndVocalIsNotSet();
         }
-        int vocalAudioTrackIndex = playingParam.getVocalAudioTrackIndex();
-        int vocalAudioChannel = playingParam.getVocalAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);
-        setAudioTrackAndChannel(vocalAudioTrackIndex, vocalAudioChannel);
+        setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
     }
 
     public void switchAudioToMusic() {
@@ -236,27 +232,7 @@ public abstract class PlayerBasePresenter {
             // not in the database and show message
             presentView.showMusicAndVocalIsNotSet();
         }
-        int musicAudioTrackIndex = playingParam.getMusicAudioTrackIndex();
-        int musicAudioChannel = playingParam.getMusicAudioChannel();
-        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);
-        setAudioTrackAndChannel(musicAudioTrackIndex, musicAudioChannel);
-    }
-
-    protected void setProperAudioTrackAndChannel() {
-        if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
-            switchAudioToVocal();
-            // removed on 2020-06-01
-            /*
-            if (playingParam.isPlayingPublic()) {
-                switchAudioToVocal();
-            } else {
-                switchAudioToMusic();
-            }
-            */
-        } else {
-            // not auto playing media, means using open menu to open a media
-            switchAudioToVocal();   // music and vocal are the same in this case
-        }
+        setAudioTrackAndChannel(playingParam.getMusicAudioTrackIndex(), playingParam.getMusicAudioChannel());
     }
 
     protected void playMediaFromUri(Uri uri) {
@@ -271,10 +247,10 @@ public abstract class PlayerBasePresenter {
     }
 
     private void setPlayingParameters(SongInfo songInfo) {
+        playingParam.setInSongList( (songInfo.getIncluded().equals("1") ? true : false));
         playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
         playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
         playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
-        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
         playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
     }
 
@@ -307,41 +283,15 @@ public abstract class PlayerBasePresenter {
         }
         mediaUri = getValidatedUri(Uri.parse(filePath));
 
-        // testing code
-        // if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-        // Have to add android:requestLegacyExternalStorage="true" in AndroidManifest.xml
-        // to let devices that are above (included) API 29 can still use external storage
-        // the following codes need android.permission.READ_EXTERNAL_STORAGE
-        // and android.permission.WRITE_EXTERNAL_STORAGE
-        /*
-        Uri resultUri = null;
-        try {
-            filePath = ExternalStorageUtil.getUriRealPath(callingContext, mediaUri);
-            if (filePath != null) {
-                if (!filePath.isEmpty()) {
-                    File songFile = new File(filePath);
-                    resultUri = Uri.fromFile(songFile);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        Log.d(TAG, "PlayerBasePresenter-->resultUri = " + resultUri);
-        mediaUri = resultUri;
-        //  end of testing code
-        */
-
         Log.i(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }
 
-        playingParam.setInSongList(true);
-
         setPlayingParameters(songInfo);
 
-        playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingVocal);  // presume vocal
         playingParam.setCurrentVideoTrackIndexPlayed(0);
+        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
         playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
@@ -356,111 +306,87 @@ public abstract class PlayerBasePresenter {
             return;
         }
 
-        // activity is not being destroyed then check
-        // if there are still songs to be play
-        boolean hasSongs = false;   // no more songs to play
-        if (hasSongs) {
-            playingParam.setPlayingPublic(false);   // playing next ordered song
-        } else {
-            playingParam.setPlayingPublic(true);   // playing next public song on list
+        // playingParam.setPlayingPublic(true);   // playing next public song on list
+
+        boolean stillPlayNext = true;
+        int repeatStatus = playingParam.getRepeatStatus();
+        int publicSongListSize = publicSongList.size();
+        int publicNextSongIndex = playingParam.getPublicNextSongIndex();
+        switch (repeatStatus) {
+            case PlayerConstants.NoRepeatPlaying:
+                // no repeat
+                if ( (publicNextSongIndex >= publicSongListSize) || (publicNextSongIndex<0) ) {
+                    // stop playing
+                    stopPlay();
+                    stillPlayNext = false;  // stop here and do not go to next
+                }
+                break;
+            case PlayerConstants.RepeatOneSong:
+                // repeat one song
+                Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
+                if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
+                    publicNextSongIndex--;
+                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
+                }
+                break;
+            case PlayerConstants.RepeatAllSongs:
+                // repeat all songs
+                if (publicNextSongIndex >= publicSongListSize) {
+                    publicNextSongIndex = 0;
+                }
+                break;
         }
 
-        SongInfo songInfo = null;
-        if (playingParam.isPlayingPublic())  {
-            int publicSongListSize = 0;
-            if (publicSongList != null) {
-                publicSongListSize = publicSongList.size();
-            }
-            if (publicSongListSize <= 0) {
-                // no public songs
-                ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-                playingParam.setAutoPlay(false);    // cancel auto play
-            } else {
-                // There are public songs to be played
-                boolean stillPlayNext = true;
-                int repeatStatus = playingParam.getRepeatStatus();
-                int publicNextSongIndex = playingParam.getPublicNextSongIndex();
-                switch (repeatStatus) {
-                    case PlayerConstants.NoRepeatPlaying:
-                        // no repeat
-                        if ( (publicNextSongIndex >= publicSongListSize) || (publicNextSongIndex<0) ) {
-                            // stop playing
-                            // playingParam.setAutoPlay(false); // this statement is in stopPlay() method
-                            stopPlay();
-                            stillPlayNext = false;  // stop here and do not go to next
-                        }
-                        break;
-                    case PlayerConstants.RepeatOneSong:
-                        // repeat one song
-                        Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
-                        if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
-                            publicNextSongIndex--;
-                            Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
-                        }
-                        break;
-                    case PlayerConstants.RepeatAllSongs:
-                        // repeat all songs
-                        if (publicNextSongIndex >= publicSongListSize) {
-                            publicNextSongIndex = 0;
-                        }
-                        break;
-                }
-
-                if (stillPlayNext) {    // still play the next song
-                    songInfo = publicSongList.get(publicNextSongIndex);
-                    playSingleSong(songInfo);
-                    publicNextSongIndex++;  // set next index of playlist that will be played
-                    playingParam.setPublicNextSongIndex(publicNextSongIndex);
-                }
-                Log.d(TAG, "Repeat status = " + repeatStatus);
-                Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
-                // }
-            }
-        } else {
-            // play next song that user has ordered
-            playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.PlayingMusic);  // presume music
-            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
-                if (playingParam.getRepeatStatus() != PlayerConstants.NoRepeatPlaying) {
-                    // repeat playing this mediaUri
-                } else {
-                    // next song that user ordered
-                }
-            }
-            Log.d(TAG, "startAutoPlay() finished --> ordered song.");
+        if (stillPlayNext) {    // still play the next song
+            SongInfo songInfo = publicSongList.get(publicNextSongIndex);
+            playSingleSong(songInfo);
+            publicNextSongIndex++;  // set next index of playlist that will be played
+            playingParam.setPublicNextSongIndex(publicNextSongIndex);
         }
+        Log.d(TAG, "Repeat status = " + repeatStatus);
+        Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
 
         presentView.setImageButtonStatus();
     }
 
     public void setAutoPlayStatusAndAction() {
-        boolean isAutoPlay = !playingParam.isAutoPlay();
-        canShowNotSupportedFormat = true;
-        if (isAutoPlay) {
-            publicSongList = DataOrContentAccessUtil.readPublicSongList(callingContext);
-            if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
-                playingParam.setAutoPlay(true);
-                playingParam.setPublicNextSongIndex(0);
-                // start playing video from list
-                // if (exoPlayer.getPlaybackState() != Player.STATE_IDLE) {
-                if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE) {
-                    // media is playing or prepared
-                    // exoPlayer.stop();// no need   // will go to onPlayerStateChanged()
-                    Log.d(TAG, "isAutoPlay is true and exoPlayer.stop().");
-
-                }
-                startAutoPlay();
-            } else {
-                String msg = callingContext.getString(R.string.noPlaylistString);
-                ScreenUtil.showToast(callingContext, msg, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-            }
+        boolean isAutoPlay = playingParam.isAutoPlay();
+        if (!isAutoPlay) {
+            // previous is not auto play
+            playingParam.setAutoPlay(true); // must be above autoPlayPublicSongList()
+            publicSongList = DatabaseAccessUtil.readPublicSongList(callingContext);
+            autoPlaySongList();
         } else {
-            playingParam.setAutoPlay(isAutoPlay);
+            // previous is auto play
+            int playbackState = playingParam.getCurrentPlaybackState();
+            if (playbackState!=PlaybackStateCompat.STATE_NONE
+                    && playbackState!=PlaybackStateCompat.STATE_STOPPED) {
+                // not the following: (has not started, stopped, or finished)
+                stopPlay();
+            }
+            playingParam.setAutoPlay(false);    // must be the last in this block
         }
+
         presentView.setImageButtonStatus();
     }
 
+    private void autoPlaySongList() {
+        canShowNotSupportedFormat = true;
+        if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
+            // playingParam.setAutoPlay(true);
+            playingParam.setPublicNextSongIndex(0); // next song that will be played
+            // start playing video from list
+            startAutoPlay();
+        } else {
+            playingParam.setAutoPlay(false);
+            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+        }
+    }
+
     public void playPreviousSong() {
-        if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+        // if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+        if ( publicSongList==null || playingParam.isPlaySingleSong()) {
             return;
         }
         int publicSongListSize = publicSongList.size();
@@ -483,7 +409,11 @@ public abstract class PlayerBasePresenter {
                 }
                 break;
             case PlayerConstants.NoRepeatPlaying:
-            default:
+                if (nextIndex < 0) {
+                    ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPreviousSongString)
+                            , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                    return;
+                }
                 break;
         }
         playingParam.setPublicNextSongIndex(nextIndex);
@@ -492,14 +422,26 @@ public abstract class PlayerBasePresenter {
     }
 
     public void playNextSong() {
-        if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+        // if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
+        if ( publicSongList==null || playingParam.isPlaySingleSong()) {
             return;
         }
         int publicSongListSize = publicSongList.size();
         int nextIndex = playingParam.getPublicNextSongIndex();
         int repeatStatus = playingParam.getRepeatStatus();
-        if (repeatStatus == PlayerConstants.RepeatOneSong) {
-            nextIndex++;
+        switch (repeatStatus) {
+            case PlayerConstants.NoRepeatPlaying:
+                if (nextIndex >= publicSongListSize) {
+                    ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noNextSongString)
+                            , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                    return; // no more next
+                }
+                break;
+            case PlayerConstants.RepeatOneSong:
+                nextIndex++;
+                break;
+            case PlayerConstants.RepeatAllSongs:
+                break;
         }
         if (nextIndex > publicSongListSize) {
             // it is playing the last one right now
@@ -515,47 +457,44 @@ public abstract class PlayerBasePresenter {
         return tempUri;
     }
 
-    public void playSelectedSongFromStorage(Uri tempUri) {
+    public void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
 
-        mediaUri = getValidatedUri(tempUri);
-        Log.i(TAG, "mediaUri = " + mediaUri);
-        if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
+        if (tempUriList==null || tempUriList.size()==0) {
             return;
         }
 
-        // searching song list for the information of tempUri
-        SongInfo songInfo = null;
-        SongListSQLite songListSQLite = new SongListSQLite(callingContext);
-        if (songListSQLite != null) {
-            songInfo = songListSQLite.findOneSongByContentUri(tempUri); // use the original Uri
-            songListSQLite.closeDatabase();
+        // clear publicSongList but publicSongList might be null
+        publicSongList = new ArrayList<>();
+        for (Uri tempUri : tempUriList) {
+            // searching song list for the information of tempUri
+            SongInfo songInfo = null;
+            SongListSQLite songListSQLite = new SongListSQLite(callingContext);
+            if (songListSQLite != null) {
+                songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
+                songListSQLite.closeDatabase();
+            }
+            if (songInfo != null) {
+                Log.d(TAG, "Found this song on song list.");
+                songInfo.setIncluded("1");  // set to in the list
+            } else {
+                Log.d(TAG, "Could not find this song on song list.");
+                songInfo = new SongInfo();
+                songInfo.setSongName("");
+                // has to be tempUri not mediaUri
+                songInfo.setFilePath(tempUri.toString());
+                int currentAudioTrack = 1;
+                songInfo.setMusicTrackNo(currentAudioTrack);
+                songInfo.setMusicChannel(CommonConstants.LeftChannel);
+                songInfo.setVocalTrackNo(currentAudioTrack);
+                songInfo.setVocalChannel(CommonConstants.RightChannel);
+                // not in the list and unknown music and vocal setting
+                songInfo.setIncluded("0");  // set to not in the list
+            }
+            publicSongList.add(songInfo);
         }
-        //
 
-        if (songInfo != null) {
-            Log.d(TAG, "Found this song on song list.");
-            playSingleSong(songInfo);
-        } else {
-            Log.d(TAG, "Could not find this song on song list.");
-            playingParam.setInSongList(false);
-            playingParam.setCurrentVideoTrackIndexPlayed(0);
-            int currentAudioRederer = 0;
-            playingParam.setMusicAudioTrackIndex(currentAudioRederer);
-            playingParam.setVocalAudioTrackIndex(currentAudioRederer);
-            playingParam.setCurrentAudioTrackIndexPlayed(currentAudioRederer);
-            playingParam.setMusicAudioChannel(CommonConstants.LeftChannel);
-            playingParam.setVocalAudioChannel(CommonConstants.StereoChannel);
-            playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-            playingParam.setCurrentAudioPosition(0);
-            playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-            playingParam.setMediaSourcePrepared(false);
-            // music or vocal is unknown
-            playingParam.setMusicOrVocalOrNoSetting(PlayerConstants.MusicOrVocalUnknown);
-
-            playMediaFromUri(mediaUri);
-        }
-        // one more open. only for select songs
-        playingParam.setNumOfPlayedSongs(playingParam.getNumOfPlayedSongs()+1);
+        playingParam.setAutoPlay(false);
+        autoPlaySongList();
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
@@ -598,7 +537,16 @@ public abstract class PlayerBasePresenter {
     }
 
     public void startPlay() {
+        Log.d(TAG, "startPlay() is called.");
+
         int playbackState = playingParam.getCurrentPlaybackState();
+        if (playbackState==PlaybackStateCompat.STATE_NONE
+            || playbackState==PlaybackStateCompat.STATE_STOPPED) {
+            // start playing the first song in the list
+            autoPlaySongList();
+            return;
+        }
+
         if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playbackState != PlaybackStateCompat.STATE_PLAYING) ) {
             // no media file opened or playing has been stopped
             if ( (playbackState == PlaybackStateCompat.STATE_PAUSED)
@@ -615,7 +563,6 @@ public abstract class PlayerBasePresenter {
                 Log.d(TAG, "startPlay() --> replayMedia() is called.");
             }
         }
-        Log.d(TAG, "startPlay() is called.");
     }
 
     public void pausePlay() {
@@ -637,17 +584,13 @@ public abstract class PlayerBasePresenter {
                 mediaTransportControls.stop();
                 if (playingParam.isPlaySingleSong()) {
                     presentView.showInterstitialAd(true);
-                } else if (playingParam.isAutoPlay()) {
-                    presentView.showInterstitialAd(false);
                 } else {
-                    if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
-                        presentView.showInterstitialAd(false);
-                        playingParam.setNumOfPlayedSongs(0);
-                    }
+                    presentView.showInterstitialAd(false);
                 }
             }
         }
-        playingParam.setAutoPlay(false);    // no auto playing song list
+        // removed the following on 2020-08-16 because app wants to keep the status
+        // playingParam.setAutoPlay(false);    // no auto playing song list
     }
 
     protected abstract void specificPlayerReplayMedia(long currentAudioPosition);
@@ -696,17 +639,6 @@ public abstract class PlayerBasePresenter {
 
     public MediaControllerCompat.TransportControls getMediaTransportControls() {
         return mediaTransportControls;
-    }
-
-    public void mayShowInterstitialAd() {
-        if (!playingParam.isAutoPlay() && !playingParam.isPlaySingleSong()
-                && (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying)) {
-            // not auto playing, not playing single song, not repeat
-            if (playingParam.getNumOfPlayedSongs() >= SmileApplication.maxNumOfPlayedSongsBeforeAd) {
-                presentView.showInterstitialAd(false);
-                playingParam.setNumOfPlayedSongs(0);
-            }
-        }
     }
 
     public void saveInstanceState(@NonNull Bundle outState) {

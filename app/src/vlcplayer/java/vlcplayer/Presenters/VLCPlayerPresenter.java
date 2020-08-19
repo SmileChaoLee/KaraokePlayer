@@ -206,10 +206,23 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
                     }
                 }
                 // for open media. do not know the music track and vocal track
-                playingParam.setMusicAudioTrackIndex(audioTrackIndex);
-                playingParam.setMusicAudioChannel(audioChannel);
-                playingParam.setVocalAudioTrackIndex(audioTrackIndex);
-                playingParam.setVocalAudioChannel(audioChannel);
+                // guess
+                audioTrackIdPlayed = 1;
+                if (numberOfAudioTracks >= 2) {
+                    // more than 2 audio tracks
+                    audioChannel = CommonConstants.StereoChannel;
+                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setVocalAudioChannel(audioChannel);
+                    playingParam.setMusicAudioTrackIndex(2);
+                    playingParam.setMusicAudioChannel(audioChannel);
+                } else {
+                    // only one track
+                    audioChannel = CommonConstants.LeftChannel;
+                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setVocalAudioChannel(audioChannel);
+                    playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
+                    playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
+                }
             }
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);
 
@@ -367,7 +380,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     @Override
     protected void specificPlayerReplayMedia(long currentAudioPosition) {
         vlcPlayer.setTime(currentAudioPosition); // use time to set position
-        setProperAudioTrackAndChannel();
+        switchAudioToVocal();
         if (!vlcPlayer.isPlaying()) {
             vlcPlayer.play();
         }

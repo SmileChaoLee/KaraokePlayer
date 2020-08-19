@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
         myContext = context;
         // the following statements is to create or update the database
         songDatabase = getWritableDatabase();
-        closeDatabase();
+        // closeDatabase();
     }
 
     @Override
@@ -190,7 +189,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "readSongList() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return songList;
@@ -213,7 +212,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "readPlaylist() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return playlist;
@@ -236,7 +235,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "addSongToSongList() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return result;
@@ -260,7 +259,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "updateOneSongFromSongList() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return result;
@@ -284,7 +283,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "deleteOneSongFromSongList() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return result;
@@ -299,22 +298,20 @@ public class SongListSQLite extends SQLiteOpenHelper {
                     Log.d("TAG", "deleteAllSongList() exception.");
                     ex.printStackTrace();
                 }
-                closeDatabase();
+                // closeDatabase();
             }
     }
 
-    public SongInfo findOneSongByContentUri(Uri contentUri) {
+    public SongInfo findOneSongByUriString(String uriString) {
         SongInfo songInfo = null;
-        String songFilePath = "";
-        if (contentUri == null) {
+        if (uriString==null || uriString.isEmpty()) {
             return songInfo;
         }
-        songFilePath = contentUri.toString();
 
         openScoreDatabase();
         if (songDatabase != null) {
             try {
-                String whereClause = filePath + " = " + '"' + songFilePath + '"';
+                String whereClause = filePath + " = " + '"' + uriString + '"';
                 Cursor cur = songDatabase.query(tableName, null, whereClause, null, null, null, null);
                 if (cur != null) {
                     if (cur.moveToFirst()) {
@@ -334,7 +331,7 @@ public class SongListSQLite extends SQLiteOpenHelper {
                 Log.d("TAG", "findOneSongByContentUri() exception.");
                 ex.printStackTrace();
             }
-            closeDatabase();
+            // closeDatabase();
         }
 
         return songInfo;

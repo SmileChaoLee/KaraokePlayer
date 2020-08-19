@@ -24,7 +24,6 @@ public final class PlayerConstants {
     public static final int NoAudioTrack = -1;
     public static final int NoAudioChannel = -1;
     public static final int MaxProgress = 100;
-    public static final int MusicOrVocalUnknown = 0;
     public static final int PlayingMusic = 1;
     public static final int PlayingVocal = 2;
     public static final int NoRepeatPlaying = 0;

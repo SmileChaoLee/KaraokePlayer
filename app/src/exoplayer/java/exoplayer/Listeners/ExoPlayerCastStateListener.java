@@ -8,7 +8,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import exoplayer.ExoPlayerActivity;

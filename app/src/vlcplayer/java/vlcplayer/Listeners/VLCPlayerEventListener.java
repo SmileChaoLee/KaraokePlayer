@@ -33,8 +33,8 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
     @Override
     public synchronized void onEvent(MediaPlayer.Event event) {
+        Log.d(TAG, "onEvent() is called and MediaPlayer.Event event = " + event);
         PlayingParameters playingParam = mPresenter.getPlayingParam();
-
         switch(event.type) {
             case MediaPlayer.Event.Buffering:
                 Log.d(TAG, "vlcPlayer is buffering.");
@@ -66,10 +66,9 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                     // playing has not been finished yet
                     Log.d(TAG, "Sending a event, PlaybackStateCompat.STATE_STOPPED");
                     mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
-                } else {
+                } // else {
                     // playing has finished
-                    mPresenter.mayShowInterstitialAd();
-                }
+                // }
                 break;
             case MediaPlayer.Event.EndReached:
                 Log.d(TAG, "vlcPlayer is Reached end.");
@@ -94,17 +93,13 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 mPresenter.getPresentView().showNativeAndBannerAd();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
                 String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
-                if (playingParam.isAutoPlay()) {
-                    // go to next one in the list
-                    if (mPresenter.isCanShowNotSupportedFormat()) {
-                        // only show once
-                        mPresenter.setCanShowNotSupportedFormat(false);
-                        ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-                    }
-                    mPresenter.startAutoPlay();
-                } else {
+                Log.d(TAG, "mPresenter.isCanShowNotSupportedFormat() = " + mPresenter.isCanShowNotSupportedFormat());
+                if (mPresenter.isCanShowNotSupportedFormat()) {
+                    // only show once
+                    mPresenter.setCanShowNotSupportedFormat(false);
                     ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 }
+                mPresenter.startAutoPlay();
                 break;
             default:
                 break;

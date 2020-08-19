@@ -26,7 +26,6 @@ import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
