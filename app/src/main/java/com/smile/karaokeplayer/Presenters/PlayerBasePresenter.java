@@ -306,14 +306,16 @@ public abstract class PlayerBasePresenter {
             return;
         }
 
-        // playingParam.setPlayingPublic(true);   // playing next public song on list
-
-        boolean stillPlayNext = true;
-        int repeatStatus = playingParam.getRepeatStatus();
         int publicSongListSize = 0;
         if (publicSongList != null) {
             publicSongListSize = publicSongList.size();
         }
+        if (publicSongListSize == 0) {
+            return;
+        }
+
+        boolean stillPlayNext = true;
+        int repeatStatus = playingParam.getRepeatStatus();
         int publicNextSongIndex = playingParam.getPublicNextSongIndex();
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
@@ -356,9 +358,15 @@ public abstract class PlayerBasePresenter {
         boolean isAutoPlay = playingParam.isAutoPlay();
         if (!isAutoPlay) {
             // previous is not auto play
-            playingParam.setAutoPlay(true); // must be above autoPlayPublicSongList()
-            publicSongList = DatabaseAccessUtil.readPublicSongList(callingContext);
-            autoPlaySongList();
+            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readPublicSongList(callingContext);
+            if (songListTemp.size() > 0) {
+                publicSongList = new ArrayList<>(songListTemp);
+                playingParam.setAutoPlay(true); // must be above autoPlayPublicSongList()
+                autoPlaySongList();
+            } else {
+                ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString)
+                        , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            }
         } else {
             // previous is auto play
             int playbackState = playingParam.getCurrentPlaybackState();
@@ -380,11 +388,15 @@ public abstract class PlayerBasePresenter {
             playingParam.setPublicNextSongIndex(0); // next song that will be played
             // start playing video from list
             startAutoPlay();
-        } else {
+        }
+        /*
+        // no need
+        else {
             playingParam.setAutoPlay(false);
             ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
+        */
     }
 
     public void playPreviousSong() {
@@ -393,7 +405,7 @@ public abstract class PlayerBasePresenter {
             return;
         }
         int publicSongListSize = publicSongList.size();
-        if (publicSongListSize == 1) {
+        if (publicSongListSize <= 1 ) {
             // only file in the play list
             ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPreviousSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
@@ -432,11 +444,11 @@ public abstract class PlayerBasePresenter {
 
     public void playNextSong() {
         // if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-        if ( publicSongList==null || playingParam.isPlaySingleSong()) {
+        if (publicSongList == null || playingParam.isPlaySingleSong()) {
             return;
         }
         int publicSongListSize = publicSongList.size();
-        if (publicSongListSize == 1) {
+        if (publicSongListSize <= 1 ) {
             // only file in the play list
             ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noNextSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
@@ -479,7 +491,7 @@ public abstract class PlayerBasePresenter {
         }
 
         // clear publicSongList but publicSongList might be null
-        publicSongList = new ArrayList<>();
+        ArrayList<SongInfo> songListTemp = new ArrayList<>();
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
             SongInfo songInfo = null;
@@ -505,11 +517,18 @@ public abstract class PlayerBasePresenter {
                 // not in the list and unknown music and vocal setting
                 songInfo.setIncluded("0");  // set to not in the list
             }
-            publicSongList.add(songInfo);
+            songListTemp.add(songInfo);
         }
 
-        playingParam.setAutoPlay(false);
-        autoPlaySongList();
+        if (songListTemp.size() > 0) {
+            publicSongList = new ArrayList<>(songListTemp);
+            playingParam.setAutoPlay(false);
+            autoPlaySongList();
+        }  else {
+            playingParam.setAutoPlay(false);
+            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noFilesSelectedString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+        }
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {

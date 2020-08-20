@@ -50,6 +50,7 @@
     <string name="editString">Mengedit</string>
     <string name="deleteString">Padam</string>
     <string name="noPlaylistString">Tiada senarai</string>
+    <string name="noFilesSelectedString">No files selected</string>
     <string name="bufferingString">Penimbunan .....</string>
     <string name="saveString">berjimat</string>
     <string name="backKeyToExitApp">Press the back key again to exit.</string>

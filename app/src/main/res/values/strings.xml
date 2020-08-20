@@ -49,6 +49,7 @@
     <string name="editString">Edit</string>
     <string name="deleteString">Delete</string>
     <string name="noPlaylistString">No Play List</string>
+    <string name="noFilesSelectedString">No files selected</string>
     <string name="bufferingString">Buffering .....</string>
     <string name="saveString">Save</string>
     <string name="backKeyToExitApp">Press the back key again to exit.</string>

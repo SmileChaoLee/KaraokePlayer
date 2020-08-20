@@ -3,6 +3,9 @@ package com.smile.karaokeplayer.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.Constants.PlayerConstants;
+
 public class SongInfo implements Parcelable {
     private int id;
     private String songName;
@@ -14,6 +17,12 @@ public class SongInfo implements Parcelable {
     private String included;   // is included in playlist
 
     public SongInfo() {
+        songName = "";
+        filePath = "";
+        musicTrackNo = 1;
+        musicChannel = CommonConstants.RightChannel;
+        vocalTrackNo = 1;
+        vocalChannel = CommonConstants.LeftChannel;
         included = "1"; // default is included in playlist
     }
 
