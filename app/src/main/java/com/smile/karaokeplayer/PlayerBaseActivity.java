@@ -230,12 +230,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
-        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
-            Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.FLAVOR = " + com.smile.karaokeplayer.BuildConfig.FLAVOR );
-            if (!com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase().equals("exoplayer")) {
-                player_duration_seekbar.setBackgroundColor(Color.BLUE);
-            }
-        }
 
         durationTimeTextView = findViewById(R.id.durationTimeTextView);
         durationTimeTextView.setText("000:00");
