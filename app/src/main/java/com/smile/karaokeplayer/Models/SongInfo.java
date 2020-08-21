@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
 
 public class SongInfo implements Parcelable {
     private int id;

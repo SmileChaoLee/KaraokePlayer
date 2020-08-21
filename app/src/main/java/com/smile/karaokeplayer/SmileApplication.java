@@ -21,7 +21,11 @@ public class SmileApplication extends MultiDexApplication {
 
     private static final String TAG = new String("SmileApplication");
 
-    public static final int maxNumOfPlayedSongsBeforeAd = 3;  // show ad after playing 3 songs
+    public static final String exoPlayerFlavor = "exoplayer";
+    public static final String vlcPlayerFlavor = "vlcplayer";
+    public static final String videoPlayerFlavor = "videoplayer";
+    public static final String musicPlayerFlavor = "musicplayer";
+
     public static String leftChannelString;
     public static String rightChannelString;
     public static String stereoChannelString;
@@ -61,15 +65,10 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(rightChannelString, CommonConstants.RightChannel);
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
-        // String facebookInterstitialID = new String("1712962715503258_1712963252169871");
-        // facebookBannerID = "1712962715503258_2019623008170559";
-        // String googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
-        // googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
-
         String facebookInterstitialID = "";
         String googleAdMobAppID = "";
         String googleAdMobInterstitialID = "";
-        switch (BuildConfig.APPLICATION_ID) {
+        switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
             case "com.smile.karaokeplayer":
                 facebookInterstitialID = "1712962715503258_1712963252169871";
                 facebookBannerID = "1712962715503258_2019623008170559";

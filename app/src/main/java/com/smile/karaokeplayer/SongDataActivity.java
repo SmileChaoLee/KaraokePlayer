@@ -12,6 +12,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -149,6 +150,8 @@ public class SongDataActivity extends AppCompatActivity {
             }
         });
 
+        LinearLayout karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
+        //
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_musicTrackSpinner = findViewById(R.id.edit_musicTrackSpinner);
@@ -172,6 +175,18 @@ public class SongDataActivity extends AppCompatActivity {
         edit_vocalChannelSpinner = findViewById(R.id.edit_vocalChannelSpinner);
         edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
         edit_vocalChannelSpinner.setSelection(mSongInfo.getVocalChannel());
+        //
+
+        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
+            case SmileApplication.exoPlayerFlavor:
+            case SmileApplication.vlcPlayerFlavor:
+                karaokeSettingLayout.setVisibility(View.VISIBLE);
+                break;
+            case SmileApplication.videoPlayerFlavor:
+            case SmileApplication.musicPlayerFlavor:
+                karaokeSettingLayout.setVisibility(View.GONE);
+                break;
+        }
 
         TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
         ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);

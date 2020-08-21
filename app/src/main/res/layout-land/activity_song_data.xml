@@ -22,80 +22,73 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="20">
-
             <include layout="@layout/edit_title_string_textview_layout" />
             <include layout="@layout/edit_title_name_edittext_layout" />
-
         </RelativeLayout>
-
         <RelativeLayout
             android:id="@+id/edit_filePathRelativeLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="20">
-
             <include layout="@layout/edit_filepath_string_textview_layout" />
             <include layout="@layout/edit_filepath_edittext_layout" />
-
         </RelativeLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
+            android:id="@+id/karaokeSettingLayout"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="15"
-            android:weightSum="7">
-            <RelativeLayout
-                android:id="@+id/edit_audioMusicTrackLayout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3">
-
-                <include layout="@layout/edit_music_track_string_textview_layout" />
-                <include layout="@layout/edit_music_track_spinner_layout" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/edit_audioMusicChannelLayout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:gravity="left|center_vertical"
-                android:layout_weight="4">
-
-                <include layout="@layout/edit_music_channel_string_textview_layout" />
-                <include layout="@layout/edit_music_channel_spinner_layout" />
-
-            </RelativeLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="15"
-            android:weightSum="7">
-            <RelativeLayout
-                android:id="@+id/edit_audioVocalTrackLayout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3">
-
-                <include layout="@layout/edit_vocal_track_string_textview_layout" />
-                <include layout="@layout/edit_vocal_track_spinner_layout" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/edit_audioVocalChannelLayout"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="4">
-
-                <include layout="@layout/edit_vocal_channel_string_textview_layout" />
-                <include layout="@layout/edit_vocal_channel_spinner_layout" />
-
-            </RelativeLayout>
+            android:gravity="center"
+            android:layout_weight="30"
+            android:weightSum="30">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:weightSum="7">
+                <RelativeLayout
+                    android:id="@+id/edit_audioMusicTrackLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
+                    <include layout="@layout/edit_music_track_string_textview_layout" />
+                    <include layout="@layout/edit_music_track_spinner_layout" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/edit_audioMusicChannelLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:gravity="left|center_vertical"
+                    android:layout_weight="4">
+                    <include layout="@layout/edit_music_channel_string_textview_layout" />
+                    <include layout="@layout/edit_music_channel_spinner_layout" />
+                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="15"
+                android:weightSum="7">
+                <RelativeLayout
+                    android:id="@+id/edit_audioVocalTrackLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3">
+                    <include layout="@layout/edit_vocal_track_string_textview_layout" />
+                    <include layout="@layout/edit_vocal_track_spinner_layout" />
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/edit_audioVocalChannelLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4">
+                    <include layout="@layout/edit_vocal_channel_string_textview_layout" />
+                    <include layout="@layout/edit_vocal_channel_spinner_layout" />
+                </RelativeLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout
@@ -103,22 +96,17 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10">
-
             <include layout="@layout/edit_included_playlist_string_textview_layout" />
             <include layout="@layout/edit_included_playlist_checkbox_layout" />
-
         </RelativeLayout>
-
         <RelativeLayout
             android:id="@+id/edit_buttonsLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:gravity="center_vertical"
             android:layout_weight="20">
-
             <include layout="@layout/edit_save_one_song_button_layout" />
             <include layout="@layout/edit_exit_edit_song_button_layout" />
-
         </RelativeLayout>
 
     </LinearLayout>

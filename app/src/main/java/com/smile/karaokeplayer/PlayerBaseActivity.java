@@ -22,6 +22,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -332,13 +333,13 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
         //
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case "exoplayer" :
+            case SmileApplication.exoPlayerFlavor:
                 break;
-            case "vlcplayer" :
+            case SmileApplication.vlcPlayerFlavor:
                 break;
-            case "musicplayer" :
+            case SmileApplication.musicPlayerFlavor:
                 audioTrackMenuItem.setVisible(false);
-            case "videoplayer" :
+            case SmileApplication.videoPlayerFlavor:
                 MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
                 channelMenuItem.setVisible(false);
                 break;
@@ -854,8 +855,18 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         // boolean isAutoPlay = playingParam.isAutoPlay();
         switchToMusicImageButton.setEnabled(true);
         switchToMusicImageButton.setVisibility(View.VISIBLE);
-        switchToVocalImageButton.setEnabled(true);
-        switchToVocalImageButton.setVisibility(View.VISIBLE);
+        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
+            case SmileApplication.exoPlayerFlavor:
+            case SmileApplication.vlcPlayerFlavor:
+                switchToVocalImageButton.setEnabled(true);
+                switchToVocalImageButton.setVisibility(View.VISIBLE);
+                break;
+            case SmileApplication.videoPlayerFlavor:
+            case SmileApplication.musicPlayerFlavor:
+                switchToVocalImageButton.setEnabled(false);
+                switchToVocalImageButton.setVisibility(View.GONE);
+                break;
+        }
 
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();

@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -248,6 +249,8 @@ public class SongListActivity extends AppCompatActivity {
             final TextView filePathTextView = view.findViewById(R.id.filePathTextView);
             ScreenUtil.resizeTextSize(filePathTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
 
+            final LinearLayout audioMusicLinearLayout = view.findViewById(R.id.audioMusicLinearLayout);
+            //
             final TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
             ScreenUtil.resizeTextSize(musicTrackStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final TextView musicTrackTextView = view.findViewById(R.id.musicTrackTextView);
@@ -257,7 +260,10 @@ public class SongListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(musicChannelStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
             ScreenUtil.resizeTextSize(musicChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
+            //
 
+            final LinearLayout audioVocalLinearLayout = view.findViewById(R.id.audioVocalLinearLayout);
+            //
             final TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
             ScreenUtil.resizeTextSize(vocalTrackStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final TextView vocalTrackTextView = view.findViewById(R.id.vocalTrackTextView);
@@ -267,6 +273,20 @@ public class SongListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(vocalChannelStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
             ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
+            //
+
+            switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
+                case SmileApplication.exoPlayerFlavor:
+                case SmileApplication.vlcPlayerFlavor:
+                    audioMusicLinearLayout.setVisibility(View.VISIBLE);
+                    audioVocalLinearLayout.setVisibility(View.VISIBLE);
+                    break;
+                case SmileApplication.videoPlayerFlavor:
+                case SmileApplication.musicPlayerFlavor:
+                    audioMusicLinearLayout.setVisibility(View.GONE);
+                    audioVocalLinearLayout.setVisibility(View.GONE);
+                    break;
+            }
 
             final TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
             ScreenUtil.resizeTextSize(includedPlaylistStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
