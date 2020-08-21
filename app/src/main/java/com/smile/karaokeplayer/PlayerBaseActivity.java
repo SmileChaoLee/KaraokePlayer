@@ -858,12 +858,11 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
             case SmileApplication.vlcPlayerFlavor:
-                switchToVocalImageButton.setEnabled(true);
                 switchToVocalImageButton.setVisibility(View.VISIBLE);
                 break;
-            case SmileApplication.videoPlayerFlavor:
             case SmileApplication.musicPlayerFlavor:
-                switchToVocalImageButton.setEnabled(false);
+                switchToMusicImageButton.setVisibility(View.GONE);
+            case SmileApplication.videoPlayerFlavor:
                 switchToVocalImageButton.setVisibility(View.GONE);
                 break;
         }

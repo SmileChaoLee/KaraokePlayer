@@ -226,6 +226,9 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
             }
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);
 
+            // build R.id.audioTrack submenu
+            presentView.buildAudioTrackMenuItem(audioTrackIndicesList.size());
+
             // for testing
             // Media media = vlcPlayer.getMedia();  // for version 3.1.12
             IMedia media = vlcPlayer.getMedia();    // for version above 3.3.0
@@ -243,9 +246,6 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
                 }
             }
             //
-
-            // build R.id.audioTrack submenu
-            presentView.buildAudioTrackMenuItem(audioTrackIndicesList.size());
         }
 
         // update the duration on controller UI
