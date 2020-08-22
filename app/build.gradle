@@ -68,8 +68,6 @@ android {
         }
         exoplayer {
             // java.srcDirs += "src/exoplayer/java"
-            // resources.srcDirs += "src/exoplayer/res"
-            // or
             // res.srcDirs += "src/exoplayer/res"
             manifest {
                 srcFile "src/exoplayer/AndroidManifest.xml"
