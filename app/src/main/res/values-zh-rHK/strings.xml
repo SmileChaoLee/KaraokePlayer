@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">微笑卡拉OK</string>
-    <string name="app_name_video_player">微笑視頻播放器</string>
-    <string name="app_name_music_player">微笑音樂播放器r</string>
-
     <string name="fileString">檔案</string>
     <string name="accessExternalStoragePermissionDeniedString">存取外部儲存裝置被拒絕</string>
     <string name="noReadableExternalStorageString">沒有外部存取裝置</string>

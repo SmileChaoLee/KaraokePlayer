@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Smile Karaoke</string>
-    <string name="app_name_video_player">Smile VPlayer</string>
-    <string name="app_name_music_player">Smile MPlayer</string>
-
     <string name="fileString">Fail</string>
     <string name="accessExternalStoragePermissionDeniedString">Storage Permission Denied</string>
     <string name="noReadableExternalStorageString">No readable external storage</string>

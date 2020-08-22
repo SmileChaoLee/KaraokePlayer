@@ -29,14 +29,12 @@ android {
         exoplayer {
             dimension("player")
             minSdkVersion 16
-            manifestPlaceholders = [flavorLegacyExternalStorage: "false"
-                                    , appName: "@string/app_name"]
+            manifestPlaceholders = [flavorLegacyExternalStorage: "false"]
         }
         vlcplayer {
             dimension("player")
             minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , appName: "@string/app_name"]
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true"]
         }
 
         videoplayer {
@@ -44,7 +42,6 @@ android {
             minSdkVersion 17
             applicationId = "com.smile.videoplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , appName: "@string/app_name_video_player"
                                     , google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
         }
 
@@ -53,7 +50,6 @@ android {
             minSdkVersion 17
             applicationId "com.smile.musicplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , appName: "@string/app_name_music_player"
                                     , google_AdMobAppID: "ca-app-pub-8354869049759576~3279561070"]
         }
     }
