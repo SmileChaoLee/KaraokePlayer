@@ -68,50 +68,54 @@ public class SmileApplication extends MultiDexApplication {
         String facebookInterstitialID = "";
         String googleAdMobAppID = "";
         String googleAdMobInterstitialID = "";
-        switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
-            case "com.smile.karaokeplayer":
-                facebookInterstitialID = "1712962715503258_1712963252169871";
-                facebookBannerID = "1712962715503258_2019623008170559";
-                googleAdMobAppID = "ca-app-pub-8354869049759576~5549171584";
-                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
-                googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
-                googleAdMobNativeID = "ca-app-pub-8354869049759576/7985456524";
-                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
-                break;
-            case "com.smile.videoplayer":
-                // Token: EAAEN04aiEXUBAHBQwZBZB4gmWOueuRTEZCHMCAWOHZBB7hjavIuXgKELNvtfcIGCJV72zkohipkSZALG51WCXX6xbN3oUy84i8NrIvuc44RTfypgdcyOTnaPyM1W4JZBjQvDGuWsCRGmbusWaZCKmWt5iCkhQklOKeZC4Edx6FDIGTUUiHMKURzS
-                // App ID: 633653050588487
-                facebookInterstitialID = "296677124739445_296678328072658";
-                facebookBannerID = "296677124739445_296687284738429";
-                googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060";
-                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/7715939032";
-                googleAdMobBannerID = "ca-app-pub-8354869049759576/2158051096";
-                googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044";
-                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
-                break;
-            case "com.smile.musicplayer":
-                // Token: EAAFARZAONXXYBAK09XFusSFgrK4un2ykcXGG3xjwlRaHZCUzr5ZAJIM6mz2ZC7DcKQAGWMFtinkg9p6BeV41YB7Ttr8m90YJu8mhUZCsJnmdffp8uNGiNZC73rErjkHZBS2tWn2mZBOCHf96AYlhZCqfki10UKI5uZBqDX8LQPwmqrEZBku5QLLEGHQ
-                // App ID: 3006486769578153
-                facebookInterstitialID = "352142549146998_352142985813621";
-                facebookBannerID = "352142549146998_352146195813300";
-                googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
-                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
-                googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
-                googleAdMobNativeID = "ca-app-pub-8354869049759576/6835662705";
-                Log.d(TAG, "BuildConfig.APPLICATION_ID = " + BuildConfig.APPLICATION_ID);
-                break;
-        }
 
-        AudienceNetworkAds.initialize(this);
         String testString = "";
-        // for debug mode
+        // for debug mode and for facebook
         if (BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
 
+        switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
+            case "com.smile.karaokeplayer":
+                AudienceNetworkAds.initialize(this);
+                facebookInterstitialID = "1712962715503258_1712963252169871";
+                facebookInterstitialID = testString + facebookInterstitialID;
+                facebookAds = new FacebookInterstitialAds(AppContext, facebookInterstitialID);
+                facebookBannerID = testString + "1712962715503258_2019623008170559";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~5549171584";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/7985456524";
+                break;
+            case "com.smile.videoplayer":
+                // Token: EAAEN04aiEXUBAHBQwZBZB4gmWOueuRTEZCHMCAWOHZBB7hjavIuXgKELNvtfcIGCJV72zkohipkSZALG51WCXX6xbN3oUy84i8NrIvuc44RTfypgdcyOTnaPyM1W4JZBjQvDGuWsCRGmbusWaZCKmWt5iCkhQklOKeZC4Edx6FDIGTUUiHMKURzS
+                // App ID: 633653050588487
+                // facebookInterstitialID = "296677124739445_296678328072658";
+                // facebookBannerID = testString + "296677124739445_296687284738429";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/7715939032";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/2158051096";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044";
+                AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
+                break;
+            case "com.smile.musicplayer":
+                // Token: EAAFARZAONXXYBAK09XFusSFgrK4un2ykcXGG3xjwlRaHZCUzr5ZAJIM6mz2ZC7DcKQAGWMFtinkg9p6BeV41YB7Ttr8m90YJu8mhUZCsJnmdffp8uNGiNZC73rErjkHZBS2tWn2mZBOCHf96AYlhZCqfki10UKI5uZBqDX8LQPwmqrEZBku5QLLEGHQ
+                // App ID: 3006486769578153
+                // facebookInterstitialID = "352142549146998_352142985813621";
+                // facebookBannerID = testString + "352142549146998_352146195813300";
+                googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
+                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
+                googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
+                googleAdMobNativeID = "ca-app-pub-8354869049759576/6835662705";
+                AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
+                break;
+        }
+
+
         // facebook
-        facebookInterstitialID = testString + facebookInterstitialID;
-        facebookAds = new FacebookInterstitialAds(AppContext, facebookInterstitialID);
+        // only for com.smile.karaokeplayer
+        // facebookInterstitialID = testString + facebookInterstitialID;
+        // facebookAds = new FacebookInterstitialAds(AppContext, facebookInterstitialID);
 
         // google
         MobileAds.initialize(AppContext, initializationStatus -> Log.d(TAG, "Google AdMob was initialized successfully."));

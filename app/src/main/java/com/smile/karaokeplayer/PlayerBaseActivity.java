@@ -202,6 +202,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
         // bannerLinearLayout.setGravity(Gravity.TOP);
 
+        /*  // removed on 2020-08-28 18:57
         String testString = "";
         // for debug mode
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
@@ -209,8 +210,9 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
         String facebookBannerID = testString + SmileApplication.facebookBannerID;
         //
+        */
         myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
-                , SmileApplication.googleAdMobBannerID, facebookBannerID);
+                , SmileApplication.googleAdMobBannerID, SmileApplication.facebookBannerID);
         myBannerAdView.showBannerAdViewFromAdMobOrFacebook(SmileApplication.AdProvider);
 
         // message area
