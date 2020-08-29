@@ -66,7 +66,7 @@ public class VLCMediaControllerCallback extends MediaControllerCompat.Callback {
                             }
                         }
                     };
-                    handler.postDelayed(runnable, 500); // delay 0.5 seconds
+                    handler.postDelayed(runnable, 1000); // delay 1 seconds
                 }
                 mPresenter.getPresentView().playButtonOffPauseButtonOn();
                 // set up a timer for supportToolbar's visibility

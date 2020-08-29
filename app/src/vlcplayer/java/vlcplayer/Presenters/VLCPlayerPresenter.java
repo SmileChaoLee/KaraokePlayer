@@ -50,8 +50,8 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     private MediaPlayer vlcPlayer;
 
     // instances of the following members have to be saved when configuration changed
-    private ArrayList<Integer> videoTrackIndicesList;
-    private ArrayList<Integer> audioTrackIndicesList;
+    private ArrayList<Integer> videoTrackIndicesList = new ArrayList<>();
+    private ArrayList<Integer> audioTrackIndicesList = new ArrayList<>();
 
     public interface VLCPlayerPresentView extends BasePresentView {
     }
@@ -138,7 +138,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         MediaPlayer.TrackDescription videoDis[] = vlcPlayer.getVideoTracks();
         int videoTrackId;
         String videoTrackName;
-        videoTrackIndicesList.clear();
+        videoTrackIndicesList = new ArrayList<>();
         if (videoDis != null) {
             // because it is null sometimes
             for (int i = 0; i < videoDis.length; i++) {
