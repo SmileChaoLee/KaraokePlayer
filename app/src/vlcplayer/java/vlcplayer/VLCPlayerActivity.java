@@ -41,8 +41,10 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
 
         mPresenter = new VLCPlayerPresenter(this, this);
 
-        Intent callingIntent = getIntent();
-        mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        // removed on 2020-12-08
+        // Intent callingIntent = getIntent();
+        // mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        //
 
         super.onCreate(savedInstanceState);
 

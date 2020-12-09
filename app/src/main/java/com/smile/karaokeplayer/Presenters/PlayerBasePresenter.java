@@ -152,6 +152,7 @@ public abstract class PlayerBasePresenter {
 
     @SuppressWarnings("unchecked")
     public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        Log.d(TAG, "PlayerBasePresenter --> initializeVariables()");
         if (savedInstanceState == null) {
             numberOfVideoTracks = 0;
             numberOfAudioTracks = 0;

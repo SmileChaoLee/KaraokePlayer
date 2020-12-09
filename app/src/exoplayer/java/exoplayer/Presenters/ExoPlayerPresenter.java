@@ -460,6 +460,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     @SuppressWarnings("unchecked")
     @Override
     public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        Log.d(TAG, "ExoPlayerPresenter --> initializeVariables()");
         super.initializeVariables(savedInstanceState, callingIntent);
         if (savedInstanceState == null) {
             videoTrackIndicesList = new ArrayList<>();

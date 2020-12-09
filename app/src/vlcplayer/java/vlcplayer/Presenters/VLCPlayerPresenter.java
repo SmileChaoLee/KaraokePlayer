@@ -256,6 +256,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     @Override
     @SuppressWarnings("unchecked")
     public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        Log.d(TAG, "VLCPlayerPresenter --> initializeVariables()");
         super.initializeVariables(savedInstanceState, callingIntent);
         if (savedInstanceState == null) {
             videoTrackIndicesList = new ArrayList<>();

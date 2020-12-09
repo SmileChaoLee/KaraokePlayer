@@ -42,8 +42,10 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
         mPresenter = new ExoPlayerPresenter(this, this);
 
-        Intent callingIntent = getIntent();
-        mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        // removed on 2020-12-08
+        // Intent callingIntent = getIntent();
+        // mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        //
 
         super.onCreate(savedInstanceState);
 
