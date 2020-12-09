@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="CustomActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
+    <style name="CustomActionButtonTheme" parent="@style/Widget.AppCompat.ActionButton">
         <!-- Required for API greater than and equal to 18 -->
         <item name="android:textSize">60px</item>
         <item name="android:textStyle">normal</item>

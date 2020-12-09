@@ -1,0 +1,12 @@
+com/google/android/exoplayer2/ext/av1/Gav1Decoder.java
+ com.google.android.exoplayer2.ext.av1.Gav1Decoder
+com/google/android/exoplayer2/ext/av1/Gav1DecoderException.java
+ com.google.android.exoplayer2.ext.av1.Gav1DecoderException
+com/google/android/exoplayer2/ext/av1/package-info.java
+ com.google.android.exoplayer2.ext.av1.package-info
+com/google/android/exoplayer2/ext/av1/Gav1Library.java
+ com.google.android.exoplayer2.ext.av1.Gav1Library
+com/google/android/exoplayer2/ext/av1/Libgav1VideoRenderer.java
+ com.google.android.exoplayer2.ext.av1.Libgav1VideoRenderer
+com/google/android/exoplayer2/ext/av1/BuildConfig.java
+ com.google.android.exoplayer2.ext.av1.BuildConfig

@@ -154,6 +154,12 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
             return;
         }
 
+        // added on 2020-12-08
+        Intent callingIntent = getIntent();
+        // Log.d(TAG, "PlayerBaseActivity --> getIntent() = " + callingIntent);
+        mPresenter.initializeVariables(savedInstanceState, callingIntent);
+        //
+
         textFontSize = mPresenter.getTextFontSize();
         fontScale = mPresenter.getFontScale();
         toastTextSize = mPresenter.getToastTextSize();

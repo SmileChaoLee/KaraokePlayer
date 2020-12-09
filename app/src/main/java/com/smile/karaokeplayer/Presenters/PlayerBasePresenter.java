@@ -152,6 +152,7 @@ public abstract class PlayerBasePresenter {
 
     @SuppressWarnings("unchecked")
     public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+        Log.d(TAG, "PlayerBasePresenter --> initializeVariables()");
         if (savedInstanceState == null) {
             numberOfVideoTracks = 0;
             numberOfAudioTracks = 0;
@@ -338,6 +339,7 @@ public abstract class PlayerBasePresenter {
     }
 
     public void startAutoPlay() {
+        Log.d(TAG, "startAutoPlay() is called.");
         if (mActivity.isFinishing()) {
             // activity is being destroyed
             return;
@@ -347,6 +349,8 @@ public abstract class PlayerBasePresenter {
         if (publicSongList != null) {
             publicSongListSize = publicSongList.size();
         }
+
+        Log.d(TAG, "startAutoPlay() --> publicSongListSize = " + publicSongListSize);
         if (publicSongListSize == 0) {
             return;
         }
@@ -354,6 +358,7 @@ public abstract class PlayerBasePresenter {
         boolean stillPlayNext = true;
         int repeatStatus = playingParam.getRepeatStatus();
         int publicNextSongIndex = playingParam.getPublicNextSongIndex();
+
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
                 // no repeat
@@ -385,8 +390,11 @@ public abstract class PlayerBasePresenter {
             publicNextSongIndex++;  // set next index of playlist that will be played
             playingParam.setPublicNextSongIndex(publicNextSongIndex);
         }
-        Log.d(TAG, "Repeat status = " + repeatStatus);
-        Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
+        Log.d(TAG, "startAutoPlay() -->finished--> Repeat status = " + repeatStatus);
+        // removed on 2020-12-08
+        // Log.d(TAG, "startAutoPlay() finished --> " + publicNextSongIndex--);
+        int nextIndex = publicNextSongIndex-1;
+        Log.d(TAG, "startAutoPlay() -->finished--> publicNextSongIndex-1 = " + nextIndex);
 
         presentView.setImageButtonStatus();
     }
@@ -438,7 +446,8 @@ public abstract class PlayerBasePresenter {
 
     public void playPreviousSong() {
         // if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-        if ( publicSongList==null || playingParam.isPlaySingleSong()) {
+        // if ( publicSongList==null || playingParam.isPlaySingleSong()) {  // removed on 2020-12-08
+        if ( publicSongList==null) {    // added on 2020-12-08
             return;
         }
         int publicSongListSize = publicSongList.size();
@@ -481,7 +490,8 @@ public abstract class PlayerBasePresenter {
 
     public void playNextSong() {
         // if ( publicSongList==null || !playingParam.isAutoPlay() || playingParam.isPlaySingleSong()) {
-        if (publicSongList == null || playingParam.isPlaySingleSong()) {
+        // if (publicSongList == null || playingParam.isPlaySingleSong()) { // removed on 2020-12-08
+        if (publicSongList == null) {   // added on 2020-12-08
             return;
         }
         int publicSongListSize = publicSongList.size();
@@ -571,12 +581,19 @@ public abstract class PlayerBasePresenter {
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
+                // called by SongListActivity
                 if (singleSongInfo == null) {
                     Log.d(TAG, "singleSongInfo is null");
                 } else {
                     Log.d(TAG, "singleSongInfo is not null");
                     playingParam.setAutoPlay(false);
-                    playSingleSong(singleSongInfo);
+                    // added on 2020-12-08
+                    // set publicSongList that only contains song info from SongListActivity
+                    publicSongList = new ArrayList<>();
+                    publicSongList.add(singleSongInfo);
+                    autoPlaySongList();
+                    //
+                    // playSingleSong(singleSongInfo); // removed on 2020-12-08
                 }
             }
         } else {

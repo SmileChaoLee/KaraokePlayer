@@ -44,13 +44,13 @@
     <style name="CustomToolbarTheme" parent="@android:style/Theme.Translucent">
         <item name="actionMenuTextColor">@drawable/main_menuitem_color</item>
         <item name="android:padding">0dp</item>
-        <item name="android:actionButtonStyle">@style/CustomActionButtonStyle</item>
-        <item name="actionButtonStyle">@style/CustomActionButtonStyle</item>
+        <item name="android:actionButtonStyle">@style/CustomActionButtonTheme</item>
+        <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
         <item name="actionOverflowMenuStyle">@style/CustomOverflowMenuStyle</item>
         <item name="actionOverflowButtonStyle">@style/CustomActionOverflowButtonStyle</item>
     </style>
 
-    <style name="CustomActionButtonStyle" parent="@style/Widget.AppCompat.ActionButton">
+    <style name="CustomActionButtonTheme" parent="@style/Widget.AppCompat.ActionButton">
         <!-- makes MenuItems in ActionBar, Toolbar, and Button not be capitalized automatically.
         this style can be put in main AppThem or the themes of ActionBar or Toolbar
         using item of <item name="actionButtonStyle">@style/CustomActionButtonTheme</item>
