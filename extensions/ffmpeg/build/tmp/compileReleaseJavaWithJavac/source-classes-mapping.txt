@@ -1,0 +1,12 @@
+com/google/android/exoplayer2/ext/ffmpeg/FfmpegDecoderException.java
+ com.google.android.exoplayer2.ext.ffmpeg.FfmpegDecoderException
+com/google/android/exoplayer2/ext/ffmpeg/package-info.java
+ com.google.android.exoplayer2.ext.ffmpeg.package-info
+com/google/android/exoplayer2/ext/ffmpeg/FfmpegDecoder.java
+ com.google.android.exoplayer2.ext.ffmpeg.FfmpegDecoder
+com/google/android/exoplayer2/ext/ffmpeg/FfmpegLibrary.java
+ com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary
+com/google/android/exoplayer2/ext/ffmpeg/BuildConfig.java
+ com.google.android.exoplayer2.ext.ffmpeg.BuildConfig
+com/google/android/exoplayer2/ext/ffmpeg/FfmpegAudioRenderer.java
+ com.google.android.exoplayer2.ext.ffmpeg.FfmpegAudioRenderer

@@ -1,0 +1,25 @@
+-- Merging decision tree log ---
+manifest
+ADDED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml:17:1-61
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml:17:1-61
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml:17:1-61
+	package
+		ADDED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml:17:11-59
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+	xmlns:android
+		ADDED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml:17:1-61
+uses-sdk
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+		ADDED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+		ADDED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml
+		INJECTED from C:\AndroidStudio\KaraokePlayer\extensions\flac\src\main\AndroidManifest.xml

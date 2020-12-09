@@ -1,0 +1,12 @@
+com/google/android/exoplayer2/ext/opus/package-info.java
+ com.google.android.exoplayer2.ext.opus.package-info
+com/google/android/exoplayer2/ext/opus/OpusDecoder.java
+ com.google.android.exoplayer2.ext.opus.OpusDecoder
+com/google/android/exoplayer2/ext/opus/LibopusAudioRenderer.java
+ com.google.android.exoplayer2.ext.opus.LibopusAudioRenderer
+com/google/android/exoplayer2/ext/opus/OpusLibrary.java
+ com.google.android.exoplayer2.ext.opus.OpusLibrary
+com/google/android/exoplayer2/ext/opus/OpusDecoderException.java
+ com.google.android.exoplayer2.ext.opus.OpusDecoderException
+com/google/android/exoplayer2/ext/opus/BuildConfig.java
+ com.google.android.exoplayer2.ext.opus.BuildConfig

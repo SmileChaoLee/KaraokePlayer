@@ -1,0 +1,14 @@
+com/google/android/exoplayer2/ext/vp9/BuildConfig.java
+ com.google.android.exoplayer2.ext.vp9.BuildConfig
+com/google/android/exoplayer2/ext/vp9/VpxOutputBuffer.java
+ com.google.android.exoplayer2.ext.vp9.VpxOutputBuffer
+com/google/android/exoplayer2/ext/vp9/package-info.java
+ com.google.android.exoplayer2.ext.vp9.package-info
+com/google/android/exoplayer2/ext/vp9/VpxLibrary.java
+ com.google.android.exoplayer2.ext.vp9.VpxLibrary
+com/google/android/exoplayer2/ext/vp9/VpxDecoderException.java
+ com.google.android.exoplayer2.ext.vp9.VpxDecoderException
+com/google/android/exoplayer2/ext/vp9/LibvpxVideoRenderer.java
+ com.google.android.exoplayer2.ext.vp9.LibvpxVideoRenderer
+com/google/android/exoplayer2/ext/vp9/VpxDecoder.java
+ com.google.android.exoplayer2.ext.vp9.VpxDecoder
