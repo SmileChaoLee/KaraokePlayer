@@ -6,8 +6,8 @@
     <dimen name="volume_pressed_seekbar_thumb_size">32dp</dimen>
     <dimen name="volume_seekbar_height">266dp</dimen>
     <dimen name="volume_progress_background_width">8dp</dimen>
-    <dimen name="duration_seekbar_thumb_size">13dp</dimen>
-    <dimen name="duration_pressed_seekbar_thumb_size">13dp</dimen>
+    <dimen name="duration_seekbar_thumb_size">26dp</dimen>
+    <dimen name="duration_pressed_seekbar_thumb_size">26dp</dimen>
     <dimen name="duration_progress_background_width">5dp</dimen>
     <dimen name="MediaRouterThemeTextSize">40dp</dimen>
 </resources>
