@@ -615,6 +615,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
 
     @Override
     public void releaseMediaSessionCompat() {
+        Log.d(TAG, "ExoPlayerPresenter.releaseMediaSessionCompat() is called.");
         super.releaseMediaSessionCompat();
 
         if (mediaControllerCallback != null) {
