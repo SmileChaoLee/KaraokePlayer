@@ -512,9 +512,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     @Override
     protected void onDestroy() {
         Log.d(TAG,"onDestroy() is called.");
-        if (mPresenter != null) {
-            mPresenter.releaseMediaSessionCompat();
-        }
         if (myBannerAdView != null) {
             myBannerAdView.destroy();
             myBannerAdView = null;
