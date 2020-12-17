@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.smilelibraries.utilities.ExternalStorageUtil;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.MediaPlayer;
@@ -30,6 +29,7 @@ import java.util.ArrayList;
 import vlcplayer.Callbacks.VLCMediaControllerCallback;
 import vlcplayer.Callbacks.VLCMediaSessionCallback;
 import vlcplayer.Listeners.VLCPlayerEventListener;
+import vlcplayer.utilities.ExternalStorageUtil;
 
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 
@@ -360,11 +360,13 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
 
     @Override
     public Uri getValidatedUri(Uri tempUri) {
+        Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() is called.");
         super.getValidatedUri(tempUri);
 
         Uri resultUri = null;
         try {
             String filePath = ExternalStorageUtil.getUriRealPath(callingContext, tempUri);
+            Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() --> filePath == " + filePath);
             if (filePath != null) {
                 if (!filePath.isEmpty()) {
                     File songFile = new File(filePath);
@@ -390,6 +392,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     @Override
     public void initMediaSessionCompat() {
         // Create a MediaSessionCompat
+        Log.d(TAG, "VLCPlayerPresenter.initMediaSessionCompat() is called.");
         super.initMediaSessionCompat();
 
         VLCMediaSessionCallback mediaSessionCallback = new VLCMediaSessionCallback(this, mLibVLC, vlcPlayer);
@@ -406,6 +409,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
 
     @Override
     public void releaseMediaSessionCompat() {
+        Log.d(TAG, "VLCPlayerPresenter.releaseMediaSessionCompat() is called.");
         super.releaseMediaSessionCompat();
 
         if (mediaControllerCallback != null) {

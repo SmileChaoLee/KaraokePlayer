@@ -41,6 +41,7 @@ public abstract class PlayerBasePresenter {
     protected final float textFontSize;
     protected final float fontScale;
     protected final float toastTextSize;
+
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
 
@@ -305,6 +306,7 @@ public abstract class PlayerBasePresenter {
         if (filePath.equals("")) {
             return;
         }
+        Log.d(TAG, "filePath = " + filePath);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
@@ -321,7 +323,7 @@ public abstract class PlayerBasePresenter {
         }
         mediaUri = getValidatedUri(Uri.parse(filePath));
 
-        Log.i(TAG, "mediaUri = " + mediaUri);
+        Log.d(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
         }
@@ -528,6 +530,7 @@ public abstract class PlayerBasePresenter {
     }
 
     public Uri getValidatedUri(Uri tempUri) {
+        Log.d(TAG, "PlayerBasePresenter.getValidatedUri() is called.");
         return tempUri;
     }
 
@@ -709,6 +712,7 @@ public abstract class PlayerBasePresenter {
     }
 
     public void initMediaSessionCompat() {
+        Log.d(TAG, "PlayerBasePresenter.initMediaSessionCompat() is called.");
         // Create a MediaSessionCompat
         mediaSessionCompat = new MediaSessionCompat(callingContext, PlayerConstants.LOG_TAG);
         // Do not let MediaButtons restart the player when the app is not visible
@@ -717,6 +721,7 @@ public abstract class PlayerBasePresenter {
     }
 
     public void releaseMediaSessionCompat() {
+        Log.d(TAG, "PlayerBasePresenter.releaseMediaSessionCompat() is called.");
         if (mediaSessionCompat != null) {
             mediaSessionCompat.setActive(false);
             mediaSessionCompat.release();
