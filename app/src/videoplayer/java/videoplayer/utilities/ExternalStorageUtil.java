@@ -117,11 +117,12 @@ public final class ExternalStorageUtil {
                         String type = idArr[0];
                         Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> type = " + type);
                         String realDocId = idArr[1];
+                        String relativePath = "/" + realDocId;
                         Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> realDocId = " + realDocId);
                         if ("primary".equalsIgnoreCase(type)) {
                             Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> primary");
-                            ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
-                            // ret = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + realDocId;
+                            ret = Environment.getExternalStorageDirectory() + relativePath;
+                            // ret = Environment.getExternalStorageDirectory().getAbsolutePath() + relativePath;
                         } else {
                             int pos = -1;
                             String retTemp = System.getenv("SECONDARY_STORAGE");
@@ -136,10 +137,21 @@ public final class ExternalStorageUtil {
                                 }
                             }
                             if (pos>=0) {
-                                ret = retTemp.substring(0, pos) + "/" + realDocId;
+                                ret = retTemp.substring(0, pos) + relativePath;
+                                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);
+                            } else {
+                                // mnt directory
+                                ret = Environment.getExternalStorageDirectory() + relativePath;
+                                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> not primary -->getExternalStorageDirectory() = " + ret);
+                                if (!fileExists(ret)) {
+                                    ret = "/mnt/sdcard" + relativePath;
+                                    if (!fileExists(ret)) {
+                                        // secondary storage
+                                        ret = "/mnt/sdcard1" + relativePath;
+                                    }
+                                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> mnt-->mnt = " + ret);
+                                }
                             }
-                            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);
-                            // ret = "/storage/sdcard1" + "/" + realDocId;
                         }
                     }
                 }
