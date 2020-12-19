@@ -17,12 +17,10 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -52,10 +50,11 @@ import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
 import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
-import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
+
+import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
 
@@ -134,8 +133,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
     };
 
-    protected abstract PlayerBasePresenter getPlayerBasePresenter();
-    protected abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
+    public abstract PlayerBasePresenter getPlayerBasePresenter();
+    public abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
     public abstract void setMediaRouteButtonVisible(boolean isVisible);
 
     @Override
@@ -148,6 +147,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         setContentView(R.layout.activity_player_base);
 
         mPresenter = getPlayerBasePresenter();
+        Log.d(TAG, "mPresenter = " + mPresenter);
         if (mPresenter == null) {
             Log.d(TAG, "mPresenter is null so exit activity.");
             returnToPrevious();
@@ -372,7 +372,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 }
                 break;
             case R.id.open:
-                ContentUriAccessUtil.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+                mPresenter.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE, false);
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -852,6 +852,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         switchToMusicImageButton.setVisibility(View.VISIBLE);
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
+                break;
             case SmileApplication.videoPlayerFlavor:
                 switchToVocalImageButton.setVisibility(View.GONE);
                 break;

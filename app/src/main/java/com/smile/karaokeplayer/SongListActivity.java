@@ -27,12 +27,13 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
-import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 public class SongListActivity extends AppCompatActivity {
 

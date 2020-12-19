@@ -71,6 +71,14 @@ public abstract class PlayerBasePresenter {
         void showInterstitialAd(boolean isReturnToPrevious);
     }
 
+    public abstract void setPlayerTime(int progress);
+    public abstract void setAudioVolume(float volume);
+    public abstract void setAudioVolumeInsideVolumeSeekBar(int i);
+    public abstract int getCurrentProgressForVolumeSeekBar();
+    public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
+    public abstract void specificPlayerReplayMedia(long currentAudioPosition);
+    public abstract void selectFileToOpen(Activity activity, int requestCode, boolean isSingle);
+
     public PlayerBasePresenter(Context context, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
         this.callingContext = context;
@@ -203,11 +211,6 @@ public abstract class PlayerBasePresenter {
         return true;
     }
 
-    public abstract void setPlayerTime(int progress);
-    public abstract void setAudioVolume(float volume);
-    public abstract void setAudioVolumeInsideVolumeSeekBar(int i);
-    public abstract int getCurrentProgressForVolumeSeekBar();
-
     public void playLeftChannel() {
         playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
         setAudioVolume(playingParam.getCurrentVolume());
@@ -222,8 +225,6 @@ public abstract class PlayerBasePresenter {
         playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
         setAudioVolume(playingParam.getCurrentVolume());
     }
-
-    public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
 
     public void switchAudioToVocal() {
         if (!playingParam.isInSongList()) {
@@ -681,8 +682,6 @@ public abstract class PlayerBasePresenter {
         // removed the following on 2020-08-16 because app wants to keep the status
         // playingParam.setAutoPlay(false);    // no auto playing song list
     }
-
-    protected abstract void specificPlayerReplayMedia(long currentAudioPosition);
 
     public void replayMedia() {
         if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {

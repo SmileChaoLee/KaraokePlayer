@@ -48,6 +48,7 @@ import exoplayer.ExoRenderersFactory.MyRenderersFactory;
 import exoplayer.Listeners.ExoPlayerCastStateListener;
 import exoplayer.Listeners.ExoPlayerEventListener;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 
@@ -582,7 +583,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    protected void specificPlayerReplayMedia(long currentAudioPosition) {
+    public void specificPlayerReplayMedia(long currentAudioPosition) {
         // song is playing, paused, or finished playing
         // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
         // because it will send Play.STATE_ENDED event after the playing has finished
@@ -641,6 +642,11 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         outState.putParcelable(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters);
 
         super.saveInstanceState(outState);
+    }
+
+    @Override
+    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
+        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
     }
 
     // methods related to ChromeCast

@@ -129,13 +129,6 @@ public final class ExternalStorageUtil {
                             if (retTemp != null) {
                                 pos = retTemp.indexOf(':');
                             }
-                            if (pos<0) {
-                                // Third storage
-                                retTemp = System.getenv("THIRD_STORAGE");
-                                if (retTemp != null) {
-                                    pos = retTemp.indexOf(':');
-                                }
-                            }
                             if (pos>=0) {
                                 ret = retTemp.substring(0, pos) + relativePath;
                                 Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);

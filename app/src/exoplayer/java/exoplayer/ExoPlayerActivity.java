@@ -1,6 +1,5 @@
 package exoplayer;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -118,12 +117,12 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
     // implement abstract methods of super class
     @Override
-    protected PlayerBasePresenter getPlayerBasePresenter() {
+    public PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 
     @Override
-    protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
+    public void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
         // MediaRouteButton View
         mMediaRouteButton = findViewById(R.id.media_route_button);
         if (mPresenter.getCurrentCastState() == CastState.NO_DEVICES_AVAILABLE) {

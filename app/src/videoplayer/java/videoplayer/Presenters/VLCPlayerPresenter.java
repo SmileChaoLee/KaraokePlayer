@@ -29,13 +29,14 @@ import java.util.ArrayList;
 import videoplayer.Callbacks.VLCMediaControllerCallback;
 import videoplayer.Callbacks.VLCMediaSessionCallback;
 import videoplayer.Listeners.VLCPlayerEventListener;
+import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 import videoplayer.utilities.ExternalStorageUtil;
 
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 
     private static final String TAG = "VLCPlayerPresenter";
 
-    private final VLCPlayerPresentView presentView;
+    private final BasePresentView presentView;
     private final Context callingContext;
     private final Activity mActivity;
     private final AudioManager audioManager;
@@ -53,10 +54,10 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     private ArrayList<Integer> videoTrackIndicesList = new ArrayList<>();
     private ArrayList<Integer> audioTrackIndicesList = new ArrayList<>();
 
-    public interface VLCPlayerPresentView extends BasePresentView {
-    }
+    // public interface VLCPlayerPresentView extends BasePresentView {
+    // }
 
-    public VLCPlayerPresenter(Context context, VLCPlayerPresentView presentView) {
+    public VLCPlayerPresenter(Context context, BasePresentView presentView) {
         super(context, presentView);
         this.callingContext = context;
         this.presentView = presentView;
@@ -80,7 +81,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         this.videoTrackIndicesList = videoTrackIndicesList;
     }
 
-    public VLCPlayerPresentView getPresentView() {
+    public BasePresentView getPresentView() {
         return presentView;
     }
 
@@ -381,7 +382,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    protected void specificPlayerReplayMedia(long currentAudioPosition) {
+    public void specificPlayerReplayMedia(long currentAudioPosition) {
         vlcPlayer.setTime(currentAudioPosition); // use time to set position
         switchAudioToVocal();
         if (!vlcPlayer.isPlaying()) {
@@ -430,5 +431,10 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         outState.putIntegerArrayList("AudioTrackIndexList", audioTrackIndicesList);
 
         super.saveInstanceState(outState);
+    }
+
+    @Override
+    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
+        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
     }
 }
