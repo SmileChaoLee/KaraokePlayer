@@ -277,12 +277,10 @@ public class SongListActivity extends AppCompatActivity {
 
             switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
                 case SmileApplication.exoPlayerFlavor:
-                case SmileApplication.vlcPlayerFlavor:
                     audioMusicLinearLayout.setVisibility(View.VISIBLE);
                     audioVocalLinearLayout.setVisibility(View.VISIBLE);
                     break;
                 case SmileApplication.videoPlayerFlavor:
-                case SmileApplication.musicPlayerFlavor:
                     audioMusicLinearLayout.setVisibility(View.GONE);
                     audioVocalLinearLayout.setVisibility(View.GONE);
                     break;

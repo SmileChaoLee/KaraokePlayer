@@ -1,7 +1,6 @@
-package vlcplayer;
+package videoplayer;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import vlcplayer.Presenters.VLCPlayerPresenter;
+import videoplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPresenter.VLCPlayerPresentView{
 

@@ -1,4 +1,4 @@
-package vlcplayer.Listeners;
+package videoplayer.Listeners;
 
 import android.content.Context;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -11,7 +11,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.MediaPlayer;
 
-import vlcplayer.Presenters.VLCPlayerPresenter;
+import videoplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 

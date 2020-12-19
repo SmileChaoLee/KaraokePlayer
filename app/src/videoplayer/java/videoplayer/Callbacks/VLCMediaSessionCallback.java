@@ -1,4 +1,4 @@
-package vlcplayer.Callbacks;
+package videoplayer.Callbacks;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IMedia;
 
-import vlcplayer.Presenters.VLCPlayerPresenter;
+import videoplayer.Presenters.VLCPlayerPresenter;
 
 public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 

@@ -1,4 +1,4 @@
-package vlcplayer.utilities;
+package videoplayer.utilities;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -11,6 +11,8 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
+
+import java.io.File;
 
 public final class ExternalStorageUtil {
 
@@ -116,18 +118,29 @@ public final class ExternalStorageUtil {
                         Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> type = " + type);
                         String realDocId = idArr[1];
                         Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> realDocId = " + realDocId);
-                        /*
-                        // removed on 2020-12-17 because it is a bug for some Android device
-                        // like Android 5.1
                         if ("primary".equalsIgnoreCase(type)) {
-                            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> \"primary\".equalsIgnoreCase(type)");
-                            // ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
-                            ret = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + realDocId;
+                            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> primary");
+                            ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
+                            // ret = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + realDocId;
+                        } else {
+                            int pos = -1;
+                            String retTemp = System.getenv("SECONDARY_STORAGE");
+                            if (retTemp != null) {
+                                pos = retTemp.indexOf(':');
+                            }
+                            if (pos<0) {
+                                // Third storage
+                                retTemp = System.getenv("THIRD_STORAGE");
+                                if (retTemp != null) {
+                                    pos = retTemp.indexOf(':');
+                                }
+                            }
+                            if (pos>=0) {
+                                ret = retTemp.substring(0, pos) + "/" + realDocId;
+                            }
+                            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);
+                            // ret = "/storage/sdcard1" + "/" + realDocId;
                         }
-                         */
-                        // ret = Environment.getExternalStorageDirectory() + "/" + realDocId;
-                        ret = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + realDocId;
-                        Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> ret = " + ret);
                     }
                 }
             } else if (isContentUri(uri)) {
@@ -275,5 +288,11 @@ public final class ExternalStorageUtil {
         }
 
         return ret;
+    }
+
+    private static boolean fileExists(String filePath) {
+        File file = new File(filePath);
+
+        return file.exists();
     }
 }

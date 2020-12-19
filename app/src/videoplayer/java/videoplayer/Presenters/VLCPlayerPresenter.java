@@ -1,4 +1,4 @@
-package vlcplayer.Presenters;
+package videoplayer.Presenters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -26,10 +26,10 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 import java.io.File;
 import java.util.ArrayList;
 
-import vlcplayer.Callbacks.VLCMediaControllerCallback;
-import vlcplayer.Callbacks.VLCMediaSessionCallback;
-import vlcplayer.Listeners.VLCPlayerEventListener;
-import vlcplayer.utilities.ExternalStorageUtil;
+import videoplayer.Callbacks.VLCMediaControllerCallback;
+import videoplayer.Callbacks.VLCMediaSessionCallback;
+import videoplayer.Listeners.VLCPlayerEventListener;
+import videoplayer.utilities.ExternalStorageUtil;
 
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 

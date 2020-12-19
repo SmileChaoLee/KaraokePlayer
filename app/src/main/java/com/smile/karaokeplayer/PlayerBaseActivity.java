@@ -337,10 +337,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
                 break;
-            case SmileApplication.vlcPlayerFlavor:
-                break;
-            case SmileApplication.musicPlayerFlavor:
-                audioTrackMenuItem.setVisible(false);
             case SmileApplication.videoPlayerFlavor:
                 MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
                 channelMenuItem.setVisible(false);
@@ -856,11 +852,6 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         switchToMusicImageButton.setVisibility(View.VISIBLE);
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
-            case SmileApplication.vlcPlayerFlavor:
-                switchToVocalImageButton.setVisibility(View.VISIBLE);
-                break;
-            case SmileApplication.musicPlayerFlavor:
-                switchToMusicImageButton.setVisibility(View.GONE);
             case SmileApplication.videoPlayerFlavor:
                 switchToVocalImageButton.setVisibility(View.GONE);
                 break;

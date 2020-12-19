@@ -30,26 +30,12 @@ android {
             minSdkVersion 16
             manifestPlaceholders = [flavorLegacyExternalStorage: "false"]
         }
-        vlcplayer {
-            dimension("player")
-            minSdkVersion 17
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"]
-        }
-
         videoplayer {
             dimension("player")
             minSdkVersion 17
             applicationId = "com.smile.videoplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true"
                                     , google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
-        }
-
-        musicplayer {
-            dimension("player")
-            minSdkVersion 17
-            applicationId "com.smile.musicplayer"
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , google_AdMobAppID: "ca-app-pub-8354869049759576~3279561070"]
         }
     }
 
@@ -68,27 +54,12 @@ android {
                 srcFile "src/exoplayer/AndroidManifest.xml"
             }
         }
-        vlcplayer {
-            // java.srcDirs += "src/common/java"
-            // res.srcDirs += "src/vlcplayer/res"
-            manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
-            }
-        }
 
         videoplayer {
-            java.srcDirs += "src/vlcplayer/java"
-            res.srcDirs += "src/vlcplayer/res"
+            // java.srcDirs += "src/vlcplayer/java"
+            // res.srcDirs += "src/vlcplayer/res"
             manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
-            }
-        }
-
-        musicplayer {
-            java.srcDirs += "src/vlcplayer/java"
-            res.srcDirs += "src/vlcplayer/res"
-            manifest {
-                srcFile "src/vlcplayer/AndroidManifest.xml"
+                srcFile "src/videoplayer/AndroidManifest.xml"
             }
         }
     }
@@ -155,14 +126,10 @@ dependencies {
     exoplayerImplementation project(':extension-vp9')
     exoplayerImplementation project(':extension-av1')
 
-    vlcplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
-
-    videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
-
-    musicplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
 }
 
 apply plugin: 'com.google.gms.google-services'

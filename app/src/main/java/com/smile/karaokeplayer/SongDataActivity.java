@@ -179,11 +179,9 @@ public class SongDataActivity extends AppCompatActivity {
 
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
-            case SmileApplication.vlcPlayerFlavor:
                 karaokeSettingLayout.setVisibility(View.VISIBLE);
                 break;
             case SmileApplication.videoPlayerFlavor:
-            case SmileApplication.musicPlayerFlavor:
                 karaokeSettingLayout.setVisibility(View.GONE);
                 break;
         }

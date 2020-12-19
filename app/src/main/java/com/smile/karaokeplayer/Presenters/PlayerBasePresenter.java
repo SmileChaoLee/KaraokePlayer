@@ -238,14 +238,12 @@ public abstract class PlayerBasePresenter {
         int audioChannel = playingParam.getMusicAudioChannel();
         switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
             case SmileApplication.exoPlayerFlavor:
-            case SmileApplication.vlcPlayerFlavor:
                 if (!playingParam.isInSongList()) {
                     // not in the database and show message
                     presentView.showMusicAndVocalIsNotSet();
                 }
                 break;
             case SmileApplication.videoPlayerFlavor:
-            case SmileApplication.musicPlayerFlavor:
                 Log.d(TAG, "switchAudioToMusic() is called");
                 int trackIndex;
                 int channel;
