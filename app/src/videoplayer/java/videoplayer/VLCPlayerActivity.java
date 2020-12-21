@@ -1,6 +1,7 @@
 package videoplayer;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -147,6 +148,11 @@ public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPla
     @Override
     public void setMediaRouteButtonVisible(boolean isVisible) {
 
+    }
+
+    @Override
+    public Intent createIntentForSongListActivity() {
+        return new Intent(getApplicationContext(), SongListActivity.class);
     }
     // end of implementing methods of super class
 }

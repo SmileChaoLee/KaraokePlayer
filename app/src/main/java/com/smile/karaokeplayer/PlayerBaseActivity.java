@@ -54,8 +54,6 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
-
 public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
 
     private static final String TAG = "PlayerBaseActivity";
@@ -136,6 +134,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     public abstract PlayerBasePresenter getPlayerBasePresenter();
     public abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
     public abstract void setMediaRouteButtonVisible(boolean isVisible);
+    public abstract Intent createIntentForSongListActivity();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -362,7 +361,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 mPresenter.setAutoPlayStatusAndAction();
                 break;
             case R.id.songList:
-                Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
+                Intent songListIntent = createIntentForSongListActivity();
+                // Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
                 Class childClass = getClass();
                 Log.d(TAG, "childClass = " + childClass);
                 if (childClass != null) {
@@ -372,7 +372,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 }
                 break;
             case R.id.open:
-                mPresenter.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+                mPresenter.selectFileToOpenPresenter(PlayerConstants.FILE_READ_REQUEST_CODE, false);
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -497,8 +497,10 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
-            if (uris.size()>0) {
+            Log.d(TAG, "onActivityResult() is called.");
+            ArrayList<Uri> uris = mPresenter.getUrisListFromIntentPresenter(data);
+            if (uris!=null && uris.size()>0) {
+                Log.d(TAG, "onActivityResult( --> uris.size() = " + uris.size());
                 // There are files selected
                 mPresenter.playSelectedUrisFromStorage(uris);
             }

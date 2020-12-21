@@ -13,6 +13,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.aditya.filebrowser.FileChooser;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
@@ -31,6 +32,8 @@ import videoplayer.Callbacks.VLCMediaSessionCallback;
 import videoplayer.Listeners.VLCPlayerEventListener;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 import videoplayer.utilities.ExternalStorageUtil;
+import videoplayer.utilities.FileSelectUtil;
+import videoplayer.utilities.UriUtil;
 
 public class VLCPlayerPresenter extends PlayerBasePresenter {
 
@@ -362,7 +365,14 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     @Override
     public Uri getValidatedUri(Uri tempUri) {
         Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() is called.");
-        super.getValidatedUri(tempUri);
+        tempUri = super.getValidatedUri(tempUri);
+
+        return tempUri;
+
+        /*
+        // removed on 2020-12-21
+        // because of using file picker to select file
+        // so the uri is already file uri
 
         Uri resultUri = null;
         try {
@@ -379,6 +389,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         }
 
         return resultUri;
+        */
     }
 
     @Override
@@ -434,7 +445,12 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
-        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
+        FileSelectUtil.selectFileToOpen(mActivity, requestCode, isSingle);
+    }
+
+    @Override
+    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
+        return UriUtil.getUrisListFromIntent(callingContext, data);
     }
 }

@@ -1,5 +1,7 @@
 package exoplayer;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -152,6 +154,11 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         } else {
             mMediaRouteButton.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public Intent createIntentForSongListActivity() {
+        return new Intent(getApplicationContext(), SongListActivity.class);
     }
 
     // end of implementing methods of super class

@@ -129,6 +129,7 @@ dependencies {
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+    videoplayerImplementation 'com.adityak:browsemyfiles:1.9'   // file chooser
 }
 
 apply plugin: 'com.google.gms.google-services'

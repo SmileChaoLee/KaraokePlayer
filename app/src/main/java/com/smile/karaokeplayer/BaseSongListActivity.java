@@ -33,11 +33,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
+public abstract class BaseSongListActivity extends AppCompatActivity {
 
-public class SongListActivity extends AppCompatActivity {
-
-    private static final String TAG = "SongListActivity";
+    private static final String TAG = "BaseSongListActivity";
     private static final int ADD_ONE_SONG_TO_PLAY_LIST = 1;
     private static final int EDIT_ONE_SONG_TO_PLAY_LIST = 2;
     private static final int DELETE_ONE_SONG_TO_PLAY_LIST = 3;
@@ -51,6 +49,12 @@ public class SongListActivity extends AppCompatActivity {
     private ArrayList<SongInfo> mSongList = new ArrayList<>();
     private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
+
+    public abstract void selectOneFileToAddSongList(int requestCode);
+    public abstract void selectMultipleFileToAddSongList(int requestCode);
+    public abstract ArrayList<Uri> getUrisListFromIntentSongList(Intent data);
+    public abstract void editOneSongFromSongList(SongInfo singleSongInfo, int requestCode);
+    public abstract void deleteOneSongFromSongList(SongInfo singleSongInfo, int requestCode);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +73,12 @@ public class SongListActivity extends AppCompatActivity {
         TextView songListStringTextView = findViewById(R.id.songListStringTextView);
         ScreenUtil.resizeTextSize(songListStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
-        Button addoneSongListButton = findViewById(R.id.addOneSongListButton);
-        ScreenUtil.resizeTextSize(addoneSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        addoneSongListButton.setOnClickListener(new View.OnClickListener() {
+        Button addOneSongListButton = findViewById(R.id.addOneSongListButton);
+        ScreenUtil.resizeTextSize(addOneSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        addOneSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent addIntent = new Intent(SongListActivity.this, SongDataActivity.class);
-                addIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.AddActionString);
-                startActivityForResult(addIntent, ADD_ONE_SONG_TO_PLAY_LIST);
+                selectOneFileToAddSongList(ADD_ONE_SONG_TO_PLAY_LIST);
             }
         });
 
@@ -85,8 +87,7 @@ public class SongListActivity extends AppCompatActivity {
         addSongsListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // selecting multiple files. Can be single
-                ContentUriAccessUtil.selectFileToOpen(SongListActivity.this, ADD_MULTIPLE_SONGS_TO_PLAY_LIST, false);
+                selectMultipleFileToAddSongList(ADD_MULTIPLE_SONGS_TO_PLAY_LIST);
             }
         });
 
@@ -137,7 +138,7 @@ public class SongListActivity extends AppCompatActivity {
                 case ADD_ONE_SONG_TO_PLAY_LIST:
                     break;
                 case ADD_MULTIPLE_SONGS_TO_PLAY_LIST:
-                    ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
+                    ArrayList<Uri> uris = getUrisListFromIntentSongList(data);
                     // this activity allows only one file selected
                     if (uris.size()>0) {
                         // There are files selected
@@ -276,7 +277,7 @@ public class SongListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             //
 
-            switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
+            switch (BuildConfig.FLAVOR.toLowerCase()) {
                 case SmileApplication.exoPlayerFlavor:
                     audioMusicLinearLayout.setVisibility(View.VISIBLE);
                     audioVocalLinearLayout.setVisibility(View.VISIBLE);
@@ -331,20 +332,14 @@ public class SongListActivity extends AppCompatActivity {
                 editSongListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent editIntent = new Intent(context, SongDataActivity.class);
-                        editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
-                        editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-                        startActivityForResult(editIntent, EDIT_ONE_SONG_TO_PLAY_LIST);
+                        editOneSongFromSongList(singleSongInfo, EDIT_ONE_SONG_TO_PLAY_LIST);
                     }
                 });
 
                 deleteSongListButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent deleteIntent = new Intent(context, SongDataActivity.class);
-                        deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
-                        deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-                        startActivityForResult(deleteIntent, DELETE_ONE_SONG_TO_PLAY_LIST);
+                        deleteOneSongFromSongList(singleSongInfo, DELETE_ONE_SONG_TO_PLAY_LIST);
                     }
                 });
 

@@ -47,6 +47,8 @@ import com.smile.karaokeplayer.Constants.PlayerConstants;
 import exoplayer.ExoRenderersFactory.MyRenderersFactory;
 import exoplayer.Listeners.ExoPlayerCastStateListener;
 import exoplayer.Listeners.ExoPlayerEventListener;
+import exoplayer.Utilities.UriUtil;
+
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
@@ -645,8 +647,13 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
-        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
+        ContentUriAccessUtil.selectFileToOpen(mActivity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    }
+
+    @Override
+    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
+        return UriUtil.getUrisListFromIntent(callingContext, data);
     }
 
     // methods related to ChromeCast

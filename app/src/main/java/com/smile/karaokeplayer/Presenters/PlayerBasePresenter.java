@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.smile.karaokeplayer.BuildConfig;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -77,7 +76,8 @@ public abstract class PlayerBasePresenter {
     public abstract int getCurrentProgressForVolumeSeekBar();
     public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
     public abstract void specificPlayerReplayMedia(long currentAudioPosition);
-    public abstract void selectFileToOpen(Activity activity, int requestCode, boolean isSingle);
+    public abstract void selectFileToOpenPresenter(int requestCode, boolean isSingle);
+    public abstract ArrayList<Uri> getUrisListFromIntentPresenter(Intent data);
 
     public PlayerBasePresenter(Context context, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");

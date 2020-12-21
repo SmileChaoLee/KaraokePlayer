@@ -38,8 +38,8 @@
             android:name=".PlayerBaseActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
         </activity>
-        <activity android:name=".SongListActivity" />
-        <activity android:name=".SongDataActivity" />
+        <activity android:name=".BaseSongListActivity" />
+        <activity android:name=".BaseSongDataActivity" />
 
     </application>
 
