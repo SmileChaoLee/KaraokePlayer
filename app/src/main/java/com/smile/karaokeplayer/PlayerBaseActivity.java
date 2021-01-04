@@ -82,7 +82,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
-    private ImageButton switchToVocalImageButton;
+    protected ImageButton switchToVocalImageButton;
 
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
@@ -135,6 +135,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     public abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
     public abstract void setMediaRouteButtonVisible(boolean isVisible);
     public abstract Intent createIntentForSongListActivity();
+    public abstract void setMenuItemsVisibility();
+    public abstract void setSwitchToVocalImageButtonVisibility();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -333,14 +335,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
 
         //
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
-                channelMenuItem.setVisible(false);
-                break;
-        }
+        setMenuItemsVisibility();   // abstract method
+        //
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -852,13 +848,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         // boolean isAutoPlay = playingParam.isAutoPlay();
         switchToMusicImageButton.setEnabled(true);
         switchToMusicImageButton.setVisibility(View.VISIBLE);
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                switchToVocalImageButton.setVisibility(View.GONE);
-                break;
-        }
+
+        setSwitchToVocalImageButtonVisibility();    // abstract method
 
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();

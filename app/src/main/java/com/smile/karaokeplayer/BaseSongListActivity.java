@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
     public abstract ArrayList<Uri> getUrisListFromIntentSongList(Intent data);
     public abstract void editOneSongFromSongList(SongInfo singleSongInfo, int requestCode);
     public abstract void deleteOneSongFromSongList(SongInfo singleSongInfo, int requestCode);
+    public abstract void setAudioLinearLayoutVisibility(LinearLayout linearLayout);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +252,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(filePathStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final TextView filePathTextView = view.findViewById(R.id.filePathTextView);
             ScreenUtil.resizeTextSize(filePathTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-
+            //
             final LinearLayout audioMusicLinearLayout = view.findViewById(R.id.audioMusicLinearLayout);
             //
             final TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
@@ -263,7 +265,6 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             final TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
             ScreenUtil.resizeTextSize(musicChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             //
-
             final LinearLayout audioVocalLinearLayout = view.findViewById(R.id.audioVocalLinearLayout);
             //
             final TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
@@ -276,18 +277,9 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             final TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
             ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             //
-
-            switch (BuildConfig.FLAVOR.toLowerCase()) {
-                case SmileApplication.exoPlayerFlavor:
-                    audioMusicLinearLayout.setVisibility(View.VISIBLE);
-                    audioVocalLinearLayout.setVisibility(View.VISIBLE);
-                    break;
-                case SmileApplication.videoPlayerFlavor:
-                    audioMusicLinearLayout.setVisibility(View.GONE);
-                    audioVocalLinearLayout.setVisibility(View.GONE);
-                    break;
-            }
-
+            setAudioLinearLayoutVisibility(audioMusicLinearLayout); // abstract method
+            setAudioLinearLayoutVisibility(audioVocalLinearLayout);
+            //
             final TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
             ScreenUtil.resizeTextSize(includedPlaylistStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);

@@ -2,6 +2,8 @@ package videoplayer;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.smile.karaokeplayer.BaseSongListActivity;
 import com.smile.karaokeplayer.Constants.CommonConstants;
@@ -46,5 +48,10 @@ public class SongListActivity extends BaseSongListActivity {
         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
         deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
         startActivityForResult(deleteIntent, requestCode);
+    }
+
+    @Override
+    public void setAudioLinearLayoutVisibility(LinearLayout linearLayout) {
+        linearLayout.setVisibility(View.GONE);
     }
 }

@@ -52,6 +52,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private Spinner edit_vocalTrackSpinner;
     private Spinner edit_vocalChannelSpinner;
     private CheckBox edit_includedPlaylistCheckBox;
+    protected LinearLayout karaokeSettingLayout;
 
     private String actionButtonString;
     private String crudAction;;
@@ -59,6 +60,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
 
     public abstract void selectOneFilePathSongData(int requestCode);
     public abstract ArrayList<Uri> getUrisListFromIntentSongData(Intent data);
+    public abstract void setKaraokeSettingLayoutVisibility();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +154,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
             }
         });
 
-        LinearLayout karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
+        karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
         //
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
@@ -177,16 +179,10 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         edit_vocalChannelSpinner = findViewById(R.id.edit_vocalChannelSpinner);
         edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
         edit_vocalChannelSpinner.setSelection(mSongInfo.getVocalChannel());
-        //
 
-        switch (BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                karaokeSettingLayout.setVisibility(View.VISIBLE);
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                karaokeSettingLayout.setVisibility(View.GONE);
-                break;
-        }
+        //
+        setKaraokeSettingLayoutVisibility();    // abstract method
+        //
 
         TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
         ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);

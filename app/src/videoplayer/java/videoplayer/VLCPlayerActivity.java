@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import androidx.core.content.ContextCompat;
 
 import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.util.VLCVideoLayout;
@@ -153,6 +155,17 @@ public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPla
     @Override
     public Intent createIntentForSongListActivity() {
         return new Intent(getApplicationContext(), SongListActivity.class);
+    }
+
+    @Override
+    public void setMenuItemsVisibility() {
+        MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
+        channelMenuItem.setVisible(false);
+    }
+
+    @Override
+    public void setSwitchToVocalImageButtonVisibility() {
+        switchToVocalImageButton.setVisibility(View.GONE);
     }
     // end of implementing methods of super class
 }

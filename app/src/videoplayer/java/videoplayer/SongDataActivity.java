@@ -2,6 +2,7 @@ package videoplayer;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
 
 import com.smile.karaokeplayer.BaseSongDataActivity;
 
@@ -20,6 +21,11 @@ public class SongDataActivity extends BaseSongDataActivity {
     @Override
     public ArrayList<Uri> getUrisListFromIntentSongData(Intent data) {
         return UriUtil.getUrisListFromIntent(this, data);
+    }
+
+    @Override
+    public void setKaraokeSettingLayoutVisibility() {
+        karaokeSettingLayout.setVisibility(View.GONE);
     }
 
 }

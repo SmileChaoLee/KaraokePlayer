@@ -98,19 +98,7 @@ public class SmileApplication extends MultiDexApplication {
                 googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044";
                 AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
                 break;
-            case "com.smile.musicplayer":
-                // Token: EAAFARZAONXXYBAK09XFusSFgrK4un2ykcXGG3xjwlRaHZCUzr5ZAJIM6mz2ZC7DcKQAGWMFtinkg9p6BeV41YB7Ttr8m90YJu8mhUZCsJnmdffp8uNGiNZC73rErjkHZBS2tWn2mZBOCHf96AYlhZCqfki10UKI5uZBqDX8LQPwmqrEZBku5QLLEGHQ
-                // App ID: 3006486769578153
-                // facebookInterstitialID = "352142549146998_352142985813621";
-                // facebookBannerID = testString + "352142549146998_352146195813300";
-                googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
-                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
-                googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
-                googleAdMobNativeID = "ca-app-pub-8354869049759576/6835662705";
-                AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
-                break;
         }
-
 
         // facebook
         // only for com.smile.karaokeplayer

@@ -656,6 +656,26 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         return UriUtil.getUrisListFromIntent(callingContext, data);
     }
 
+    @Override
+    public void switchAudioToMusic() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
+        int audioTrack = playingParam.getMusicAudioTrackIndex();
+        int audioChannel = playingParam.getMusicAudioChannel();
+        setAudioTrackAndChannel(audioTrack, audioChannel);
+    }
+
+    @Override
+    public void switchAudioToVocal() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
+        setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
+    }
+
     // methods related to ChromeCast
     public Player getCurrentPlayer() {
         return mCurrentPlayer;

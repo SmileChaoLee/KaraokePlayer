@@ -2,6 +2,8 @@ package exoplayer;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.view.View;
+
 import com.smile.karaokeplayer.BaseSongDataActivity;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 import java.util.ArrayList;
@@ -19,6 +21,11 @@ public class SongDataActivity extends BaseSongDataActivity {
     @Override
     public ArrayList<Uri> getUrisListFromIntentSongData(Intent data) {
         return UriUtil.getUrisListFromIntent(this, data);
+    }
+
+    @Override
+    public void setKaraokeSettingLayoutVisibility() {
+        karaokeSettingLayout.setVisibility(View.VISIBLE);
     }
 
 }

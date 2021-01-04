@@ -453,4 +453,38 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
         return UriUtil.getUrisListFromIntent(callingContext, data);
     }
+
+    @Override
+    public void switchAudioToMusic() {
+        Log.d(TAG, "switchAudioToMusic() is called");
+        int trackIndex;
+        int channel;
+        if (numberOfAudioTracks >= 2) {
+            // has more than 2 audio tracks
+            trackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
+            trackIndex++;
+            if (trackIndex>numberOfAudioTracks) {
+                trackIndex = 1; // the first audio track
+            }
+            playingParam.setCurrentAudioTrackIndexPlayed(trackIndex);
+            playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
+        } else {
+            playingParam.setCurrentAudioTrackIndexPlayed(1);    // first audio track
+            channel = playingParam.getCurrentChannelPlayed();
+            if (channel == CommonConstants.LeftChannel) {
+                playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
+            } else {
+                playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
+            }
+        }
+        int audioTrack = playingParam.getCurrentAudioTrackIndexPlayed();
+        int audioChannel = playingParam.getCurrentChannelPlayed();
+
+        setAudioTrackAndChannel(audioTrack, audioChannel);
+    }
+
+    @Override
+    public void switchAudioToVocal() {
+        // do nothing because it does not have this functionality yet
+    }
 }

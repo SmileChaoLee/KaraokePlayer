@@ -161,5 +161,15 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         return new Intent(getApplicationContext(), SongListActivity.class);
     }
 
+    @Override
+    public void setMenuItemsVisibility() {
+        // do nothing
+    }
+
+    @Override
+    public void setSwitchToVocalImageButtonVisibility() {
+        // do nothing
+    }
+
     // end of implementing methods of super class
 }

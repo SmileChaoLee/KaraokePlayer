@@ -78,6 +78,8 @@ public abstract class PlayerBasePresenter {
     public abstract void specificPlayerReplayMedia(long currentAudioPosition);
     public abstract void selectFileToOpenPresenter(int requestCode, boolean isSingle);
     public abstract ArrayList<Uri> getUrisListFromIntentPresenter(Intent data);
+    public abstract void switchAudioToMusic();
+    public abstract void switchAudioToVocal();
 
     public PlayerBasePresenter(Context context, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
@@ -224,53 +226,6 @@ public abstract class PlayerBasePresenter {
     public void playStereoChannel() {
         playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
         setAudioVolume(playingParam.getCurrentVolume());
-    }
-
-    public void switchAudioToVocal() {
-        if (!playingParam.isInSongList()) {
-            // not in the database and show message
-            presentView.showMusicAndVocalIsNotSet();
-        }
-        setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
-    }
-
-    public void switchAudioToMusic() {
-        int audioTrack = playingParam.getMusicAudioTrackIndex();
-        int audioChannel = playingParam.getMusicAudioChannel();
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                if (!playingParam.isInSongList()) {
-                    // not in the database and show message
-                    presentView.showMusicAndVocalIsNotSet();
-                }
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                Log.d(TAG, "switchAudioToMusic() is called");
-                int trackIndex;
-                int channel;
-                if (numberOfAudioTracks >= 2) {
-                    // has more than 2 audio tracks
-                    trackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
-                    trackIndex++;
-                    if (trackIndex>numberOfAudioTracks) {
-                        trackIndex = 1; // the first audio track
-                    }
-                    playingParam.setCurrentAudioTrackIndexPlayed(trackIndex);
-                    playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-                } else {
-                    playingParam.setCurrentAudioTrackIndexPlayed(1);    // first audio track
-                    channel = playingParam.getCurrentChannelPlayed();
-                    if (channel == CommonConstants.LeftChannel) {
-                        playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
-                    } else {
-                        playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
-                    }
-                }
-                audioTrack = playingParam.getCurrentAudioTrackIndexPlayed();
-                audioChannel = playingParam.getCurrentChannelPlayed();
-                break;
-        }
-        setAudioTrackAndChannel(audioTrack, audioChannel);
     }
 
     protected void playMediaFromUri(Uri uri) {
