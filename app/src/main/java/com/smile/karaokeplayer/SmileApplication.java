@@ -21,11 +21,6 @@ public class SmileApplication extends MultiDexApplication {
 
     private static final String TAG = new String("SmileApplication");
 
-    public static final String exoPlayerFlavor = "exoplayer";
-    public static final String vlcPlayerFlavor = "videoplayer";
-    public static final String videoPlayerFlavor = "videoplayer";
-    public static final String musicPlayerFlavor = "musicplayer";
-
     public static String leftChannelString;
     public static String rightChannelString;
     public static String stereoChannelString;
