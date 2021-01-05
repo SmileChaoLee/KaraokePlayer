@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
@@ -17,14 +16,14 @@ import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingIntersti
 
 import java.util.LinkedHashMap;
 
-public class SmileApplication extends MultiDexApplication {
+public abstract class BaseApplication extends MultiDexApplication {
 
-    private static final String TAG = new String("SmileApplication");
+    private static final String TAG = new String("BaseApplication");
 
-    public static final String exoPlayerFlavor = "exoplayer";
-    public static final String vlcPlayerFlavor = "videoplayer";
-    public static final String videoPlayerFlavor = "videoplayer";
-    public static final String musicPlayerFlavor = "musicplayer";
+    protected String facebookInterstitialID = "";
+    protected String googleAdMobAppID = "";
+    protected String googleAdMobInterstitialID = "";
+    protected String testString = "";
 
     public static String leftChannelString;
     public static String rightChannelString;
@@ -43,6 +42,8 @@ public class SmileApplication extends MultiDexApplication {
 
     public static FacebookInterstitialAds facebookAds;
     public static GoogleAdMobInterstitial googleInterstitialAd;
+
+    public abstract void setGoogleAdMobAndFacebookAudioNetwork();
 
     @Override
     public void onCreate() {
@@ -65,16 +66,14 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(rightChannelString, CommonConstants.RightChannel);
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
-        String facebookInterstitialID = "";
-        String googleAdMobAppID = "";
-        String googleAdMobInterstitialID = "";
-
-        String testString = "";
         // for debug mode and for facebook
         if (BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
 
+        setGoogleAdMobAndFacebookAudioNetwork();
+
+        /*
         switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
             case "com.smile.karaokeplayer":
                 AudienceNetworkAds.initialize(this);
@@ -98,19 +97,8 @@ public class SmileApplication extends MultiDexApplication {
                 googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044";
                 AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
                 break;
-            case "com.smile.musicplayer":
-                // Token: EAAFARZAONXXYBAK09XFusSFgrK4un2ykcXGG3xjwlRaHZCUzr5ZAJIM6mz2ZC7DcKQAGWMFtinkg9p6BeV41YB7Ttr8m90YJu8mhUZCsJnmdffp8uNGiNZC73rErjkHZBS2tWn2mZBOCHf96AYlhZCqfki10UKI5uZBqDX8LQPwmqrEZBku5QLLEGHQ
-                // App ID: 3006486769578153
-                // facebookInterstitialID = "352142549146998_352142985813621";
-                // facebookBannerID = testString + "352142549146998_352146195813300";
-                googleAdMobAppID = "ca-app-pub-8354869049759576~3279561070";
-                googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1888913198";
-                googleAdMobBannerID = "ca-app-pub-8354869049759576/1966479405";
-                googleAdMobNativeID = "ca-app-pub-8354869049759576/6835662705";
-                AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
-                break;
         }
-
+        */
 
         // facebook
         // only for com.smile.karaokeplayer

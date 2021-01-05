@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <application>
+    <application
+        android:name="videoplayer.SmileApplication">
         <activity
             android:name="videoplayer.VLCPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">
@@ -15,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="videoplayer.SongListActivity" />
+        <activity android:name="videoplayer.SongDataActivity" />
     </application>
 
 </manifest>

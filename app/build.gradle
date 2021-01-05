@@ -14,13 +14,10 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 175
-        versionName "1.75"
+        versionCode 180
+        versionName "1.80"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
-
-        applicationId "com.smile.karaokeplayer"
-        manifestPlaceholders = [google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
     }
 
     flavorDimensions("player")
@@ -28,14 +25,16 @@ android {
         exoplayer {
             dimension("player")
             minSdkVersion 16
-            manifestPlaceholders = [flavorLegacyExternalStorage: "false"]
+            applicationId "com.smile.karaokeplayer"
+            manifestPlaceholders = [flavorLegacyExternalStorage: "false",
+                                    google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
         }
         videoplayer {
             dimension("player")
             minSdkVersion 17
             applicationId = "com.smile.videoplayer"
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true"
-                                    , google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
+            manifestPlaceholders = [flavorLegacyExternalStorage: "true",
+                                    google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
         }
     }
 
@@ -130,6 +129,7 @@ dependencies {
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
+    videoplayerImplementation 'com.adityak:browsemyfiles:1.9'   // file chooser
 }
 
 apply plugin: 'com.google.gms.google-services'

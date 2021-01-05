@@ -1,5 +1,6 @@
 package exoplayer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,15 +19,15 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.gms.cast.framework.CastButtonFactory;
-import com.google.android.gms.cast.framework.CastState;
-import com.smile.karaokeplayer.PlayerBaseActivity;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.karaokeplayer.R;
-
 import exoplayer.Presenters.ExoPlayerPresenter;
 
-public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastState;
+import com.smile.karaokeplayer.BasePlayerActivity;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.R;
+
+public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
 
     private ExoPlayerPresenter mPresenter;
@@ -117,7 +118,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
     // implement abstract methods of super class
     @Override
-    public PlayerBasePresenter getPlayerBasePresenter() {
+    public BasePlayerPresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 
@@ -152,6 +153,21 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
         } else {
             mMediaRouteButton.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public Intent createIntentForSongListActivity() {
+        return new Intent(getApplicationContext(), SongListActivity.class);
+    }
+
+    @Override
+    public void setMenuItemsVisibility() {
+        // do nothing
+    }
+
+    @Override
+    public void setSwitchToVocalImageButtonVisibility() {
+        // do nothing
     }
 
     // end of implementing methods of super class

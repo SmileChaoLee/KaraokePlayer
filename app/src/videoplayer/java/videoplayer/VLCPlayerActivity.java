@@ -1,11 +1,13 @@
 package videoplayer;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -14,15 +16,16 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.smile.karaokeplayer.PlayerBaseActivity;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.BasePlayerActivity;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import org.videolan.libvlc.util.VLCVideoLayout;
 
 import videoplayer.Presenters.VLCPlayerPresenter;
 
-public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
+public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
 
     private static final String TAG = "VLCPlayerActivity";
     private static final boolean ENABLE_SUBTITLES = true;
@@ -135,7 +138,7 @@ public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPla
 
     // implement abstract methods of super class
     @Override
-    public PlayerBasePresenter getPlayerBasePresenter() {
+    public BasePlayerPresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 
@@ -147,6 +150,22 @@ public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPla
     @Override
     public void setMediaRouteButtonVisible(boolean isVisible) {
 
+    }
+
+    @Override
+    public Intent createIntentForSongListActivity() {
+        return new Intent(getApplicationContext(), SongListActivity.class);
+    }
+
+    @Override
+    public void setMenuItemsVisibility() {
+        MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
+        channelMenuItem.setVisible(false);
+    }
+
+    @Override
+    public void setSwitchToVocalImageButtonVisibility() {
+        switchToVocalImageButton.setVisibility(View.GONE);
     }
     // end of implementing methods of super class
 }

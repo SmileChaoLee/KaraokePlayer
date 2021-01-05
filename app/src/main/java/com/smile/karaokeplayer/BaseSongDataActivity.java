@@ -30,12 +30,10 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
+public abstract class BaseSongDataActivity extends AppCompatActivity {
 
-public class SongDataActivity extends AppCompatActivity {
-
-    private static final String TAG = "SongDataActivity";
-    private static final int SELECT_FILES = 1;
+    private static final String TAG = "BaseSongDataActivity";
+    private static final int SELECT_ONE_FILE = 1;
 
     private float textFontSize;
     private float fontScale;
@@ -48,16 +46,21 @@ public class SongDataActivity extends AppCompatActivity {
 
     private EditText edit_titleNameEditText;
     private EditText edit_filePathEditText;
-    private ImageButton edit_selectFilePathButton;
+    private ImageButton edit_selectOneFilePathButton;
     private Spinner edit_musicTrackSpinner;
     private Spinner edit_musicChannelSpinner;
     private Spinner edit_vocalTrackSpinner;
     private Spinner edit_vocalChannelSpinner;
     private CheckBox edit_includedPlaylistCheckBox;
+    protected LinearLayout karaokeSettingLayout;
 
     private String actionButtonString;
     private String crudAction;;
     private SongInfo mSongInfo;
+
+    public abstract void selectOneFilePathSongData(int requestCode);
+    public abstract ArrayList<Uri> getUrisListFromIntentSongData(Intent data);
+    public abstract void setKaraokeSettingLayoutVisibility();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +128,7 @@ public class SongDataActivity extends AppCompatActivity {
         numList.add("8");
         audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        ArrayList<String> aList = new ArrayList<>(SmileApplication.audioChannelMap.values());
+        ArrayList<String> aList = new ArrayList<>(BaseApplication.audioChannelMap.values());
         audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         // audioVocalChannelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
@@ -143,15 +146,15 @@ public class SongDataActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_filePathEditText.setText(mSongInfo.getFilePath());
 
-        edit_selectFilePathButton = findViewById(R.id.edit_selectFilePathButton);
-        edit_selectFilePathButton.setOnClickListener(new View.OnClickListener() {
+        edit_selectOneFilePathButton = findViewById(R.id.edit_selectOneFilePathButton);
+        edit_selectOneFilePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectFilePath(crudAction);
+                selectOneFilePathSongData(SELECT_ONE_FILE);
             }
         });
 
-        LinearLayout karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
+        karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
         //
         TextView edit_musicTrackStringTextView = findViewById(R.id.edit_musicTrackStringTextView);
         ScreenUtil.resizeTextSize(edit_musicTrackStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
@@ -176,16 +179,10 @@ public class SongDataActivity extends AppCompatActivity {
         edit_vocalChannelSpinner = findViewById(R.id.edit_vocalChannelSpinner);
         edit_vocalChannelSpinner.setAdapter(audioVocalChannelAdapter);
         edit_vocalChannelSpinner.setSelection(mSongInfo.getVocalChannel());
-        //
 
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                karaokeSettingLayout.setVisibility(View.VISIBLE);
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                karaokeSettingLayout.setVisibility(View.GONE);
-                break;
-        }
+        //
+        setKaraokeSettingLayoutVisibility();    // abstract method
+        //
 
         TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
         ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
@@ -284,17 +281,8 @@ public class SongDataActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
-
-        if (requestCode == SELECT_FILES && resultCode == Activity.RESULT_OK) {
-            // The document selected by the user won't be returned in the intent.
-            // Instead, a URI to that document will be contained in the return intent
-            // provided to this method as a parameter.
-            // Pull that URI using resultData.getData().
-            ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
+        if (requestCode == SELECT_ONE_FILE && resultCode == Activity.RESULT_OK) {
+            ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
             // this activity allows only one file selected
             switch (uris.size()) {
                 case 0:
@@ -302,8 +290,6 @@ public class SongDataActivity extends AppCompatActivity {
                     break;
                 case 1:
                     // single file selected
-                default:
-                    // multiple files selected
                     edit_filePathEditText.setText(uris.get(0).toString());
                     break;
             }
@@ -323,20 +309,6 @@ public class SongDataActivity extends AppCompatActivity {
         setResult(resultYn, returnIntent);    // can bundle some data to previous activity
 
         finish();
-    }
-
-    private void selectFilePath(String crudAction) {
-        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
-        // browser.
-        boolean isSingleFile;
-        if (crudAction.equalsIgnoreCase(CommonConstants.AddActionString)) {
-            // can be multiple files
-            isSingleFile = false;
-        } else {
-            // only single file
-            isSingleFile = true;
-        }
-        ContentUriAccessUtil.selectFileToOpen(this, SELECT_FILES, true);
     }
 
     private boolean setSongInfoFromInput(boolean hasMessage) {
@@ -363,9 +335,9 @@ public class SongDataActivity extends AppCompatActivity {
         mSongInfo.setSongName(title);
         mSongInfo.setFilePath(filePath);
         mSongInfo.setMusicTrackNo(Integer.valueOf(musicTrack));
-        mSongInfo.setMusicChannel(SmileApplication.audioChannelReverseMap.get(musicChannel));
+        mSongInfo.setMusicChannel(BaseApplication.audioChannelReverseMap.get(musicChannel));
         mSongInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
-        mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
+        mSongInfo.setVocalChannel(BaseApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
 
         if (filePath.isEmpty()) {

@@ -39,21 +39,22 @@ import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
+import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.Callbacks.ExoMediaControllerCallback;
+import exoplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import exoplayer.ExoRenderersFactory.MyRenderersFactory;
+import exoplayer.Listeners.ExoPlayerCastStateListener;
+import exoplayer.Listeners.ExoPlayerEventListener;
+import exoplayer.Utilities.UriUtil;
+
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 
-import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
-import exoplayer.Callbacks.ExoMediaControllerCallback;
-import exoplayer.Callbacks.ExoPlaybackPreparer;
-import exoplayer.ExoRenderersFactory.MyRenderersFactory;
-import exoplayer.Listeners.ExoPlayerCastStateListener;
-import exoplayer.Listeners.ExoPlayerEventListener;
-
-public class ExoPlayerPresenter extends PlayerBasePresenter {
+public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "ExoPlayerPresenter";
 
@@ -98,7 +99,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         }
     };
 
-    public interface ExoPlayerPresentView extends PlayerBasePresenter.BasePresentView {
+    public interface ExoPlayerPresentView extends BasePlayerPresenter.BasePresentView {
         void setCurrentPlayerToPlayerView();
     }
 
@@ -646,8 +647,33 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
-        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
+        ContentUriAccessUtil.selectFileToOpen(mActivity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    }
+
+    @Override
+    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
+        return UriUtil.getUrisListFromIntent(callingContext, data);
+    }
+
+    @Override
+    public void switchAudioToMusic() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
+        int audioTrack = playingParam.getMusicAudioTrackIndex();
+        int audioChannel = playingParam.getMusicAudioChannel();
+        setAudioTrackAndChannel(audioTrack, audioChannel);
+    }
+
+    @Override
+    public void switchAudioToVocal() {
+        if (!playingParam.isInSongList()) {
+            // not in the database and show message
+            presentView.showMusicAndVocalIsNotSet();
+        }
+        setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
     }
 
     // methods related to ChromeCast

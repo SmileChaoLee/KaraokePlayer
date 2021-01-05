@@ -15,8 +15,7 @@ import androidx.annotation.Nullable;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.MediaPlayer;
@@ -24,15 +23,15 @@ import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.DisplayManager;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import videoplayer.Callbacks.VLCMediaControllerCallback;
 import videoplayer.Callbacks.VLCMediaSessionCallback;
 import videoplayer.Listeners.VLCPlayerEventListener;
-import videoplayer.utilities.ExternalStorageUtil;
+import videoplayer.utilities.FileSelectUtil;
+import videoplayer.utilities.UriUtil;
 
-public class VLCPlayerPresenter extends PlayerBasePresenter {
+public class VLCPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "VLCPlayerPresenter";
 
@@ -362,7 +361,14 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     @Override
     public Uri getValidatedUri(Uri tempUri) {
         Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() is called.");
-        super.getValidatedUri(tempUri);
+        tempUri = super.getValidatedUri(tempUri);
+
+        return tempUri;
+
+        /*
+        // removed on 2020-12-21
+        // because of using file picker to select file
+        // so the uri is already file uri
 
         Uri resultUri = null;
         try {
@@ -379,6 +385,7 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
         }
 
         return resultUri;
+        */
     }
 
     @Override
@@ -434,7 +441,46 @@ public class VLCPlayerPresenter extends PlayerBasePresenter {
     }
 
     @Override
-    public void selectFileToOpen(Activity activity, int requestCode, boolean isSingle) {
-        ContentUriAccessUtil.selectFileToOpen(activity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
+        FileSelectUtil.selectFileToOpen(mActivity, requestCode, isSingle);
+    }
+
+    @Override
+    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
+        return UriUtil.getUrisListFromIntent(callingContext, data);
+    }
+
+    @Override
+    public void switchAudioToMusic() {
+        Log.d(TAG, "switchAudioToMusic() is called");
+        int trackIndex;
+        int channel;
+        if (numberOfAudioTracks >= 2) {
+            // has more than 2 audio tracks
+            trackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
+            trackIndex++;
+            if (trackIndex>numberOfAudioTracks) {
+                trackIndex = 1; // the first audio track
+            }
+            playingParam.setCurrentAudioTrackIndexPlayed(trackIndex);
+            playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
+        } else {
+            playingParam.setCurrentAudioTrackIndexPlayed(1);    // first audio track
+            channel = playingParam.getCurrentChannelPlayed();
+            if (channel == CommonConstants.LeftChannel) {
+                playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
+            } else {
+                playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
+            }
+        }
+        int audioTrack = playingParam.getCurrentAudioTrackIndexPlayed();
+        int audioChannel = playingParam.getCurrentChannelPlayed();
+
+        setAudioTrackAndChannel(audioTrack, audioChannel);
+    }
+
+    @Override
+    public void switchAudioToVocal() {
+        // do nothing because it does not have this functionality yet
     }
 }

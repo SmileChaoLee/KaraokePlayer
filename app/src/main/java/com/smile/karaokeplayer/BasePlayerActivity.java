@@ -44,7 +44,7 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
@@ -54,12 +54,10 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
-
-public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
+public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
     private static final String TAG = "PlayerBaseActivity";
-    private PlayerBasePresenter mPresenter;
+    private BasePlayerPresenter mPresenter;
 
     protected float textFontSize;
     protected float fontScale;
@@ -84,7 +82,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
 
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
-    private ImageButton switchToVocalImageButton;
+    protected ImageButton switchToVocalImageButton;
 
     private ImageButton actionMenuImageButton;
     private int volumeSeekBarHeightForLandscape;
@@ -133,15 +131,18 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
     };
 
-    public abstract PlayerBasePresenter getPlayerBasePresenter();
+    public abstract BasePlayerPresenter getPlayerBasePresenter();
     public abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
     public abstract void setMediaRouteButtonVisible(boolean isVisible);
+    public abstract Intent createIntentForSongListActivity();
+    public abstract void setMenuItemsVisibility();
+    public abstract void setSwitchToVocalImageButtonVisibility();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
 
-        SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
+        BaseApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, BaseApplication.facebookAds, BaseApplication.googleInterstitialAd);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
@@ -214,12 +215,12 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
-        String facebookBannerID = testString + SmileApplication.facebookBannerID;
+        String facebookBannerID = testString + BaseApplication.facebookBannerID;
         //
         */
         myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
-                , SmileApplication.googleAdMobBannerID, SmileApplication.facebookBannerID);
-        myBannerAdView.showBannerAdViewFromAdMobOrFacebook(SmileApplication.AdProvider);
+                , BaseApplication.googleAdMobBannerID, BaseApplication.facebookBannerID);
+        myBannerAdView.showBannerAdViewFromAdMobOrFacebook(BaseApplication.AdProvider);
 
         // message area
         message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout);
@@ -246,7 +247,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
 
-        String nativeAdvancedId0 = SmileApplication.googleAdMobNativeID;     // real ad unit id
+        String nativeAdvancedId0 = BaseApplication.googleAdMobNativeID;     // real ad unit id
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
         FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
@@ -306,7 +307,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         final int popupThemeId = supportToolbar.getPopupTheme();
         final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
 
-        // ScreenUtil.buildActionViewClassMenu(this, wrapper, mainMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+        // ScreenUtil.buildActionViewClassMenu(this, wrapper, mainMenu, fontScale, BaseApplication.FontSize_Scale_Type);
         ScreenUtil.resizeMenuTextIconSize(wrapper, mainMenu, fontScale);
 
         // submenu of file
@@ -334,14 +335,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
 
         //
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
-                channelMenuItem.setVisible(false);
-                break;
-        }
+        setMenuItemsVisibility();   // abstract method
+        //
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -362,7 +357,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 mPresenter.setAutoPlayStatusAndAction();
                 break;
             case R.id.songList:
-                Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
+                Intent songListIntent = createIntentForSongListActivity();
+                // Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
                 Class childClass = getClass();
                 Log.d(TAG, "childClass = " + childClass);
                 if (childClass != null) {
@@ -372,7 +368,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
                 }
                 break;
             case R.id.open:
-                mPresenter.selectFileToOpen(this, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+                mPresenter.selectFileToOpenPresenter(PlayerConstants.FILE_READ_REQUEST_CODE, false);
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -497,8 +493,10 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            ArrayList<Uri> uris = ContentUriAccessUtil.getUrisList(this, data);
-            if (uris.size()>0) {
+            Log.d(TAG, "onActivityResult() is called.");
+            ArrayList<Uri> uris = mPresenter.getUrisListFromIntentPresenter(data);
+            if (uris!=null && uris.size()>0) {
+                Log.d(TAG, "onActivityResult( --> uris.size() = " + uris.size());
                 // There are files selected
                 mPresenter.playSelectedUrisFromStorage(uris);
             }
@@ -850,13 +848,8 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         // boolean isAutoPlay = playingParam.isAutoPlay();
         switchToMusicImageButton.setEnabled(true);
         switchToMusicImageButton.setVisibility(View.VISIBLE);
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                switchToVocalImageButton.setVisibility(View.GONE);
-                break;
-        }
+
+        setSwitchToVocalImageButtonVisibility();    // abstract method
 
         // repeatImageButton
         int repeatStatus = playingParam.getRepeatStatus();
@@ -979,11 +972,11 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         if (isReturnToPrevious) {
             returnToPrevious();
         }
-        if (SmileApplication.InterstitialAd != null) {
+        if (BaseApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, SmileApplication.AdProvider);
+                    BaseApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, BaseApplication.AdProvider);
             showAdAsyncTask.startShowAd();
         }
     }

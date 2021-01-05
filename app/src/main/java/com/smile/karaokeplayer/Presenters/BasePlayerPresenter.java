@@ -12,25 +12,22 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.smile.karaokeplayer.BuildConfig;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;
 
-public abstract class PlayerBasePresenter {
+public abstract class BasePlayerPresenter {
 
     private static final String TAG = "PlayerBasePresenter";
 
@@ -77,9 +74,12 @@ public abstract class PlayerBasePresenter {
     public abstract int getCurrentProgressForVolumeSeekBar();
     public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
     public abstract void specificPlayerReplayMedia(long currentAudioPosition);
-    public abstract void selectFileToOpen(Activity activity, int requestCode, boolean isSingle);
+    public abstract void selectFileToOpenPresenter(int requestCode, boolean isSingle);
+    public abstract ArrayList<Uri> getUrisListFromIntentPresenter(Intent data);
+    public abstract void switchAudioToMusic();
+    public abstract void switchAudioToVocal();
 
-    public PlayerBasePresenter(Context context, BasePresentView presentView) {
+    public BasePlayerPresenter(Context context, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
         this.callingContext = context;
         this.presentView = presentView;
@@ -224,53 +224,6 @@ public abstract class PlayerBasePresenter {
     public void playStereoChannel() {
         playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
         setAudioVolume(playingParam.getCurrentVolume());
-    }
-
-    public void switchAudioToVocal() {
-        if (!playingParam.isInSongList()) {
-            // not in the database and show message
-            presentView.showMusicAndVocalIsNotSet();
-        }
-        setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
-    }
-
-    public void switchAudioToMusic() {
-        int audioTrack = playingParam.getMusicAudioTrackIndex();
-        int audioChannel = playingParam.getMusicAudioChannel();
-        switch (com.smile.karaokeplayer.BuildConfig.FLAVOR.toLowerCase()) {
-            case SmileApplication.exoPlayerFlavor:
-                if (!playingParam.isInSongList()) {
-                    // not in the database and show message
-                    presentView.showMusicAndVocalIsNotSet();
-                }
-                break;
-            case SmileApplication.videoPlayerFlavor:
-                Log.d(TAG, "switchAudioToMusic() is called");
-                int trackIndex;
-                int channel;
-                if (numberOfAudioTracks >= 2) {
-                    // has more than 2 audio tracks
-                    trackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
-                    trackIndex++;
-                    if (trackIndex>numberOfAudioTracks) {
-                        trackIndex = 1; // the first audio track
-                    }
-                    playingParam.setCurrentAudioTrackIndexPlayed(trackIndex);
-                    playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
-                } else {
-                    playingParam.setCurrentAudioTrackIndexPlayed(1);    // first audio track
-                    channel = playingParam.getCurrentChannelPlayed();
-                    if (channel == CommonConstants.LeftChannel) {
-                        playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
-                    } else {
-                        playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
-                    }
-                }
-                audioTrack = playingParam.getCurrentAudioTrackIndexPlayed();
-                audioChannel = playingParam.getCurrentChannelPlayed();
-                break;
-        }
-        setAudioTrackAndChannel(audioTrack, audioChannel);
     }
 
     protected void playMediaFromUri(Uri uri) {
