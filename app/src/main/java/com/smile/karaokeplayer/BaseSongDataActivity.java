@@ -128,7 +128,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         numList.add("8");
         audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        ArrayList<String> aList = new ArrayList<>(SmileApplication.audioChannelMap.values());
+        ArrayList<String> aList = new ArrayList<>(BaseApplication.audioChannelMap.values());
         audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         // audioVocalChannelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
@@ -335,9 +335,9 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         mSongInfo.setSongName(title);
         mSongInfo.setFilePath(filePath);
         mSongInfo.setMusicTrackNo(Integer.valueOf(musicTrack));
-        mSongInfo.setMusicChannel(SmileApplication.audioChannelReverseMap.get(musicChannel));
+        mSongInfo.setMusicChannel(BaseApplication.audioChannelReverseMap.get(musicChannel));
         mSongInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
-        mSongInfo.setVocalChannel(SmileApplication.audioChannelReverseMap.get(vocalChannel));
+        mSongInfo.setVocalChannel(BaseApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
 
         if (filePath.isEmpty()) {

@@ -142,7 +142,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
 
-        SmileApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, SmileApplication.facebookAds, SmileApplication.googleInterstitialAd);
+        BaseApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, BaseApplication.facebookAds, BaseApplication.googleInterstitialAd);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
@@ -215,12 +215,12 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
-        String facebookBannerID = testString + SmileApplication.facebookBannerID;
+        String facebookBannerID = testString + BaseApplication.facebookBannerID;
         //
         */
         myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
-                , SmileApplication.googleAdMobBannerID, SmileApplication.facebookBannerID);
-        myBannerAdView.showBannerAdViewFromAdMobOrFacebook(SmileApplication.AdProvider);
+                , BaseApplication.googleAdMobBannerID, BaseApplication.facebookBannerID);
+        myBannerAdView.showBannerAdViewFromAdMobOrFacebook(BaseApplication.AdProvider);
 
         // message area
         message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout);
@@ -247,7 +247,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
 
-        String nativeAdvancedId0 = SmileApplication.googleAdMobNativeID;     // real ad unit id
+        String nativeAdvancedId0 = BaseApplication.googleAdMobNativeID;     // real ad unit id
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
         FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
@@ -307,7 +307,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         final int popupThemeId = supportToolbar.getPopupTheme();
         final Context wrapper = new ContextThemeWrapper(this, popupThemeId);
 
-        // ScreenUtil.buildActionViewClassMenu(this, wrapper, mainMenu, fontScale, SmileApplication.FontSize_Scale_Type);
+        // ScreenUtil.buildActionViewClassMenu(this, wrapper, mainMenu, fontScale, BaseApplication.FontSize_Scale_Type);
         ScreenUtil.resizeMenuTextIconSize(wrapper, mainMenu, fontScale);
 
         // submenu of file
@@ -972,11 +972,11 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         if (isReturnToPrevious) {
             returnToPrevious();
         }
-        if (SmileApplication.InterstitialAd != null) {
+        if (BaseApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
             ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
-                    SmileApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, SmileApplication.AdProvider);
+                    BaseApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, BaseApplication.AdProvider);
             showAdAsyncTask.startShowAd();
         }
     }

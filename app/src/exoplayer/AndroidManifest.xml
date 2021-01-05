@@ -3,7 +3,8 @@
     package="com.smile.karaokeplayer"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <application>
+    <application
+        android:name="exoplayer.SmileApplication">
         <activity
             android:name="exoplayer.ExoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">

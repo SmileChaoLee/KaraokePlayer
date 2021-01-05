@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.multidex.MultiDexApplication;
 
-import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
@@ -17,9 +16,14 @@ import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingIntersti
 
 import java.util.LinkedHashMap;
 
-public class SmileApplication extends MultiDexApplication {
+public abstract class BaseApplication extends MultiDexApplication {
 
-    private static final String TAG = new String("SmileApplication");
+    private static final String TAG = new String("BaseApplication");
+
+    protected String facebookInterstitialID = "";
+    protected String googleAdMobAppID = "";
+    protected String googleAdMobInterstitialID = "";
+    protected String testString = "";
 
     public static String leftChannelString;
     public static String rightChannelString;
@@ -38,6 +42,8 @@ public class SmileApplication extends MultiDexApplication {
 
     public static FacebookInterstitialAds facebookAds;
     public static GoogleAdMobInterstitial googleInterstitialAd;
+
+    public abstract void setGoogleAdMobAndFacebookAudioNetwork();
 
     @Override
     public void onCreate() {
@@ -60,16 +66,14 @@ public class SmileApplication extends MultiDexApplication {
         audioChannelReverseMap.put(rightChannelString, CommonConstants.RightChannel);
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
-        String facebookInterstitialID = "";
-        String googleAdMobAppID = "";
-        String googleAdMobInterstitialID = "";
-
-        String testString = "";
         // for debug mode and for facebook
         if (BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
 
+        setGoogleAdMobAndFacebookAudioNetwork();
+
+        /*
         switch (com.smile.karaokeplayer.BuildConfig.APPLICATION_ID) {
             case "com.smile.karaokeplayer":
                 AudienceNetworkAds.initialize(this);
@@ -94,6 +98,7 @@ public class SmileApplication extends MultiDexApplication {
                 AdProvider = ShowingInterstitialAdsUtil.GoogleAdMobAdProvider;
                 break;
         }
+        */
 
         // facebook
         // only for com.smile.karaokeplayer

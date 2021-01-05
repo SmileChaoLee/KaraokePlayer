@@ -12,7 +12,6 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.SongInfo;
 import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.SmileApplication;
 import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;

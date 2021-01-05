@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -304,9 +303,9 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                 titleNameTextView.setText(singleSongInfo.getSongName());
                 filePathTextView.setText(singleSongInfo.getFilePath());
                 musicTrackTextView.setText(String.valueOf(singleSongInfo.getMusicTrackNo()));
-                musicChannelTextView.setText(SmileApplication.audioChannelMap.get(singleSongInfo.getMusicChannel()));
+                musicChannelTextView.setText(BaseApplication.audioChannelMap.get(singleSongInfo.getMusicChannel()));
                 vocalTrackTextView.setText(String.valueOf(singleSongInfo.getVocalTrackNo()));
-                vocalChannelTextView.setText(SmileApplication.audioChannelMap.get(singleSongInfo.getVocalChannel()));
+                vocalChannelTextView.setText(BaseApplication.audioChannelMap.get(singleSongInfo.getVocalChannel()));
 
                 boolean inPlaylist = (singleSongInfo.getIncluded().equals("1"));
                 includedPlaylistCheckBox.setChecked(inPlaylist);
