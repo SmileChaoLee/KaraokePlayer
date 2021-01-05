@@ -48,16 +48,16 @@ android {
             }
         }
         exoplayer {
-            // java.srcDirs += "src/exoplayer/java"
-            // res.srcDirs += "src/exoplayer/res"
+            java.srcDirs += "src/exoplayer/java"
+            res.srcDirs += "src/exoplayer/res"
             manifest {
                 srcFile "src/exoplayer/AndroidManifest.xml"
             }
         }
 
         videoplayer {
-            // java.srcDirs += "src/vlcplayer/java"
-            // res.srcDirs += "src/vlcplayer/res"
+            java.srcDirs += "src/videoplayer/java"
+            res.srcDirs += "src/videoplayer/res"
             manifest {
                 srcFile "src/videoplayer/AndroidManifest.xml"
             }
@@ -126,7 +126,7 @@ dependencies {
     exoplayerImplementation project(':extension-vp9')
     exoplayerImplementation project(':extension-av1')
 
-    videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0-eap15'
+    videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.10'
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'

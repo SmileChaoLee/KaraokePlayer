@@ -22,7 +22,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 import videoplayer.Presenters.VLCPlayerPresenter;
 
-public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPresenter.VLCPlayerPresentView{
+public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
 
     private static final String TAG = "VLCPlayerActivity";
     private static final boolean ENABLE_SUBTITLES = true;
@@ -135,12 +135,12 @@ public class VLCPlayerActivity extends PlayerBaseActivity implements VLCPlayerPr
 
     // implement abstract methods of super class
     @Override
-    protected PlayerBasePresenter getPlayerBasePresenter() {
+    public PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 
     @Override
-    protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
+    public void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
 
     }
 

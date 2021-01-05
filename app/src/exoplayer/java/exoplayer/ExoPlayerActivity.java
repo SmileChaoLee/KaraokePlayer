@@ -1,6 +1,5 @@
 package exoplayer;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,13 +18,13 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import exoplayer.Presenters.ExoPlayerPresenter;
-
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.PlayerBaseActivity;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.R;
+
+import exoplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
@@ -118,12 +117,12 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
     // implement abstract methods of super class
     @Override
-    protected PlayerBasePresenter getPlayerBasePresenter() {
+    public PlayerBasePresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 
     @Override
-    protected void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
+    public void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
         // MediaRouteButton View
         mMediaRouteButton = findViewById(R.id.media_route_button);
         if (mPresenter.getCurrentCastState() == CastState.NO_DEVICES_AVAILABLE) {
