@@ -44,7 +44,7 @@ import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import com.smile.karaokeplayer.Models.VerticalSeekBar;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
@@ -54,10 +54,10 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 
-public abstract class PlayerBaseActivity extends AppCompatActivity implements PlayerBasePresenter.BasePresentView {
+public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
     private static final String TAG = "PlayerBaseActivity";
-    private PlayerBasePresenter mPresenter;
+    private BasePlayerPresenter mPresenter;
 
     protected float textFontSize;
     protected float fontScale;
@@ -131,7 +131,7 @@ public abstract class PlayerBaseActivity extends AppCompatActivity implements Pl
         }
     };
 
-    public abstract PlayerBasePresenter getPlayerBasePresenter();
+    public abstract BasePlayerPresenter getPlayerBasePresenter();
     public abstract void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight);
     public abstract void setMediaRouteButtonVisible(boolean isVisible);
     public abstract Intent createIntentForSongListActivity();

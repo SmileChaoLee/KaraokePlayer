@@ -13,10 +13,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.aditya.filebrowser.FileChooser;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.MediaPlayer;
@@ -24,18 +23,15 @@ import org.videolan.libvlc.interfaces.IMedia;
 import org.videolan.libvlc.util.DisplayManager;
 import org.videolan.libvlc.util.VLCVideoLayout;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import videoplayer.Callbacks.VLCMediaControllerCallback;
 import videoplayer.Callbacks.VLCMediaSessionCallback;
 import videoplayer.Listeners.VLCPlayerEventListener;
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
-import videoplayer.utilities.ExternalStorageUtil;
 import videoplayer.utilities.FileSelectUtil;
 import videoplayer.utilities.UriUtil;
 
-public class VLCPlayerPresenter extends PlayerBasePresenter {
+public class VLCPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "VLCPlayerPresenter";
 

@@ -16,8 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.smile.karaokeplayer.PlayerBaseActivity;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.BasePlayerActivity;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -25,7 +25,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 import videoplayer.Presenters.VLCPlayerPresenter;
 
-public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
+public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
 
     private static final String TAG = "VLCPlayerActivity";
     private static final boolean ENABLE_SUBTITLES = true;
@@ -138,7 +138,7 @@ public class VLCPlayerActivity extends PlayerBaseActivity { // implements VLCPla
 
     // implement abstract methods of super class
     @Override
-    public PlayerBasePresenter getPlayerBasePresenter() {
+    public BasePlayerPresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 

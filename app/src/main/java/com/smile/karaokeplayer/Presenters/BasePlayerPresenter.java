@@ -29,7 +29,7 @@ import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;
 
-public abstract class PlayerBasePresenter {
+public abstract class BasePlayerPresenter {
 
     private static final String TAG = "PlayerBasePresenter";
 
@@ -81,7 +81,7 @@ public abstract class PlayerBasePresenter {
     public abstract void switchAudioToMusic();
     public abstract void switchAudioToVocal();
 
-    public PlayerBasePresenter(Context context, BasePresentView presentView) {
+    public BasePlayerPresenter(Context context, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
         this.callingContext = context;
         this.presentView = presentView;

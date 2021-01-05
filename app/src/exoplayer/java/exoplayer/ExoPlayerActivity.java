@@ -1,6 +1,5 @@
 package exoplayer;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,11 +23,11 @@ import exoplayer.Presenters.ExoPlayerPresenter;
 
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastState;
-import com.smile.karaokeplayer.PlayerBaseActivity;
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.BasePlayerActivity;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.R;
 
-public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
+public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = "ExoPlayerActivity";
 
     private ExoPlayerPresenter mPresenter;
@@ -119,7 +118,7 @@ public class ExoPlayerActivity extends PlayerBaseActivity implements ExoPlayerPr
 
     // implement abstract methods of super class
     @Override
-    public PlayerBasePresenter getPlayerBasePresenter() {
+    public BasePlayerPresenter getPlayerBasePresenter() {
         return mPresenter;
     }
 

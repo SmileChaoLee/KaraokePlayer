@@ -49,12 +49,12 @@ import exoplayer.Listeners.ExoPlayerCastStateListener;
 import exoplayer.Listeners.ExoPlayerEventListener;
 import exoplayer.Utilities.UriUtil;
 
-import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
+import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 
-public class ExoPlayerPresenter extends PlayerBasePresenter {
+public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "ExoPlayerPresenter";
 
@@ -99,7 +99,7 @@ public class ExoPlayerPresenter extends PlayerBasePresenter {
         }
     };
 
-    public interface ExoPlayerPresentView extends PlayerBasePresenter.BasePresentView {
+    public interface ExoPlayerPresentView extends BasePlayerPresenter.BasePresentView {
         void setCurrentPlayerToPlayerView();
     }
 
