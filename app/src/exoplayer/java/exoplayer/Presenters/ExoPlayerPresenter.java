@@ -39,18 +39,19 @@ import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
-import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
-import exoplayer.Callbacks.ExoMediaControllerCallback;
-import exoplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import exoplayer.ExoRenderersFactory.MyRenderersFactory;
-import exoplayer.Listeners.ExoPlayerCastStateListener;
-import exoplayer.Listeners.ExoPlayerEventListener;
 import com.smile.karaokeplayer.Presenters.PlayerBasePresenter;
 import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
+
+import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.Callbacks.ExoMediaControllerCallback;
+import exoplayer.Callbacks.ExoPlaybackPreparer;
+import exoplayer.ExoRenderersFactory.MyRenderersFactory;
+import exoplayer.Listeners.ExoPlayerCastStateListener;
+import exoplayer.Listeners.ExoPlayerEventListener;
 
 public class ExoPlayerPresenter extends PlayerBasePresenter {
 
