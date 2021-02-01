@@ -63,4 +63,5 @@
     <string name="chromecast_is_connecting">Chromecast is connecting</string>
     <string name="chromecast_is_connected">Chromecast is connected</string>
     <string name="guessedAudioTrackValue">Audio tracks are guessed values,\nNeed to confirm.</string>
+    <string name="duplicate_in_database">Duplicate in database</string>
 </resources>

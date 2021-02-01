@@ -25,6 +25,17 @@ public class SongInfo implements Parcelable {
         included = "1"; // default is included in playlist
     }
 
+    public SongInfo(SongInfo songInfo) {
+        id = songInfo.id;
+        songName = songInfo.songName;
+        filePath = songInfo.filePath;
+        musicTrackNo = songInfo.musicTrackNo;
+        musicChannel = songInfo.musicChannel;
+        vocalTrackNo = songInfo.vocalTrackNo;
+        vocalChannel = songInfo.vocalChannel;
+        included = songInfo.included;
+    }
+
     public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel, String included) {
         this.id = id;
         this.songName = songName;

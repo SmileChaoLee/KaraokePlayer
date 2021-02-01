@@ -10,6 +10,11 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -36,7 +41,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     private static final String TAG = "VLCPlayerPresenter";
 
     private final BasePresentView presentView;
-    private final Context callingContext;
+    // private final Context callingContext;
     private final Activity mActivity;
     private final AudioManager audioManager;
     private final int mStreamType = AudioManager.STREAM_MUSIC;
@@ -56,12 +61,13 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     // public interface VLCPlayerPresentView extends BasePresentView {
     // }
 
-    public VLCPlayerPresenter(Context context, BasePresentView presentView) {
-        super(context, presentView);
-        this.callingContext = context;
+    public VLCPlayerPresenter(Activity activity, BasePresentView presentView) {
+        super(activity, presentView);
+        mActivity = activity;
+        // this.callingContext = activity;
         this.presentView = presentView;
-        this.mActivity = (Activity)(this.presentView);
-        this.audioManager = (AudioManager) callingContext.getSystemService(Context.AUDIO_SERVICE);
+        // this.mActivity = (Activity)(this.presentView);
+        this.audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
         // set volume control stream to STREAM_MUSIC
         mActivity.setVolumeControlStream(mStreamType);
     }
@@ -96,9 +102,10 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         // final ArrayList<String> args = new ArrayList<>();
         // args.add("-vvv");
         // mLibVLC = new LibVLC(callingContext, args);
-        mLibVLC = new LibVLC(callingContext);
+        // mLibVLC = new LibVLC(callingContext);
+        mLibVLC = new LibVLC(mActivity);
         vlcPlayer = new MediaPlayer(mLibVLC);
-        vlcPlayer.setEventListener(new VLCPlayerEventListener(callingContext, this));
+        vlcPlayer.setEventListener(new VLCPlayerEventListener(mActivity, this));
     }
 
     public void releaseVLCPlayer() {
@@ -208,21 +215,19 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
                 // for open media. do not know the music track and vocal track
                 // guess
                 audioTrackIdPlayed = 1;
+                int musicAudioTrack = 2;
+                audioChannel = CommonConstants.StereoChannel;
                 if (numberOfAudioTracks >= 2) {
                     // more than 2 audio tracks
-                    audioChannel = CommonConstants.StereoChannel;
-                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
-                    playingParam.setVocalAudioChannel(audioChannel);
-                    playingParam.setMusicAudioTrackIndex(2);
-                    playingParam.setMusicAudioChannel(audioChannel);
+                    musicAudioTrack = 2; // default music is the second track
                 } else {
                     // only one track
-                    audioChannel = CommonConstants.LeftChannel;
-                    playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
-                    playingParam.setVocalAudioChannel(audioChannel);
-                    playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
-                    playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
+                    musicAudioTrack = 1;
                 }
+                playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
+                playingParam.setVocalAudioChannel(audioChannel);
+                playingParam.setMusicAudioTrackIndex(musicAudioTrack);    // default music is the second track
+                playingParam.setMusicAudioChannel(audioChannel);
             }
             setAudioTrackAndChannel(audioTrackIndex, audioChannel);
 
@@ -408,7 +413,8 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         setMediaPlaybackState(playingParam.getCurrentPlaybackState());
 
         // Create a MediaControllerCompat
-        mediaControllerCompat = new MediaControllerCompat(callingContext, mediaSessionCompat);
+        // mediaControllerCompat = new MediaControllerCompat(callingContext, mediaSessionCompat);
+        mediaControllerCompat = new MediaControllerCompat(mActivity, mediaSessionCompat);
         MediaControllerCompat.setMediaController(mActivity, mediaControllerCompat);
         mediaControllerCallback = new VLCMediaControllerCallback(this);
         mediaControllerCompat.registerCallback(mediaControllerCallback);
@@ -441,13 +447,14 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     }
 
     @Override
-    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
-        FileSelectUtil.selectFileToOpen(mActivity, requestCode, isSingle);
+    public Intent createSelectFilesToOpenIntent() {
+        return FileSelectUtil.selectFileToOpenIntent(mActivity, false);
     }
 
     @Override
     public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
-        return UriUtil.getUrisListFromIntent(callingContext, data);
+        // return UriUtil.getUrisListFromIntent(callingContext, data);
+        return UriUtil.getUrisListFromIntent(mActivity, data);
     }
 
     @Override

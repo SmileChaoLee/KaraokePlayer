@@ -10,14 +10,14 @@ android {
             keyPassword '86637971'
         }
     }
-    */
+     */
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 180
-        versionName "1.80"
+        versionCode 280
+        versionName "2.00"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // signingConfig signingConfigs.release
     }

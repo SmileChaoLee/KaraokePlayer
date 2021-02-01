@@ -1,5 +1,6 @@
 package videoplayer.Listeners;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -16,18 +17,20 @@ import videoplayer.Presenters.VLCPlayerPresenter;
 public class VLCPlayerEventListener implements MediaPlayer.EventListener {
 
     private static final String TAG = "VLCPlayerEventListener";
-    private final Context callingContext;
+    private final Activity mActivity;
+    // private final Context callingContext;
     private final VLCPlayerPresenter mPresenter;
     private final MediaPlayer vlcPlayer;
     private final float toastTextSize;
 
-    public VLCPlayerEventListener(Context context, VLCPlayerPresenter presenter) {
-        callingContext = context;
+    public VLCPlayerEventListener(Activity activity, VLCPlayerPresenter presenter) {
+        mActivity = activity;
+        // callingContext = context;
         mPresenter = presenter;
         vlcPlayer = mPresenter.getVlcPlayer();
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
-        float textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(mActivity, ScreenUtil.FontSize_Pixel_Type, null);
+        float textFontSize = ScreenUtil.suitableFontSize(mActivity, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
     }
 
@@ -92,12 +95,12 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 Log.d(TAG, "vlcPlayer is EncounteredError event");
                 mPresenter.getPresentView().showNativeAndBannerAd();
                 mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
-                String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
+                String formatNotSupportedString = mActivity.getString(R.string.formatNotSupportedString);
                 Log.d(TAG, "mPresenter.isCanShowNotSupportedFormat() = " + mPresenter.isCanShowNotSupportedFormat());
                 if (mPresenter.isCanShowNotSupportedFormat()) {
                     // only show once
                     mPresenter.setCanShowNotSupportedFormat(false);
-                    ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                    ScreenUtil.showToast(mActivity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 }
                 mPresenter.startAutoPlay();
                 break;

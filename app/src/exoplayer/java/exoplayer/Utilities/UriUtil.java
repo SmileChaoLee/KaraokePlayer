@@ -3,7 +3,9 @@ package exoplayer.Utilities;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
+
+import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
+
 import java.util.ArrayList;
 
 public class UriUtil {

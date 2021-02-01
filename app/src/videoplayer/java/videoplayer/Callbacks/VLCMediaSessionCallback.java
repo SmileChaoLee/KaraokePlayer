@@ -82,14 +82,15 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                     Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_STOPPED");
                     break;
                 case PlaybackStateCompat.STATE_PLAYING:
+                    Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PLAYING");
                 case PlaybackStateCompat.STATE_NONE:
+                    Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_NONE");
                     // start playing when ready or just start new playing
                     // final Media mediaSource = new Media(mLibVLC, uri);   // libvlc version 3.1.12
                     final IMedia mediaSource = new Media(mLibVLC, uri);
                     vlcPlayer.setMedia(mediaSource);
                     vlcPlayer.play();
                     mediaSource.release();
-                    Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PLAYING");
                     break;
             }
         } catch (Exception e) {
