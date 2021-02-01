@@ -1,7 +1,6 @@
 package exoplayer.Presenters;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +9,11 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.mediarouter.media.MediaRouter;
 
@@ -50,7 +54,7 @@ import exoplayer.Listeners.ExoPlayerEventListener;
 import exoplayer.Utilities.UriUtil;
 
 import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
-import com.smile.karaokeplayer.Utilities.ContentUriAccessUtil;
+import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 
@@ -58,9 +62,9 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "ExoPlayerPresenter";
 
-    private final Context callingContext;
-    private final ExoPlayerPresentView presentView;
     private final Activity mActivity;
+    // private final Context callingContext;
+    private final ExoPlayerPresentView presentView;
     private final CastContext castContext;
     private ExoPlayerCastStateListener exoPlayerCastStateListener;
 
@@ -103,17 +107,19 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         void setCurrentPlayerToPlayerView();
     }
 
-    public ExoPlayerPresenter(Context context, ExoPlayerPresentView presentView) {
-        super(context, presentView);
-        this.callingContext = context;
+    public ExoPlayerPresenter(Activity activity, ExoPlayerPresentView presentView) {
+        super(activity, presentView);
+        // this.callingContext = context;
+        mActivity = activity;
         this.presentView = presentView;
-        this.mActivity = (Activity)(this.presentView);
+        // this.mActivity = (Activity)(this.presentView);
 
         CastContext _castContext = null;
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
             try {
-                _castContext = CastContext.getSharedInstance(callingContext);
+                // _castContext = CastContext.getSharedInstance(callingContext);
+                _castContext = CastContext.getSharedInstance(mActivity);
             } catch (RuntimeException e) {
                 _castContext = null;
                 Throwable cause = e.getCause();
@@ -128,11 +134,13 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             }
         }
         castContext = _castContext;
-        currentCastState = CastState.NO_DEVICES_AVAILABLE;
+        // currentCastState = CastState.NO_DEVICES_AVAILABLE;
+        currentCastState = castContext.getCastState();
 
         Log.d(TAG, "castContext is " + castContext);
 
         exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
+        castContext.getCastState();
     }
 
     public ArrayList<Integer[]> getAudioTrackIndicesList() {
@@ -154,18 +162,22 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     }
 
     public void initExoPlayerAndCastPlayer() {
-        trackSelector = new DefaultTrackSelector(callingContext, new AdaptiveTrackSelection.Factory());
+        // trackSelector = new DefaultTrackSelector(callingContext, new AdaptiveTrackSelection.Factory());
+        trackSelector = new DefaultTrackSelector(mActivity, new AdaptiveTrackSelection.Factory());
         trackSelector.setParameters(trackSelectorParameters);
 
-        MyRenderersFactory myRenderersFactory = new MyRenderersFactory(callingContext);
+        // MyRenderersFactory myRenderersFactory = new MyRenderersFactory(callingContext);
+        MyRenderersFactory myRenderersFactory = new MyRenderersFactory(mActivity);
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
 
-        SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(callingContext, myRenderersFactory);
+        // SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(callingContext, myRenderersFactory);
+        SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(mActivity, myRenderersFactory);
         exoPlayerBuilder.setTrackSelector(trackSelector);
         exoPlayer = exoPlayerBuilder.build();
 
         // no need. It will ve overridden by MediaSessionConnector
-        mExoPlayerEventListener = new ExoPlayerEventListener(callingContext, this);
+        // mExoPlayerEventListener = new ExoPlayerEventListener(callingContext, this);
+        mExoPlayerEventListener = new ExoPlayerEventListener(mActivity, this);
         exoPlayer.addListener(mExoPlayerEventListener);
 
         if (castContext != null) {
@@ -178,7 +190,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                     if (mediaUri == null) {
                         Log.d(TAG, "Stopped casting because mediaUri is null");
                         Log.d(TAG, "Set current player back to exoPlayer");
-                        MediaRouter mRouter = MediaRouter.getInstance(callingContext);  // singleton
+                        // MediaRouter mRouter = MediaRouter.getInstance(callingContext);  // singleton
+                        MediaRouter mRouter = MediaRouter.getInstance(mActivity);  // singleton
                         mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
                         return;
                     }
@@ -468,7 +481,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         if (savedInstanceState == null) {
             videoTrackIndicesList = new ArrayList<>();
             audioTrackIndicesList = new ArrayList<>();
-            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
+            // trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(callingContext).build();
+            trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder(mActivity).build();
         } else {
             videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
             audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
@@ -605,7 +619,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         super.initMediaSessionCompat();
 
         // Create a MediaControllerCompat
-        mediaControllerCompat = new MediaControllerCompat(callingContext, mediaSessionCompat);
+        // mediaControllerCompat = new MediaControllerCompat(callingContext, mediaSessionCompat);
+        mediaControllerCompat = new MediaControllerCompat(mActivity, mediaSessionCompat);
         MediaControllerCompat.setMediaController(mActivity, mediaControllerCompat);
         mediaControllerCallback = new ExoMediaControllerCallback(this);
         mediaControllerCompat.registerCallback(mediaControllerCallback);
@@ -613,7 +628,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
         mediaSessionConnector = new MediaSessionConnector(mediaSessionCompat);
         mediaSessionConnector.setPlayer(exoPlayer);
-        mediaSessionConnector.setPlaybackPreparer(new ExoPlaybackPreparer(callingContext, this));
+        // mediaSessionConnector.setPlaybackPreparer(new ExoPlaybackPreparer(callingContext, this));
+        mediaSessionConnector.setPlaybackPreparer(new ExoPlaybackPreparer(mActivity, this));
     }
 
     @Override
@@ -647,13 +663,14 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     }
 
     @Override
-    public void selectFileToOpenPresenter(int requestCode, boolean isSingle) {
-        ContentUriAccessUtil.selectFileToOpen(mActivity, PlayerConstants.FILE_READ_REQUEST_CODE, false);
+    public Intent createSelectFilesToOpenIntent() {
+        return ContentUriAccessUtil.createIntentForSelectingFile(false);
     }
 
     @Override
     public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
-        return UriUtil.getUrisListFromIntent(callingContext, data);
+        // return UriUtil.getUrisListFromIntent(callingContext, data);
+        return UriUtil.getUrisListFromIntent(mActivity, data);
     }
 
     @Override
@@ -770,11 +787,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     // ChromeCast methods
     public void addBaseCastStateListener() {
         Log.d(TAG, "addBaseCastStateListener() is called.");
+        Log.d(TAG, "castContext = " + castContext);
         if (castContext != null) {
             castContext.addCastStateListener(exoPlayerCastStateListener);
             Log.d(TAG, "castContext.addCastStateListener(baseCastStateListener)");
         }
-
     }
     public void removeBaseCastStateListener() {
         Log.d(TAG, "removeBaseCastStateListener() is called.");

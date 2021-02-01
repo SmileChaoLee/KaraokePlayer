@@ -76,7 +76,10 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
 
         mPresenter.addBaseCastStateListener();
         if (castPlayer != null && exoPlayer != null) {
+            Log.d(TAG, "castPlayer != null && exoPlayer != null");
             mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
+        } else {
+            Log.d(TAG, "castPlayer == null || exoPlayer == null");
         }
 
         Log.d(TAG,"onCreate() is finished.");

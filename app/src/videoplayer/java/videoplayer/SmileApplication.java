@@ -1,7 +1,7 @@
 package videoplayer;
 
 import com.smile.karaokeplayer.BaseApplication;
-import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
+import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
 
 public class SmileApplication extends BaseApplication {
 

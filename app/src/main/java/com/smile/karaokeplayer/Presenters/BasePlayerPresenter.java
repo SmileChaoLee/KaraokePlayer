@@ -2,7 +2,6 @@ package com.smile.karaokeplayer.Presenters;
 
 import android.app.Activity;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.UriPermission;
 import android.net.Uri;
@@ -15,6 +14,11 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.activity.ComponentActivity;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
@@ -31,9 +35,9 @@ public abstract class BasePlayerPresenter {
 
     private static final String TAG = "PlayerBasePresenter";
 
-    private final Context callingContext;
-    private final BasePresentView presentView;
     private final Activity mActivity;
+    // private final Context callingContext;
+    private final BasePresentView presentView;
 
     protected final float textFontSize;
     protected final float fontScale;
@@ -74,20 +78,21 @@ public abstract class BasePlayerPresenter {
     public abstract int getCurrentProgressForVolumeSeekBar();
     public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
     public abstract void specificPlayerReplayMedia(long currentAudioPosition);
-    public abstract void selectFileToOpenPresenter(int requestCode, boolean isSingle);
+    public abstract Intent createSelectFilesToOpenIntent();
     public abstract ArrayList<Uri> getUrisListFromIntentPresenter(Intent data);
     public abstract void switchAudioToMusic();
     public abstract void switchAudioToVocal();
 
-    public BasePlayerPresenter(Context context, BasePresentView presentView) {
+    public BasePlayerPresenter(Activity activity, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
-        this.callingContext = context;
+        mActivity = activity;
+        // this.callingContext = context;
         this.presentView = presentView;
-        this.mActivity = (Activity)(this.presentView);
+        // this.mActivity = (Activity)(this.presentView);
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(callingContext, ScreenUtil.FontSize_Pixel_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(callingContext, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(callingContext, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(mActivity, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(mActivity, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(mActivity, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
     }
 
@@ -152,6 +157,84 @@ public abstract class BasePlayerPresenter {
 
     public BasePresentView getPresentView() {
         return presentView;
+    }
+
+    private void setPlayingParameters(SongInfo songInfo) {
+        playingParam.setInSongList( (songInfo.getIncluded().equals("1") ? true : false));
+        playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
+        playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
+        playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
+        playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+    }
+
+    private void autoPlaySongList() {
+        canShowNotSupportedFormat = true;
+        if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
+            // playingParam.setAutoPlay(true);
+            playingParam.setPublicNextSongIndex(0); // next song that will be played
+            // start playing video from list
+            startAutoPlay();
+        }
+    }
+
+    private void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
+
+        if (tempUriList==null || tempUriList.size()==0) {
+            return;
+        }
+
+        // clear publicSongList but publicSongList might be null
+        ArrayList<SongInfo> songListTemp = new ArrayList<>();
+        for (Uri tempUri : tempUriList) {
+            // searching song list for the information of tempUri
+            SongInfo songInfo = null;
+            // SongListSQLite songListSQLite = new SongListSQLite(callingContext);
+            SongListSQLite songListSQLite = new SongListSQLite(mActivity);
+            if (songListSQLite != null) {
+                songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
+                songListSQLite.closeDatabase();
+            }
+            if (songInfo != null) {
+                Log.d(TAG, "Found this song on song list.");
+                songInfo.setIncluded("1");  // set to in the list
+            } else {
+                Log.d(TAG, "Could not find this song on song list.");
+                songInfo = new SongInfo();
+                songInfo.setSongName("");
+                // has to be tempUri not mediaUri
+                songInfo.setFilePath(tempUri.toString());
+                int currentAudioTrack = 1;
+                songInfo.setMusicTrackNo(currentAudioTrack);
+                songInfo.setMusicChannel(CommonConstants.LeftChannel);
+                songInfo.setVocalTrackNo(currentAudioTrack);
+                songInfo.setVocalChannel(CommonConstants.RightChannel);
+                // not in the list and unknown music and vocal setting
+                songInfo.setIncluded("0");  // set to not in the list
+            }
+            songListTemp.add(songInfo);
+        }
+
+        if (songListTemp.size() > 0) {
+            publicSongList = new ArrayList<>(songListTemp);
+            playingParam.setAutoPlay(false);
+            autoPlaySongList();
+        }  else {
+            playingParam.setAutoPlay(false);
+            // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noFilesSelectedString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noFilesSelectedString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+        }
+    }
+
+    protected void playMediaFromUri(Uri uri) {
+        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
+        // pass the saved instance of playingParam to
+        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
+        Bundle playingParamOriginExtras = new Bundle();
+        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
+        if (mediaTransportControls != null) {
+            mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
+        }
     }
 
     public void initializePlayingParam() {
@@ -226,25 +309,6 @@ public abstract class BasePlayerPresenter {
         setAudioVolume(playingParam.getCurrentVolume());
     }
 
-    protected void playMediaFromUri(Uri uri) {
-        // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
-        // pass the saved instance of playingParam to
-        // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
-        Bundle playingParamOriginExtras = new Bundle();
-        playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
-        if (mediaTransportControls != null) {
-            mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
-        }
-    }
-
-    private void setPlayingParameters(SongInfo songInfo) {
-        playingParam.setInSongList( (songInfo.getIncluded().equals("1") ? true : false));
-        playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
-        playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
-        playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
-        playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-    }
-
     public void playSingleSong(SongInfo songInfo) {
         if (songInfo == null) {
             return;
@@ -262,7 +326,8 @@ public abstract class BasePlayerPresenter {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
-                ContentResolver contentResolver = callingContext.getContentResolver();
+                // ContentResolver contentResolver = callingContext.getContentResolver();
+                ContentResolver contentResolver = mActivity.getContentResolver();
                 for (UriPermission perm : contentResolver.getPersistedUriPermissions()) {
                     if (perm.getUri().equals(Uri.parse(filePath))) {
                         Log.d(TAG, "playSingleSong() has URI permission");
@@ -357,13 +422,15 @@ public abstract class BasePlayerPresenter {
         boolean isAutoPlay = playingParam.isAutoPlay();
         if (!isAutoPlay) {
             // previous is not auto play
-            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readPublicSongList(callingContext);
+            // ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readPublicSongList(callingContext);
+            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readPublicSongList(mActivity);
             if (songListTemp.size() > 0) {
                 publicSongList = new ArrayList<>(songListTemp);
                 playingParam.setAutoPlay(true); // must be above autoPlayPublicSongList()
                 autoPlaySongList();
             } else {
-                ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString)
+                // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noPlaylistString)
+                ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPlaylistString)
                         , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         } else {
@@ -380,22 +447,29 @@ public abstract class BasePlayerPresenter {
         presentView.setImageButtonStatus();
     }
 
-    private void autoPlaySongList() {
-        canShowNotSupportedFormat = true;
-        if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
-            // playingParam.setAutoPlay(true);
-            playingParam.setPublicNextSongIndex(0); // next song that will be played
-            // start playing video from list
-            startAutoPlay();
-        }
-        /*
-        // no need
-        else {
-            playingParam.setAutoPlay(false);
-            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPlaylistString)
-                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-        }
-        */
+    public void selectFileToOpenPresenter() {
+        ActivityResultLauncher<Intent> activityResultLauncher = ((ComponentActivity)mActivity).registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result == null) {
+                            return;
+                        }
+                        Log.d(TAG, "selectFileToOpenPresenter()-->onActivityResult() is called.");
+                        int resultCode = result.getResultCode();
+                        if (resultCode == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
+                            if (uris != null && uris.size() > 0) {
+                                Log.d(TAG, "selectFileToOpenPresenter()-->onActivityResult()-->uris.size() = " + uris.size());
+                                // There are files selected
+                                playSelectedUrisFromStorage(uris);
+                            }
+                        }
+                    }
+                });
+        Intent selectFileIntent = createSelectFilesToOpenIntent();
+        activityResultLauncher.launch(selectFileIntent);
     }
 
     public void playPreviousSong() {
@@ -407,7 +481,8 @@ public abstract class BasePlayerPresenter {
         int publicSongListSize = publicSongList.size();
         if (publicSongListSize <= 1 ) {
             // only file in the play list
-            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPreviousSongString)
+            // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noPreviousSongString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPreviousSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
@@ -431,7 +506,8 @@ public abstract class BasePlayerPresenter {
                 break;
             case PlayerConstants.NoRepeatPlaying:
                 if (nextIndex < 0) {
-                    ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noPreviousSongString)
+                    // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noPreviousSongString)
+                    ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPreviousSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return;
                 }
@@ -451,7 +527,8 @@ public abstract class BasePlayerPresenter {
         int publicSongListSize = publicSongList.size();
         if (publicSongListSize <= 1 ) {
             // only file in the play list
-            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noNextSongString)
+            // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noNextSongString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noNextSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
@@ -460,7 +537,8 @@ public abstract class BasePlayerPresenter {
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
                 if (nextIndex >= publicSongListSize) {
-                    ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noNextSongString)
+                    // ScreenUtil.showToast(mActivity, callingContext.getString(R.string.noNextSongString)
+                    ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noNextSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return; // no more next
                 }
@@ -484,53 +562,6 @@ public abstract class BasePlayerPresenter {
     public Uri getValidatedUri(Uri tempUri) {
         Log.d(TAG, "PlayerBasePresenter.getValidatedUri() is called.");
         return tempUri;
-    }
-
-    public void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
-
-        if (tempUriList==null || tempUriList.size()==0) {
-            return;
-        }
-
-        // clear publicSongList but publicSongList might be null
-        ArrayList<SongInfo> songListTemp = new ArrayList<>();
-        for (Uri tempUri : tempUriList) {
-            // searching song list for the information of tempUri
-            SongInfo songInfo = null;
-            SongListSQLite songListSQLite = new SongListSQLite(callingContext);
-            if (songListSQLite != null) {
-                songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
-                songListSQLite.closeDatabase();
-            }
-            if (songInfo != null) {
-                Log.d(TAG, "Found this song on song list.");
-                songInfo.setIncluded("1");  // set to in the list
-            } else {
-                Log.d(TAG, "Could not find this song on song list.");
-                songInfo = new SongInfo();
-                songInfo.setSongName("");
-                // has to be tempUri not mediaUri
-                songInfo.setFilePath(tempUri.toString());
-                int currentAudioTrack = 1;
-                songInfo.setMusicTrackNo(currentAudioTrack);
-                songInfo.setMusicChannel(CommonConstants.LeftChannel);
-                songInfo.setVocalTrackNo(currentAudioTrack);
-                songInfo.setVocalChannel(CommonConstants.RightChannel);
-                // not in the list and unknown music and vocal setting
-                songInfo.setIncluded("0");  // set to not in the list
-            }
-            songListTemp.add(songInfo);
-        }
-
-        if (songListTemp.size() > 0) {
-            publicSongList = new ArrayList<>(songListTemp);
-            playingParam.setAutoPlay(false);
-            autoPlaySongList();
-        }  else {
-            playingParam.setAutoPlay(false);
-            ScreenUtil.showToast(callingContext, callingContext.getString(R.string.noFilesSelectedString)
-                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-        }
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
@@ -664,7 +695,8 @@ public abstract class BasePlayerPresenter {
     public void initMediaSessionCompat() {
         Log.d(TAG, "PlayerBasePresenter.initMediaSessionCompat() is called.");
         // Create a MediaSessionCompat
-        mediaSessionCompat = new MediaSessionCompat(callingContext, PlayerConstants.LOG_TAG);
+        // mediaSessionCompat = new MediaSessionCompat(callingContext, PlayerConstants.LOG_TAG);
+        mediaSessionCompat = new MediaSessionCompat(mActivity, PlayerConstants.LOG_TAG);
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
         mediaSessionCompat.setActive(true); // might need to find better place to put

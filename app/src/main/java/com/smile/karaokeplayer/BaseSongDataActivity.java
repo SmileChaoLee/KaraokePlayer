@@ -17,8 +17,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.smile.karaokeplayer.ArrayAdapters.SpinnerAdapter;
@@ -45,7 +48,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private SpinnerAdapter audioVocalChannelAdapter;
 
     private EditText edit_titleNameEditText;
-    private EditText edit_filePathEditText;
+    protected EditText edit_filePathEditText;
     private ImageButton edit_selectOneFilePathButton;
     private Spinner edit_musicTrackSpinner;
     private Spinner edit_musicChannelSpinner;
@@ -58,7 +61,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private String crudAction;;
     private SongInfo mSongInfo;
 
-    public abstract void selectOneFilePathSongData(int requestCode);
+    public abstract Intent createSelectOneFileToOpenIntent();
     public abstract ArrayList<Uri> getUrisListFromIntentSongData(Intent data);
     public abstract void setKaraokeSettingLayoutVisibility();
 
@@ -150,7 +153,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         edit_selectOneFilePathButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                selectOneFilePathSongData(SELECT_ONE_FILE);
+                selectOneFilePathSongData();
             }
         });
 
@@ -206,18 +209,41 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
             public void onClick(View view) {
                 final boolean isValid = setSongInfoFromInput(true);
                 SongListSQLite songListSQLite = new SongListSQLite(getApplicationContext());
+                SongInfo songInfo;
                 long databaseResult = -1;
                 switch (crudAction.toUpperCase()) {
                     case CommonConstants.AddActionString:
                         // add one record
                         if (isValid) {
-                            databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+                            // check if this file is already in database
+                            songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
+                            if (songInfo == null) {
+                                databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+                            } else {
+                                ScreenUtil.showToast(BaseSongDataActivity.this, getString(R.string.duplicate_in_database),
+                                        toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                            }
                         }
                         break;
                     case CommonConstants.EditActionString:
                         // = "EDIT". Edit one record
                         if (isValid) {
-                            databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                            songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
+                            if (songInfo == null) {
+                                // not in the database
+                                databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                            } else {
+                                // already in the database
+                                // if (songInfo.getFilePath() == mSongInfo.getFilePath()) {
+                                if (songInfo.getId() == mSongInfo.getId()) {
+                                    // same record because same id so update
+                                    databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                                } else {
+                                    // different id then duplicate
+                                    ScreenUtil.showToast(BaseSongDataActivity.this, getString(R.string.duplicate_in_database),
+                                            toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                                }
+                            }
                         }
                         break;
                     case CommonConstants.DeleteActionString:
@@ -278,26 +304,6 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         returnToPrevious();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SELECT_ONE_FILE && resultCode == Activity.RESULT_OK) {
-            ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
-            // this activity allows only one file selected
-            switch (uris.size()) {
-                case 0:
-                    // no files selected
-                    break;
-                case 1:
-                    // single file selected
-                    edit_filePathEditText.setText(uris.get(0).toString());
-                    break;
-            }
-
-            return;
-        }
-    }
-
     private void returnToPrevious() {
 
         Intent returnIntent = new Intent();
@@ -343,11 +349,36 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         if (filePath.isEmpty()) {
             isValid = false;
             if (hasMessage) {
-                ScreenUtil.showToast(getApplicationContext(), getString(R.string.filepathEmptyString),
+                ScreenUtil.showToast(this, getString(R.string.filepathEmptyString),
                         toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         }
 
         return isValid;
+    }
+
+    private void selectOneFilePathSongData() {
+        Log.d(TAG, "selectOneFilePathSongData() is called.");
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        Intent data = result.getData();
+                        ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
+                        // this activity allows only one file selected
+                        switch (uris.size()) {
+                            case 0:
+                                // no files selected
+                                break;
+                            case 1:
+                                // single file selected
+                                edit_filePathEditText.setText(uris.get(0).toString());
+                                break;
+                        }
+                    }
+                });
+
+        Intent selectOneFileIntent = createSelectOneFileToOpenIntent();
+        activityResultLauncher.launch(selectOneFileIntent);
     }
 }

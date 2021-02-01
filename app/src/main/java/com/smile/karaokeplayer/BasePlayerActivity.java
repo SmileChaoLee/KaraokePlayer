@@ -1,7 +1,6 @@
 package com.smile.karaokeplayer;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -49,10 +48,8 @@ import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
-import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
+import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
-
-import java.util.ArrayList;
 
 public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
@@ -358,17 +355,10 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                 break;
             case R.id.songList:
                 Intent songListIntent = createIntentForSongListActivity();
-                // Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
-                Class childClass = getClass();
-                Log.d(TAG, "childClass = " + childClass);
-                if (childClass != null) {
-                    Intent playerBaseActivityIntent = new Intent(getApplicationContext(), childClass);
-                    songListIntent.putExtra(PlayerConstants.PlayerBaseActivityIntent, playerBaseActivityIntent);
-                    startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
-                }
+                startActivity(songListIntent);
                 break;
             case R.id.open:
-                mPresenter.selectFileToOpenPresenter(PlayerConstants.FILE_READ_REQUEST_CODE, false);
+                mPresenter.selectFileToOpenPresenter();
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -487,20 +477,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         Log.d(TAG,"onSaveInstanceState() is called.");
         mPresenter.saveInstanceState(outState);
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "onActivityResult() is called.");
-            ArrayList<Uri> uris = mPresenter.getUrisListFromIntentPresenter(data);
-            if (uris!=null && uris.size()>0) {
-                Log.d(TAG, "onActivityResult( --> uris.size() = " + uris.size());
-                // There are files selected
-                mPresenter.playSelectedUrisFromStorage(uris);
-            }
-        }
     }
 
     @Override

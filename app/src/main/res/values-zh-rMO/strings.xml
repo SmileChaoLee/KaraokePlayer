@@ -64,4 +64,5 @@
     <string name="chromecast_is_connecting">Chromecast連線中</string>
     <string name="chromecast_is_connected">Chromecast以連線</string>
     <string name="guessedAudioTrackValue">音軌設定是猜測的,\n需要再確認</string>
+    <string name="duplicate_in_database">資料重複在資料庫中</string>
 </resources>
