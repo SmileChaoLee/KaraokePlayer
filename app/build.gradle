@@ -1,25 +1,26 @@
 apply plugin: 'com.android.application'
 
 android {
-    /*
+
     signingConfigs {
         release {
-            storeFile file('C:\\AndroidStudio\\keystore\\new_key.jks')
+            // storeFile file('C:\\AndroidStudio\\keystore\\new_key.jks')
+            storeFile file('/home/chao/AndroidStudio/keystore/new_key.jks')
             storePassword '86637971'
             keyAlias = 'chaolee1959'
             keyPassword '86637971'
         }
     }
-     */
+
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 280
-        versionName "2.00"
+        versionCode 281
+        versionName "2.81"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // signingConfig signingConfigs.release
+        signingConfig signingConfigs.release
     }
 
     flavorDimensions("player")
@@ -70,7 +71,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
         debug {
             minifyEnabled false

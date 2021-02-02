@@ -9,11 +9,6 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 
-import androidx.activity.ComponentActivity;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.mediarouter.media.MediaRouter;
 
@@ -65,7 +60,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     private final Activity mActivity;
     // private final Context callingContext;
     private final ExoPlayerPresentView presentView;
-    private final CastContext castContext;
+    private CastContext castContext;
     private ExoPlayerCastStateListener exoPlayerCastStateListener;
 
     private MediaControllerCompat mediaControllerCompat;
@@ -114,14 +109,15 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         this.presentView = presentView;
         // this.mActivity = (Activity)(this.presentView);
 
-        CastContext _castContext = null;
+        castContext = null;
+        currentCastState = CastState.NO_DEVICES_AVAILABLE;
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
             try {
                 // _castContext = CastContext.getSharedInstance(callingContext);
-                _castContext = CastContext.getSharedInstance(mActivity);
+                castContext = CastContext.getSharedInstance(mActivity);
             } catch (RuntimeException e) {
-                _castContext = null;
+                castContext = null;
                 Throwable cause = e.getCause();
                 while (cause != null) {
                     if (cause instanceof DynamiteModule.LoadingException) {
@@ -132,15 +128,12 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 // Unknown error. We propagate it.
                 Log.d(TAG, "Failed to get CastContext. Unknown error.");
             }
+            if (castContext != null) {
+                Log.d(TAG, "castContext is " + castContext);
+                exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
+                currentCastState = castContext.getCastState();
+            }
         }
-        castContext = _castContext;
-        // currentCastState = CastState.NO_DEVICES_AVAILABLE;
-        currentCastState = castContext.getCastState();
-
-        Log.d(TAG, "castContext is " + castContext);
-
-        exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
-        castContext.getCastState();
     }
 
     public ArrayList<Integer[]> getAudioTrackIndicesList() {
