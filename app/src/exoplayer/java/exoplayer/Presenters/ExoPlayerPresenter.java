@@ -9,11 +9,6 @@ import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 
-import androidx.activity.ComponentActivity;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.mediarouter.media.MediaRouter;
 
@@ -115,6 +110,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         // this.mActivity = (Activity)(this.presentView);
 
         castContext = null;
+        currentCastState = CastState.NO_DEVICES_AVAILABLE;
         if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             Log.d(TAG, "com.smile.karaokeplayer.BuildConfig.DEBUG");
             try {
