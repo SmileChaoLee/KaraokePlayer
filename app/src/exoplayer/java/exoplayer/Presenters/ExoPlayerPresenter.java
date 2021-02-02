@@ -129,11 +129,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 Log.d(TAG, "Failed to get CastContext. Unknown error.");
             }
             if (castContext != null) {
-                // currentCastState = CastState.NO_DEVICES_AVAILABLE;
-                currentCastState = castContext.getCastState();
-
                 Log.d(TAG, "castContext is " + castContext);
-
                 exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
                 currentCastState = castContext.getCastState();
             }
