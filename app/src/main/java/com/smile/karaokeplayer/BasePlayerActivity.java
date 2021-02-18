@@ -30,6 +30,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
@@ -143,6 +145,12 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
+
+        // keep the screen on all the time, added on 2021-02-18
+        Window mWindow = getWindow();
+        if (mWindow != null) {
+            mWindow.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
 
         mPresenter = getPlayerBasePresenter();
         Log.d(TAG, "mPresenter = " + mPresenter);
@@ -489,6 +497,14 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         if (nativeTemplate != null) {
             nativeTemplate.release();
         }
+
+        // clear the screen on, added on 2021-02-18
+        Window mWindow = getWindow();
+        if (mWindow != null) {
+            mWindow.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        //
+
         super.onDestroy();
     }
 

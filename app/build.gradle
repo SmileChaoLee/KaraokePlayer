@@ -4,8 +4,8 @@ android {
 
     signingConfigs {
         release {
-            // storeFile file('C:\\AndroidStudio\\keystore\\new_key.jks')
-            storeFile file('/home/chao/AndroidStudio/keystore/new_key.jks')
+            storeFile file('C:\\AndroidStudio\\keystore\\new_key.jks')
+            // storeFile file('/home/chao/AndroidStudio/keystore/new_key.jks')
             storePassword '86637971'
             keyAlias = 'chaolee1959'
             keyPassword '86637971'
@@ -17,8 +17,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 281
-        versionName "2.81"
+        versionCode 282
+        versionName "2.82"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
