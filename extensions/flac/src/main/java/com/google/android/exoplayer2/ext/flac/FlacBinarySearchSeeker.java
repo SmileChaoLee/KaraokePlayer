@@ -15,12 +15,14 @@
  */
 package com.google.android.exoplayer2.ext.flac;
 
+import static java.lang.Math.max;
+
 import com.google.android.exoplayer2.extractor.BinarySearchSeeker;
 import com.google.android.exoplayer2.extractor.ExtractorInput;
+import com.google.android.exoplayer2.extractor.FlacStreamMetadata;
 import com.google.android.exoplayer2.extractor.SeekMap;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.FlacConstants;
-import com.google.android.exoplayer2.util.FlacStreamMetadata;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -60,22 +62,22 @@ import java.nio.ByteBuffer;
    * @param outputFrameHolder A holder used to retrieve the frame found by a seeking operation.
    */
   public FlacBinarySearchSeeker(
-          FlacStreamMetadata streamMetadata,
-          long firstFramePosition,
-          long inputLength,
-          FlacDecoderJni decoderJni,
-          OutputFrameHolder outputFrameHolder) {
+      FlacStreamMetadata streamMetadata,
+      long firstFramePosition,
+      long inputLength,
+      FlacDecoderJni decoderJni,
+      OutputFrameHolder outputFrameHolder) {
     super(
-            /* seekTimestampConverter= */ streamMetadata::getSampleNumber,
-            new FlacTimestampSeeker(decoderJni, outputFrameHolder),
-            streamMetadata.getDurationUs(),
-            /* floorTimePosition= */ 0,
-            /* ceilingTimePosition= */ streamMetadata.totalSamples,
-            /* floorBytePosition= */ firstFramePosition,
-            /* ceilingBytePosition= */ inputLength,
-            /* approxBytesPerFrame= */ streamMetadata.getApproxBytesPerFrame(),
-            /* minimumSearchRange= */ Math.max(
-                    FlacConstants.MIN_FRAME_HEADER_SIZE, streamMetadata.minFrameSize));
+        /* seekTimestampConverter= */ streamMetadata::getSampleNumber,
+        new FlacTimestampSeeker(decoderJni, outputFrameHolder),
+        streamMetadata.getDurationUs(),
+        /* floorTimePosition= */ 0,
+        /* ceilingTimePosition= */ streamMetadata.totalSamples,
+        /* floorBytePosition= */ firstFramePosition,
+        /* ceilingBytePosition= */ inputLength,
+        /* approxBytesPerFrame= */ streamMetadata.getApproxBytesPerFrame(),
+        /* minimumSearchRange= */ max(
+            FlacConstants.MIN_FRAME_HEADER_SIZE, streamMetadata.minFrameSize));
     this.decoderJni = Assertions.checkNotNull(decoderJni);
   }
 
@@ -100,13 +102,13 @@ import java.nio.ByteBuffer;
 
     @Override
     public TimestampSearchResult searchForTimestamp(ExtractorInput input, long targetSampleIndex)
-            throws IOException, InterruptedException {
+        throws IOException {
       ByteBuffer outputBuffer = outputFrameHolder.byteBuffer;
       long searchPosition = input.getPosition();
       decoderJni.reset(searchPosition);
       try {
         decoderJni.decodeSampleWithBacktrackPosition(
-                outputBuffer, /* retryPosition= */ searchPosition);
+            outputBuffer, /* retryPosition= */ searchPosition);
       } catch (FlacDecoderJni.FlacFrameDecodeException e) {
         // For some reasons, the extractor can't find a frame mid-stream.
         // Stop the seeking and let it re-try playing at the last search position.
@@ -121,7 +123,7 @@ import java.nio.ByteBuffer;
       long nextFrameSamplePosition = decoderJni.getDecodePosition();
 
       boolean targetSampleInLastFrame =
-              lastFrameSampleIndex <= targetSampleIndex && nextFrameSampleIndex > targetSampleIndex;
+          lastFrameSampleIndex <= targetSampleIndex && nextFrameSampleIndex > targetSampleIndex;
 
       if (targetSampleInLastFrame) {
         // We are holding the target frame in outputFrameHolder. Set its presentation time now.
@@ -131,7 +133,7 @@ import java.nio.ByteBuffer;
         return TimestampSearchResult.targetFoundResult(input.getPosition());
       } else if (nextFrameSampleIndex <= targetSampleIndex) {
         return TimestampSearchResult.underestimatedResult(
-                nextFrameSampleIndex, nextFrameSamplePosition);
+            nextFrameSampleIndex, nextFrameSamplePosition);
       } else {
         return TimestampSearchResult.overestimatedResult(lastFrameSampleIndex, searchPosition);
       }

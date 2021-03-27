@@ -74,7 +74,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
 
         mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
 
-        mPresenter.addBaseCastStateListener();
+        // mPresenter.addBaseCastStateListener();   // moved to onResume() on 2021-03-26
         if (castPlayer != null && exoPlayer != null) {
             Log.d(TAG, "castPlayer != null && exoPlayer != null");
             mPresenter.setCurrentPlayer(castPlayer.isCastSessionAvailable() ? castPlayer : exoPlayer);
@@ -86,13 +86,27 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.setSessionAvailabilityListener();
+        mPresenter.addBaseCastStateListener();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.releaseSessionAvailabilityListener();
+        mPresenter.removeBaseCastStateListener();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
         if (mPresenter != null) {
             mPresenter.releaseMediaSessionCompat();
+            // mPresenter.removeBaseCastStateListener();    // moved to onPause() on 2021-03-26
             mPresenter.releaseExoPlayerAndCastPlayer();
-            mPresenter.removeBaseCastStateListener();
         }
         videoExoPlayerView.setPlayer(null);
     }

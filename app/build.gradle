@@ -119,9 +119,9 @@ dependencies {
     implementation(name: 'smilelibraries-release', ext: 'aar')
     implementation(name: 'NativeTemplatesModels-release', ext: 'aar')
 
-    exoplayerImplementation 'com.google.android.exoplayer:exoplayer:2.11.8'
-    exoplayerImplementation 'com.google.android.exoplayer:extension-mediasession:2.11.8'
-    exoplayerImplementation 'com.google.android.exoplayer:extension-cast:2.11.8'
+    exoplayerImplementation 'com.google.android.exoplayer:exoplayer:2.13.2'
+    exoplayerImplementation 'com.google.android.exoplayer:extension-mediasession:2.13.2'
+    exoplayerImplementation 'com.google.android.exoplayer:extension-cast:2.13.2'
     exoplayerImplementation project(':extension-ffmpeg')
     exoplayerImplementation project(':extension-flac')
     exoplayerImplementation project(':extension-opus')

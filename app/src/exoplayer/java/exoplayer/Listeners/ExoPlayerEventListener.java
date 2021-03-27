@@ -1,7 +1,6 @@
 package exoplayer.Listeners;
 
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -19,13 +18,11 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 public class ExoPlayerEventListener implements Player.EventListener {
 
     private static final String TAG = "ExoPlayerEventListener";
-    // private final Context callingContext;
     private final Activity mActivity;
     private final ExoPlayerPresenter mPresenter;
     private final float toastTextSize;
 
     public ExoPlayerEventListener(Activity activity, ExoPlayerPresenter presenter) {
-        // callingContext = context;
         mActivity = activity;
         mPresenter = presenter;
         toastTextSize = mPresenter.getToastTextSize();
@@ -120,12 +117,10 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
         PlayingParameters playingParam = mPresenter.getPlayingParam();
 
-        // String formatNotSupportedString = callingContext.getString(R.string.formatNotSupportedString);
         String formatNotSupportedString = mActivity.getString(R.string.formatNotSupportedString);
         if (mPresenter.isCanShowNotSupportedFormat()) {
             // only show once
             mPresenter.setCanShowNotSupportedFormat(false);
-            // ScreenUtil.showToast(callingContext, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             ScreenUtil.showToast(mActivity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
         mPresenter.startAutoPlay();

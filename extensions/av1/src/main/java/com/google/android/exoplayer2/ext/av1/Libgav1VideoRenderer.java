@@ -15,43 +15,25 @@
  */
 package com.google.android.exoplayer2.ext.av1;
 
+import static com.google.android.exoplayer2.decoder.DecoderReuseEvaluation.REUSE_RESULT_YES_WITHOUT_RECONFIGURATION;
+
 import android.os.Handler;
 import android.view.Surface;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlayerMessage.Target;
 import com.google.android.exoplayer2.RendererCapabilities;
-import com.google.android.exoplayer2.decoder.SimpleDecoder;
-import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
 import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.SimpleDecoderVideoRenderer;
-import com.google.android.exoplayer2.video.VideoDecoderException;
-import com.google.android.exoplayer2.video.VideoDecoderInputBuffer;
+import com.google.android.exoplayer2.video.DecoderVideoRenderer;
 import com.google.android.exoplayer2.video.VideoDecoderOutputBuffer;
-import com.google.android.exoplayer2.video.VideoDecoderOutputBufferRenderer;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 
-/**
- * Decodes and renders video using libgav1 decoder.
- *
- * <p>This renderer accepts the following messages sent via {@link ExoPlayer#createMessage(Target)}
- * on the playback thread:
- *
- * <ul>
- *   <li>Message with type {@link C#MSG_SET_SURFACE} to set the output surface. The message payload
- *       should be the target {@link Surface}, or null.
- *   <li>Message with type {@link C#MSG_SET_VIDEO_DECODER_OUTPUT_BUFFER_RENDERER} to set the output
- *       buffer renderer. The message payload should be the target {@link
- *       VideoDecoderOutputBufferRenderer}, or null.
- * </ul>
- */
-public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
+/** Decodes and renders video using libgav1 decoder. */
+public class Libgav1VideoRenderer extends DecoderVideoRenderer {
 
   /**
    * Attempts to use as many threads as performance processors available on the device. If the
@@ -60,11 +42,15 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
    */
   public static final int THREAD_COUNT_AUTODETECT = 0;
 
+  private static final String TAG = "Libgav1VideoRenderer";
   private static final int DEFAULT_NUM_OF_INPUT_BUFFERS = 4;
   private static final int DEFAULT_NUM_OF_OUTPUT_BUFFERS = 4;
-  /* Default size based on 720p resolution video compressed by a factor of two. */
+  /**
+   * Default input buffer size in bytes, based on 720p resolution video compressed by a factor of
+   * two.
+   */
   private static final int DEFAULT_INPUT_BUFFER_SIZE =
-          Util.ceilDivide(1280, 64) * Util.ceilDivide(720, 64) * (64 * 64 * 3 / 2) / 2;
+      Util.ceilDivide(1280, 64) * Util.ceilDivide(720, 64) * (64 * 64 * 3 / 2) / 2;
 
   /** The number of input buffers. */
   private final int numInputBuffers;
@@ -79,7 +65,7 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
   @Nullable private Gav1Decoder decoder;
 
   /**
-   * Creates a Libgav1VideoRenderer.
+   * Creates a new instance.
    *
    * @param allowedJoiningTimeMs The maximum duration in milliseconds for which this video renderer
    *     can attempt to seamlessly join an ongoing playback.
@@ -90,22 +76,22 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
    *     invocations of {@link VideoRendererEventListener#onDroppedFrames(int, long)}.
    */
   public Libgav1VideoRenderer(
-          long allowedJoiningTimeMs,
-          @Nullable Handler eventHandler,
-          @Nullable VideoRendererEventListener eventListener,
-          int maxDroppedFramesToNotify) {
+      long allowedJoiningTimeMs,
+      @Nullable Handler eventHandler,
+      @Nullable VideoRendererEventListener eventListener,
+      int maxDroppedFramesToNotify) {
     this(
-            allowedJoiningTimeMs,
-            eventHandler,
-            eventListener,
-            maxDroppedFramesToNotify,
-            THREAD_COUNT_AUTODETECT,
-            DEFAULT_NUM_OF_INPUT_BUFFERS,
-            DEFAULT_NUM_OF_OUTPUT_BUFFERS);
+        allowedJoiningTimeMs,
+        eventHandler,
+        eventListener,
+        maxDroppedFramesToNotify,
+        THREAD_COUNT_AUTODETECT,
+        DEFAULT_NUM_OF_INPUT_BUFFERS,
+        DEFAULT_NUM_OF_OUTPUT_BUFFERS);
   }
 
   /**
-   * Creates a Libgav1VideoRenderer.
+   * Creates a new instance.
    *
    * @param allowedJoiningTimeMs The maximum duration in milliseconds for which this video renderer
    *     can attempt to seamlessly join an ongoing playback.
@@ -114,58 +100,53 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
    * @param eventListener A listener of events. May be null if delivery of events is not required.
    * @param maxDroppedFramesToNotify The maximum number of frames that can be dropped between
    *     invocations of {@link VideoRendererEventListener#onDroppedFrames(int, long)}.
-   * @param threads Number of threads libgav1 will use to decode. If
-   *     {@link #THREAD_COUNT_AUTODETECT} is passed, then the number of threads to use is
-   *     auto-detected based on CPU capabilities.
+   * @param threads Number of threads libgav1 will use to decode. If {@link
+   *     #THREAD_COUNT_AUTODETECT} is passed, then the number of threads to use is autodetected
+   *     based on CPU capabilities.
    * @param numInputBuffers Number of input buffers.
    * @param numOutputBuffers Number of output buffers.
    */
   public Libgav1VideoRenderer(
-          long allowedJoiningTimeMs,
-          @Nullable Handler eventHandler,
-          @Nullable VideoRendererEventListener eventListener,
-          int maxDroppedFramesToNotify,
-          int threads,
-          int numInputBuffers,
-          int numOutputBuffers) {
-    super(
-            allowedJoiningTimeMs,
-            eventHandler,
-            eventListener,
-            maxDroppedFramesToNotify,
-            /* drmSessionManager= */ null,
-            /* playClearSamplesWithoutKeys= */ false);
+      long allowedJoiningTimeMs,
+      @Nullable Handler eventHandler,
+      @Nullable VideoRendererEventListener eventListener,
+      int maxDroppedFramesToNotify,
+      int threads,
+      int numInputBuffers,
+      int numOutputBuffers) {
+    super(allowedJoiningTimeMs, eventHandler, eventListener, maxDroppedFramesToNotify);
     this.threads = threads;
     this.numInputBuffers = numInputBuffers;
     this.numOutputBuffers = numOutputBuffers;
   }
 
   @Override
-  @Capabilities
-  protected int supportsFormatInternal(
-          @Nullable DrmSessionManager<ExoMediaCrypto> drmSessionManager, Format format) {
-    if (!MimeTypes.VIDEO_AV1.equalsIgnoreCase(format.sampleMimeType)
-            || !Gav1Library.isAvailable()) {
-      return RendererCapabilities.create(FORMAT_UNSUPPORTED_TYPE);
-    }
-    if (!supportsFormatDrm(drmSessionManager, format.drmInitData)) {
-      return RendererCapabilities.create(FORMAT_UNSUPPORTED_DRM);
-    }
-    return RendererCapabilities.create(FORMAT_HANDLED, ADAPTIVE_SEAMLESS, TUNNELING_NOT_SUPPORTED);
+  public String getName() {
+    return TAG;
   }
 
   @Override
-  protected SimpleDecoder<
-          VideoDecoderInputBuffer,
-          ? extends VideoDecoderOutputBuffer,
-          ? extends VideoDecoderException>
-  createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
-          throws VideoDecoderException {
+  @Capabilities
+  public final int supportsFormat(Format format) {
+    if (!MimeTypes.VIDEO_AV1.equalsIgnoreCase(format.sampleMimeType)
+        || !Gav1Library.isAvailable()) {
+      return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_TYPE);
+    }
+    if (format.exoMediaCryptoType != null) {
+      return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_DRM);
+    }
+    return RendererCapabilities.create(
+        C.FORMAT_HANDLED, ADAPTIVE_SEAMLESS, TUNNELING_NOT_SUPPORTED);
+  }
+
+  @Override
+  protected Gav1Decoder createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
+      throws Gav1DecoderException {
     TraceUtil.beginSection("createGav1Decoder");
     int initialInputBufferSize =
-            format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
+        format.maxInputSize != Format.NO_VALUE ? format.maxInputSize : DEFAULT_INPUT_BUFFER_SIZE;
     Gav1Decoder decoder =
-            new Gav1Decoder(numInputBuffers, numOutputBuffers, initialInputBufferSize, threads);
+        new Gav1Decoder(numInputBuffers, numOutputBuffers, initialInputBufferSize, threads);
     this.decoder = decoder;
     TraceUtil.endSection();
     return decoder;
@@ -173,10 +154,10 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
 
   @Override
   protected void renderOutputBufferToSurface(VideoDecoderOutputBuffer outputBuffer, Surface surface)
-          throws Gav1DecoderException {
+      throws Gav1DecoderException {
     if (decoder == null) {
       throw new Gav1DecoderException(
-              "Failed to render output buffer to surface: decoder is not initialized.");
+          "Failed to render output buffer to surface: decoder is not initialized.");
     }
     decoder.renderToSurface(outputBuffer, surface);
     outputBuffer.release();
@@ -189,16 +170,14 @@ public class Libgav1VideoRenderer extends SimpleDecoderVideoRenderer {
     }
   }
 
-  // PlayerMessage.Target implementation.
-
   @Override
-  public void handleMessage(int messageType, @Nullable Object message) throws ExoPlaybackException {
-    if (messageType == C.MSG_SET_SURFACE) {
-      setOutputSurface((Surface) message);
-    } else if (messageType == C.MSG_SET_VIDEO_DECODER_OUTPUT_BUFFER_RENDERER) {
-      setOutputBufferRenderer((VideoDecoderOutputBufferRenderer) message);
-    } else {
-      super.handleMessage(messageType, message);
-    }
+  protected DecoderReuseEvaluation canReuseDecoder(
+      String decoderName, Format oldFormat, Format newFormat) {
+    return new DecoderReuseEvaluation(
+        decoderName,
+        oldFormat,
+        newFormat,
+        REUSE_RESULT_YES_WITHOUT_RECONFIGURATION,
+        /* discardReasons= */ 0);
   }
 }
