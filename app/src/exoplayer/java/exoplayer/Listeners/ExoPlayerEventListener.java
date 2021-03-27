@@ -29,17 +29,28 @@ public class ExoPlayerEventListener implements Player.EventListener {
     }
 
     @Override
-    public synchronized void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+    public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+        Log.d(TAG, "onPlayWhenReadyChanged() --> playWhenReady = " + playWhenReady
+                        + ", reason = " + reason);
+        if (playWhenReady) {
+            // playing
+            Log.d(TAG, "onPlayWhenReadyChanged()-->numberOfVideoTracks != 0-->hideNativeAndBannerAd()");
+            mPresenter.getPresentView().hideNativeAndBannerAd();
+        } else {
+            Log.d(TAG, "onPlayWhenReadyChanged() --> playWhenReady=false -->showNativeAndBannerAd()");
+            mPresenter.getPresentView().showNativeAndBannerAd();
+        }
+    }
 
-        Log.d(TAG, "onPlayerStateChanged() is called.");
-        Log.d(TAG, "Playback state = " + playbackState);
-
+    @Override
+    public void onPlaybackStateChanged(int state) {
+        Log.d(TAG, "onPlaybackStateChanged()() --> Playback state = " + state);
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         Uri mediaUri = mPresenter.getMediaUri();
-
-        switch (playbackState) {
+        switch (state) {
             case Player.STATE_BUFFERING:
                 if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) {
+                    Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_BUFFERING --> hideNativeAndBannerAd()");
                     mPresenter.getPresentView().hideNativeAndBannerAd();
                 }
                 mPresenter.getPresentView().showBufferingMessage();
@@ -55,18 +66,22 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
                 if (numberOfVideoTracks == 0) {
                     // no video is being played, show native ads
+                    Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY --> numberOfVideoTracks == 0 --> showNativeAndBannerAd()");
                     mPresenter.getPresentView().showNativeAndBannerAd();
                 } else {
                     // video is being played, hide native ads
+                    boolean playWhenReady = mPresenter.getExoPlayer().getPlayWhenReady();
                     if (playWhenReady) {
                         // playing
+                        Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY --> numberOfVideoTracks != 0 --> hideNativeAndBannerAd()");
                         mPresenter.getPresentView().hideNativeAndBannerAd();
                     }
                 }
                 break;
             case Player.STATE_ENDED:
                 // playing is finished
-                mPresenter.getPresentView().showNativeAndBannerAd();
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_ENDED --> showNativeAndBannerAd()");
+                mPresenter.getPresentView().showNativeAndBannerAd(); // removed for testing
                 mPresenter.startAutoPlay(); // added on 2020-08-16
                 Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
                 break;
@@ -80,8 +95,9 @@ public class ExoPlayerEventListener implements Player.EventListener {
                     Log.d(TAG, "Song was stopped by user (by stopPlay()).");
                 }
                 // if (!playingParam.isAutoPlay()) {
-                    // not auto play
-                    mPresenter.getPresentView().showNativeAndBannerAd();
+                // not auto play
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_IDLE --> showNativeAndBannerAd()");
+                mPresenter.getPresentView().showNativeAndBannerAd(); // removed for testing
                 // }
                 break;
         }
@@ -130,10 +146,5 @@ public class ExoPlayerEventListener implements Player.EventListener {
     @Override
     public synchronized void onPositionDiscontinuity(int reason) {
         Log.d(TAG,"Player.EventListener.onPositionDiscontinuity() is called.");
-    }
-
-    @Override
-    public synchronized void onSeekProcessed() {
-        Log.d(TAG,"Player.EventListener.onSeekProcessed() is called.");
     }
 }

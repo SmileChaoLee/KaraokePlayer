@@ -612,7 +612,6 @@ public abstract class BasePlayerPresenter {
 
     public void startPlay() {
         Log.d(TAG, "startPlay() is called.");
-
         int playbackState = playingParam.getCurrentPlaybackState();
         if (playbackState==PlaybackStateCompat.STATE_NONE
             || playbackState==PlaybackStateCompat.STATE_STOPPED) {
@@ -640,6 +639,7 @@ public abstract class BasePlayerPresenter {
     }
 
     public void pausePlay() {
+        Log.d(TAG, "pausePlay() is called.");
         if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
             // no media file opened or playing has been stopped
             if (mediaTransportControls != null) {
@@ -668,10 +668,10 @@ public abstract class BasePlayerPresenter {
     }
 
     public void replayMedia() {
+        Log.d(TAG, "replayMedia() is called.");
         if ( (mediaUri == null) || (Uri.EMPTY.equals(mediaUri)) || (numberOfAudioTracks<=0) ) {
             return;
         }
-
         long currentAudioPosition = 0;
         playingParam.setCurrentAudioPosition(currentAudioPosition);
         if (playingParam.isMediaSourcePrepared()) {
@@ -688,8 +688,6 @@ public abstract class BasePlayerPresenter {
             // Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
             playMediaFromUri(mediaUri);
         }
-
-        Log.d(TAG, "replayMedia() is called.");
     }
 
     public void initMediaSessionCompat() {

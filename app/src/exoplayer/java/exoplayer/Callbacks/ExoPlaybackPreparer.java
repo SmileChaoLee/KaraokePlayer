@@ -8,6 +8,8 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
 import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
@@ -17,6 +19,7 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -76,13 +79,25 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
 
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
 
-        MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+        // removed on 2021-03-27
+        // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
+        //
+        MediaItem mediaItem = new MediaItem.Builder()
+                .setUri(uri)
+                .setMediaMetadata(new MediaMetadata.Builder().setTitle("Opened Media").build())
+                .setMimeType(MimeTypes.BASE_TYPE_VIDEO)
+                // .setDrmConfiguration(null)
+                .build();
+        MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(mediaItem);
         Log.d(TAG, "ExoPlaybackPreparer.onPrepareFromUri()->mediaSource = " + mediaSource);
         if (mediaSource == null) {
             return;
         }
         
-        exoPlayer.prepare(mediaSource);
+        // exoPlayer.prepare(mediaSource);  // deprecated, removed on 2021-03-26
+        exoPlayer.setMediaSource(mediaSource);
+        exoPlayer.prepare();
+
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         int playbackState = playbackState = playingParam.getCurrentPlaybackState();
         if (extras != null) {

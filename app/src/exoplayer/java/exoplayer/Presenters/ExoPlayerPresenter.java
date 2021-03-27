@@ -53,6 +53,7 @@ import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExoPlayerPresenter extends BasePlayerPresenter {
 
@@ -252,8 +253,10 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         int audioTrackIndex = trackIndicesCombination[2];
         Log.d(TAG, "selectAudioTrack() --> audioTrackIndex = " + audioTrackIndex);
 
+        // if (mappedTrackInfo.getTrackSupport(audioRendererIndex, audioTrackGroupIndex, audioTrackIndex)
+        //         != RendererCapabilities.FORMAT_HANDLED) {
         if (mappedTrackInfo.getTrackSupport(audioRendererIndex, audioTrackGroupIndex, audioTrackIndex)
-                != RendererCapabilities.FORMAT_HANDLED) {
+                 != C.FORMAT_HANDLED) {
             return result;
         }
 
@@ -599,7 +602,9 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         // exoPlayer.setPlayWhenReady(false);
         exoPlayer.seekTo(currentAudioPosition);
         switchAudioToVocal();
-        exoPlayer.retry();
+        // exoPlayer.retry();   // deprecated and removed on 2021-03-27
+        exoPlayer.prepare();    // replace exoPlayer.retry();
+        //
         exoPlayer.setPlayWhenReady(true);
         Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");
     }
@@ -736,16 +741,18 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 // has not play yet
                 Log.d(TAG, "getCurrentTimeline() is Empty()");
 
-                MediaItemConverter mediaItemConverter = new DefaultMediaItemConverter();
-                MediaItem mediaItem;
-                MediaQueueItem mediaQueueItem;
-                mediaItem = new MediaItem.Builder()
+                // removed on 2021-03-27
+                // MediaItemConverter mediaItemConverter = new DefaultMediaItemConverter();
+                // MediaQueueItem mediaQueueItem;
+                //
+                MediaItem mediaItem = new MediaItem.Builder()
                         .setUri(mediaUri)
                         .setMediaMetadata(new MediaMetadata.Builder().setTitle("Video Casted").build())
                         .setMimeType(MimeTypes.BASE_TYPE_VIDEO)
                         // .setDrmConfiguration(null)
                         .build();
-                mediaQueueItem = mediaItemConverter.toMediaQueueItem(mediaItem);
+                // removed on 2021-03-27
+                // mediaQueueItem = mediaItemConverter.toMediaQueueItem(mediaItem);
                 /*
                 // added for testing
                 mediaItem = new MediaItem.Builder()
@@ -753,11 +760,19 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                     .setMediaMetadata(new MediaMetadata.Builder().setTitle("Clear MP4: Dizzy").build())
                     .setMimeType(MimeTypes.VIDEO_MP4)
                     .build();
-                mediaQueueItem = mediaItemConverter.toMediaQueueItem(mediaItem);
+                // removed on 2021-03-27
+                // mediaQueueItem = mediaItemConverter.toMediaQueueItem(mediaItem);
                 */
-                Log.d(TAG, "mediaQueueItem = " + mediaQueueItem);
+                // Log.d(TAG, "mediaQueueItem = " + mediaQueueItem);    // removed on 2021-03-27
                 Log.d(TAG, "windowIndex = " + windowIndex);
-                castPlayer.loadItems(new MediaQueueItem[] {mediaQueueItem}, windowIndex, C.TIME_UNSET, playingParam.getRepeatStatus());
+                // deprecated // removed on 2021-03-27
+                // castPlayer.loadItems(new MediaQueueItem[] {mediaQueueItem}, windowIndex, C.TIME_UNSET, playingParam.getRepeatStatus());
+                //
+                List<MediaItem> mediaItems = new ArrayList<>();
+                mediaItems.add(mediaItem);
+                castPlayer.setMediaItems(mediaItems, windowIndex, C.TIME_UNSET);
+                castPlayer.setRepeatMode(playingParam.getRepeatStatus());
+                //
                 castPlayer.setPlayWhenReady(playWhenReady);
             } else {
                 // already played before
