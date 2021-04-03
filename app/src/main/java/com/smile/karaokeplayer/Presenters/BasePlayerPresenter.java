@@ -83,6 +83,7 @@ public abstract class BasePlayerPresenter {
     public abstract void switchAudioToVocal();
     public abstract void startDurationSeekBarHandler();
     public abstract long getDuration();
+    public abstract void removeCallbacksAndMessages();
 
     public BasePlayerPresenter(Activity activity, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
@@ -679,6 +680,7 @@ public abstract class BasePlayerPresenter {
                 }
                 presentView.playButtonOnPauseButtonOff();
                 presentView.showNativeAndBannerAd();
+                removeCallbacksAndMessages();
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
@@ -688,14 +690,6 @@ public abstract class BasePlayerPresenter {
                 // set up a timer for supportToolbar's visibility
                 presentView.setTimerToHideSupportAndAudioController();
                 //
-                if (getNumberOfVideoTracks() == 0) {
-                    // no video is being played, show native ads
-                    Log.d(TAG, "updateStatusAndUi()--> STATE_PLAYING --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
-                    presentView.showNativeAndBannerAd();
-                } else {
-                    Log.d(TAG, "updateStatusAndUi()--> STATE_PLAYING --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
-                    presentView.hideNativeAndBannerAd();
-                }
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 // when playing is paused
@@ -724,6 +718,7 @@ public abstract class BasePlayerPresenter {
                     // play next song
                     startAutoPlay();
                 }
+                removeCallbacksAndMessages();
                 break;
         }
     }
@@ -759,5 +754,16 @@ public abstract class BasePlayerPresenter {
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
+    }
+
+    protected void musicShowNativeAndBannerAd() {
+        if (getNumberOfVideoTracks() == 0) {
+            // no video is being played, show native ads
+            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
+            presentView.showNativeAndBannerAd();
+        } else {
+            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
+            presentView.hideNativeAndBannerAd();
+        }
     }
 }

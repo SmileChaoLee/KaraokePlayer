@@ -10,10 +10,10 @@ import exoplayer.Presenters.ExoPlayerPresenter;
 public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
 
     private static final String TAG = "ExoMediaControllerCallback";
-    private final ExoPlayerPresenter mPresenter;
+    private final ExoPlayerPresenter presenter;
 
     public ExoMediaControllerCallback(ExoPlayerPresenter presenter) {
-        mPresenter = presenter;
+        this.presenter = presenter;
     }
 
     @SuppressLint("LongLogTag")
@@ -24,6 +24,6 @@ public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
         if( state == null ) {
             return;
         }
-        mPresenter.updateStatusAndUi(state);
+        presenter.updateStatusAndUi(state);
     }
 }

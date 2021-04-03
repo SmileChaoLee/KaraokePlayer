@@ -93,7 +93,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                     presentView.update_Player_duration_seekbar_progress((int)exoPlayer.getCurrentPosition());
                 }
             }
-            durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 1000);
+            durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 500);
         }
     };
 
@@ -668,23 +668,18 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     @Override
     public synchronized void startDurationSeekBarHandler() {
         // start monitor player_duration_seekbar
-        durationSeekBarHandler.removeCallbacksAndMessages(null);
-        final Handler tempHandler = new Handler(Looper.getMainLooper());
-        final Runnable tempRunnable = new Runnable() {
-            @Override
-            public void run() {
-                tempHandler.removeCallbacksAndMessages(null);
-                // start durationSeekBarHandler immediately
-                durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 0);
-            }
-        };
-        tempHandler.postDelayed(tempRunnable, 200); // delay 200ms
-        //
+        durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 200); // delay 200ms
+        musicShowNativeAndBannerAd();
     }
 
     @Override
     public long getDuration() {
         return exoPlayer.getDuration();
+    }
+
+    @Override
+    public void removeCallbacksAndMessages() {
+        durationSeekBarHandler.removeCallbacksAndMessages(null);
     }
 
     // methods related to ChromeCast
