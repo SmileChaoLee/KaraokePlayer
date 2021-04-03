@@ -1,117 +1,89 @@
 package exoplayer.Listeners;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.Presenters.ExoPlayerPresenter.ExoPlayerPresentView;
 import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public class ExoPlayerEventListener implements Player.EventListener {
 
     private static final String TAG = "ExoPlayerEventListener";
-    private final Activity mActivity;
-    private final ExoPlayerPresenter mPresenter;
+    private final Activity activity;
+    private final ExoPlayerPresenter presenter;
+    private final SimpleExoPlayer exoPlayer;
+    private final ExoPlayerPresentView presentView;
     private final float toastTextSize;
 
     public ExoPlayerEventListener(Activity activity, ExoPlayerPresenter presenter) {
-        mActivity = activity;
-        mPresenter = presenter;
-        toastTextSize = mPresenter.getToastTextSize();
+        this.activity = activity;
+        this.presenter = presenter;
+        exoPlayer = this.presenter.getExoPlayer();
+        presentView = this.presenter.getPresentView();
+        toastTextSize = this.presenter.getToastTextSize();
+        Log.d(TAG, "ExoPlayerEventListener is created.");
     }
 
     @Override
-    public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
+    public synchronized void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
         Log.d(TAG, "onPlayWhenReadyChanged() --> playWhenReady = " + playWhenReady
                         + ", reason = " + reason);
-        if (playWhenReady) {
-            // playing
-            Log.d(TAG, "onPlayWhenReadyChanged()-->numberOfVideoTracks != 0-->hideNativeAndBannerAd()");
-            mPresenter.getPresentView().hideNativeAndBannerAd();
-        } else {
-            Log.d(TAG, "onPlayWhenReadyChanged() --> playWhenReady=false -->showNativeAndBannerAd()");
-            mPresenter.getPresentView().showNativeAndBannerAd();
-        }
     }
 
     @Override
-    public void onPlaybackStateChanged(int state) {
-        Log.d(TAG, "onPlaybackStateChanged()() --> Playback state = " + state);
-        PlayingParameters playingParam = mPresenter.getPlayingParam();
-        Uri mediaUri = mPresenter.getMediaUri();
+    public synchronized void onPlaybackStateChanged(int state) {
+        PlayingParameters playingParam = presenter.getPlayingParam();
         switch (state) {
             case Player.STATE_BUFFERING:
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_BUFFERING--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
                 if (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) {
                     Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_BUFFERING --> hideNativeAndBannerAd()");
-                    mPresenter.getPresentView().hideNativeAndBannerAd();
+                    presentView.hideNativeAndBannerAd();
                 }
-                mPresenter.getPresentView().showBufferingMessage();
+                presentView.showBufferingMessage();
                 return;
             case Player.STATE_READY:
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
                 if (!playingParam.isMediaSourcePrepared()) {
                     // the first time of Player.STATE_READY means prepared
-                    mPresenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
-                    playingParam = mPresenter.getPlayingParam();
+                    presenter.getPlayingMediaInfoAndSetAudioActionSubMenu();
+                    playingParam = presenter.getPlayingParam();
                 }
                 playingParam.setMediaSourcePrepared(true);
-
-                int numberOfVideoTracks = mPresenter.getNumberOfVideoTracks();
-                if (numberOfVideoTracks == 0) {
-                    // no video is being played, show native ads
-                    Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY --> numberOfVideoTracks == 0 --> showNativeAndBannerAd()");
-                    mPresenter.getPresentView().showNativeAndBannerAd();
-                } else {
-                    // video is being played, hide native ads
-                    boolean playWhenReady = mPresenter.getExoPlayer().getPlayWhenReady();
-                    if (playWhenReady) {
-                        // playing
-                        Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY --> numberOfVideoTracks != 0 --> hideNativeAndBannerAd()");
-                        mPresenter.getPresentView().hideNativeAndBannerAd();
-                    }
-                }
                 break;
             case Player.STATE_ENDED:
                 // playing is finished
-                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_ENDED --> showNativeAndBannerAd()");
-                mPresenter.getPresentView().showNativeAndBannerAd(); // removed for testing
-                mPresenter.startAutoPlay(); // added on 2020-08-16
-                Log.d(TAG, "Playback state = Player.STATE_ENDED after startAutoPlay()");
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_ENDED--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
                 break;
             case Player.STATE_IDLE:
-                // There is bug here
-                // The listener will get twice of (Player.STATE_IDLE)
-                // when user stop playing using ExoPlayer.stop()
-                // so do not put startAutoPlay() inside this event
-                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
-                    playingParam.setMediaSourcePrepared(false);
-                    Log.d(TAG, "Song was stopped by user (by stopPlay()).");
-                }
-                // if (!playingParam.isAutoPlay()) {
-                // not auto play
-                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_IDLE --> showNativeAndBannerAd()");
-                mPresenter.getPresentView().showNativeAndBannerAd(); // removed for testing
-                // }
+                Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_IDLE--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
+                break;
+            default:
+                Log.d(TAG, "onPlaybackStateChanged() --> Playback state (Default) = " + state);
                 break;
         }
 
-        mPresenter.getPresentView().dismissBufferingMessage();
+        presentView.dismissBufferingMessage();
+    }
+
+    @Override
+    public synchronized void onIsPlayingChanged(boolean isPlaying) {
+        Log.d(TAG,"Player.EventListener.onIsPlayingChanged() --> isPlaying = " + isPlaying);
     }
 
     @Override
     public synchronized void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
         Log.d(TAG,"Player.EventListener.onTracksChanged() is called.");
-    }
-    @Override
-    public synchronized void onIsPlayingChanged(boolean isPlaying) {
-        Log.d(TAG,"Player.EventListener.onIsPlayingChanged() is called.");
     }
 
     @Override
@@ -131,16 +103,16 @@ public class ExoPlayerEventListener implements Player.EventListener {
                 break;
         }
 
-        PlayingParameters playingParam = mPresenter.getPlayingParam();
+        PlayingParameters playingParam = presenter.getPlayingParam();
 
-        String formatNotSupportedString = mActivity.getString(R.string.formatNotSupportedString);
-        if (mPresenter.isCanShowNotSupportedFormat()) {
+        String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
+        if (presenter.isCanShowNotSupportedFormat()) {
             // only show once
-            mPresenter.setCanShowNotSupportedFormat(false);
-            ScreenUtil.showToast(mActivity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            presenter.setCanShowNotSupportedFormat(false);
+            ScreenUtil.showToast(activity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
-        mPresenter.startAutoPlay();
-        mPresenter.setMediaUri(null);
+        presenter.startAutoPlay();
+        presenter.setMediaUri(null);
     }
 
     @Override

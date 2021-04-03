@@ -15,14 +15,11 @@ import androidx.mediarouter.media.MediaRouter;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.av1.Gav1Library;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.MediaMetadata;
-import com.google.android.exoplayer2.ext.cast.DefaultMediaItemConverter;
-import com.google.android.exoplayer2.ext.cast.MediaItemConverter;
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener;
 import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
 import com.google.android.exoplayer2.ext.flac.FlacLibrary;
@@ -35,7 +32,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
@@ -79,7 +75,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     private SessionAvailabilityListener mSessionAvailabilityListener;
 
     private ExoPlayerEventListener mExoPlayerEventListener;
-    private Player mCurrentPlayer;
+    private Player currentPlayer;
     private int currentItemIndex;
 
     // instances of the following members have to be saved when configuration changed
@@ -201,7 +197,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             // castPlayer.setSessionAvailabilityListener(mSessionAvailabilityListener);
         }
 
-        mCurrentPlayer = exoPlayer; // default is playing video on Android device
+        currentPlayer = exoPlayer; // default is playing video on Android device
 
         Log.d(TAG, "FfmpegLibrary.isAvailable() = " + FfmpegLibrary.isAvailable());
         Log.d(TAG, "VpxLibrary.isAvailable() = " + VpxLibrary.isAvailable());
@@ -452,6 +448,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         presentView.update_Player_duration_seekbar(duration);
     }
 
+    @Override
     public synchronized void startDurationSeekBarHandler() {
         // start monitor player_duration_seekbar
         durationSeekBarHandler.removeCallbacksAndMessages(null);
@@ -466,6 +463,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         };
         tempHandler.postDelayed(tempRunnable, 200); // delay 200ms
         //
+    }
+
+    @Override
+    public long getDuration() {
+        return exoPlayer.getDuration();
     }
 
     @SuppressWarnings("unchecked")
@@ -688,16 +690,16 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     // methods related to ChromeCast
     public Player getCurrentPlayer() {
-        return mCurrentPlayer;
+        return currentPlayer;
     }
 
     public synchronized void setCurrentPlayer(Player currentPlayer) {
 
-        if (currentPlayer == null || mCurrentPlayer == null ) {
+        if (currentPlayer == null) {
             return;
         }
 
-        if (mCurrentPlayer == currentPlayer) {
+        if (this.currentPlayer == currentPlayer) {
             return;
         }
 
@@ -713,7 +715,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         int windowIndex = C.INDEX_UNSET;
         boolean playWhenReady = false;
 
-        Player previousPlayer = mCurrentPlayer;
+        Player previousPlayer = this.currentPlayer;
         if (previousPlayer != null) {
             // Save state from the previous player.
             int playbackState = previousPlayer.getPlaybackState();
@@ -730,9 +732,9 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             stopPlay(); // or pausePlay();
         }
 
-        mCurrentPlayer = currentPlayer;
+        this.currentPlayer = currentPlayer;
 
-        if (mCurrentPlayer == exoPlayer) {
+        if (this.currentPlayer == exoPlayer) {
             Log.d(TAG, "exoPlayer startPlay()");
             startPlay();
         } else {

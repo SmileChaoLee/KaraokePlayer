@@ -15,20 +15,20 @@ import exoplayer.Presenters.ExoPlayerPresenter;
 public class ExoPlayerCastStateListener implements com.google.android.gms.cast.framework.CastStateListener {
     private static final String TAG = "ExoPlayerCastStateListener";
     private final ExoPlayerActivity exoPlayerActivity;
-    private final ExoPlayerPresenter mPresenter;
+    private final ExoPlayerPresenter presenter;
     private final float toastTextSize;
 
     public ExoPlayerCastStateListener(Activity activity, ExoPlayerPresenter presenter) {
         exoPlayerActivity = (ExoPlayerActivity)activity;
-        mPresenter = presenter;
-        toastTextSize = mPresenter.getToastTextSize();
+        this.presenter = presenter;
+        toastTextSize = this.presenter.getToastTextSize();
     }
 
     @SuppressLint("LongLogTag")
     @Override
     public void onCastStateChanged(int i) {
         Log.d(TAG, "onCastStateChanged() is called");
-        mPresenter.setCurrentCastState(i);
+        presenter.setCurrentCastState(i);
         switch (i) {
             case CastState.NO_DEVICES_AVAILABLE:
                 Log.d(TAG, "CastState is NO_DEVICES_AVAILABLE.");

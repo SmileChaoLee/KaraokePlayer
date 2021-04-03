@@ -372,7 +372,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
                 break;
             case R.id.exit:
-                showInterstitialAd(true);
+                showInterstitialAd();
                 break;
             case R.id.audioTrack:
                 // if there are audio tracks
@@ -512,7 +512,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     public void onBackPressed() {
         ExitAppTimer exitAppTimer = ExitAppTimer.getInstance(1000); // singleton class
         if (exitAppTimer.canExit()) {
-            showInterstitialAd(true);
+            showInterstitialAd();
         } else {
             exitAppTimer.start();
             ScreenUtil.showToast(this, getString(R.string.backKeyToExitApp), toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
@@ -960,10 +960,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     }
 
     @Override
-    public void showInterstitialAd(boolean isReturnToPrevious) {
-        if (isReturnToPrevious) {
-            returnToPrevious();
-        }
+    public void showInterstitialAd() {
+        returnToPrevious();
         if (BaseApplication.InterstitialAd != null) {
             // free version
             int entryPoint = 0; //  no used
