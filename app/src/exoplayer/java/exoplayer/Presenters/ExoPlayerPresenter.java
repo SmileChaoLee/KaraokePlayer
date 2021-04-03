@@ -444,30 +444,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         presentView.buildAudioTrackMenuItem(audioTrackIndicesList.size());
 
         // update the duration on controller UI
-        float duration = exoPlayer.getDuration();
-        presentView.update_Player_duration_seekbar(duration);
-    }
-
-    @Override
-    public synchronized void startDurationSeekBarHandler() {
-        // start monitor player_duration_seekbar
-        durationSeekBarHandler.removeCallbacksAndMessages(null);
-        final Handler tempHandler = new Handler(Looper.getMainLooper());
-        final Runnable tempRunnable = new Runnable() {
-            @Override
-            public void run() {
-                tempHandler.removeCallbacksAndMessages(null);
-                // start durationSeekBarHandler immediately
-                durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 0);
-            }
-        };
-        tempHandler.postDelayed(tempRunnable, 200); // delay 200ms
-        //
-    }
-
-    @Override
-    public long getDuration() {
-        return exoPlayer.getDuration();
+        presentView.update_Player_duration_seekbar(exoPlayer.getDuration());
     }
 
     @SuppressWarnings("unchecked")
@@ -686,6 +663,28 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             presentView.showMusicAndVocalIsNotSet();
         }
         setAudioTrackAndChannel(playingParam.getVocalAudioTrackIndex(), playingParam.getVocalAudioChannel());
+    }
+
+    @Override
+    public synchronized void startDurationSeekBarHandler() {
+        // start monitor player_duration_seekbar
+        durationSeekBarHandler.removeCallbacksAndMessages(null);
+        final Handler tempHandler = new Handler(Looper.getMainLooper());
+        final Runnable tempRunnable = new Runnable() {
+            @Override
+            public void run() {
+                tempHandler.removeCallbacksAndMessages(null);
+                // start durationSeekBarHandler immediately
+                durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 0);
+            }
+        };
+        tempHandler.postDelayed(tempRunnable, 200); // delay 200ms
+        //
+    }
+
+    @Override
+    public long getDuration() {
+        return exoPlayer.getDuration();
     }
 
     // methods related to ChromeCast
