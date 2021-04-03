@@ -7,6 +7,8 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -82,8 +84,9 @@ public abstract class BasePlayerPresenter {
     public abstract void switchAudioToMusic();
     public abstract void switchAudioToVocal();
     public abstract void startDurationSeekBarHandler();
-    public abstract long getDuration();
+    public abstract long getMediaDuration();
     public abstract void removeCallbacksAndMessages();
+    public abstract void getPlayingMediaInfoAndSetAudioActionSubMenu();
 
     public BasePlayerPresenter(Activity activity, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
@@ -670,26 +673,42 @@ public abstract class BasePlayerPresenter {
         int currentState = state.getState();
         Log.d(TAG, "updateStatusAndUi() --> currentState = " + currentState);
         playingParam.setCurrentPlaybackState(currentState);
+        if (currentState == PlaybackStateCompat.STATE_BUFFERING) {
+            Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_BUFFERING");
+            presentView.hideNativeAndBannerAd();
+            presentView.showBufferingMessage();
+            return;
+        }
+        presentView.dismissBufferingMessage();
         switch (currentState) {
             case PlaybackStateCompat.STATE_NONE:
-                // initial state or when playing is stopped by user
+                // 1. initial state
+                // 2. exoPlayer is stopped by user
+                // 3. vlcPlayer is finished playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_NONE");
-                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) {
-                    Log.d(TAG, "updateStatusAndUi--> Song was stopped by user.");
-                    playingParam.setMediaSourcePrepared(false);
-                }
                 presentView.playButtonOnPauseButtonOff();
-                presentView.showNativeAndBannerAd();
                 removeCallbacksAndMessages();
+                playingParam.setMediaSourcePrepared(false); // for vlcPlayer
+                if (playingParam.isPlaySingleSong()) {
+                    // playing song in song list activity
+                    // return to song list activity
+                    presentView.showInterstitialAd();
+                } else {
+                    presentView.showNativeAndBannerAd();
+                }
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING");
+                playingParam.setMediaSourcePrepared(true);  // has been prepared
+                getPlayingMediaInfoAndSetAudioActionSubMenu();
                 startDurationSeekBarHandler();   // start updating duration seekbar
-                presentView.playButtonOffPauseButtonOn();
                 // set up a timer for supportToolbar's visibility
                 presentView.setTimerToHideSupportAndAudioController();
-                //
+                presentView.playButtonOffPauseButtonOn();
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING-->hideNativeAndBannerAd()");
+                presentView.hideNativeAndBannerAd();
+                musicShowNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 // when playing is paused
@@ -698,28 +717,91 @@ public abstract class BasePlayerPresenter {
                 presentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_STOPPED:
-                // when playing is finished
+                // 1. exoPlayer is finished playing
+                // 2. vlcPlayer is stopped by user
+                // 3. after vlcPlayer is finished playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_STOPPED");
-                presentView.update_Player_duration_seekbar_progress((int)getDuration());
-                presentView.playButtonOnPauseButtonOff();
-                // deciding if showing native ad
-                int publicSongListSize = 0;
-                if (publicSongList != null) {
-                    publicSongListSize = publicSongList.size();
+                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && playingParam.isMediaSourcePrepared()) {
+                    // for vlcPlayer
+                    Log.d(TAG, "updateStatusAndUi--> vlcPlayer was stopped by user.");
+                    playingParam.setMediaSourcePrepared(false);
                 }
-                int publicNextSongIndex = playingParam.getPublicNextSongIndex();
-                Log.d(TAG, "updateStatusAndUi()--> publicSongList.size() = " + publicSongListSize);
-                Log.d(TAG, "updateStatusAndUi()--> getPublicNextSongIndex() = " + publicNextSongIndex);
-                if (publicSongListSize==0
-                        || (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying
-                        && (publicSongListSize==publicNextSongIndex || publicNextSongIndex<0))) {
+                presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
+                presentView.playButtonOnPauseButtonOff();
+                removeCallbacksAndMessages();
+                if (playingParam.isPlaySingleSong()) {
+                    // playing song in song list activity
+                    // return to song list activity
+                    presentView.showInterstitialAd();
+                } else {
+                    nextSongOrShowNativeAndBannerAd();
+                }
+                break;
+            case PlaybackStateCompat.STATE_ERROR:
+                String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
+                if (isCanShowNotSupportedFormat()) {
+                    // only show once
+                    setCanShowNotSupportedFormat(false);
+                    ScreenUtil.showToast(activity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                }
+                setMediaUri(null);
+                if (playingParam.isPlaySingleSong()) {
+                    // playing song in song list activity
+                    // return to song list activity
+                    presentView.showInterstitialAd();
+                } else {
+                    // remove the song that is unable to be played
+                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
+                    int currentIndexOfList = playingParam.getPublicNextSongIndex();
+                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->currentIndexOfList = " + currentIndexOfList);
+                    if (currentIndexOfList > 0) {
+                        publicSongList.remove(--currentIndexOfList);
+                        Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.remove("+currentIndexOfList+")");
+                        playingParam.setPublicNextSongIndex(currentIndexOfList);
+                    }
+                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
+                    nextSongOrShowNativeAndBannerAd();
+                }
+                break;
+        }
+    }
+
+    private void musicShowNativeAndBannerAd() {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                handler.removeCallbacksAndMessages(null);
+                getPlayingMediaInfoAndSetAudioActionSubMenu();
+                if (getNumberOfVideoTracks() == 0) {
+                    // no video is being played, show native ads
+                    Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
                     presentView.showNativeAndBannerAd();
                 } else {
-                    // play next song
-                    startAutoPlay();
+                    Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
+                    presentView.hideNativeAndBannerAd();
                 }
-                removeCallbacksAndMessages();
-                break;
+            }
+        };
+        handler.postDelayed(runnable, 1000); // delay 1 seconds
+    }
+
+    private void nextSongOrShowNativeAndBannerAd() {
+        // deciding if showing native ad
+        int publicSongListSize = 0;
+        if (publicSongList != null) {
+            publicSongListSize = publicSongList.size();
+        }
+        int publicNextSongIndex = playingParam.getPublicNextSongIndex();
+        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> publicSongList.size() = " + publicSongListSize);
+        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> getPublicNextSongIndex() = " + publicNextSongIndex);
+        if (publicSongListSize==0
+                || (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying
+                && (publicSongListSize==publicNextSongIndex || publicNextSongIndex<0))) {
+            presentView.showNativeAndBannerAd();
+        } else {
+            // play next song
+            startAutoPlay();
         }
     }
 
@@ -754,16 +836,5 @@ public abstract class BasePlayerPresenter {
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
-    }
-
-    protected void musicShowNativeAndBannerAd() {
-        if (getNumberOfVideoTracks() == 0) {
-            // no video is being played, show native ads
-            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
-            presentView.showNativeAndBannerAd();
-        } else {
-            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
-            presentView.hideNativeAndBannerAd();
-        }
     }
 }

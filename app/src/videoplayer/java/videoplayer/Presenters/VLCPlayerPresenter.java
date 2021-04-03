@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -141,6 +143,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         return mediaControllerCompat;
     }
 
+    @Override
     public void getPlayingMediaInfoAndSetAudioActionSubMenu() {
         MediaPlayer.TrackDescription videoDis[] = vlcPlayer.getVideoTracks();
         int videoTrackId;
@@ -254,8 +257,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         }
 
         // update the duration on controller UI
-        float duration = vlcPlayer.getLength();
-        presentView.update_Player_duration_seekbar(duration);
+        presentView.update_Player_duration_seekbar(vlcPlayer.getLength());
     }
 
     @Override
@@ -489,5 +491,18 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     @Override
     public void switchAudioToVocal() {
         // do nothing because it does not have this functionality yet
+    }
+
+    @Override
+    public void startDurationSeekBarHandler() {
+    }
+
+    @Override
+    public long getMediaDuration() {
+        return vlcPlayer.getLength();
+    }
+
+    @Override
+    public void removeCallbacksAndMessages() {
     }
 }

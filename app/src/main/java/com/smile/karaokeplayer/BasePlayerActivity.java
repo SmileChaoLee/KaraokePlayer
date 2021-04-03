@@ -923,6 +923,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
     @Override
     public void showBufferingMessage() {
+        Log.d(TAG, "showBufferingMessage() is called.");
         message_area_LinearLayout.setVisibility(View.VISIBLE);
         if (animationText != null) {
             bufferingStringTextView.startAnimation(animationText);
@@ -931,6 +932,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
     @Override
     public void dismissBufferingMessage() {
+        Log.d(TAG, "dismissBufferingMessage() is called.");
         if (animationText != null) {
             animationText.cancel();
         }

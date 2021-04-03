@@ -21,13 +21,13 @@ import videoplayer.Presenters.VLCPlayerPresenter;
 public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 
     private static final String TAG = "VLCMediaSessionCallback";
-    private final VLCPlayerPresenter mPresenter;
-    private final LibVLC mLibVLC;
+    private final VLCPlayerPresenter presenter;
+    private final LibVLC libVLC;
     private final MediaPlayer vlcPlayer;
 
     public VLCMediaSessionCallback(VLCPlayerPresenter presenter, LibVLC libVLC, MediaPlayer mediaPlayer) {
-        mPresenter = presenter;
-        mLibVLC = libVLC;
+        this.presenter = presenter;
+        this.libVLC = libVLC;
         vlcPlayer = mediaPlayer;
     }
 
@@ -50,10 +50,10 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 
     @Override
     public synchronized void onPrepareFromUri(Uri uri, Bundle extras) {
-        Log.d(TAG, "onPrepareFromUri() is called.");
+        Log.d(TAG, "onPrepareFromUri() --> uri = " + uri);
         super.onPrepareFromUri(uri, extras);
 
-        PlayingParameters playingParam = mPresenter.getPlayingParam();
+        PlayingParameters playingParam = presenter.getPlayingParam();
         playingParam.setMediaSourcePrepared(false);
 
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
@@ -69,17 +69,17 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                 currentVolume = playingParamOrigin.getCurrentVolume();
             }
         }
-        mPresenter.setAudioVolume(currentVolume);
+        presenter.setAudioVolume(currentVolume);
         vlcPlayer.setTime(currentAudioPosition); // use time to set position
         try {
             switch (playbackState) {
                 case PlaybackStateCompat.STATE_PAUSED:
-                    vlcPlayer.pause();
                     Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PAUSED");
+                    vlcPlayer.pause();
                     break;
                 case PlaybackStateCompat.STATE_STOPPED:
-                    vlcPlayer.stop();
                     Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_STOPPED");
+                    vlcPlayer.stop();
                     break;
                 case PlaybackStateCompat.STATE_PLAYING:
                     Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PLAYING");
@@ -87,7 +87,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                     Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_NONE");
                     // start playing when ready or just start new playing
                     // final Media mediaSource = new Media(mLibVLC, uri);   // libvlc version 3.1.12
-                    final IMedia mediaSource = new Media(mLibVLC, uri);
+                    final IMedia mediaSource = new Media(libVLC, uri);
                     vlcPlayer.setMedia(mediaSource);
                     vlcPlayer.play();
                     mediaSource.release();
@@ -103,7 +103,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     public synchronized void onPlay() {
         super.onPlay();
         Log.d(TAG, "onPlay() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
+        MediaControllerCompat controller = presenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_PLAYING) {
@@ -130,7 +130,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     public synchronized void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
+        MediaControllerCompat controller = presenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_PAUSED) {
@@ -142,7 +142,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     public synchronized void onStop() {
         super.onStop();
         Log.d(TAG, "onStop() is called.");
-        MediaControllerCompat controller = mPresenter.getMediaControllerCompat();
+        MediaControllerCompat controller = presenter.getMediaControllerCompat();
         PlaybackStateCompat stateCompat = controller.getPlaybackState();
         int state = stateCompat.getState();
         if (state != PlaybackStateCompat.STATE_STOPPED) {
@@ -154,13 +154,13 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
     public synchronized void onFastForward() {
         super.onFastForward();
         Log.d(TAG, "onFastForward() is called.");
-        mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_FAST_FORWARDING);
+        presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_FAST_FORWARDING);
     }
 
     @Override
     public synchronized void onRewind() {
         super.onRewind();
         Log.d(TAG, "onRewind() is called.");
-        mPresenter.setMediaPlaybackState(PlaybackStateCompat.STATE_REWINDING);
+        presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_REWINDING);
     }
 }
