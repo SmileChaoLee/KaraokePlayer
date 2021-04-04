@@ -62,17 +62,11 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 break;
             case MediaPlayer.Event.EndReached:
                 // after this event, vlcPlayer will send out Event.Stopped to EventListener
-                Log.d(TAG, "onEvent()-->Stopped-->getLength() = " + vlcPlayer.getLength());
-                if (vlcPlayer.getLength() != 0) {
-                    //  legal media format
-                    presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
-                }
-                //
+                Log.d(TAG, "onEvent()-->EndReached-->getLength() = " + vlcPlayer.getLength());
+                // has to be here for next event
+                // Event.Stopper
                 playingParam.setMediaSourcePrepared(false);
-                // playingParam.setMediaSourcePrepared(false);
-                // is inside BasePlayerPresenter#updateStatusAndUi()
-                // and in the PlaybackStateCompat.STATE_NONE case block
-                //
+                // no message has to be sent
                 break;
             case MediaPlayer.Event.Opening:
                 Log.d(TAG, "onEvent()-->Opening.");
