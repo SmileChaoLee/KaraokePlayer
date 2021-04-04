@@ -10,7 +10,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 import exoplayer.Presenters.ExoPlayerPresenter;
-import exoplayer.Presenters.ExoPlayerPresenter.ExoPlayerPresentView;
 
 public class ExoPlayerEventListener implements Player.EventListener {
 
@@ -36,7 +35,7 @@ public class ExoPlayerEventListener implements Player.EventListener {
         switch (state) {
             case Player.STATE_BUFFERING:
                 Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_BUFFERING--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
-                return;
+                break;
             case Player.STATE_READY:
                 Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_READY--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
                 break;

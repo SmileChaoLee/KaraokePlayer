@@ -7,8 +7,6 @@ import android.content.UriPermission;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -693,15 +691,17 @@ public abstract class BasePlayerPresenter {
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING");
+                if (!playingParam.isMediaSourcePrepared()) {
+                    // the first time of Player.STATE_READY means prepared
+                    getPlayingMediaInfoAndSetAudioActionSubMenu();
+                }
                 playingParam.setMediaSourcePrepared(true);  // has been prepared
-                getPlayingMediaInfoAndSetAudioActionSubMenu();  // extra
                 startDurationSeekBarHandler();   // start updating duration seekbar
                 // set up a timer for supportToolbar's visibility
                 presentView.setTimerToHideSupportAndAudioController();
                 presentView.playButtonOffPauseButtonOn();
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING-->hideNativeAndBannerAd()");
-                presentView.hideNativeAndBannerAd();
-                musicShowNativeAndBannerAd();
+                onlyMusicShowNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 // when playing is paused
@@ -742,27 +742,6 @@ public abstract class BasePlayerPresenter {
         }
     }
 
-    private void musicShowNativeAndBannerAd() {
-        final Handler handler = new Handler(Looper.getMainLooper());
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "musicShowNativeAndBannerAd() --> run()");
-                handler.removeCallbacksAndMessages(null);
-                getPlayingMediaInfoAndSetAudioActionSubMenu();   // removed to testing
-                if (getNumberOfVideoTracks() == 0) {
-                    // no video is being played, show native ads
-                    Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
-                    presentView.showNativeAndBannerAd();
-                } else {
-                    Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
-                    presentView.hideNativeAndBannerAd();
-                }
-            }
-        };
-        handler.postDelayed(runnable, 1000); // delay 1 seconds
-    }
-
     private void nextSongOrShowNativeAndBannerAd() {
         // deciding if showing native ad
         int publicSongListSize = 0;
@@ -780,6 +759,17 @@ public abstract class BasePlayerPresenter {
         } else {
             // play next song
             startAutoPlay();
+        }
+    }
+
+    protected void onlyMusicShowNativeAndBannerAd() {
+        if (getNumberOfVideoTracks() == 0) {
+            // no video is being played, show native ads
+            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
+            presentView.showNativeAndBannerAd();
+        } else {
+            Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
+            presentView.hideNativeAndBannerAd();
         }
     }
 
