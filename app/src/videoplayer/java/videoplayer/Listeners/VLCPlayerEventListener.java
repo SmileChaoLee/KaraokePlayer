@@ -1,8 +1,11 @@
 package videoplayer.Listeners;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+
+import com.smile.karaokeplayer.Models.PlayingParameters;
 
 import org.videolan.libvlc.MediaPlayer;
 import videoplayer.Presenters.VLCPlayerPresenter;
@@ -21,6 +24,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
     public synchronized void onEvent(MediaPlayer.Event event) {
         // Log.d(TAG, "onEvent() is called and MediaPlayer.Event event = " + event);
         // PlayingParameters playingParam = presenter.getPlayingParam();
+        PlayingParameters playingParam = presenter.getPlayingParam();
         switch(event.type) {
             case MediaPlayer.Event.Buffering:
                 Log.d(TAG, "onEvent()-->Buffering.");
@@ -45,13 +49,30 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                     // no legal media format
                     presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
                 } else {
-                    presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
+                    Uri mediaUri = presenter.getMediaUri();
+                    if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && playingParam.isMediaSourcePrepared()) {
+                        Log.d(TAG, "onEvent()-->Stopped--> vlcPlayer was stopped by user.");
+                        presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+                    } else {
+                        // playing is finished
+                        Log.d(TAG, "onEvent()-->Stopped--> vlcPlayer is finished playing.");
+                        presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_STOPPED);
+                    }
                 }
                 break;
             case MediaPlayer.Event.EndReached:
                 // after this event, vlcPlayer will send out Event.Stopped to EventListener
-                Log.d(TAG, "onEvent()-->EndReached");
-                presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+                Log.d(TAG, "onEvent()-->Stopped-->getLength() = " + vlcPlayer.getLength());
+                if (vlcPlayer.getLength() != 0) {
+                    //  legal media format
+                    presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
+                }
+                //
+                playingParam.setMediaSourcePrepared(false);
+                // playingParam.setMediaSourcePrepared(false);
+                // is inside BasePlayerPresenter#updateStatusAndUi()
+                // and in the PlaybackStateCompat.STATE_NONE case block
+                //
                 break;
             case MediaPlayer.Event.Opening:
                 Log.d(TAG, "onEvent()-->Opening.");

@@ -128,6 +128,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     }
 
     public void setMediaPlaybackState(int state) {
+        Log.d(TAG, "setMediaPlaybackState() = " + state);
         PlaybackStateCompat.Builder playbackStateBuilder = new PlaybackStateCompat.Builder();
         if( state == PlaybackStateCompat.STATE_PLAYING ) {
             playbackStateBuilder.setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE | PlaybackStateCompat.ACTION_PAUSE);
@@ -412,7 +413,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
 
         VLCMediaSessionCallback mediaSessionCallback = new VLCMediaSessionCallback(this, mLibVLC, vlcPlayer);
         mediaSessionCompat.setCallback(mediaSessionCallback);
-        setMediaPlaybackState(playingParam.getCurrentPlaybackState());
+        // setMediaPlaybackState(playingParam.getCurrentPlaybackState());   // removed on 2021-04-03 for testing
 
         // Create a MediaControllerCompat
         // mediaControllerCompat = new MediaControllerCompat(callingContext, mediaSessionCompat);

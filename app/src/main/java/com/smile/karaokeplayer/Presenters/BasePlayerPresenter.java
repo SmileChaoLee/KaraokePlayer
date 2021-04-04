@@ -669,9 +669,7 @@ public abstract class BasePlayerPresenter {
     }
 
     public void updateStatusAndUi(PlaybackStateCompat state) {
-        Log.d(TAG, "updateStatusAndUi() --> state = " + state);
         int currentState = state.getState();
-        Log.d(TAG, "updateStatusAndUi() --> currentState = " + currentState);
         playingParam.setCurrentPlaybackState(currentState);
         if (currentState == PlaybackStateCompat.STATE_BUFFERING) {
             Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_BUFFERING");
@@ -685,10 +683,11 @@ public abstract class BasePlayerPresenter {
                 // 1. initial state
                 // 2. exoPlayer is stopped by user
                 // 3. vlcPlayer is finished playing
+                // 4. vlcPlayer is stopped by user
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_NONE");
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
-                playingParam.setMediaSourcePrepared(false); // for vlcPlayer
+                playingParam.setMediaSourcePrepared(false);
                 if (playingParam.isPlaySingleSong()) {
                     // playing song in song list activity
                     // return to song list activity
@@ -718,14 +717,9 @@ public abstract class BasePlayerPresenter {
                 break;
             case PlaybackStateCompat.STATE_STOPPED:
                 // 1. exoPlayer is finished playing
-                // 2. vlcPlayer is stopped by user
                 // 3. after vlcPlayer is finished playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_STOPPED");
-                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && playingParam.isMediaSourcePrepared()) {
-                    // for vlcPlayer
-                    Log.d(TAG, "updateStatusAndUi--> vlcPlayer was stopped by user.");
-                    playingParam.setMediaSourcePrepared(false);
-                }
+                playingParam.setMediaSourcePrepared(false);
                 presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
