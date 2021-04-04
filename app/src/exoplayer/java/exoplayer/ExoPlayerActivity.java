@@ -86,8 +86,15 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart() is finished.");
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume() is finished.");
         presenter.setSessionAvailabilityListener();
         presenter.addBaseCastStateListener();
     }
@@ -95,8 +102,15 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG,"onPause() is finished.");
         presenter.releaseSessionAvailabilityListener();
         presenter.removeBaseCastStateListener();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG,"onStop() is finished.");
     }
 
     @Override

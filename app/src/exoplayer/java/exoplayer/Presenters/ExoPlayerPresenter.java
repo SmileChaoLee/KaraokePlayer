@@ -274,7 +274,9 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         return result;
     }
 
+    @Override
     public void getPlayingMediaInfoAndSetAudioActionSubMenu() {
+        Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu()");
         int numVideoRenderers = 0;
         int numAudioRenderers = 0;
         int numVideoTrackGroups = 0;
@@ -669,11 +671,10 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     public synchronized void startDurationSeekBarHandler() {
         // start monitor player_duration_seekbar
         durationSeekBarHandler.postDelayed(durationSeekBarRunnable, 200); // delay 200ms
-        musicShowNativeAndBannerAd();
     }
 
     @Override
-    public long getDuration() {
+    public long getMediaDuration() {
         return exoPlayer.getDuration();
     }
 

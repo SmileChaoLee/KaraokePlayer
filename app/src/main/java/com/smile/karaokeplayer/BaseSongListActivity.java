@@ -237,6 +237,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
     }
 
     protected void updateSongList() {
+        Log.d(TAG, "updateSongList()");
         mSongList = songListSQLite.readSongList();
         mySongListAdapter.updateData(mSongList);    // update the UI
     }
@@ -387,23 +388,25 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         // play this item (media file)
                         Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
+                        Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
                         if (callingIntent != null) {
                             ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                                     new ActivityResultCallback<ActivityResult>() {
                                         @Override
                                         public void onActivityResult(ActivityResult result) {
+                                            Log.d(TAG, "ActivityResultCallback()-->updateSongList()");
                                             updateSongList();
                                         }
                                     });
-                            // Intent playerBaseActivityIntent = callingIntent.getParcelableExtra(PlayerConstants.PlayerBaseActivityIntent);
+                            Log.d(TAG, "playSongListButton()-->createPlayerActivityIntent");
                             Intent playerActivityIntent = createPlayerActivityIntent();
                             Bundle extras = new Bundle();
                             extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                             extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                             playerActivityIntent.putExtras(extras);
+                            Log.d(TAG, "playSongListButton()-->activityResultLauncher.launch(playerActivityIntent)");
                             activityResultLauncher.launch(playerActivityIntent);
                         }
-                        Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
                     }
                 });
             }

@@ -70,7 +70,7 @@ public abstract class BasePlayerPresenter {
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
-        void showInterstitialAd();
+        void showInterstitialAd(boolean isExit);
     }
 
     public abstract void setPlayerTime(int progress);
@@ -682,25 +682,19 @@ public abstract class BasePlayerPresenter {
             case PlaybackStateCompat.STATE_NONE:
                 // 1. initial state
                 // 2. exoPlayer is stopped by user
-                // 3. vlcPlayer is finished playing
+                // 3. vlcPlayer finished playing (Event.EndReached)
                 // 4. vlcPlayer is stopped by user
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_NONE");
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
                 playingParam.setMediaSourcePrepared(false);
-                if (playingParam.isPlaySingleSong()) {
-                    // playing song in song list activity
-                    // return to song list activity
-                    presentView.showInterstitialAd();
-                } else {
-                    presentView.showNativeAndBannerAd();
-                }
+                presentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING");
                 playingParam.setMediaSourcePrepared(true);  // has been prepared
-                getPlayingMediaInfoAndSetAudioActionSubMenu();
+                getPlayingMediaInfoAndSetAudioActionSubMenu();  // extra
                 startDurationSeekBarHandler();   // start updating duration seekbar
                 // set up a timer for supportToolbar's visibility
                 presentView.setTimerToHideSupportAndAudioController();
@@ -716,20 +710,14 @@ public abstract class BasePlayerPresenter {
                 presentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_STOPPED:
-                // 1. exoPlayer is finished playing
-                // 3. after vlcPlayer is finished playing
+                // 1. exoPlayer finished playing
+                // 3. after vlcPlayer finished playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_STOPPED");
                 playingParam.setMediaSourcePrepared(false);
                 presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
-                if (playingParam.isPlaySingleSong()) {
-                    // playing song in song list activity
-                    // return to song list activity
-                    presentView.showInterstitialAd();
-                } else {
-                    nextSongOrShowNativeAndBannerAd();
-                }
+                nextSongOrShowNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_ERROR:
                 String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
@@ -739,23 +727,17 @@ public abstract class BasePlayerPresenter {
                     ScreenUtil.showToast(activity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 }
                 setMediaUri(null);
-                if (playingParam.isPlaySingleSong()) {
-                    // playing song in song list activity
-                    // return to song list activity
-                    presentView.showInterstitialAd();
-                } else {
-                    // remove the song that is unable to be played
-                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
-                    int currentIndexOfList = playingParam.getPublicNextSongIndex();
-                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->currentIndexOfList = " + currentIndexOfList);
-                    if (currentIndexOfList > 0) {
-                        publicSongList.remove(--currentIndexOfList);
-                        Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.remove("+currentIndexOfList+")");
-                        playingParam.setPublicNextSongIndex(currentIndexOfList);
-                    }
-                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
-                    nextSongOrShowNativeAndBannerAd();
+                // remove the song that is unable to be played
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
+                int currentIndexOfList = playingParam.getPublicNextSongIndex();
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->currentIndexOfList = " + currentIndexOfList);
+                if (currentIndexOfList > 0) {
+                    publicSongList.remove(--currentIndexOfList);
+                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.remove("+currentIndexOfList+")");
+                    playingParam.setPublicNextSongIndex(currentIndexOfList);
                 }
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
+                nextSongOrShowNativeAndBannerAd();
                 break;
         }
     }
@@ -765,8 +747,9 @@ public abstract class BasePlayerPresenter {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "musicShowNativeAndBannerAd() --> run()");
                 handler.removeCallbacksAndMessages(null);
-                getPlayingMediaInfoAndSetAudioActionSubMenu();
+                getPlayingMediaInfoAndSetAudioActionSubMenu();   // removed to testing
                 if (getNumberOfVideoTracks() == 0) {
                     // no video is being played, show native ads
                     Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
@@ -793,6 +776,7 @@ public abstract class BasePlayerPresenter {
                 || (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying
                 && (publicSongListSize==publicNextSongIndex || publicNextSongIndex<0))) {
             presentView.showNativeAndBannerAd();
+            presentView.showInterstitialAd(false);
         } else {
             // play next song
             startAutoPlay();
