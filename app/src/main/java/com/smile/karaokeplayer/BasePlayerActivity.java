@@ -1,7 +1,6 @@
 package com.smile.karaokeplayer;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ContextThemeWrapper;
@@ -31,6 +30,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.FrameLayout;
@@ -49,10 +50,8 @@ import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook;
-import com.smile.smilelibraries.showing_instertitial_ads_utility.ShowingInterstitialAdsUtil;
+import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
-
-import java.util.ArrayList;
 
 public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
@@ -146,6 +145,12 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
+
+        // keep the screen on all the time, added on 2021-02-18
+        Window mWindow = getWindow();
+        if (mWindow != null) {
+            mWindow.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
 
         mPresenter = getPlayerBasePresenter();
         Log.d(TAG, "mPresenter = " + mPresenter);
@@ -358,17 +363,10 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                 break;
             case R.id.songList:
                 Intent songListIntent = createIntentForSongListActivity();
-                // Intent songListIntent = new Intent(getApplicationContext(), SongListActivity.class);
-                Class childClass = getClass();
-                Log.d(TAG, "childClass = " + childClass);
-                if (childClass != null) {
-                    Intent playerBaseActivityIntent = new Intent(getApplicationContext(), childClass);
-                    songListIntent.putExtra(PlayerConstants.PlayerBaseActivityIntent, playerBaseActivityIntent);
-                    startActivityForResult(songListIntent, PlayerConstants.SONG_LIST_ACTIVITY_CODE);
-                }
+                startActivity(songListIntent);
                 break;
             case R.id.open:
-                mPresenter.selectFileToOpenPresenter(PlayerConstants.FILE_READ_REQUEST_CODE, false);
+                mPresenter.selectFileToOpenPresenter();
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
@@ -490,20 +488,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PlayerConstants.FILE_READ_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            Log.d(TAG, "onActivityResult() is called.");
-            ArrayList<Uri> uris = mPresenter.getUrisListFromIntentPresenter(data);
-            if (uris!=null && uris.size()>0) {
-                Log.d(TAG, "onActivityResult( --> uris.size() = " + uris.size());
-                // There are files selected
-                mPresenter.playSelectedUrisFromStorage(uris);
-            }
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         Log.d(TAG,"onDestroy() is called.");
         if (myBannerAdView != null) {
@@ -513,6 +497,14 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         if (nativeTemplate != null) {
             nativeTemplate.release();
         }
+
+        // clear the screen on, added on 2021-02-18
+        Window mWindow = getWindow();
+        if (mWindow != null) {
+            mWindow.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        //
+
         super.onDestroy();
     }
 
@@ -931,6 +923,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
     @Override
     public void showBufferingMessage() {
+        Log.d(TAG, "showBufferingMessage() is called.");
         message_area_LinearLayout.setVisibility(View.VISIBLE);
         if (animationText != null) {
             bufferingStringTextView.startAnimation(animationText);
@@ -939,6 +932,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
     @Override
     public void dismissBufferingMessage() {
+        Log.d(TAG, "dismissBufferingMessage() is called.");
         if (animationText != null) {
             animationText.cancel();
         }
@@ -968,9 +962,13 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     }
 
     @Override
-    public void showInterstitialAd(boolean isReturnToPrevious) {
-        if (isReturnToPrevious) {
+    public void showInterstitialAd(boolean isExit) {
+        if (isExit) {
             returnToPrevious();
+            PlayingParameters playingParam = mPresenter.getPlayingParam();
+            if (playingParam.isPlaySingleSong()) {
+                return;
+            }
         }
         if (BaseApplication.InterstitialAd != null) {
             // free version

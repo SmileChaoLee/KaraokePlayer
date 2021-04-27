@@ -2,6 +2,7 @@ package videoplayer;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 
 import com.smile.karaokeplayer.BaseSongDataActivity;
@@ -13,9 +14,12 @@ import videoplayer.utilities.UriUtil;
 
 public class SongDataActivity extends BaseSongDataActivity {
 
+    private static final String TAG = "SongDataActivity";
+
     @Override
-    public void selectOneFilePathSongData(int requestCode) {
-        FileSelectUtil.selectFileToOpen(this, requestCode, true);
+    public Intent createSelectOneFileToOpenIntent() {
+        Log.d(TAG, "createSelectFileToOpenIntent() is called.");
+        return FileSelectUtil.selectFileToOpenIntent(this, true);
     }
 
     @Override

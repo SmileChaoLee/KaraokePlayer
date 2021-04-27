@@ -15,5 +15,5 @@
 -->
 
 <manifest package="com.google.android.exoplayer2.ext.vp9">
-    <uses-sdk/>
+  <uses-sdk/>
 </manifest>

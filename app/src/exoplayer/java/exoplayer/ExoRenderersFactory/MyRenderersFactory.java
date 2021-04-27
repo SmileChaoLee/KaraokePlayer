@@ -1,10 +1,14 @@
 package exoplayer.ExoRenderersFactory;
 
 import android.content.Context;
-import android.util.Log;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.audio.AudioCapabilities;
 import com.google.android.exoplayer2.audio.AudioProcessor;
+import com.google.android.exoplayer2.audio.AudioSink;
+import com.google.android.exoplayer2.audio.DefaultAudioSink;
+
 import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
 
 public class MyRenderersFactory extends DefaultRenderersFactory {
@@ -13,6 +17,7 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
 
     // Customized AudioProcessor
     private final StereoVolumeAudioProcessor stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
+    private final AudioProcessor[] audioProcessors = {stereoVolumeAudioProcessor};
 
     public MyRenderersFactory(Context context) {
         super(context);
@@ -21,27 +26,22 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
         // setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER);
     }
 
+    @Nullable
     @Override
-    protected AudioProcessor[] buildAudioProcessors() {
-        Log.d(TAG,"DefaultRenderersFactory.buildAudioProcessors() is called.");
-        AudioProcessor[] audioProcessors;
-
-        int arrayLength = 0;
-        if (super.buildAudioProcessors() != null) {
-            arrayLength = super.buildAudioProcessors().length;
-        }
-
-        Log.d(TAG,"buildAudioProcessors --> arrayLength() = " + arrayLength);
-
-        audioProcessors = new AudioProcessor[arrayLength + 1];
-
-        audioProcessors[0] = stereoVolumeAudioProcessor;
-
-        for (int i=1; i<=arrayLength; i++) {
-            audioProcessors[i] = (super.buildAudioProcessors())[i-1];
-        }
-
-        return audioProcessors;
+    protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams, boolean enableOffload) {
+        /*
+        DefaultAudioSink.DefaultAudioProcessorChain audioProcessorChain = new DefaultAudioSink.DefaultAudioProcessorChain(audioProcessors);
+        AudioSink audioSink = new DefaultAudioSink(AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES,
+                        audioProcessorChain,
+                        enableFloatOutput,
+                        enableAudioTrackPlaybackParams,
+                        enableOffload);
+        */
+        // or
+        AudioSink audioSink = new DefaultAudioSink(AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES,
+                        audioProcessors,
+                        enableFloatOutput);
+        return audioSink;
     }
 
     public StereoVolumeAudioProcessor getStereoVolumeAudioProcessor() {

@@ -4,13 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.View;
 import android.widget.LinearLayout;
-
-import com.smile.karaokeplayer.BaseSongListActivity;
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.SongInfo;
-
 import java.util.ArrayList;
+import com.smile.karaokeplayer.BaseSongListActivity;
 
 import videoplayer.utilities.FileSelectUtil;
 import videoplayer.utilities.UriUtil;
@@ -18,15 +13,13 @@ import videoplayer.utilities.UriUtil;
 public class SongListActivity extends BaseSongListActivity {
 
     @Override
-    public void selectOneFileToAddSongList(int requestCode) {
-        Intent addIntent = new Intent(this, SongDataActivity.class);
-        addIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.AddActionString);
-        startActivityForResult(addIntent, requestCode);
+    public Intent createIntentFromSongDataActivity() {
+        return new Intent(this, SongDataActivity.class);
     }
 
     @Override
-    public void selectMultipleFileToAddSongList(int requestCode) {
-        FileSelectUtil.selectFileToOpen(this, requestCode, false);
+    public Intent createSelectFilesToOpenIntent() {
+        return FileSelectUtil.selectFileToOpenIntent(this, false);
     }
 
     @Override
@@ -35,23 +28,12 @@ public class SongListActivity extends BaseSongListActivity {
     }
 
     @Override
-    public void editOneSongFromSongList(SongInfo singleSongInfo, int requestCode) {
-        Intent editIntent = new Intent(this, SongDataActivity.class);
-        editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
-        editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-        startActivityForResult(editIntent, requestCode);
-    }
-
-    @Override
-    public void deleteOneSongFromSongList(SongInfo singleSongInfo, int requestCode) {
-        Intent deleteIntent = new Intent(this, SongDataActivity.class);
-        deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
-        deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-        startActivityForResult(deleteIntent, requestCode);
-    }
-
-    @Override
     public void setAudioLinearLayoutVisibility(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.GONE);
+    }
+
+    @Override
+    public Intent createPlayerActivityIntent() {
+        return new Intent(this, VLCPlayerActivity.class);
     }
 }

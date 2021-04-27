@@ -14,6 +14,9 @@ public class UriUtil {
 
     public static ArrayList<Uri> getUrisListFromIntent(Context context, Intent data) {
         ArrayList<Uri> urisList = new ArrayList<>();
+        if (data == null) {
+            return urisList;
+        }
 
         if (data.getData() != null) {
             // com.aditya.filebrowser.Constants.SELECTION_MODES.SINGLE_SELECTION.ordinal();
