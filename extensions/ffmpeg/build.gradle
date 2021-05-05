@@ -9,7 +9,6 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
         targetSdkVersion 30
         consumerProguardFiles 'proguard-rules.txt'
      	testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
@@ -23,7 +22,7 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.13.2'
+    implementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     compileOnly 'org.checkerframework:checker-qual:' + '2.5.0'
     compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.4.31'
 }

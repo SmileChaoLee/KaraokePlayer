@@ -19,16 +19,16 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
-import exoplayer.Presenters.ExoPlayerPresenter;
-
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.BasePlayerActivity;
 import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.R;
 
+import exoplayer.Presenters.ExoPlayerPresenter;
+
 public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
-    private static final String TAG = "ExoPlayerActivity";
+    private static final String TAG = ExoPlayerActivity.class.getName();
 
     private ExoPlayerPresenter presenter;
     private SimpleExoPlayer exoPlayer;
