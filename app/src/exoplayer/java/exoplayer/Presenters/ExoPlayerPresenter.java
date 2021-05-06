@@ -14,18 +14,20 @@ import androidx.mediarouter.media.MediaRouter;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.av1.Gav1Library;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener;
 import com.google.android.exoplayer2.ext.ffmpeg.FfmpegLibrary;
 import com.google.android.exoplayer2.ext.flac.FlacLibrary;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.ext.opus.OpusLibrary;
 import com.google.android.exoplayer2.ext.vp9.VpxLibrary;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
@@ -35,21 +37,21 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
-import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
-import exoplayer.Callbacks.ExoMediaControllerCallback;
-import exoplayer.Callbacks.ExoPlaybackPreparer;
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
-import exoplayer.ExoRenderersFactory.MyRenderersFactory;
-import exoplayer.Listeners.ExoPlayerCastStateListener;
-import exoplayer.Listeners.ExoPlayerEventListener;
-import exoplayer.Utilities.UriUtil;
-
 import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
 import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.Callbacks.ExoMediaControllerCallback;
+import exoplayer.Callbacks.ExoPlaybackPreparer;
+import exoplayer.ExoRenderersFactory.MyRenderersFactory;
+import exoplayer.Listeners.ExoPlayerCastStateListener;
+import exoplayer.Listeners.ExoPlayerEventListener;
+import exoplayer.Utilities.UriUtil;
 
 public class ExoPlayerPresenter extends BasePlayerPresenter {
 
@@ -76,7 +78,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     private ExoPlayerEventListener mExoPlayerEventListener;
     private Player currentPlayer;
-    private int currentItemIndex;
+    private int currentItemIndex = -1;
 
     // instances of the following members have to be saved when configuration changed
     private ArrayList<Integer[]> videoTrackIndicesList = new ArrayList<>();
@@ -159,10 +161,12 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
 
         SimpleExoPlayer.Builder exoPlayerBuilder = new SimpleExoPlayer.Builder(mActivity, myRenderersFactory);
-        exoPlayerBuilder.setTrackSelector(trackSelector);
-        exoPlayer = exoPlayerBuilder.build();
+        DefaultExtractorsFactory extractorsFactory = new DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true);
+        exoPlayer = exoPlayerBuilder
+                .setTrackSelector(trackSelector)
+                .setMediaSourceFactory(new DefaultMediaSourceFactory(mActivity, extractorsFactory))
+                .build();
 
-        // no need. It will ve overridden by MediaSessionConnector
         mExoPlayerEventListener = new ExoPlayerEventListener(mActivity, this);
         exoPlayer.addListener(mExoPlayerEventListener);
 
@@ -259,9 +263,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         DefaultTrackSelector.Parameters trackParameters = trackSelector.getParameters();
         DefaultTrackSelector.ParametersBuilder parametersBuilder = trackParameters.buildUpon();
 
-        DefaultTrackSelector.SelectionOverride initialOverride = trackParameters.getSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex));
-
-        initialOverride = new DefaultTrackSelector.SelectionOverride(audioTrackGroupIndex, audioTrackIndex);
+        // DefaultTrackSelector.SelectionOverride initialOverride = trackParameters.getSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex));
+        DefaultTrackSelector.SelectionOverride initialOverride = new DefaultTrackSelector.SelectionOverride(audioTrackGroupIndex, audioTrackIndex);
         // trackSelector.setParameters(parametersBuilder.build());
         // or
         parametersBuilder.clearSelectionOverrides(audioRendererIndex)
@@ -602,6 +605,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         mediaControllerCompat.registerCallback(mediaControllerCallback);
         mediaTransportControls = mediaControllerCompat.getTransportControls();
 
+        // no need to create MediaSessionCallback(). It will be overridden by PlaybackPreparer
+        // MediaSessionConnector will automatically update playback status to MediaControllerCallback
         mediaSessionConnector = new MediaSessionConnector(mediaSessionCompat);
         mediaSessionConnector.setPlayer(exoPlayer);
         mediaSessionConnector.setPlaybackPreparer(new ExoPlaybackPreparer(mActivity, this));
@@ -720,7 +725,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 windowIndex = previousPlayer.getCurrentWindowIndex();
                 if (windowIndex != currentItemIndex) {
                     playbackPositionMs = C.TIME_UNSET;
-                    windowIndex = currentItemIndex;
+                    // windowIndex = currentItemIndex;
+                    currentItemIndex = windowIndex;
                 }
             }
             // previousPlayer.stop(true);
