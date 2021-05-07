@@ -83,6 +83,14 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+
+    android {
+        ndkVersion '21.0.6011959'
+    }
+    // or
+    // android {
+    //     ndkPath "C:\\Users\\lee\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669"  // Point to your own NDK
+    // }
 }
 
 allprojects {

@@ -12,6 +12,9 @@ android {
         targetSdkVersion 30
         consumerProguardFiles 'proguard-rules.txt'
      	testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     sourceSets.main {
@@ -19,6 +22,13 @@ android {
         jni.srcDirs = [] // Disable the automatic ndk-build call by Android Studio.
     }
 }
+
+// Configure the native build only if ffmpeg is present to avoid gradle sync
+// failures if ffmpeg hasn't been built according to the README instructions.
+// if (project.file('src/main/jni/ffmpeg').exists()) {
+//     android.externalNativeBuild.cmake.path = 'src/main/jni/CMakeLists.txt'
+//     android.externalNativeBuild.cmake.version = '3.7.1+'
+// }
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.1.0'
