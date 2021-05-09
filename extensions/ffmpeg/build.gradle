@@ -8,6 +8,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    // android {
+    //     ndkVersion '21.4.7075529'
+    // }
+
+    // or
+    // android {
+    //     ndkPath "C:\\Users\\lee\\AppData\\Local\\Android\\Sdk\\ndk\\21.4.7075529"  // Point to your own NDK
+    // }
+
     defaultConfig {
         targetSdkVersion 30
         consumerProguardFiles 'proguard-rules.txt'
