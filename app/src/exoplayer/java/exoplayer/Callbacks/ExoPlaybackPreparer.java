@@ -13,20 +13,11 @@ import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.MimeTypes;
-import com.google.android.exoplayer2.util.Util;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
-import exoplayer.Presenters.ExoPlayerPresenter;
 
-import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_ALLOW_NON_IDR_KEYFRAMES;
-import static com.google.android.exoplayer2.extractor.ts.DefaultTsPayloadReaderFactory.FLAG_DETECT_ACCESS_UNITS;
+import exoplayer.Presenters.ExoPlayerPresenter;
 
 public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
 
@@ -71,33 +62,31 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         PlayingParameters playingParam = mPresenter.getPlayingParam();
         SimpleExoPlayer exoPlayer = mPresenter.getExoPlayer();
 
-        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory()
-                .setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS)
-                .setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
+        playingParam.setMediaPrepared(false);
 
-        playingParam.setMediaSourcePrepared(false);
-
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
-
-        // removed on 2021-03-27
-        // MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(uri);
-        //
         MediaItem mediaItem = new MediaItem.Builder()
                 .setUri(uri)
                 .setMediaMetadata(new MediaMetadata.Builder().setTitle("Opened Media").build())
                 .setMimeType(MimeTypes.BASE_TYPE_VIDEO)
                 // .setDrmConfiguration(null)
                 .build();
+
+        /*
+        // removed on 2021-05-23 for testing
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory()
+            .setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS)
+            .setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(callingContext, Util.getUserAgent(callingContext, callingContext.getPackageName()));
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory, extractorsFactory).createMediaSource(mediaItem);
         Log.d(TAG, "onPrepareFromUri() --> mediaSource = " + mediaSource);
         if (mediaSource == null) {
             return;
         }
-
         Log.d(TAG, "onPrepareFromUri() --> preparing mediaSource");
-
-        // exoPlayer.prepare(mediaSource);  // deprecated, removed on 2021-03-26
         exoPlayer.setMediaSource(mediaSource);
+        */
+
+        exoPlayer.setMediaItem(mediaItem);      // added on 2021-05-23
         exoPlayer.prepare();
 
         long currentAudioPosition = playingParam.getCurrentAudioPosition();

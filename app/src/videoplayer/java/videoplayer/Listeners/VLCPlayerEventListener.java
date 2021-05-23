@@ -50,7 +50,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                     presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_ERROR);
                 } else {
                     Uri mediaUri = presenter.getMediaUri();
-                    if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && playingParam.isMediaSourcePrepared()) {
+                    if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && playingParam.isMediaPrepared()) {
                         Log.d(TAG, "onEvent()-->Stopped--> vlcPlayer was stopped by user.");
                         presenter.setMediaPlaybackState(PlaybackStateCompat.STATE_NONE);
                     } else {
@@ -65,7 +65,7 @@ public class VLCPlayerEventListener implements MediaPlayer.EventListener {
                 Log.d(TAG, "onEvent()-->EndReached-->getLength() = " + vlcPlayer.getLength());
                 // has to be here for next event
                 // Event.Stopper
-                playingParam.setMediaSourcePrepared(false);
+                playingParam.setMediaPrepared(false);
                 // no message has to be sent
                 break;
             case MediaPlayer.Event.Opening:

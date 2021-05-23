@@ -16,8 +16,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 30
         multiDexEnabled true
-        versionCode 290
-        versionName "2.90"
+        versionCode 300
+        versionName "3.00"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -115,8 +115,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
-    exoplayerImplementation files('libs/smilelibraries-release.aar')
-    exoplayerImplementation files('libs/NativeTemplatesModels-release.aar')
+    implementation files('libs/smilelibraries-release.aar')
+    implementation files('libs/NativeTemplatesModels-release.aar')
 
     exoplayerImplementation 'com.google.android.exoplayer:exoplayer:2.13.3'
     exoplayerImplementation 'com.google.android.exoplayer:extension-mediasession:2.13.3'

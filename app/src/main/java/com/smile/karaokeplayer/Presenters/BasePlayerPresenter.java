@@ -350,7 +350,7 @@ public abstract class BasePlayerPresenter {
         playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-        playingParam.setMediaSourcePrepared(false);
+        playingParam.setMediaPrepared(false);
 
         playMediaFromUri(mediaUri);
     }
@@ -650,7 +650,7 @@ public abstract class BasePlayerPresenter {
         }
         long currentAudioPosition = 0;
         playingParam.setCurrentAudioPosition(currentAudioPosition);
-        if (playingParam.isMediaSourcePrepared()) {
+        if (playingParam.isMediaPrepared()) {
             // song is playing, paused, or finished playing
             // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
             // because it will send Play.STATE_ENDED event after the playing has finished
@@ -685,17 +685,17 @@ public abstract class BasePlayerPresenter {
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_NONE");
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
-                playingParam.setMediaSourcePrepared(false);
+                playingParam.setMediaPrepared(false);
                 presentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_PLAYING");
-                if (!playingParam.isMediaSourcePrepared()) {
+                if (!playingParam.isMediaPrepared()) {
                     // the first time of Player.STATE_READY means prepared
                     getPlayingMediaInfoAndSetAudioActionSubMenu();
                 }
-                playingParam.setMediaSourcePrepared(true);  // has been prepared
+                playingParam.setMediaPrepared(true);  // has been prepared
                 startDurationSeekBarHandler();   // start updating duration seekbar
                 // set up a timer for supportToolbar's visibility
                 presentView.setTimerToHideSupportAndAudioController();
@@ -713,7 +713,7 @@ public abstract class BasePlayerPresenter {
                 // 1. exoPlayer finished playing
                 // 3. after vlcPlayer finished playing
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_STOPPED");
-                playingParam.setMediaSourcePrepared(false);
+                playingParam.setMediaPrepared(false);
                 presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();

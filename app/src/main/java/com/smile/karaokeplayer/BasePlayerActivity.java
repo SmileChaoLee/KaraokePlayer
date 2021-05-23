@@ -117,7 +117,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             if (mPresenter != null) {
                 PlayingParameters playingParam = mPresenter.getPlayingParam();
                 if (playingParam != null) {
-                    if (playingParam.isMediaSourcePrepared()) {
+                    if (playingParam.isMediaPrepared()) {
                         if (supportToolbar.getVisibility() == View.VISIBLE) {
                             // hide supportToolbar
                             hideSupportToolbarAndAudioController();
@@ -421,7 +421,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                     leftChannelMenuItem.setEnabled(true);
                     rightChannelMenuItem.setEnabled(true);
                     stereoChannelMenuItem.setEnabled(true);
-                    if (playingParam.isMediaSourcePrepared()) {
+                    if (playingParam.isMediaPrepared()) {
                         if (currentChannelPlayed == CommonConstants.LeftChannel) {
                             leftChannelMenuItem.setCheckable(true);
                             leftChannelMenuItem.setChecked(true);
