@@ -4,9 +4,9 @@
 
 FFMPEG_EXT_PATH="$(pwd)/src/main"
 echo ${FFMPEG_EXT_PATH}
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
+NDK_PATH="/home/chaolee/Android/Sdk/ndk/21.4.7075529"
 echo ${NDK_PATH}
-HOST_PLATFORM="darwin-x86_64"
+HOST_PLATFORM="linux-x86_64"
 echo ${HOST_PLATFORM}
 ENABLED_DECODERS=(vorbis opus flac)
 

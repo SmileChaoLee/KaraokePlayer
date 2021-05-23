@@ -8,6 +8,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    externalNativeBuild {
+        cmake {
+            path file('../extensions/ffmpeg/src/main/jni/CMakeLists.txt')
+        }
+    }
+    ndkVersion '21.4.7075529'
+    // or
+    // ndkPath "home/chaolee/Android/Sdk/ndk/21.4.7075529"  // Point to your own NDK
+
     defaultConfig {
         targetSdkVersion 30
         consumerProguardFiles 'proguard-rules.txt'

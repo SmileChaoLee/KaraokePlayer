@@ -4,7 +4,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('C:\\AndroidStudio\\keystore\\new_key.jks')
+            storeFile file('/home/chaolee/AndroidStudioProjects/keystore/new_key.jks')
             storePassword '86637971'
             keyAlias = 'chaolee1959'
             keyPassword '86637971'
@@ -83,14 +83,6 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
-
-    android {
-        ndkVersion '21.0.6011959'
-    }
-    // or
-    // android {
-    //     ndkPath "C:\\Users\\lee\\AppData\\Local\\Android\\Sdk\\ndk\\21.0.6113669"  // Point to your own NDK
-    // }
 }
 
 allprojects {
