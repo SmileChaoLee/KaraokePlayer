@@ -11,3 +11,4 @@
 /build
 /captures
 .externalNativeBuild
+/extensions/ffmpeg/src/main/jni/ffmpeg/
