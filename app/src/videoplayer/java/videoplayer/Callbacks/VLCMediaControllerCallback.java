@@ -1,13 +1,9 @@
 package videoplayer.Callbacks;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import com.smile.karaokeplayer.Models.PlayingParameters;
 
 import videoplayer.Presenters.VLCPlayerPresenter;
 
