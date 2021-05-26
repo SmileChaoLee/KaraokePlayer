@@ -12,7 +12,7 @@ public final class DatabaseAccessUtil {
     private static final String TAG = "DatabaseAccessUtil";
 
     private DatabaseAccessUtil() {}
-    public static ArrayList<SongInfo> readPublicSongList(Context callingContext) {
+    public static ArrayList<SongInfo> readSavedSongList(Context callingContext) {
         ArrayList<SongInfo> playlist;
         SongListSQLite songListSQLite = new SongListSQLite(callingContext);
         if (songListSQLite != null) {

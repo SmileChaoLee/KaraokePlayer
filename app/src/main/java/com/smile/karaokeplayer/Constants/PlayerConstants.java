@@ -10,7 +10,7 @@ public final class PlayerConstants {
     public static final String TrackSelectorParametersState = "TrackSelectorParameters";
     public static final String NumberOfVideoTracksState = "NumberOfVideoTracks";
     public static final String NumberOfAudioTracksState = "NumberOfAudioTracks";
-    public static final String PublicSongListState = "PublicSongList";
+    public static final String OrderedSongListState = "OrderedSongList";
     public static final String MediaUriState = "MediaUri";
     public static final String CanShowNotSupportedFormatState = "CanShowNotSupportedFormat";
     public static final String VideoTrackIndicesListState = "VideoTrackIndicesList";

@@ -49,7 +49,7 @@ public abstract class BasePlayerPresenter {
     protected Uri mediaUri;
     protected int numberOfVideoTracks;
     protected int numberOfAudioTracks;
-    protected ArrayList<SongInfo> publicSongList;
+    protected ArrayList<SongInfo> orderedSongList;
     protected PlayingParameters playingParam;
     protected boolean canShowNotSupportedFormat;
     protected SongInfo singleSongInfo;    // when playing single song in songs list
@@ -142,11 +142,11 @@ public abstract class BasePlayerPresenter {
         this.canShowNotSupportedFormat = canShowNotSupportedFormat;
     }
 
-    public ArrayList<SongInfo> getPublicSongList() {
-        return publicSongList;
+    public ArrayList<SongInfo> getOrderedSongList() {
+        return orderedSongList;
     }
-    public void setPublicSongList(ArrayList<SongInfo> publicSongList) {
-        this.publicSongList = publicSongList;
+    public void setOrderedSongList(ArrayList<SongInfo> orderedSongList) {
+        this.orderedSongList = orderedSongList;
     }
 
     public PlayingParameters getPlayingParam() {
@@ -170,11 +170,11 @@ public abstract class BasePlayerPresenter {
 
     private void autoPlaySongList() {
         canShowNotSupportedFormat = true;
-        if ( (publicSongList != null) && (publicSongList.size() > 0) ) {
+        if ( (orderedSongList != null) && (orderedSongList.size() > 0) ) {
             // playingParam.setAutoPlay(true);
-            playingParam.setPublicNextSongIndex(0); // next song that will be played
+            playingParam.setCurrentSongIndex(-1); // next song that will be played, which the index is 0
             // start playing video from list
-            startAutoPlay();
+            startAutoPlay(true);
         }
     }
 
@@ -184,7 +184,7 @@ public abstract class BasePlayerPresenter {
             return;
         }
 
-        // clear publicSongList but publicSongList might be null
+        // clear orderedSongList but orderedSongList might be null
         ArrayList<SongInfo> songListTemp = new ArrayList<>();
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
@@ -215,7 +215,7 @@ public abstract class BasePlayerPresenter {
         }
 
         if (songListTemp.size() > 0) {
-            publicSongList = new ArrayList<>(songListTemp);
+            orderedSongList = new ArrayList<>(songListTemp);
             playingParam.setAutoPlay(false);
             autoPlaySongList();
         }  else {
@@ -263,7 +263,7 @@ public abstract class BasePlayerPresenter {
             // needed to be set
             numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
             numberOfAudioTracks = savedInstanceState.getInt(PlayerConstants.NumberOfAudioTracksState);
-            publicSongList = savedInstanceState.getParcelableArrayList(PlayerConstants.PublicSongListState);
+            orderedSongList = savedInstanceState.getParcelableArrayList(PlayerConstants.OrderedSongListState);
             mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState);
             playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState);
             canShowNotSupportedFormat = savedInstanceState.getBoolean(PlayerConstants.CanShowNotSupportedFormatState);
@@ -355,58 +355,56 @@ public abstract class BasePlayerPresenter {
         playMediaFromUri(mediaUri);
     }
 
-    public void startAutoPlay() {
+    public void startAutoPlay(boolean isSelfFinished) {
         Log.d(TAG, "startAutoPlay() is called.");
         if (activity.isFinishing()) {
             // activity is being destroyed
             return;
         }
 
-        int publicSongListSize = 0;
-        if (publicSongList != null) {
-            publicSongListSize = publicSongList.size();
+        int orderedSongListSize = 0;
+        if (orderedSongList != null) {
+            orderedSongListSize = orderedSongList.size();
         }
 
-        Log.d(TAG, "startAutoPlay() --> publicSongListSize = " + publicSongListSize);
-        if (publicSongListSize == 0) {
+        Log.d(TAG, "startAutoPlay() --> orderedSongListSize = " + orderedSongListSize);
+        if (orderedSongListSize == 0) {
             return;
         }
 
         boolean stillPlayNext = true;
         int repeatStatus = playingParam.getRepeatStatus();
-        int publicNextSongIndex = playingParam.getPublicNextSongIndex();
-        Log.d(TAG, "startAutoPlay() --> playingParam.getPublicNextSongIndex() = " + publicNextSongIndex);
+        int nextSongIndex = playingParam.getCurrentSongIndex() + 1; // preparing the next
+        Log.d(TAG, "startAutoPlay() --> playingParam.getCurrentSongIndex()+1 = " + nextSongIndex);
 
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
                 // no repeat
-                if ( (publicNextSongIndex >= publicSongListSize) || (publicNextSongIndex<0) ) {
-                    // stop playing
-                    // stopPlay();  // removed on 2021-04-02
-                    stillPlayNext = false;  // stop here and do not go to next
+                if ( (nextSongIndex >= orderedSongListSize) || (nextSongIndex<0) ) {
+                    stillPlayNext = false;  // no more songs
                 }
                 break;
             case PlayerConstants.RepeatOneSong:
                 // repeat one song
                 Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
-                if ( (publicNextSongIndex > 0) && (publicNextSongIndex <= publicSongListSize) ) {
-                    publicNextSongIndex--;
-                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> publicSongIndex = " + publicNextSongIndex);
+                if ( isSelfFinished && (nextSongIndex > 0) && (nextSongIndex <= orderedSongListSize) ) {
+                    nextSongIndex--;
+                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> nextSongIndex = " + nextSongIndex);
                 }
                 break;
             case PlayerConstants.RepeatAllSongs:
                 // repeat all songs
-                if (publicNextSongIndex >= publicSongListSize) {
-                    publicNextSongIndex = 0;
+                if (nextSongIndex >= orderedSongListSize) {
+                    nextSongIndex = 0;
                 }
                 break;
         }
 
         if (stillPlayNext) {    // still play the next song
-            SongInfo songInfo = publicSongList.get(publicNextSongIndex);
+            SongInfo songInfo = orderedSongList.get(nextSongIndex);
             playSingleSong(songInfo);
-            playingParam.setPublicNextSongIndex(++publicNextSongIndex);
-            Log.d(TAG, "startAutoPlay() --> stillPlayNext--> setPublicNextSongIndex() = " + publicNextSongIndex);
+            playingParam.setCurrentSongIndex(nextSongIndex);    // set nextSongIndex to currentSongIndex
+            Log.d(TAG, "startAutoPlay() --> stillPlayNext--> setCurrentSongIndex() = " + nextSongIndex);
         } else {
             Log.d(TAG, "startAutoPlay() --> not stillPlayNext");
         }
@@ -418,10 +416,10 @@ public abstract class BasePlayerPresenter {
         boolean isAutoPlay = playingParam.isAutoPlay();
         if (!isAutoPlay) {
             // previous is not auto play
-            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readPublicSongList(activity);
+            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readSavedSongList(activity);
             if (songListTemp.size() > 0) {
-                publicSongList = new ArrayList<>(songListTemp);
-                playingParam.setAutoPlay(true); // must be above autoPlayPublicSongList()
+                orderedSongList = new ArrayList<>(songListTemp);
+                playingParam.setAutoPlay(true); // must be above autoPlay savedSongList()
                 autoPlaySongList();
             } else {
                 ScreenUtil.showToast(activity, activity.getString(R.string.noPlaylistString)
@@ -467,82 +465,74 @@ public abstract class BasePlayerPresenter {
     }
 
     public void playPreviousSong() {
-        if ( publicSongList == null) {    // added on 2020-12-08
+        if ( orderedSongList == null) {    // added on 2020-12-08
             return;
         }
-        int publicSongListSize = publicSongList.size();
-        if (publicSongListSize <= 1 ) {
+        int orderedSongListSize = orderedSongList.size();
+        if (orderedSongListSize <= 1 ) {
             // only file in the play list
             ScreenUtil.showToast(activity, activity.getString(R.string.noPreviousSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
-        int nextIndex = playingParam.getPublicNextSongIndex();
+        int currentIndex = playingParam.getCurrentSongIndex();
         int repeatStatus = playingParam.getRepeatStatus();
-        nextIndex = nextIndex - 2;
+        // because in startAutoPlay(), the next song will be current index + 1
+        int lastPreviousIndex = currentIndex - 2;
         switch (repeatStatus) {
-            case PlayerConstants.RepeatOneSong:
-                // because in startAutoPlay() will subtract 1 from next index
-                nextIndex++;
-                if (nextIndex == 0) {
-                    // go to last song
-                    nextIndex = publicSongListSize;
-                }
-                break;
-            case PlayerConstants.RepeatAllSongs:
-                if (nextIndex < 0) {
-                    // is going to play the last one
-                    nextIndex = publicSongListSize - 1; // the last one
-                }
-                break;
             case PlayerConstants.NoRepeatPlaying:
-                if (nextIndex < 0) {
+            case PlayerConstants.RepeatOneSong:
+                if (currentIndex <= 0) {
+                    // no more previous
                     ScreenUtil.showToast(activity, activity.getString(R.string.noPreviousSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return;
                 }
+                // because in startAutoPlay(), the next song will be current index + 1
+                currentIndex = lastPreviousIndex;
+                break;
+            case PlayerConstants.RepeatAllSongs:
+                if (currentIndex <= 0) {
+                    // is going to play the last one
+                    currentIndex = orderedSongListSize - 2; // the last one
+                } else {
+                    // because in startAutoPlay(), the next song will be current index + 1
+                    currentIndex = lastPreviousIndex;
+                }
                 break;
         }
-        playingParam.setPublicNextSongIndex(nextIndex);
 
-        startAutoPlay();
+        playingParam.setCurrentSongIndex(currentIndex);
+        startAutoPlay(false);
     }
 
     public void playNextSong() {
-        if (publicSongList == null) {   // added on 2020-12-08
+        if (orderedSongList == null) {   // added on 2020-12-08
             return;
         }
-        int publicSongListSize = publicSongList.size();
-        if (publicSongListSize <= 1 ) {
+        int orderedSongListSize = orderedSongList.size();
+        int currentIndex = playingParam.getCurrentSongIndex();
+        int repeatStatus = playingParam.getRepeatStatus();
+        if (orderedSongListSize <= 1 ) {
             // only file in the play list
             ScreenUtil.showToast(activity, activity.getString(R.string.noNextSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-            return;
+            return; // no more next
         }
-        int nextIndex = playingParam.getPublicNextSongIndex();
-        int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
-                if (nextIndex >= publicSongListSize) {
+            case PlayerConstants.RepeatOneSong:
+                if (currentIndex >= (orderedSongListSize-1)) {
                     ScreenUtil.showToast(activity, activity.getString(R.string.noNextSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return; // no more next
                 }
                 break;
-            case PlayerConstants.RepeatOneSong:
-                nextIndex++;
-                break;
             case PlayerConstants.RepeatAllSongs:
                 break;
         }
-        if (nextIndex > publicSongListSize) {
-            // it is playing the last one right now
-            // so it is going to play the first one
-            nextIndex = 0;
-        }
-        playingParam.setPublicNextSongIndex(nextIndex);
-
-        startAutoPlay();
+        Log.d(TAG, "PlayerBasePresenter.getValidatedUri() is called.");
+        startAutoPlay(false);    // go to next round
     }
 
     public Uri getValidatedUri(Uri tempUri) {
@@ -560,9 +550,9 @@ public abstract class BasePlayerPresenter {
                     Log.d(TAG, "singleSongInfo is not null");
                     playingParam.setAutoPlay(false);
                     // added on 2020-12-08
-                    // set publicSongList that only contains song info from SongListActivity
-                    publicSongList = new ArrayList<>();
-                    publicSongList.add(singleSongInfo);
+                    // set orderedSongList that only contains song info from SongListActivity
+                    orderedSongList = new ArrayList<>();
+                    orderedSongList.add(singleSongInfo);
                     autoPlaySongList();
                 }
             }
@@ -728,15 +718,15 @@ public abstract class BasePlayerPresenter {
                 }
                 setMediaUri(null);
                 // remove the song that is unable to be played
-                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
-                int currentIndexOfList = playingParam.getPublicNextSongIndex();
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->orderedSongList.size() = " + orderedSongList.size());
+                int currentIndexOfList = playingParam.getCurrentSongIndex();
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->currentIndexOfList = " + currentIndexOfList);
-                if (currentIndexOfList > 0) {
-                    publicSongList.remove(--currentIndexOfList);
-                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.remove("+currentIndexOfList+")");
-                    playingParam.setPublicNextSongIndex(currentIndexOfList);
+                if (currentIndexOfList >= 0) {
+                    orderedSongList.remove(currentIndexOfList);
+                    Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->orderedSongList.remove("+currentIndexOfList+")");
+                    playingParam.setCurrentSongIndex(--currentIndexOfList);
                 }
-                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->publicSongList.size() = " + publicSongList.size());
+                Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->orderedSongList.size() = " + orderedSongList.size());
                 nextSongOrShowNativeAndBannerAd();
                 break;
         }
@@ -744,21 +734,21 @@ public abstract class BasePlayerPresenter {
 
     private void nextSongOrShowNativeAndBannerAd() {
         // deciding if showing native ad
-        int publicSongListSize = 0;
-        if (publicSongList != null) {
-            publicSongListSize = publicSongList.size();
+        int orderedSongListSize = 0;
+        if (orderedSongList != null) {
+            orderedSongListSize = orderedSongList.size();
         }
-        int publicNextSongIndex = playingParam.getPublicNextSongIndex();
-        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> publicSongList.size() = " + publicSongListSize);
-        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> getPublicNextSongIndex() = " + publicNextSongIndex);
-        if (publicSongListSize==0
+        int currentSongIndex = playingParam.getCurrentSongIndex();
+        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> orderedSongList.size() = " + orderedSongListSize);
+        Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> getCurrentSongIndex() = " + currentSongIndex);
+        if (orderedSongListSize==0
                 || (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying
-                && (publicSongListSize==publicNextSongIndex || publicNextSongIndex<0))) {
+                && (orderedSongListSize==currentSongIndex || currentSongIndex<0))) {
             presentView.showNativeAndBannerAd();
             presentView.showInterstitialAd(false);
         } else {
             // play next song
-            startAutoPlay();
+            startAutoPlay(true);
         }
     }
 
@@ -799,7 +789,7 @@ public abstract class BasePlayerPresenter {
     public void saveInstanceState(@NonNull Bundle outState) {
         outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);
         outState.putInt(PlayerConstants.NumberOfAudioTracksState, numberOfAudioTracks);
-        outState.putParcelableArrayList(PlayerConstants.PublicSongListState, publicSongList);
+        outState.putParcelableArrayList(PlayerConstants.OrderedSongListState, orderedSongList);
         outState.putParcelable(PlayerConstants.MediaUriState, mediaUri);
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);

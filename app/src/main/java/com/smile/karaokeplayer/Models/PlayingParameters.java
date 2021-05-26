@@ -21,8 +21,7 @@ public class PlayingParameters implements Parcelable {
     private int currentAudioTrackIndexPlayed;
     private long currentAudioPosition;
     private float currentVolume;
-    private int publicNextSongIndex;
-    private boolean isPlayingPublic;
+    private int currentSongIndex;
     private int repeatStatus;
     private boolean isPlaySingleSong;
     private boolean isInSongList;
@@ -32,9 +31,8 @@ public class PlayingParameters implements Parcelable {
                              int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
-                             int publicSongIndex, boolean isPlayingPublic,
-                             int repeatStatus, boolean isPlaySingleSong, boolean isInSongList,
-                             int numOfPlayedSongs) {
+                             int currentSongIndex, int repeatStatus, boolean isPlaySingleSong,
+                             boolean isInSongList, int numOfPlayedSongs) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaPrepared = isMediaPrepared;
@@ -47,8 +45,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioTrackIndexPlayed = currentAudioTrackIndexPlayed;
         this.currentAudioPosition = currentAudioPosition;
         this.currentVolume = currentVolume;
-        this.publicNextSongIndex = publicSongIndex;
-        this.isPlayingPublic = isPlayingPublic;
+        this.currentSongIndex = currentSongIndex;
         this.repeatStatus = repeatStatus;
         this.isPlaySingleSong = isPlaySingleSong;
         this.isInSongList = isInSongList;
@@ -142,18 +139,11 @@ public class PlayingParameters implements Parcelable {
         this.currentVolume = currentVolume;
     }
 
-    public int getPublicNextSongIndex() {
-        return publicNextSongIndex;
+    public int getCurrentSongIndex() {
+        return currentSongIndex;
     }
-    public void setPublicNextSongIndex(int publicNextSongIndex) {
-        this.publicNextSongIndex = publicNextSongIndex;
-    }
-
-    public boolean isPlayingPublic() {
-        return isPlayingPublic;
-    }
-    public void setPlayingPublic(boolean playingPublic) {
-        isPlayingPublic = playingPublic;
+    public void setCurrentSongIndex(int currentSongIndex) {
+        this.currentSongIndex = currentSongIndex;
     }
 
     public int getRepeatStatus() {
@@ -203,8 +193,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.currentAudioTrackIndexPlayed);
         dest.writeLong(this.currentAudioPosition);
         dest.writeFloat(this.currentVolume);
-        dest.writeInt(this.publicNextSongIndex);
-        dest.writeByte(this.isPlayingPublic ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.currentSongIndex);
         dest.writeInt(this.repeatStatus);
         dest.writeByte(this.isPlaySingleSong ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isInSongList ? (byte) 1 : (byte) 0);
@@ -224,8 +213,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioTrackIndexPlayed = in.readInt();
         this.currentAudioPosition = in.readLong();
         this.currentVolume = in.readFloat();
-        this.publicNextSongIndex = in.readInt();
-        this.isPlayingPublic = in.readByte() != 0;
+        this.currentSongIndex = in.readInt();
         this.repeatStatus = in.readInt();
         this.isPlaySingleSong = in.readByte() != 0;
         this.isInSongList = in.readByte() != 0;
@@ -260,8 +248,7 @@ public class PlayingParameters implements Parcelable {
         setCurrentAudioPosition(0);
         setCurrentVolume(1.0f);
 
-        setPublicNextSongIndex(0);
-        setPlayingPublic(true);
+        setCurrentSongIndex(-1);    // no playing
 
         setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         setPlaySingleSong(false);    // default
