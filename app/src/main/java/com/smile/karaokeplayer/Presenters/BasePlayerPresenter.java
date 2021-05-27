@@ -174,7 +174,7 @@ public abstract class BasePlayerPresenter {
             // playingParam.setAutoPlay(true);
             playingParam.setCurrentSongIndex(-1); // next song that will be played, which the index is 0
             // start playing video from list
-            startAutoPlay(true);
+            startAutoPlay(false);
         }
     }
 
@@ -501,7 +501,6 @@ public abstract class BasePlayerPresenter {
                 }
                 break;
         }
-
         playingParam.setCurrentSongIndex(currentIndex);
         startAutoPlay(false);
     }
@@ -707,7 +706,7 @@ public abstract class BasePlayerPresenter {
                 presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
-                nextSongOrShowNativeAndBannerAd();
+                nextSongOrShowNativeAndBannerAd(true);
                 break;
             case PlaybackStateCompat.STATE_ERROR:
                 String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
@@ -727,12 +726,12 @@ public abstract class BasePlayerPresenter {
                     playingParam.setCurrentSongIndex(--currentIndexOfList);
                 }
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->orderedSongList.size() = " + orderedSongList.size());
-                nextSongOrShowNativeAndBannerAd();
+                nextSongOrShowNativeAndBannerAd(false);
                 break;
         }
     }
 
-    private void nextSongOrShowNativeAndBannerAd() {
+    private void nextSongOrShowNativeAndBannerAd(boolean isSelfFinished) {
         // deciding if showing native ad
         int orderedSongListSize = 0;
         if (orderedSongList != null) {
@@ -748,7 +747,7 @@ public abstract class BasePlayerPresenter {
             presentView.showInterstitialAd(false);
         } else {
             // play next song
-            startAutoPlay(true);
+            startAutoPlay(isSelfFinished);
         }
     }
 
