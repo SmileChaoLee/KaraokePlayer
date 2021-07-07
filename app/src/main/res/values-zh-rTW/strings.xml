@@ -18,6 +18,7 @@
     <string name="rewindString">倒轉</string>
     <string name="toTVString">電視播放</string>
     <string name="volumeString">音量</string>
+    <string name="audioString">音頻</string>
     <string name="audioTrackString">音軌</string>
     <string name="audioTrack1String">音軌 1</string>
     <string name="audioTrack2String">音軌 2</string>

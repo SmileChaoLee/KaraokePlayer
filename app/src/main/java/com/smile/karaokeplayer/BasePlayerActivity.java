@@ -1,15 +1,5 @@
 package com.smile.karaokeplayer;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.ContextCompat;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -41,6 +31,20 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
 import com.smile.karaokeplayer.Constants.CommonConstants;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
@@ -55,8 +59,9 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
-    private static final String TAG = "PlayerBaseActivity";
+    private static final String TAG = BasePlayerActivity.class.getName();
     private BasePlayerPresenter mPresenter;
+    private ActivityResultLauncher<Intent> selectSongsToPlayActivityLauncher;
 
     protected float textFontSize;
     protected float fontScale;
@@ -265,6 +270,21 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         showNativeAndBannerAd();
 
+        selectSongsToPlayActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result == null) {
+                            return;
+                        }
+                        Log.d(TAG, "selectFileToOpenActivityLauncher --> onActivityResult() is called.");
+                        int resultCode = result.getResultCode();
+                        if (resultCode == Activity.RESULT_OK) {
+                            mPresenter.selectFileToOpenPresenter(result);
+                        }
+                    }
+                });
+
         Log.d(TAG,"onCreate() is finished.");
     }
 
@@ -366,7 +386,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                 startActivity(songListIntent);
                 break;
             case R.id.open:
-                mPresenter.selectFileToOpenPresenter();
+                // mPresenter.selectFileToOpenPresenter();
+                Intent selectFileIntent = mPresenter.createSelectFilesToOpenIntent();
+                selectSongsToPlayActivityLauncher.launch(selectFileIntent);
                 break;
             case R.id.privacyPolicy:
                 PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);

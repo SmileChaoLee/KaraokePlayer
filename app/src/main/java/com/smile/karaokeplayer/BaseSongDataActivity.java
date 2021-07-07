@@ -35,12 +35,13 @@ import java.util.ArrayList;
 
 public abstract class BaseSongDataActivity extends AppCompatActivity {
 
-    private static final String TAG = "BaseSongDataActivity";
-    private static final int SELECT_ONE_FILE = 1;
+    private static final String TAG = BaseSongDataActivity.class.getName();
 
     private float textFontSize;
     private float fontScale;
     private float toastTextSize;
+
+    private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
 
     private SpinnerAdapter audioMusicTrackAdapter;
     private SpinnerAdapter audioMusicChannelAdapter;
@@ -267,6 +268,26 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
                 returnToPrevious();
             }
         });
+
+        selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        Intent data = result.getData();
+                        ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
+                        // this activity allows only one file selected
+                        switch (uris.size()) {
+                            case 0:
+                                // no files selected
+                                break;
+                            case 1:
+                                // single file selected
+                                edit_filePathEditText.setText(uris.get(0).toString());
+                                break;
+                        }
+                    }
+                });
+
     }
 
     @Override
@@ -359,26 +380,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
 
     private void selectOneFilePathSongData() {
         Log.d(TAG, "selectOneFilePathSongData() is called.");
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        Intent data = result.getData();
-                        ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
-                        // this activity allows only one file selected
-                        switch (uris.size()) {
-                            case 0:
-                                // no files selected
-                                break;
-                            case 1:
-                                // single file selected
-                                edit_filePathEditText.setText(uris.get(0).toString());
-                                break;
-                        }
-                    }
-                });
-
         Intent selectOneFileIntent = createSelectOneFileToOpenIntent();
-        activityResultLauncher.launch(selectOneFileIntent);
+        selectOneSongActivityLauncher.launch(selectOneFileIntent);
     }
 }

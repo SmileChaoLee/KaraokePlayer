@@ -49,6 +49,9 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
     private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
 
+    private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
+    private ActivityResultLauncher<Intent> selectMultipleSongActivityLauncher;
+
     public abstract Intent createIntentFromSongDataActivity();
     public abstract Intent createSelectFilesToOpenIntent();
     public abstract ArrayList<Uri> getUrisListFromIntentSongList(Intent data);
@@ -77,7 +80,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         addOneSongListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOneSongToAddSongList();
+                selectOneSong();
             }
         });
 
@@ -86,7 +89,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         addSongsListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectMultipleFileToAddSongList();
+                selectMultipleSong();
             }
         });
 
@@ -112,6 +115,28 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
             }
         });
+
+        selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        updateSongList();
+                    }
+                });
+        selectMultipleSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result == null) {
+                            return;
+                        }
+                        int resultCode = result.getResultCode();
+                        if (resultCode == Activity.RESULT_OK) {
+                            Intent data= result.getData();
+                            addMultipleSongToSongList(data);
+                        }
+                    }
+                });
     }
 
     @Override
@@ -140,69 +165,32 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         finish();
     }
 
-    private void addOneSongToAddSongList() {
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        updateSongList();
-                    }
-                });
-
+    private void selectOneSong() {
         Intent addIntent = createIntentFromSongDataActivity();
         addIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.AddActionString);
-        activityResultLauncher.launch(addIntent);
+        selectOneSongActivityLauncher.launch(addIntent);
     }
 
-    private void editOneSongFromSongList(SongInfo singleSongInfo) {
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        updateSongList();
-                    }
-                });
-        Intent editIntent = createIntentFromSongDataActivity();
-        editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
-        editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-        activityResultLauncher.launch(editIntent);
+    private void selectMultipleSong() {
+        Intent selectFileIntent = createSelectFilesToOpenIntent();
+        selectMultipleSongActivityLauncher.launch(selectFileIntent);
     }
 
     private void deleteOneSongFromSongList(SongInfo singleSongInfo) {
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        updateSongList();
-                    }
-                });
         Intent deleteIntent = createIntentFromSongDataActivity();
         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
         deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
-        activityResultLauncher.launch(deleteIntent);
+        selectOneSongActivityLauncher.launch(deleteIntent);
     }
 
-    private void selectMultipleFileToAddSongList() {
-        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result == null) {
-                            return;
-                        }
-                        int resultCode = result.getResultCode();
-                        if (resultCode == Activity.RESULT_OK) {
-                            Intent data= result.getData();
-                            addMultipleSongsToPlaylist(data);
-                        }
-                    }
-                });
-        Intent selectFileIntent = createSelectFilesToOpenIntent();
-
-        activityResultLauncher.launch(selectFileIntent);
+    private void editOneSongFromSongList(SongInfo singleSongInfo) {
+        Intent editIntent = createIntentFromSongDataActivity();
+        editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
+        editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
+        selectOneSongActivityLauncher.launch(editIntent);
     }
 
-    protected void addMultipleSongsToPlaylist(Intent data) {
+    protected void addMultipleSongToSongList(Intent data) {
         ArrayList<Uri> uris = getUrisListFromIntentSongList(data);
         // this activity allows only one file selected
         if (uris.size()>0) {
@@ -390,14 +378,6 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                         Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
                         Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
                         if (callingIntent != null) {
-                            ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                                    new ActivityResultCallback<ActivityResult>() {
-                                        @Override
-                                        public void onActivityResult(ActivityResult result) {
-                                            Log.d(TAG, "ActivityResultCallback()-->updateSongList()");
-                                            updateSongList();
-                                        }
-                                    });
                             Log.d(TAG, "playSongListButton()-->createPlayerActivityIntent");
                             Intent playerActivityIntent = createPlayerActivityIntent();
                             Bundle extras = new Bundle();
@@ -405,7 +385,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                             extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                             playerActivityIntent.putExtras(extras);
                             Log.d(TAG, "playSongListButton()-->activityResultLauncher.launch(playerActivityIntent)");
-                            activityResultLauncher.launch(playerActivityIntent);
+                            selectOneSongActivityLauncher.launch(playerActivityIntent);
                         }
                     }
                 });

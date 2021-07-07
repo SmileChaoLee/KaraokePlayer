@@ -14,11 +14,7 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import androidx.activity.ComponentActivity;
 import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.smile.karaokeplayer.Constants.CommonConstants;
@@ -29,6 +25,7 @@ import com.smile.karaokeplayer.Models.SongListSQLite;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
+
 import java.util.ArrayList;
 
 public abstract class BasePlayerPresenter {
@@ -439,29 +436,14 @@ public abstract class BasePlayerPresenter {
         presentView.setImageButtonStatus();
     }
 
-    public void selectFileToOpenPresenter() {
-        ActivityResultLauncher<Intent> activityResultLauncher = ((ComponentActivity) activity).registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result == null) {
-                            return;
-                        }
-                        Log.d(TAG, "selectFileToOpenPresenter()-->onActivityResult() is called.");
-                        int resultCode = result.getResultCode();
-                        if (resultCode == Activity.RESULT_OK) {
-                            Intent data = result.getData();
-                            ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
-                            if (uris != null && uris.size() > 0) {
-                                Log.d(TAG, "selectFileToOpenPresenter()-->onActivityResult()-->uris.size() = " + uris.size());
-                                // There are files selected
-                                playSelectedUrisFromStorage(uris);
-                            }
-                        }
-                    }
-                });
-        Intent selectFileIntent = createSelectFilesToOpenIntent();
-        activityResultLauncher.launch(selectFileIntent);
+    public void selectFileToOpenPresenter(ActivityResult result) {
+        Intent data = result.getData();
+        ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
+        if (uris != null && uris.size() > 0) {
+            Log.d(TAG, "selectFileToOpenPresenter() --> uris.size() = " + uris.size());
+            // There are files selected
+            playSelectedUrisFromStorage(uris);
+        }
     }
 
     public void playPreviousSong() {
@@ -742,7 +724,7 @@ public abstract class BasePlayerPresenter {
         Log.d(TAG, "nextSongOrShowNativeAndBannerAd()--> getCurrentSongIndex() = " + currentSongIndex);
         if (orderedSongListSize==0
                 || (playingParam.getRepeatStatus()==PlayerConstants.NoRepeatPlaying
-                && (orderedSongListSize==currentSongIndex || currentSongIndex<0))) {
+                && ((orderedSongListSize-1)==currentSongIndex || currentSongIndex<0))) {
             presentView.showNativeAndBannerAd();
             presentView.showInterstitialAd(false);
         } else {

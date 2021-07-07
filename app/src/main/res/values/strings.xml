@@ -17,6 +17,7 @@
     <string name="rewindString">Rewind</string>
     <string name="toTVString">To TV</string>
     <string name="volumeString">Volume</string>
+    <string name="audioString">Audio</string>
     <string name="audioTrackString">Track</string>
     <string name="audioTrack1String">Track 1</string>
     <string name="audioTrack2String">Track 2</string>

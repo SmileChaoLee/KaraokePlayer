@@ -18,6 +18,7 @@
     <string name="rewindString">Putar Balik</string>
     <string name="toTVString">Ke Tv</string>
     <string name="volumeString">Isipadu</string>
+    <string name="audioString">Audio</string>
     <string name="audioTrackString">Trek</string>
     <string name="audioTrack1String">Trek 1</string>
     <string name="audioTrack2String">Trek 2</string>
