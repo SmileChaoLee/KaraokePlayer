@@ -107,6 +107,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     // submenu of file
     private MenuItem autoPlayMenuItem;
     private MenuItem openMenuItem;
+    private MenuItem audioMenuItem;
     // submenu of audio
     private MenuItem audioTrackMenuItem;
     // submenu of channel
@@ -338,7 +339,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         // submenu of file
         autoPlayMenuItem = mainMenu.findItem(R.id.autoPlay);
         openMenuItem = mainMenu.findItem(R.id.open);
-
+        audioMenuItem = mainMenu.findItem(R.id.audio);
         // submenu of audio
         audioTrackMenuItem = mainMenu.findItem(R.id.audioTrack);
         // submenu of channel
@@ -352,6 +353,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             MenuItem songListMenuItem = mainMenu.findItem(R.id.songList);
             songListMenuItem.setVisible(false);
             openMenuItem.setVisible(false);
+            audioMenuItem.setVisible(false);
             audioTrackMenuItem.setVisible(false);
             MenuItem channelMenuItem = mainMenu.findItem(R.id.channel);
             channelMenuItem.setVisible(false);

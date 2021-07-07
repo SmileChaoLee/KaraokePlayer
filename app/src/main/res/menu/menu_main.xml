@@ -20,91 +20,100 @@
     </item>
     <item android:id="@+id/open"
         android:title="@string/openString"
+        android:visible="true"
         android:orderInCategory="3"
         app:showAsAction="never">
     </item>
-    <item android:id="@+id/audioTrack"
-        android:title="@string/audioTrackString"
+    <item android:id="@+id/audio"
+        android:title="@string/audioString"
         android:orderInCategory="4"
+        android:visible="true"
         app:showAsAction="never">
         <menu>
-            <item
-                android:id="@+id/audioTrack1"
-                android:title="@string/audioTrack1String"
-                android:orderInCategory="1"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack2"
-                android:title="@string/audioTrack2String"
-                android:orderInCategory="2"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack3"
-                android:title="@string/audioTrack3String"
-                android:orderInCategory="3"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack4"
-                android:title="@string/audioTrack4String"
+            <item android:id="@+id/audioTrack"
+                android:title="@string/audioTrackString"
                 android:orderInCategory="4"
-                android:visible="false"
                 app:showAsAction="never">
+                <menu>
+                    <item
+                        android:id="@+id/audioTrack1"
+                        android:title="@string/audioTrack1String"
+                        android:orderInCategory="1"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack2"
+                        android:title="@string/audioTrack2String"
+                        android:orderInCategory="2"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack3"
+                        android:title="@string/audioTrack3String"
+                        android:orderInCategory="3"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack4"
+                        android:title="@string/audioTrack4String"
+                        android:orderInCategory="4"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack5"
+                        android:title="@string/audioTrack5String"
+                        android:orderInCategory="5"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack6"
+                        android:title="@string/audioTrack6String"
+                        android:orderInCategory="6"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack7"
+                        android:title="@string/audioTrack7String"
+                        android:orderInCategory="7"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                    <item
+                        android:id="@+id/audioTrack8"
+                        android:title="@string/audioTrack8String"
+                        android:orderInCategory="8"
+                        android:visible="false"
+                        app:showAsAction="never">
+                    </item>
+                </menu>
             </item>
-            <item
-                android:id="@+id/audioTrack5"
-                android:title="@string/audioTrack5String"
+            <item android:id="@+id/channel"
+                android:title="@string/channelString"
                 android:orderInCategory="5"
-                android:visible="false"
                 app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack6"
-                android:title="@string/audioTrack6String"
-                android:orderInCategory="6"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack7"
-                android:title="@string/audioTrack7String"
-                android:orderInCategory="7"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-            <item
-                android:id="@+id/audioTrack8"
-                android:title="@string/audioTrack8String"
-                android:orderInCategory="8"
-                android:visible="false"
-                app:showAsAction="never">
-            </item>
-        </menu>
-    </item>
-    <item android:id="@+id/channel"
-        android:title="@string/channelString"
-        android:orderInCategory="5"
-        app:showAsAction="never">
-        <menu>
-            <item android:id="@+id/leftChannel"
-                android:title="@string/leftChannelString"
-                android:orderInCategory="1"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/rightChannel"
-                android:title="@string/rightChannelString"
-                android:orderInCategory="2"
-                app:showAsAction="never">
-            </item>
-            <item android:id="@+id/stereoChannel"
-                android:title="@string/stereoChannelString"
-                android:orderInCategory="3"
-                app:showAsAction="never">
+                <menu>
+                    <item android:id="@+id/leftChannel"
+                        android:title="@string/leftChannelString"
+                        android:orderInCategory="1"
+                        app:showAsAction="never">
+                    </item>
+                    <item android:id="@+id/rightChannel"
+                        android:title="@string/rightChannelString"
+                        android:orderInCategory="2"
+                        app:showAsAction="never">
+                    </item>
+                    <item android:id="@+id/stereoChannel"
+                        android:title="@string/stereoChannelString"
+                        android:orderInCategory="3"
+                        app:showAsAction="never">
+                    </item>
+                </menu>
             </item>
         </menu>
     </item>
