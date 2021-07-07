@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 public abstract class BasePlayerPresenter {
 
-    private static final String TAG = "PlayerBasePresenter";
+    private static final String TAG = BasePlayerPresenter.class.getName();
 
     private final Activity activity;
     private final BasePresentView presentView;
@@ -211,12 +211,11 @@ public abstract class BasePlayerPresenter {
             songListTemp.add(songInfo);
         }
 
+        playingParam.setAutoPlay(false);
         if (songListTemp.size() > 0) {
             orderedSongList = new ArrayList<>(songListTemp);
-            playingParam.setAutoPlay(false);
             autoPlaySongList();
         }  else {
-            playingParam.setAutoPlay(false);
             ScreenUtil.showToast(activity, activity.getString(R.string.noFilesSelectedString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
@@ -365,36 +364,43 @@ public abstract class BasePlayerPresenter {
         }
 
         Log.d(TAG, "startAutoPlay() --> orderedSongListSize = " + orderedSongListSize);
+        /*  removed on 2021-07-07
         if (orderedSongListSize == 0) {
             return;
         }
+         */
 
         boolean stillPlayNext = true;
         int repeatStatus = playingParam.getRepeatStatus();
-        int nextSongIndex = playingParam.getCurrentSongIndex() + 1; // preparing the next
+        int currentSongIndex = playingParam.getCurrentSongIndex();
+        int nextSongIndex = currentSongIndex + 1; // preparing the next
         Log.d(TAG, "startAutoPlay() --> playingParam.getCurrentSongIndex()+1 = " + nextSongIndex);
 
-        switch (repeatStatus) {
-            case PlayerConstants.NoRepeatPlaying:
-                // no repeat
-                if ( (nextSongIndex >= orderedSongListSize) || (nextSongIndex<0) ) {
-                    stillPlayNext = false;  // no more songs
-                }
-                break;
-            case PlayerConstants.RepeatOneSong:
-                // repeat one song
-                Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
-                if ( isSelfFinished && (nextSongIndex > 0) && (nextSongIndex <= orderedSongListSize) ) {
-                    nextSongIndex--;
-                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> nextSongIndex = " + nextSongIndex);
-                }
-                break;
-            case PlayerConstants.RepeatAllSongs:
-                // repeat all songs
-                if (nextSongIndex >= orderedSongListSize) {
-                    nextSongIndex = 0;
-                }
-                break;
+        if (orderedSongListSize == 0) {
+            stillPlayNext = false;  // no more songs
+        } else {
+            switch (repeatStatus) {
+                case PlayerConstants.NoRepeatPlaying:
+                    // no repeat
+                    if ((nextSongIndex >= orderedSongListSize) || (nextSongIndex < 0)) {
+                        stillPlayNext = false;  // no more songs
+                    }
+                    break;
+                case PlayerConstants.RepeatOneSong:
+                    // repeat one song
+                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
+                    if (isSelfFinished && (nextSongIndex > 0) && (nextSongIndex <= orderedSongListSize)) {
+                        nextSongIndex--;
+                        Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> nextSongIndex = " + nextSongIndex);
+                    }
+                    break;
+                case PlayerConstants.RepeatAllSongs:
+                    // repeat all songs
+                    if (nextSongIndex >= orderedSongListSize) {
+                        nextSongIndex = 0;
+                    }
+                    break;
+            }
         }
 
         if (stillPlayNext) {    // still play the next song
@@ -404,6 +410,12 @@ public abstract class BasePlayerPresenter {
             Log.d(TAG, "startAutoPlay() --> stillPlayNext--> setCurrentSongIndex() = " + nextSongIndex);
         } else {
             Log.d(TAG, "startAutoPlay() --> not stillPlayNext");
+            // added on 2021-07-7
+            presentView.showNativeAndBannerAd();
+            if (orderedSongListSize > 0) {
+                presentView.showInterstitialAd(false);
+            }
+            //
         }
 
         presentView.setImageButtonStatus();
@@ -688,7 +700,8 @@ public abstract class BasePlayerPresenter {
                 presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
                 presentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
-                nextSongOrShowNativeAndBannerAd(true);
+                // nextSongOrShowNativeAndBannerAd(true);
+                startAutoPlay(true);
                 break;
             case PlaybackStateCompat.STATE_ERROR:
                 String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
@@ -708,11 +721,13 @@ public abstract class BasePlayerPresenter {
                     playingParam.setCurrentSongIndex(--currentIndexOfList);
                 }
                 Log.d(TAG, "updateStatusAndUi()-->PlaybackStateCompat.STATE_ERROR-->orderedSongList.size() = " + orderedSongList.size());
-                nextSongOrShowNativeAndBannerAd(false);
+                // nextSongOrShowNativeAndBannerAd(false);
+                startAutoPlay(false);
                 break;
         }
     }
 
+    /*      removed on 2021-07-07
     private void nextSongOrShowNativeAndBannerAd(boolean isSelfFinished) {
         // deciding if showing native ad
         int orderedSongListSize = 0;
@@ -732,6 +747,7 @@ public abstract class BasePlayerPresenter {
             startAutoPlay(isSelfFinished);
         }
     }
+    */
 
     protected void onlyMusicShowNativeAndBannerAd() {
         if (getNumberOfVideoTracks() == 0) {
