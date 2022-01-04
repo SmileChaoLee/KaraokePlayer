@@ -15,8 +15,8 @@ import android.widget.FrameLayout;
 import androidx.core.content.ContextCompat;
 import androidx.mediarouter.app.MediaRouteButton;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -31,7 +31,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     private static final String TAG = ExoPlayerActivity.class.getName();
 
     private ExoPlayerPresenter presenter;
-    private SimpleExoPlayer exoPlayer;
+    private ExoPlayer exoPlayer;
     private PlayerView playerView;
     private MediaRouteButton mediaRouteButton;
     private CastPlayer castPlayer;

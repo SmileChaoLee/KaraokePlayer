@@ -19,10 +19,11 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
     private final StereoVolumeAudioProcessor stereoVolumeAudioProcessor = new StereoVolumeAudioProcessor();
     private final AudioProcessor[] audioProcessors = {stereoVolumeAudioProcessor};
 
-    public MyRenderersFactory(Context context) {
+    public MyRenderersFactory(Context context, int extension_renderer_mode) {
         super(context);
-        setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON);   // default is using extension
-        // setExtensionRendererMode(EXTENSION_RENDERER_MODE_OFF);
+        setExtensionRendererMode(extension_renderer_mode);
+        // setExtensionRendererMode(EXTENSION_RENDERER_MODE_ON);   // default is using extension
+        // setExtensionRendererMode(EXTENSION_RENDERER_MODE_OFF);     // do not use extension
         // setExtensionRendererMode(EXTENSION_RENDERER_MODE_PREFER);
     }
 

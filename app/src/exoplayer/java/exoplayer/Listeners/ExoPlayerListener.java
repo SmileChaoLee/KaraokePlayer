@@ -3,24 +3,24 @@ package exoplayer.Listeners;
 import android.app.Activity;
 import android.util.Log;
 
-import com.google.android.exoplayer2.ExoPlaybackException;
+import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.smile.karaokeplayer.Models.PlayingParameters;
+
 import exoplayer.Presenters.ExoPlayerPresenter;
 
-public class ExoPlayerEventListener implements Player.EventListener {
+public class ExoPlayerListener implements Player.Listener {
 
-    private static final String TAG = "ExoPlayerEventListener";
+    private static final String TAG = "ExoPlayerListener";
     private final ExoPlayerPresenter presenter;
-    private final SimpleExoPlayer exoPlayer;
+    private final ExoPlayer exoPlayer;
 
-    public ExoPlayerEventListener(Activity activity, ExoPlayerPresenter presenter) {
+    public ExoPlayerListener(Activity activity, ExoPlayerPresenter presenter) {
         this.presenter = presenter;
         exoPlayer = this.presenter.getExoPlayer();
-        Log.d(TAG, "ExoPlayerEventListener is created.");
+        Log.d(TAG, "ExoPlayerListener is created.");
     }
 
     @Override
@@ -31,7 +31,6 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
     @Override
     public synchronized void onPlaybackStateChanged(int state) {
-        PlayingParameters playingParam = presenter.getPlayingParam();
         switch (state) {
             case Player.STATE_BUFFERING:
                 Log.d(TAG, "onPlaybackStateChanged()--> Player.STATE_BUFFERING--> playWhenReady = " + exoPlayer.getPlayWhenReady() );
@@ -57,34 +56,16 @@ public class ExoPlayerEventListener implements Player.EventListener {
 
     @Override
     public synchronized void onIsPlayingChanged(boolean isPlaying) {
-        Log.d(TAG,"Player.EventListener.onIsPlayingChanged() --> isPlaying = " + isPlaying);
+        Log.d(TAG,"onIsPlayingChanged() --> isPlaying = " + isPlaying);
     }
 
     @Override
-    public synchronized void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-        Log.d(TAG,"Player.EventListener.onTracksChanged() is called.");
+    public void onPlayerErrorChanged(@Nullable PlaybackException error) {
+        Log.d(TAG,"onPlayerErrorChanged() --> error = " + error);
     }
 
     @Override
-    public synchronized void onPlayerError(ExoPlaybackException error) {
-        Log.d(TAG,"Player.EventListener.onPlayerError() is called.");
-        switch (error.type) {
-            case ExoPlaybackException.TYPE_SOURCE:
-                Log.d(TAG, "TYPE_SOURCE: " + error.getSourceException().getMessage());
-                break;
-
-            case ExoPlaybackException.TYPE_RENDERER:
-                Log.d(TAG, "TYPE_RENDERER: " + error.getRendererException().getMessage());
-                break;
-
-            case ExoPlaybackException.TYPE_UNEXPECTED:
-                Log.d(TAG, "TYPE_UNEXPECTED: " + error.getUnexpectedException().getMessage());
-                break;
-        }
-    }
-
-    @Override
-    public synchronized void onPositionDiscontinuity(int reason) {
-        Log.d(TAG,"Player.EventListener.onPositionDiscontinuity() is called.");
+    public synchronized void onPlayerError(PlaybackException error) {
+        Log.d(TAG,"onPlayerError() --> error = " + error);
     }
 }

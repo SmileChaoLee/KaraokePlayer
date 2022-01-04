@@ -290,16 +290,19 @@ public abstract class BasePlayerPresenter {
     }
 
     public void playLeftChannel() {
+        Log.d(TAG, "playLeftChannel() --> CommonConstants.LeftChannel = " + CommonConstants.LeftChannel);
         playingParam.setCurrentChannelPlayed(CommonConstants.LeftChannel);
         setAudioVolume(playingParam.getCurrentVolume());
     }
 
     public void playRightChannel() {
+        Log.d(TAG, "playRightChannel() --> CommonConstants.RightChannel = " + CommonConstants.RightChannel);
         playingParam.setCurrentChannelPlayed(CommonConstants.RightChannel);
         setAudioVolume(playingParam.getCurrentVolume());
     }
 
     public void playStereoChannel() {
+        Log.d(TAG, "playStereoChannel() --> CommonConstants.StereoChannel = " + CommonConstants.StereoChannel);
         playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
         setAudioVolume(playingParam.getCurrentVolume());
     }
@@ -340,14 +343,15 @@ public abstract class BasePlayerPresenter {
         }
 
         setPlayingParameters(songInfo);
-
+        /*
+        // removed on 2022-01-03
         playingParam.setCurrentVideoTrackIndexPlayed(0);
         playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
         playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
+        */
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaPrepared(false);
-
         playMediaFromUri(mediaUri);
     }
 
@@ -634,6 +638,7 @@ public abstract class BasePlayerPresenter {
         long currentAudioPosition = 0;
         playingParam.setCurrentAudioPosition(currentAudioPosition);
         if (playingParam.isMediaPrepared()) {
+            Log.d(TAG, "replayMedia().specificPlayerReplayMedia(currentAudioPosition)");
             // song is playing, paused, or finished playing
             // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )
             // because it will send Play.STATE_ENDED event after the playing has finished
@@ -642,9 +647,11 @@ public abstract class BasePlayerPresenter {
             // exoPlayer.setPlayWhenReady(false);
             specificPlayerReplayMedia(currentAudioPosition);
         } else {
+            Log.d(TAG, "replayMedia().playMediaFromUri(mediaUri)");
             // song was stopped by user
             // mediaTransportControls.prepare();   // prepare and play
             // Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
+            playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
             playMediaFromUri(mediaUri);
         }
     }

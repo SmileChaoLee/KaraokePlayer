@@ -26,9 +26,9 @@ public final class PlayerConstants {
     public static final int MaxProgress = 100;
     public static final int PlayingMusic = 1;
     public static final int PlayingVocal = 2;
-    public static final int NoRepeatPlaying = 0;
-    public static final int RepeatOneSong = 1;
-    public static final int RepeatAllSongs = 2;
+    public static final int NoRepeatPlaying = 0;    // Player.REPEAT_MODE_OFF
+    public static final int RepeatOneSong = 1;      // Player.REPEAT_MODE_ONE
+    public static final int RepeatAllSongs = 2;     // Player.REPEAT_MODE_ALL
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String IsPlaySingleSongState = "IsPlaySingleSong";

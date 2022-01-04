@@ -7,13 +7,13 @@ import android.os.ResultReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import com.google.android.exoplayer2.ControlDispatcher;
+import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.util.MimeTypes;
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.smile.karaokeplayer.Constants.PlayerConstants;
 import com.smile.karaokeplayer.Models.PlayingParameters;
 
@@ -33,7 +33,7 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
 
     @Override
     public synchronized long getSupportedPrepareActions() {
-        Log.d(TAG, "getSupportedPrepareActions() is called.");
+        Log.d(TAG, "getSupportedPrepareActions() is called --> MediaSessionConnector.PlaybackPreparer.ACTIONS = " + MediaSessionConnector.PlaybackPreparer.ACTIONS);
         return MediaSessionConnector.PlaybackPreparer.ACTIONS;
     }
 
@@ -60,19 +60,22 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         }
 
         PlayingParameters playingParam = mPresenter.getPlayingParam();
-        SimpleExoPlayer exoPlayer = mPresenter.getExoPlayer();
+        ExoPlayer exoPlayer = mPresenter.getExoPlayer();
 
         playingParam.setMediaPrepared(false);
 
+        /*
         MediaItem mediaItem = new MediaItem.Builder()
                 .setUri(uri)
                 .setMediaMetadata(new MediaMetadata.Builder().setTitle("Opened Media").build())
                 .setMimeType(MimeTypes.BASE_TYPE_VIDEO)
                 // .setDrmConfiguration(null)
                 .build();
+        */
+        MediaItem mediaItem = MediaItem.fromUri(uri);
 
-        /*
         // removed on 2021-05-23 for testing
+        /*
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory()
             .setTsExtractorFlags(FLAG_DETECT_ACCESS_UNITS)
             .setTsExtractorFlags(FLAG_ALLOW_NON_IDR_KEYFRAMES);
@@ -86,6 +89,9 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         exoPlayer.setMediaSource(mediaSource);
         */
 
+        Log.d(TAG, "exoPlayer.getMediaItemCount() = " + exoPlayer.getMediaItemCount());
+        TrackSelectionParameters trackParameters = new TrackSelectionParameters.Builder(callingContext).build();
+        exoPlayer.setTrackSelectionParameters(trackParameters);
         exoPlayer.setMediaItem(mediaItem);      // added on 2021-05-23
         exoPlayer.prepare();
 
@@ -123,7 +129,7 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
     }
 
     @Override
-    public synchronized boolean onCommand(Player player, ControlDispatcher controlDispatcher, String command, Bundle extras, ResultReceiver cb) {
+    public boolean onCommand(Player player, String command, @Nullable Bundle extras, @Nullable ResultReceiver cb) {
         return false;
     }
 }
