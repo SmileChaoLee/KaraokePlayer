@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/src/opus_multistream_decoder.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/src/opus_multistream_decoder.o: \
   libopus/src/opus_multistream_decoder.c \
   libopus/include/opus_multistream.h libopus/include/opus.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

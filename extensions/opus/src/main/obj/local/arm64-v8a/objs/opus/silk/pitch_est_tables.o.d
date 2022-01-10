@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/pitch_est_tables.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/pitch_est_tables.o: \
   libopus/silk/pitch_est_tables.c libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \
   libopus/silk/pitch_est_defines.h libopus/silk/SigProc_FIX.h \

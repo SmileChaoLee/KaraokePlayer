@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/src/opus_projection_encoder.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/src/opus_projection_encoder.o: \
   libopus/src/opus_projection_encoder.c libopus/celt/mathops.h \
   libopus/celt/arch.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/celt/fixed_generic.h \

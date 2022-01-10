@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vpx_dsp/vpx_convolve.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vpx_dsp/vpx_convolve.o: \
   libvpx/vpx_dsp/vpx_convolve.c \
   libvpx_android_configs/x86/./vpx_config.h \
   libvpx_android_configs/x86/./vpx_dsp_rtcd.h libvpx/vpx/vpx_integer.h \

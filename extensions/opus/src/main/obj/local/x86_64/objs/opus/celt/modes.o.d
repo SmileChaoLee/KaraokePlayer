@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/celt/modes.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/celt/modes.o: \
   libopus/celt/modes.c libopus/celt/celt.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/include/opus_custom.h \
   libopus/celt/entenc.h libopus/celt/entcode.h libopus/celt/ecintrin.h \

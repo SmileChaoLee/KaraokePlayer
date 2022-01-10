@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/arm64-v8a/objs/vpx/libvpx/vp9/decoder/vp9_detokenize.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/arm64-v8a/objs/vpx/libvpx/vp9/decoder/vp9_detokenize.o: \
   libvpx/vp9/decoder/vp9_detokenize.c libvpx/vpx_mem/vpx_mem.h \
   libvpx_android_configs/arm64-v8a/vpx_config.h libvpx/vpx/vpx_integer.h \
   libvpx/vpx_ports/mem.h libvpx/vp9/common/vp9_blockd.h \

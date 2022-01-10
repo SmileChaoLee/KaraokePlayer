@@ -1,20 +1,20 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/obj/local/armeabi-v7a/objs/flacJNI/flac/src/libFLAC/bitmath.o: \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/bitmath.c \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/include/private/bitmath.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdint.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__config \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/assert.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/share/compat.h
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/obj/local/armeabi-v7a/objs/flacJNI/flac/src/libFLAC/bitmath.o: \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/bitmath.c \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/include/private/bitmath.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdint.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__config \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/assert.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/share/compat.h
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/include/private/bitmath.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/src/libFLAC/include/private/bitmath.h:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdint.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdint.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__config:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__config:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/assert.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/assert.h:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/share/compat.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/share/compat.h:

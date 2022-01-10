@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/fixed/residual_energy16_FIX.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/fixed/residual_energy16_FIX.o: \
   libopus/silk/fixed/residual_energy16_FIX.c \
   libopus/silk/fixed/main_FIX.h libopus/silk/SigProc_FIX.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \

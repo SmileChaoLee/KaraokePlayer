@@ -18,4 +18,3 @@ APP_OPTIM := release
 APP_STL := c++_static
 APP_CPPFLAGS := -frtti
 APP_PLATFORM := android-14
-APP_ABI := x86 x86_64 armeabi-v7a arm64-v8a

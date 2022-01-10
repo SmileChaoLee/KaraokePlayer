@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vp9/common/vp9_frame_buffers.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vp9/common/vp9_frame_buffers.o: \
   libvpx/vp9/common/vp9_frame_buffers.c \
   libvpx/vp9/common/vp9_frame_buffers.h libvpx/vpx/vpx_frame_buffer.h \
   libvpx/vpx/./vpx_integer.h libvpx/vpx/vpx_integer.h \

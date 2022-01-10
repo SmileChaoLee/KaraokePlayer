@@ -4,7 +4,7 @@
 
 FFMPEG_EXT_PATH="$(pwd)/src/main"
 echo ${FFMPEG_EXT_PATH}
-NDK_PATH="/home/chaolee/Android/Sdk/ndk/21.4.7075529"
+NDK_PATH="/home/chaolee/Android/Sdk/ndk/22.1.7171670"
 echo ${NDK_PATH}
 HOST_PLATFORM="linux-x86_64"
 echo ${HOST_PLATFORM}

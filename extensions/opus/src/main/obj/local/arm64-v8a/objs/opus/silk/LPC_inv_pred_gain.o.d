@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/LPC_inv_pred_gain.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/LPC_inv_pred_gain.o: \
   libopus/silk/LPC_inv_pred_gain.c libopus/silk/SigProc_FIX.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/resampler_structs.h \

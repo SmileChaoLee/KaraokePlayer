@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/dec_API.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/dec_API.o: \
   libopus/silk/dec_API.c libopus/silk/API.h libopus/silk/control.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/errors.h \

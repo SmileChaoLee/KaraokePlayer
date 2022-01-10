@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vp9/common/vp9_tile_common.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vp9/common/vp9_tile_common.o: \
   libvpx/vp9/common/vp9_tile_common.c \
   libvpx/vp9/common/vp9_tile_common.h libvpx/vp9/common/vp9_onyxc_int.h \
   libvpx_android_configs/x86_64/./vpx_config.h \

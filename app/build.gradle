@@ -11,13 +11,13 @@ android {
         }
     }
 
-    compileSdkVersion 31
+    compileSdkVersion 32
     defaultConfig {
         applicationId "com.smile.karaokeplayer"
-        targetSdkVersion 31
+        targetSdkVersion 32
         multiDexEnabled true
-        versionCode 310
-        versionName "3.10"
+        versionCode 350
+        versionName "3.50"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -78,9 +78,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    /*
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    */
 }
 
 allprojects {

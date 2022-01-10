@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/pitch.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/pitch.o: \
   libopus/celt/pitch.c libopus/celt/pitch.h libopus/celt/modes.h \
   libopus/include/opus_types.h libopus/celt/celt.h \
   libopus/include/opus_defines.h libopus/include/opus_custom.h \

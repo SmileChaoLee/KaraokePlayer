@@ -1,158 +1,173 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/obj/local/x86/objs/flacJNI/flac_parser.o: \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac_parser.cc \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/include/flac_parser.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdint.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__config \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/array \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__tuple \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstddef \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/version \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/type_traits \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/utility \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/initializer_list \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstring \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdint \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__debug \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/iterator \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/iosfwd \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/wchar.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__functional_base \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/typeinfo \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/exception \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdlib \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdlib.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/new \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/algorithm \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/memory \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/limits \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/tuple \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdexcept \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cassert \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/atomic \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/functional \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/bit \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string_view \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__string \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdio \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdio.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cwchar \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cwctype \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cctype \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/ctype.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/wctype.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/vector \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__bit_reference \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/climits \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/limits.h \
-  /Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__split_buffer \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/stream_decoder.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/export.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/format.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h \
-  /Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/include/data_source.h
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/obj/local/x86/objs/flacJNI/flac_parser.o: \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac_parser.cc \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/include/flac_parser.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdint.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__config \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/array \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__tuple \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstddef \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/version \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/type_traits \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/utility \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/initializer_list \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstring \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdint \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__debug \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/iosfwd \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/wchar.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/iterator \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__functional_base \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/typeinfo \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/exception \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdlib \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdlib.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/new \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/algorithm \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/memory \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/limits \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/tuple \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdexcept \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/atomic \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__threading_support \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/chrono \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ctime \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ratio \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/climits \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/limits.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/errno.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/functional \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/bit \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string_view \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__string \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdio \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdio.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cwchar \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cwctype \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cctype \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ctype.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/wctype.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/vector \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__bit_reference \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__split_buffer \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/stream_decoder.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/export.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/format.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h \
+  /home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/include/data_source.h \
+  /home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cassert
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/include/flac_parser.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/include/flac_parser.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdint.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdint.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__config:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__config:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/array:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/array:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__tuple:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__tuple:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstddef:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstddef:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/version:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/version:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/type_traits:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/type_traits:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/utility:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/utility:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/initializer_list:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/initializer_list:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstring:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstring:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdint:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdint:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__debug:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__debug:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/iterator:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/iosfwd:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/iosfwd:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/wchar.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/wchar.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/iterator:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__functional_base:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__functional_base:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/typeinfo:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/typeinfo:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/exception:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/exception:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdlib:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdlib:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdlib.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdlib.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/new:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/new:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/algorithm:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/algorithm:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/memory:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/memory:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/limits:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/limits:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/tuple:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/tuple:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdexcept:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdexcept:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cassert:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/atomic:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/atomic:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__threading_support:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/functional:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/chrono:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/bit:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ctime:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ratio:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/string_view:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/climits:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__string:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/limits.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cstdio:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/errno.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/stdio.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/functional:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cwchar:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/bit:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cwctype:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/cctype:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/string_view:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/ctype.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__string:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/wctype.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cstdio:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/vector:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/stdio.h:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__bit_reference:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cwchar:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/climits:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cwctype:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/limits.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cctype:
 
-/Users/chaolee/Library/Android/sdk/android-ndk-r20b/sources/cxx-stl/llvm-libc++/include/__split_buffer:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/ctype.h:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/stream_decoder.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/wctype.h:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/export.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/vector:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/format.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__bit_reference:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h:
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/__split_buffer:
 
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/flac/src/main/jni/include/data_source.h:
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/stream_decoder.h:
+
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/export.h:
+
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/format.h:
+
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/flac/include/FLAC/ordinals.h:
+
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/flac/src/main/jni/include/data_source.h:
+
+/home/chaolee/Android/Sdk/ndk/22.1.7171670/sources/cxx-stl/llvm-libc++/include/cassert:

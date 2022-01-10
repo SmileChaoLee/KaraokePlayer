@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/tables_pitch_lag.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/tables_pitch_lag.o: \
   libopus/silk/tables_pitch_lag.c libopus/silk/tables.h \
   libopus/silk/define.h libopus/silk/errors.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

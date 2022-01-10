@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vp9/common/vp9_entropy.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86/objs/vpx/libvpx/vp9/common/vp9_entropy.o: \
   libvpx/vp9/common/vp9_entropy.c libvpx/vp9/common/vp9_entropy.h \
   libvpx/vpx/vpx_integer.h libvpx/vpx_dsp/prob.h \
   libvpx_android_configs/x86/./vpx_config.h \

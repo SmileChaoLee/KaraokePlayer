@@ -16,9 +16,8 @@
 
 #include "include/flac_parser.h"
 
-#include <jni.h>
-
 #include <android/log.h>
+#include <jni.h>
 
 #include <cassert>
 #include <cstdlib>
@@ -349,26 +348,6 @@ bool FLACParser::decodeMetadata() {
         ALOGE("unsupported bits per sample %u", getBitsPerSample());
         return false;
     }
-    // check sample rate
-    switch (getSampleRate()) {
-      case 8000:
-      case 11025:
-      case 12000:
-      case 16000:
-      case 22050:
-      case 24000:
-      case 32000:
-      case 44100:
-      case 48000:
-      case 88200:
-      case 96000:
-      case 176400:
-      case 192000:
-        break;
-      default:
-        ALOGE("unsupported sample rate %u", getSampleRate());
-        return false;
-    }
     // configure the appropriate copy function based on device endianness.
     if (isBigEndian()) {
       mCopy = copyToByteArrayBigEndian;
@@ -451,7 +430,7 @@ bool FLACParser::getSeekPositions(int64_t timeUs,
     targetSampleNumber = totalSamples - 1;
   }
 
-  FLAC__StreamMetadata_SeekPoint* points = mSeekTable->points;
+  FLAC__StreamMetadata_SeekPoint *points = mSeekTable->points;
   unsigned length = mSeekTable->num_points;
 
   for (unsigned i = length; i != 0; i--) {

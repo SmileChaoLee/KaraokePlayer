@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vpx_dsp/loopfilter.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vpx_dsp/loopfilter.o: \
   libvpx/vpx_dsp/loopfilter.c \
   libvpx_android_configs/x86_64/./vpx_config.h \
   libvpx_android_configs/x86_64/./vpx_dsp_rtcd.h \

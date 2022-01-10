@@ -28,7 +28,7 @@ android {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.2.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.14.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
     compileOnly 'org.checkerframework:checker-qual:' + '2.5.0'
     compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.5.20'
 }

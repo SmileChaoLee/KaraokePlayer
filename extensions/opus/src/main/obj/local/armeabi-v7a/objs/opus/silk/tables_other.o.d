@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/tables_other.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/tables_other.o: \
   libopus/silk/tables_other.c libopus/silk/structs.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/SigProc_FIX.h \

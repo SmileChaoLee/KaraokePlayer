@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/armeabi-v7a/objs/vpx/libvpx/vp9/common/vp9_thread_common.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/armeabi-v7a/objs/vpx/libvpx/vp9/common/vp9_thread_common.o: \
   libvpx/vp9/common/vp9_thread_common.c \
   libvpx_android_configs/armeabi-v7a/./vpx_config.h \
   libvpx/vpx_dsp/vpx_dsp_common.h libvpx/vpx/vpx_integer.h \

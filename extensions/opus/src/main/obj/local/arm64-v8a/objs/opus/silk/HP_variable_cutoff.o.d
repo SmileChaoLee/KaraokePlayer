@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/HP_variable_cutoff.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/HP_variable_cutoff.o: \
   libopus/silk/HP_variable_cutoff.c libopus/silk/fixed/main_FIX.h \
   libopus/silk/SigProc_FIX.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

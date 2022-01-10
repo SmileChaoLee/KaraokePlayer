@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/encode_pulses.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/encode_pulses.o: \
   libopus/silk/encode_pulses.c libopus/silk/main.h \
   libopus/silk/SigProc_FIX.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

@@ -1,6 +1,6 @@
 package exoplayer.Presenters;
 
-import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF;
+import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -165,7 +165,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         trackSelector.setParameters(trackSelectorParameters);
 
         // EXTENSION_RENDERER_MODE_OFF, EXTENSION_RENDERER_MODE_ON, EXTENSION_RENDERER_MODE_PREFER
-        MyRenderersFactory myRenderersFactory = new MyRenderersFactory(mActivity, EXTENSION_RENDERER_MODE_OFF);
+        MyRenderersFactory myRenderersFactory = new MyRenderersFactory(mActivity, EXTENSION_RENDERER_MODE_ON);
         stereoVolumeAudioProcessor = myRenderersFactory.getStereoVolumeAudioProcessor();
 
         ExoPlayer.Builder exoPlayerBuilder = new ExoPlayer.Builder(mActivity, myRenderersFactory);

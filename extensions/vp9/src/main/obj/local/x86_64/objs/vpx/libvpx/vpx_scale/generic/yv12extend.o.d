@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vpx_scale/generic/yv12extend.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/x86_64/objs/vpx/libvpx/vpx_scale/generic/yv12extend.o: \
   libvpx/vpx_scale/generic/yv12extend.c \
   libvpx_android_configs/x86_64/./vpx_config.h \
   libvpx_android_configs/x86_64/./vpx_scale_rtcd.h \

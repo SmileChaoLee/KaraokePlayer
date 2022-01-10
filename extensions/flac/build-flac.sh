@@ -10,7 +10,7 @@ FLAC_EXT_PATH="$(pwd)/src/main"
 # or
 #NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r17c"  # this one works too
 
-NDK_PATH="/Users/chaolee/Library/Android/sdk/android-ndk-r20b"
+NDK_PATH="/home/chaolee/Android/Sdk/ndk/22.1.7171670"
 
 # Download and extract flac-1.3.2 as "${FLAC_EXT_PATH}/jni/flac" folder:
 cd "${FLAC_EXT_PATH}/jni"

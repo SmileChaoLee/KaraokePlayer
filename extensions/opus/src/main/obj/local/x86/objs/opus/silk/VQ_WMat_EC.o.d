@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/VQ_WMat_EC.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86/objs/opus/silk/VQ_WMat_EC.o: \
   libopus/silk/VQ_WMat_EC.c libopus/silk/main.h \
   libopus/silk/SigProc_FIX.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

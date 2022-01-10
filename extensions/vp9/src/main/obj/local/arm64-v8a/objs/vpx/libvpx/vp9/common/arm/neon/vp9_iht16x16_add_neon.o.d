@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/arm64-v8a/objs/vpx/libvpx/vp9/common/arm/neon/vp9_iht16x16_add_neon.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/arm64-v8a/objs/vpx/libvpx/vp9/common/arm/neon/vp9_iht16x16_add_neon.o: \
   libvpx/vp9/common/arm/neon/vp9_iht16x16_add_neon.c \
   libvpx_android_configs/arm64-v8a/./vp9_rtcd.h libvpx/vpx/vpx_integer.h \
   libvpx/vp9/common/vp9_common.h \

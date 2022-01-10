@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/control_codec.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/control_codec.o: \
   libopus/silk/control_codec.c libopus/silk/fixed/main_FIX.h \
   libopus/silk/SigProc_FIX.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

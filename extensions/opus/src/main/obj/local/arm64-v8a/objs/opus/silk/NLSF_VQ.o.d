@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/NLSF_VQ.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/NLSF_VQ.o: \
   libopus/silk/NLSF_VQ.c libopus/silk/main.h libopus/silk/SigProc_FIX.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/resampler_structs.h \

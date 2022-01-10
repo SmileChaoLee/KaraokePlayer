@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/ana_filt_bank_1.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/silk/ana_filt_bank_1.o: \
   libopus/silk/ana_filt_bank_1.c libopus/silk/SigProc_FIX.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/resampler_structs.h \

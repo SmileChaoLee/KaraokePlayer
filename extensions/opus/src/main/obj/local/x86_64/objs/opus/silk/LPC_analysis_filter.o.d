@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/silk/LPC_analysis_filter.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/silk/LPC_analysis_filter.o: \
   libopus/silk/LPC_analysis_filter.c libopus/silk/SigProc_FIX.h \
   libopus/silk/typedef.h libopus/include/opus_types.h \
   libopus/include/opus_defines.h libopus/silk/resampler_structs.h \

@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/tables_NLSF_CB_WB.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/armeabi-v7a/objs/opus/silk/tables_NLSF_CB_WB.o: \
   libopus/silk/tables_NLSF_CB_WB.c libopus/silk/tables.h \
   libopus/silk/define.h libopus/silk/errors.h libopus/silk/typedef.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

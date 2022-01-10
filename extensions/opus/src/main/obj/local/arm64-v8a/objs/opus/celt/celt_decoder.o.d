@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/celt_decoder.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/celt_decoder.o: \
   libopus/celt/celt_decoder.c libopus/celt/cpu_support.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \
   libopus/celt/os_support.h libopus/celt/mdct.h libopus/celt/kiss_fft.h \

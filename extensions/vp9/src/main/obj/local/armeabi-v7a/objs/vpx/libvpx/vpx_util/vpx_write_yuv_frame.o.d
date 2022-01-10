@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/vp9/src/main/obj/local/armeabi-v7a/objs/vpx/libvpx/vpx_util/vpx_write_yuv_frame.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/vp9/src/main/obj/local/armeabi-v7a/objs/vpx/libvpx/vpx_util/vpx_write_yuv_frame.o: \
   libvpx/vpx_util/vpx_write_yuv_frame.c libvpx/vpx_dsp/skin_detection.h \
   libvpx/vpx_util/vpx_write_yuv_frame.h libvpx/vpx_scale/yv12config.h \
   libvpx_android_configs/armeabi-v7a/./vpx_config.h \

@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/kiss_fft.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/celt/kiss_fft.o: \
   libopus/celt/kiss_fft.c libopus/celt/_kiss_fft_guts.h \
   libopus/celt/kiss_fft.h libopus/celt/arch.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \

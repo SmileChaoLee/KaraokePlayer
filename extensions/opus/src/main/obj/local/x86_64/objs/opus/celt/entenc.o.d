@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/celt/entenc.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/x86_64/objs/opus/celt/entenc.o: \
   libopus/celt/entenc.c libopus/celt/os_support.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \
   libopus/celt/arch.h libopus/celt/fixed_generic.h libopus/celt/entenc.h \

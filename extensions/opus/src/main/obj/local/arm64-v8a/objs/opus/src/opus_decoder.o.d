@@ -1,4 +1,4 @@
-/Users/chaolee/AndroidStudio/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/src/opus_decoder.o: \
+/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/opus/src/main/obj/local/arm64-v8a/objs/opus/src/opus_decoder.o: \
   libopus/src/opus_decoder.c libopus/celt/celt.h \
   libopus/include/opus_types.h libopus/include/opus_defines.h \
   libopus/include/opus_custom.h libopus/celt/entenc.h \
