@@ -30,18 +30,11 @@ public class MyRenderersFactory extends DefaultRenderersFactory {
     @Nullable
     @Override
     protected AudioSink buildAudioSink(Context context, boolean enableFloatOutput, boolean enableAudioTrackPlaybackParams, boolean enableOffload) {
-        /*
-        DefaultAudioSink.DefaultAudioProcessorChain audioProcessorChain = new DefaultAudioSink.DefaultAudioProcessorChain(audioProcessors);
-        AudioSink audioSink = new DefaultAudioSink(AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES,
-                        audioProcessorChain,
-                        enableFloatOutput,
-                        enableAudioTrackPlaybackParams,
-                        enableOffload);
-        */
-        // or
-        AudioSink audioSink = new DefaultAudioSink(AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES,
-                        audioProcessors,
-                        enableFloatOutput);
+        AudioSink audioSink = new DefaultAudioSink.Builder()
+                .setAudioCapabilities(AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES)
+                .setAudioProcessors(audioProcessors)
+                .setEnableFloatOutput(enableFloatOutput)
+                .build();
         return audioSink;
     }
 

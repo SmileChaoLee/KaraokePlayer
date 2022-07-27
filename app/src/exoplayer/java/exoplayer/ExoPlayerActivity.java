@@ -18,7 +18,7 @@ import androidx.mediarouter.app.MediaRouteButton;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ext.cast.CastPlayer;
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.BasePlayerActivity;
@@ -32,7 +32,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
 
     private ExoPlayerPresenter presenter;
     private ExoPlayer exoPlayer;
-    private PlayerView playerView;
+    private StyledPlayerView playerView;
     private MediaRouteButton mediaRouteButton;
     private CastPlayer castPlayer;
 
@@ -58,7 +58,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
         // Video player view
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
         layoutParams.gravity = Gravity.CENTER;
-        playerView = new PlayerView(this);
+        playerView = new StyledPlayerView(this);
         playerView.setLayoutParams(layoutParams);
         playerView.setBackgroundColor(ContextCompat.getColor(this, android.R.color.black));
         playerViewLinearLayout.addView(playerView);
@@ -156,11 +156,14 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     public void setMediaRouteButtonView(int buttonMarginLeft, int imageButtonHeight) {
         // MediaRouteButton View
         mediaRouteButton = findViewById(R.id.media_route_button);
+        /*
         if (presenter.getCurrentCastState() == CastState.NO_DEVICES_AVAILABLE) {
             setMediaRouteButtonVisible(false);
         } else {
             setMediaRouteButtonVisible(true);
         }
+        */
+        setMediaRouteButtonVisible(presenter.getCurrentCastState() != CastState.NO_DEVICES_AVAILABLE);
         CastButtonFactory.setUpMediaRouteButton(this, mediaRouteButton);
 
         ViewGroup.MarginLayoutParams layoutParams;
