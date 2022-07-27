@@ -12,7 +12,6 @@ public class PlayingParameters implements Parcelable {
     private int currentPlaybackState;
     private boolean isAutoPlay;
     private boolean isMediaPrepared;
-    private int currentVideoTrackIndexPlayed;
     private int musicAudioChannel;
     private int vocalAudioChannel;
     private int currentChannelPlayed;
@@ -28,7 +27,7 @@ public class PlayingParameters implements Parcelable {
     private int numOfPlayedSongs;
 
     public PlayingParameters(int currentPlaybackState, boolean isAutoPlay, boolean isMediaPrepared,
-                             int currentVideoTrackIndexPlayed, int musicAudioChannel, int vocalAudioChannel,
+                             int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
                              int currentSongIndex, int repeatStatus, boolean isPlaySingleSong,
@@ -36,7 +35,6 @@ public class PlayingParameters implements Parcelable {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaPrepared = isMediaPrepared;
-        this.currentVideoTrackIndexPlayed = currentVideoTrackIndexPlayed;
         this.musicAudioChannel = musicAudioChannel;
         this.vocalAudioChannel = vocalAudioChannel;
         this.currentChannelPlayed = currentChannelPlayed;
@@ -74,13 +72,6 @@ public class PlayingParameters implements Parcelable {
     }
     public void setMediaPrepared(boolean isMediaPrepared) {
         this.isMediaPrepared = isMediaPrepared;
-    }
-
-    public int getCurrentVideoTrackIndexPlayed() {
-        return currentVideoTrackIndexPlayed;
-    }
-    public void setCurrentVideoTrackIndexPlayed(int currentVideoTrackIndexPlayed) {
-        this.currentVideoTrackIndexPlayed = currentVideoTrackIndexPlayed;
     }
 
     public int getMusicAudioChannel() {
@@ -184,7 +175,6 @@ public class PlayingParameters implements Parcelable {
         dest.writeInt(this.currentPlaybackState);
         dest.writeByte(this.isAutoPlay ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isMediaPrepared ? (byte) 1 : (byte) 0);
-        dest.writeInt(this.currentVideoTrackIndexPlayed);
         dest.writeInt(this.musicAudioChannel);
         dest.writeInt(this.vocalAudioChannel);
         dest.writeInt(this.currentChannelPlayed);
@@ -204,7 +194,6 @@ public class PlayingParameters implements Parcelable {
         this.currentPlaybackState = in.readInt();
         this.isAutoPlay = in.readByte() != 0;
         this.isMediaPrepared = in.readByte() != 0;
-        this.currentVideoTrackIndexPlayed = in.readInt();
         this.musicAudioChannel = in.readInt();
         this.vocalAudioChannel = in.readInt();
         this.currentChannelPlayed = in.readInt();
@@ -236,8 +225,6 @@ public class PlayingParameters implements Parcelable {
         setAutoPlay(false);
         setMediaPrepared(false);
         setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-
-        setCurrentVideoTrackIndexPlayed(0);
 
         setMusicAudioTrackIndex(1);
         setVocalAudioTrackIndex(1);

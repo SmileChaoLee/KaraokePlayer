@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -36,7 +37,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides;
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverride;
 import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.framework.CastContext;
@@ -86,7 +87,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     private int currentItemIndex = -1;
 
     // instances of the following members have to be saved when configuration changed
-    private ArrayList<Integer[]> videoTrackIndicesList = new ArrayList<>();
     private ArrayList<Integer[]> audioTrackIndicesList = new ArrayList<>();
 
     private final Handler durationSeekBarHandler = new Handler(Looper.getMainLooper());
@@ -141,24 +141,10 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     }
 
     /*
-    public ArrayList<Integer[]> getAudioTrackIndicesList() {
-        return audioTrackIndicesList;
-    }
-    public void setAudioTrackIndicesList(ArrayList<Integer[]> audioTrackIndicesList) {
-        this.audioTrackIndicesList = audioTrackIndicesList;
-    }
-
-    public ArrayList<Integer[]> getVideoTrackIndicesList() {
-        return videoTrackIndicesList;
-    }
-    public void setVideoTrackIndicesList(ArrayList<Integer[]> videoTrackIndicesList) {
-        this.videoTrackIndicesList = videoTrackIndicesList;
-    }
-    */
-
     public ExoPlayerPresentView getPresentView() {
         return presentView;
     }
+    */
 
     public void initExoPlayerAndCastPlayer() {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(mActivity, new AdaptiveTrackSelection.Factory());
@@ -249,7 +235,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     }
 
     private void selectAudioTrack(Integer[] trackIndicesCombination) {
-        Log.d(TAG, "selectAudioTrack() is called.");
+        Log.d(TAG, "selectAudioTrack");
         DefaultTrackSelector trackSelector = (DefaultTrackSelector)exoPlayer.getTrackSelector();
         if (trackSelector == null) {
             Log.d(TAG, "selectAudioTrack.trackSelector is null");
@@ -261,39 +247,30 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         }
 
         int audioRendererIndex = trackIndicesCombination[0];
-        Log.d(TAG, "selectAudioTrack() --> audioRendererIndex = " + audioRendererIndex);
+        Log.d(TAG, "selectAudioTrack.audioRendererIndex = " + audioRendererIndex);
         int audioTrackGroupIndex = trackIndicesCombination[1];
-        Log.d(TAG, "selectAudioTrack() --> audioTrackGroupIndex = " + audioTrackGroupIndex);
+        Log.d(TAG, "selectAudioTrack.audioTrackGroupIndex = " + audioTrackGroupIndex);
         int audioTrackIndex = trackIndicesCombination[2];
-        Log.d(TAG, "selectAudioTrack() --> audioTrackIndex = " + audioTrackIndex);
+        Log.d(TAG, "selectAudioTrack.audioTrackIndex = " + audioTrackIndex);
 
-        // if (mappedTrackInfo.getTrackSupport(audioRendererIndex, audioTrackGroupIndex, audioTrackIndex)
-        //         != RendererCapabilities.FORMAT_HANDLED) {
         if (mappedTrackInfo.getTrackSupport(audioRendererIndex, audioTrackGroupIndex, audioTrackIndex)
                  != C.FORMAT_HANDLED) {
             return;
         }
-        /*
-        DefaultTrackSelector.Parameters trackParameters = trackSelector.getParameters();
-        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackParameters.buildUpon();
-        DefaultTrackSelector.SelectionOverride initialOverride = new DefaultTrackSelector.SelectionOverride(audioTrackGroupIndex, audioTrackIndex);
-        parametersBuilder.clearSelectionOverrides(audioRendererIndex)
-                .setRendererDisabled(audioRendererIndex, false)
-                .setSelectionOverride(audioRendererIndex, mappedTrackInfo.getTrackGroups(audioRendererIndex), initialOverride);
-        trackSelector.setParameters(parametersBuilder);
-        */
 
-        // There is a bug: pressing on play button after playing is finished shows not supported
-        // TrackSelectionParameters trackParameters = trackSelector.getParameters();
-        // TrackSelectionParameters.Builder parametersBuilder= trackParameters.buildUpon();
         Log.d(TAG, "selectAudioTrack.trackSelectorParameters = " + trackSelectorParameters);
         TrackSelectionParameters.Builder parametersBuilder= trackSelectorParameters.buildUpon();
-        TrackSelectionOverrides overrides =
+        /*
+        TrackSelectionOverride overrides =
                 new TrackSelectionOverrides.Builder()
                         .setOverrideForType(
                                 new TrackSelectionOverrides.TrackSelectionOverride(mappedTrackInfo.getTrackGroups(audioRendererIndex).get(audioTrackGroupIndex)))
                         .build();
         trackSelectorParameters = parametersBuilder.setTrackSelectionOverrides(overrides).build();
+        */
+        TrackGroup trackGroup = mappedTrackInfo.getTrackGroups(audioRendererIndex).get(audioTrackGroupIndex);
+        TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, audioTrackIndex);
+        trackSelectorParameters = parametersBuilder.setOverrideForType(override).build();
         exoPlayer.setTrackSelectionParameters(trackSelectorParameters);
     }
 
@@ -304,14 +281,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         int numAudioRenderers = 0;
         int numVideoTrackGroups = 0;
         int numAudioTrackGroups = 0;
-        int totalVideoTracks = 0;
-        int totalAudioTracks = 0;
 
-        videoTrackIndicesList.clear();
+        numberOfVideoTracks = 0;
         audioTrackIndicesList.clear();
 
         Integer[] trackIndicesCombination;
-        int videoTrackIdPlayed = -1;
         int audioTrackIdPlayed = -1;
 
         Format videoPlayedFormat = exoPlayer.getVideoFormat();
@@ -378,11 +352,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                                     trackIndicesCombination[0] = rendererIndex;
                                     trackIndicesCombination[1] = groupIndex;
                                     trackIndicesCombination[2] = trackIndex;
-                                    videoTrackIndicesList.add(trackIndicesCombination);
-                                    totalVideoTracks++;
-                                    if (tempFormat.equals(videoPlayedFormat)) {
-                                        videoTrackIdPlayed = totalVideoTracks;
-                                    }
+                                    numberOfVideoTracks++;
                                     break;
                                 case C.TRACK_TYPE_AUDIO:
                                     trackIndicesCombination = new Integer[3];
@@ -390,9 +360,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                                     trackIndicesCombination[1] = groupIndex;
                                     trackIndicesCombination[2] = trackIndex;
                                     audioTrackIndicesList.add(trackIndicesCombination);
-                                    totalAudioTracks++;
                                     if (tempFormat.equals(audioPlayedFormat)) {
-                                        audioTrackIdPlayed = totalAudioTracks;
+                                        audioTrackIdPlayed = audioTrackIndicesList.size();
                                     }
                                     break;
                             }
@@ -405,29 +374,15 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         } else {
             Log.d(TAG, "mappedTrackInfo is null.");
         }
+        numberOfAudioTracks = audioTrackIndicesList.size();
 
         Log.d(TAG, "numVideoRenderer = " + numVideoRenderers);
         Log.d(TAG, "numAudioRenderer = " + numAudioRenderers);
         Log.d(TAG, "numVideoTrackGroups = " + numVideoTrackGroups);
         Log.d(TAG, "numAudioTrackGroups = " + numAudioTrackGroups);
-        Log.d(TAG, "totalVideoTracks = " + totalVideoTracks);
-        Log.d(TAG, "totalAudioTracks = " + totalAudioTracks);
-
-        numberOfVideoTracks = videoTrackIndicesList.size();
         Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
-        if (numberOfVideoTracks == 0) {
-            playingParam.setCurrentVideoTrackIndexPlayed(PlayerConstants.NoVideoTrack);
-            videoTrackIdPlayed = -1;
-        } else {
-            Log.d(TAG, "videoTrackIdPlayed = " + videoTrackIdPlayed);
-            if (videoTrackIdPlayed < 0) {
-                videoTrackIdPlayed = 1;
-            }
-            playingParam.setCurrentVideoTrackIndexPlayed(videoTrackIdPlayed);
-        }
-
-        numberOfAudioTracks = audioTrackIndicesList.size();
         Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
+
         if (numberOfAudioTracks == 0) {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
@@ -442,7 +397,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 // for open media. do not know the music track and vocal track
                 Log.d(TAG, "Do not know the music track and vocal track.");
                 // guess
-                videoTrackIdPlayed = playingParam.getCurrentVideoTrackIndexPlayed();
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();
                 Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.playingParam.getCurrentAudioTrackIndexPlayed() = " + audioTrackIdPlayed);
                 audioChannel = playingParam.getCurrentChannelPlayed();
@@ -491,21 +445,19 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         Log.d(TAG, "ExoPlayerPresenter --> initializeVariables()");
         super.initializeVariables(savedInstanceState, callingIntent);
         if (savedInstanceState == null) {
-            videoTrackIndicesList = new ArrayList<>();
             audioTrackIndicesList = new ArrayList<>();
             trackSelectorParameters = new TrackSelectionParameters.Builder(mActivity).build();
         } else {
-            videoTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
-            audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState, ArrayList.class);
+            } else audioTrackIndicesList = (ArrayList<Integer[]>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
             Bundle parameter = savedInstanceState.getBundle(PlayerConstants.TrackSelectorParametersState);
-            trackSelectorParameters = TrackSelectionParameters.CREATOR.fromBundle(parameter);
+            trackSelectorParameters = TrackSelectionParameters.fromBundle(parameter);
         }
     }
 
     @Override
     public boolean isSeekable() {
-        super.isSeekable();
-        // boolean result = exoPlayer.isCurrentWindowSeekable();    // deprecated
         return exoPlayer.isCurrentMediaItemSeekable();
     }
 
@@ -583,7 +535,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
                 return;
             }
-            Log.d(TAG, "setAudioTrackAndChannel().numberOfAudioTracks = " + numberOfAudioTracks);
             if (audioTrackIndex>numberOfAudioTracks) {
                 Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
                 // set to first track
@@ -667,7 +618,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         } else {
             playingParam.setCurrentAudioPosition(0);
         }
-        outState.putSerializable(PlayerConstants.VideoTrackIndicesListState, videoTrackIndicesList);
         outState.putSerializable(PlayerConstants.AudioTrackIndicesListState, audioTrackIndicesList);
         outState.putBundle(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters.toBundle());
         super.saveInstanceState(outState);

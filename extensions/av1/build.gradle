@@ -2,14 +2,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
-        targetSdkVersion 30
+        targetSdkVersion 33
         consumerProguardFiles 'proguard-rules.txt'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
@@ -27,8 +27,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.2.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.16.1'
+    implementation 'androidx.annotation:annotation:1.4.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
     compileOnly 'org.checkerframework:checker-qual:' + '2.5.0'
-    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.5.20'
+    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.7.10'
 }

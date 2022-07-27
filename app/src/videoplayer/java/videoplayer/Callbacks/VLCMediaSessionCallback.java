@@ -1,6 +1,7 @@
 package videoplayer.Callbacks;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.MediaControllerCompat;
@@ -61,7 +62,10 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
         int playbackState = playbackState = playingParam.getCurrentPlaybackState();
         if (extras != null) {
             Log.d(TAG, "extras is not null.");
-            PlayingParameters playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
+            PlayingParameters playingParamOrigin;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin, PlayingParameters.class);
+            } else playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
             if (playingParamOrigin != null) {
                 Log.d(TAG, "playingParamOrigin is not null.");
                 playbackState = playingParamOrigin.getCurrentPlaybackState();

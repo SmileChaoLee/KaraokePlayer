@@ -3,6 +3,7 @@ package com.smile.karaokeplayer;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
@@ -88,12 +89,16 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
                     break;
                 case CommonConstants.EditActionString:
                     // = "EDIT". Edit one record
-                    mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState, SongInfo.class);
+                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
                     actionButtonString = getString(R.string.saveString);
                     break;
                 case CommonConstants.DeleteActionString:
                     // = "DELETE". Delete one record
-                    mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState, SongInfo.class);
+                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
                     actionButtonString = getString(R.string.deleteString);
                     break;
                 default:
@@ -105,7 +110,9 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
             // not null, has savedInstanceState
             actionButtonString = savedInstanceState.getString("ActionButtonString");
             crudAction = savedInstanceState.getString(CommonConstants.CrudActionString);
-            mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
+            } else mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
             Log.d(TAG, "savedInstanceState is not null.");
         }
 

@@ -2,6 +2,7 @@ package exoplayer.Callbacks;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -99,7 +100,10 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         int currentPlaybackState = playingParam.getCurrentPlaybackState();
         if (extras != null) {
             Log.d(TAG, "onPrepareFromUri() --> extras is not null.");
-            PlayingParameters playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
+            PlayingParameters playingParamOrigin;
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin, PlayingParameters.class);
+            } else playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
             if (playingParamOrigin != null) {
                 Log.d(TAG, "onPrepareFromUri() --> playingParamOrigin is not null.");
                 currentPlaybackState = playingParamOrigin.getCurrentPlaybackState();

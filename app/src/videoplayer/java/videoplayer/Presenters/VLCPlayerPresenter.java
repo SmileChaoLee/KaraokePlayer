@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -52,7 +53,6 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     private MediaPlayer vlcPlayer;
 
     // instances of the following members have to be saved when configuration changed
-    private ArrayList<Integer> videoTrackIndicesList = new ArrayList<>();
     private ArrayList<Integer> audioTrackIndicesList = new ArrayList<>();
 
     // public interface VLCPlayerPresentView extends BasePresentView {
@@ -74,13 +74,6 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     }
     public void setAudioTrackIndicesList(ArrayList<Integer> audioTrackIndicesList) {
         this.audioTrackIndicesList = audioTrackIndicesList;
-    }
-
-    public ArrayList<Integer> getVideoTrackIndicesList() {
-        return videoTrackIndicesList;
-    }
-    public void setVideoTrackIndicesList(ArrayList<Integer> videoTrackIndicesList) {
-        this.videoTrackIndicesList = videoTrackIndicesList;
     }
 
     public BasePresentView getPresentView() {
@@ -145,18 +138,17 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         Log.d(TAG, "VLCPlayerPresenter --> initializeVariables()");
         super.initializeVariables(savedInstanceState, callingIntent);
         if (savedInstanceState == null) {
-            videoTrackIndicesList = new ArrayList<>();
             audioTrackIndicesList = new ArrayList<>();
         } else {
-            videoTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.VideoTrackIndicesListState);
-            audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState, ArrayList.class);
+            } else audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
         }
     }
 
     @Override
     public boolean isSeekable() {
-        boolean result = super.isSeekable();
-        return result;
+        return true;
     }
 
     @Override
@@ -321,7 +313,6 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         } else {
             playingParam.setCurrentAudioPosition(0);
         }
-        outState.putIntegerArrayList("VideoTrackIndexList", videoTrackIndicesList);
         outState.putIntegerArrayList("AudioTrackIndexList", audioTrackIndicesList);
 
         super.saveInstanceState(outState);
@@ -402,7 +393,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         MediaPlayer.TrackDescription videoDis[] = vlcPlayer.getVideoTracks();
         int videoTrackId;
         String videoTrackName;
-        videoTrackIndicesList = new ArrayList<>();
+        numberOfVideoTracks = 0;
         if (videoDis != null) {
             // because it is null sometimes
             for (int i = 0; i < videoDis.length; i++) {
@@ -412,20 +403,12 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
                 Log.d(TAG, "videoDis[i].name = " + videoTrackName);
                 // exclude disabled
                 if (videoTrackId >=0 ) {
-                    // enabled audio track
-                    videoTrackIndicesList.add(videoTrackId);
+                    // enabled video track
+                    numberOfVideoTracks++;
                 }
             }
         }
-        numberOfVideoTracks = videoTrackIndicesList.size();
         Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
-        if (numberOfVideoTracks == 0) {
-            playingParam.setCurrentVideoTrackIndexPlayed(PlayerConstants.NoVideoTrack);
-        } else {
-            // set which video track to be played
-            int videoTrackIdPlayed = vlcPlayer.getVideoTrack();
-            playingParam.setCurrentVideoTrackIndexPlayed(videoTrackIdPlayed);
-        }
 
         //
         MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();

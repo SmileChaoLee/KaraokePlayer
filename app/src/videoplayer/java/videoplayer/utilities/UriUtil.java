@@ -3,6 +3,7 @@ package videoplayer.utilities;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ public class UriUtil {
         } else {
             // com.aditya.filebrowser.Constants.SELECTION_MODES.MULTIPLE_SELECTION.ordinal()
             Log.d(TAG, "com.aditya.filebrowser.Constants.SELECTION_MODES.MULTIPLE_SELECTION.ordinal()");
-            urisList = data.getParcelableArrayListExtra(com.aditya.filebrowser.Constants.SELECTED_ITEMS);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                urisList = data.getParcelableArrayListExtra(com.aditya.filebrowser.Constants.SELECTED_ITEMS, Uri.class);
+            } else urisList = data.getParcelableArrayListExtra(com.aditya.filebrowser.Constants.SELECTED_ITEMS);
         }
 
         return urisList;
