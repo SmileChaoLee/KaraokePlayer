@@ -3,9 +3,11 @@ package com.smile.karaokeplayer;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -84,6 +86,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     protected AppCompatSeekBar player_duration_seekbar;
     private TextView durationTimeTextView;
 
+    private ImageButton orientationImageButton;
     private ImageButton repeatImageButton;
     private ImageButton switchToMusicImageButton;
     protected ImageButton switchToVocalImageButton;
@@ -149,6 +152,17 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         BaseApplication.InterstitialAd = new ShowingInterstitialAdsUtil(this, BaseApplication.facebookAds, BaseApplication.googleInterstitialAd);
 
+        mPresenter = getPlayerBasePresenter();
+        Log.d(TAG, "mPresenter = " + mPresenter);
+        if (mPresenter == null) {
+            Log.d(TAG, "mPresenter is null so exit activity.");
+            returnToPrevious();
+            return;
+        }
+        Intent callingIntent = getIntent();
+        mPresenter.initializeVariables(savedInstanceState, callingIntent, getResources().getConfiguration());
+        final PlayingParameters playingParam = mPresenter.getPlayingParam();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_base);
 
@@ -158,6 +172,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             mWindow.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
+        /*
         mPresenter = getPlayerBasePresenter();
         Log.d(TAG, "mPresenter = " + mPresenter);
         if (mPresenter == null) {
@@ -165,18 +180,14 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             returnToPrevious();
             return;
         }
-
-        // added on 2020-12-08
         Intent callingIntent = getIntent();
-        // Log.d(TAG, "PlayerBaseActivity --> getIntent() = " + callingIntent);
         mPresenter.initializeVariables(savedInstanceState, callingIntent);
-        //
+        final PlayingParameters playingParam = mPresenter.getPlayingParam();
+        */
 
         textFontSize = mPresenter.getTextFontSize();
         fontScale = mPresenter.getFontScale();
         toastTextSize = mPresenter.getToastTextSize();
-
-        final PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         // Video player view
         playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout);
@@ -212,23 +223,13 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         stopMediaImageButton = findViewById(R.id.stopMediaImageButton);
         nextMediaImageButton = findViewById(R.id.nextMediaImageButton);
 
+        orientationImageButton = findViewById(R.id.orientationImageButton);
         repeatImageButton = findViewById(R.id.repeatImageButton);
         switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton);
         switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton);
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
-        // bannerLinearLayout.setGravity(Gravity.TOP);
-
-        /*  // removed on 2020-08-28 18:57
-        String testString = "";
-        // for debug mode
-        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
-            testString = "IMG_16_9_APP_INSTALL#";
-        }
-        String facebookBannerID = testString + BaseApplication.facebookBannerID;
-        //
-        */
         myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
                 , BaseApplication.googleAdMobBannerID, BaseApplication.facebookBannerID);
         myBannerAdView.showBannerAdViewFromAdMobOrFacebook(BaseApplication.AdProvider);
@@ -246,13 +247,13 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         float durationTextSize = textFontSize * 0.6f;
         playingTimeTextView = findViewById(R.id.playingTimeTextView);
-        playingTimeTextView.setText("000:00");
+        playingTimeTextView.setText((CharSequence) "000:00");
         ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
 
         durationTimeTextView = findViewById(R.id.durationTimeTextView);
-        durationTimeTextView.setText("000:00");
+        durationTimeTextView.setText((CharSequence) "000:00");
         ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
@@ -265,7 +266,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         nativeTemplate = new GoogleAdMobNativeTemplate(this, nativeAdsFrameLayout
                 , nativeAdvancedId0, nativeAdTemplateView);
 
-        setImageButtonStatus();
+        setImageButtonStatus(); // must before setButtonsPositionAndSize()
         setButtonsPositionAndSize(getResources().getConfiguration());
         setOnClickEvents();
 
@@ -638,6 +639,22 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             }
         });
 
+        orientationImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Configuration config = getResources().getConfiguration();
+                int orientation;
+                if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    orientation = Configuration.ORIENTATION_LANDSCAPE;
+                } else {
+                    orientation = Configuration.ORIENTATION_PORTRAIT;
+                }
+                Log.d(TAG, "orientationImageButton.onClick.orientation = " + orientation);
+                mPresenter.setOrientationStatus(orientation);
+                setImageButtonStatus();
+            }
+        });
+
         repeatImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -663,12 +680,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             @Override
             public void onClick(View v) {
                 actionMenuView.showOverflowMenu();
-                PlayingParameters playingParam = mPresenter.getPlayingParam();
-                if (playingParam.isAutoPlay()) {
-                    autoPlayMenuItem.setChecked(true);
-                } else {
-                    autoPlayMenuItem.setChecked(false);
-                }
+                autoPlayMenuItem.setChecked(mPresenter.getPlayingParam().isAutoPlay());
             }
         });
 
@@ -780,10 +792,15 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
         //
-        layoutParams = (ViewGroup.MarginLayoutParams) repeatImageButton.getLayoutParams();
+        layoutParams = (ViewGroup.MarginLayoutParams) orientationImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(0, 0, 0, 0);
+
+        layoutParams = (ViewGroup.MarginLayoutParams) repeatImageButton.getLayoutParams();
+        layoutParams.height = imageButtonHeight;
+        layoutParams.width = imageButtonHeight;
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0);
 
         layoutParams = (ViewGroup.MarginLayoutParams) switchToMusicImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;
@@ -835,8 +852,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         // setting the width and the margins for nativeAdTemplateView
         layoutParams = (ViewGroup.MarginLayoutParams) nativeAdTemplateView.getLayoutParams();
         // 6 buttons and 5 gaps
-        int nativeViewWidth = imageButtonHeight * 6 + buttonMarginLeft * 5;
-        layoutParams.width = nativeViewWidth;
+        layoutParams.width = imageButtonHeight * 6 + buttonMarginLeft * 5;
         layoutParams.setMargins(0, 0, 0, 0);
         //
     }
@@ -867,12 +883,28 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         setSwitchToVocalImageButtonVisibility();    // abstract method
 
+        int orientation = playingParam.getOrientationStatus();
+        Log.d(TAG, "setImageButtonStatus.orientation = " + orientation);
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d(TAG, "setImageButtonStatus.set orientation to PORTRAIT");
+            orientationImageButton.setImageResource(R.drawable.phone_portrait);
+        } else {
+            Log.d(TAG, "setImageButtonStatus.set orientation to LANDSCAPE");
+            Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.phone_portrait);
+            Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
+            Canvas tempCanvas = new Canvas(bmResult);
+            tempCanvas.rotate(90, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
+            tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);
+            orientationImageButton.setImageBitmap(bmResult);
+        }
         // repeatImageButton
+        int backgroundColor = R.color.red;
         int repeatStatus = playingParam.getRepeatStatus();
         switch (repeatStatus) {
             case PlayerConstants.NoRepeatPlaying:
                 // no repeat but show symbol of repeat all song with transparent background
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
+                backgroundColor = R.color.transparentDark;
                 break;
             case PlayerConstants.RepeatOneSong:
                 // repeat one song
@@ -883,11 +915,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white);
                 break;
         }
-        if (repeatStatus == PlayerConstants.NoRepeatPlaying) {
-            repeatImageButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.transparentDark));
-        } else {
-            repeatImageButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), R.color.red));
-        }
+        repeatImageButton.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), backgroundColor));
     }
 
     @Override
@@ -968,7 +996,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         // build R.id.audioTrack submenu
         if (audioTrackMenuItem != null) {
             SubMenu subMenu = audioTrackMenuItem.getSubMenu();
-            int index=0;
+            int index;
             for (index = 0; index < audioTrackNumber; index++) {
                 // audio track index start from 1 for user interface
                 subMenu.getItem(index).setVisible(true);
@@ -1000,6 +1028,15 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             ShowingInterstitialAdsUtil.ShowInterstitialAdThread showAdAsyncTask =
                     BaseApplication.InterstitialAd.new ShowInterstitialAdThread(entryPoint, BaseApplication.AdProvider);
             showAdAsyncTask.startShowAd();
+        }
+    }
+
+    @Override
+    public void setScreenOrientation(int orientation) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         }
     }
 

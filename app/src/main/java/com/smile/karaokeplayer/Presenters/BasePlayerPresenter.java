@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.UriPermission;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,6 +68,7 @@ public abstract class BasePlayerPresenter {
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
         void showInterstitialAd(boolean isExit);
+        void setScreenOrientation(int orientation);
     }
 
     public abstract void setPlayerTime(int progress);
@@ -235,7 +237,7 @@ public abstract class BasePlayerPresenter {
     }
 
     @SuppressWarnings("unchecked")
-    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
+    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent, Configuration config) {
         Log.d(TAG, "PlayerBasePresenter --> initializeVariables()");
         if (savedInstanceState == null) {
             numberOfVideoTracks = 0;
@@ -254,6 +256,7 @@ public abstract class BasePlayerPresenter {
                     } else singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
                 }
             }
+            playingParam.setOrientationStatus(config.orientation);
         } else {
             // needed to be set
             numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
@@ -275,6 +278,7 @@ public abstract class BasePlayerPresenter {
                 singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
             } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
         }
+        setOrientationStatus(playingParam.getOrientationStatus());
     }
 
     public void onDurationSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -561,6 +565,11 @@ public abstract class BasePlayerPresenter {
                 playMediaFromUri(mediaUri);
             }
         }
+    }
+
+    public void setOrientationStatus(int orientation) {
+        playingParam.setOrientationStatus(orientation);
+        presentView.setScreenOrientation(orientation);
     }
 
     public void setRepeatSongStatus() {

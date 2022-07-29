@@ -1,5 +1,6 @@
 package com.smile.karaokeplayer.Models;
 
+import android.content.res.Configuration;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -21,6 +22,7 @@ public class PlayingParameters implements Parcelable {
     private long currentAudioPosition;
     private float currentVolume;
     private int currentSongIndex;
+    private int orientationStatus;
     private int repeatStatus;
     private boolean isPlaySingleSong;
     private boolean isInSongList;
@@ -30,8 +32,8 @@ public class PlayingParameters implements Parcelable {
                              int musicAudioChannel, int vocalAudioChannel,
                              int currentChannelPlayed, int musicAudioTrackIndex, int vocalAudioTrackIndex,
                              int currentAudioTrackIndexPlayed, long currentAudioPosition, float currentVolume,
-                             int currentSongIndex, int repeatStatus, boolean isPlaySingleSong,
-                             boolean isInSongList, int numOfPlayedSongs) {
+                             int currentSongIndex, int orientationStatus, int repeatStatus,
+                             boolean isPlaySingleSong, boolean isInSongList, int numOfPlayedSongs) {
         this.currentPlaybackState = currentPlaybackState;
         this.isAutoPlay = isAutoPlay;
         this.isMediaPrepared = isMediaPrepared;
@@ -44,6 +46,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioPosition = currentAudioPosition;
         this.currentVolume = currentVolume;
         this.currentSongIndex = currentSongIndex;
+        this.orientationStatus = orientationStatus;
         this.repeatStatus = repeatStatus;
         this.isPlaySingleSong = isPlaySingleSong;
         this.isInSongList = isInSongList;
@@ -137,6 +140,13 @@ public class PlayingParameters implements Parcelable {
         this.currentSongIndex = currentSongIndex;
     }
 
+    public int getOrientationStatus() {
+        return orientationStatus;
+    }
+    public void setOrientationStatus(int orientationStatus) {
+        this.orientationStatus = orientationStatus;
+    }
+
     public int getRepeatStatus() {
         return repeatStatus;
     }
@@ -184,6 +194,7 @@ public class PlayingParameters implements Parcelable {
         dest.writeLong(this.currentAudioPosition);
         dest.writeFloat(this.currentVolume);
         dest.writeInt(this.currentSongIndex);
+        dest.writeInt(this.orientationStatus);
         dest.writeInt(this.repeatStatus);
         dest.writeByte(this.isPlaySingleSong ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isInSongList ? (byte) 1 : (byte) 0);
@@ -203,6 +214,7 @@ public class PlayingParameters implements Parcelable {
         this.currentAudioPosition = in.readLong();
         this.currentVolume = in.readFloat();
         this.currentSongIndex = in.readInt();
+        this.orientationStatus = in.readInt();
         this.repeatStatus = in.readInt();
         this.isPlaySingleSong = in.readByte() != 0;
         this.isInSongList = in.readByte() != 0;
@@ -236,7 +248,7 @@ public class PlayingParameters implements Parcelable {
         setCurrentVolume(1.0f);
 
         setCurrentSongIndex(-1);    // no playing
-
+        setOrientationStatus(Configuration.ORIENTATION_PORTRAIT);
         setRepeatStatus(PlayerConstants.NoRepeatPlaying);    // no repeat playing songs
         setPlaySingleSong(false);    // default
         setInSongList(false);
