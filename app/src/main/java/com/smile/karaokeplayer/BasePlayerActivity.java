@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -643,12 +642,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             @Override
             public void onClick(View v) {
                 Configuration config = getResources().getConfiguration();
-                int orientation;
-                if (config.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                    orientation = Configuration.ORIENTATION_LANDSCAPE;
-                } else {
-                    orientation = Configuration.ORIENTATION_PORTRAIT;
-                }
+                int orientation = config.orientation==Configuration.ORIENTATION_PORTRAIT?
+                        Configuration.ORIENTATION_LANDSCAPE : Configuration.ORIENTATION_PORTRAIT;
                 Log.d(TAG, "orientationImageButton.onClick.orientation = " + orientation);
                 mPresenter.setOrientationStatus(orientation);
                 setImageButtonStatus();
@@ -885,18 +880,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         int orientation = playingParam.getOrientationStatus();
         Log.d(TAG, "setImageButtonStatus.orientation = " + orientation);
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG, "setImageButtonStatus.set orientation to PORTRAIT");
-            orientationImageButton.setImageResource(R.drawable.phone_portrait);
-        } else {
-            Log.d(TAG, "setImageButtonStatus.set orientation to LANDSCAPE");
-            Bitmap bmpOriginal = BitmapFactory.decodeResource(this.getResources(), R.drawable.phone_portrait);
-            Bitmap bmResult = Bitmap.createBitmap(bmpOriginal.getWidth(), bmpOriginal.getHeight(), Bitmap.Config.ARGB_8888);
-            Canvas tempCanvas = new Canvas(bmResult);
-            tempCanvas.rotate(90, bmpOriginal.getWidth()/2, bmpOriginal.getHeight()/2);
-            tempCanvas.drawBitmap(bmpOriginal, 0, 0, null);
-            orientationImageButton.setImageBitmap(bmResult);
-        }
+        orientationImageButton.setRotation(orientation==Configuration.ORIENTATION_LANDSCAPE? 0 : 90);
+        orientationImageButton.setImageResource(R.drawable.phone_portrait);
         // repeatImageButton
         int backgroundColor = R.color.red;
         int repeatStatus = playingParam.getRepeatStatus();
@@ -1033,11 +1018,8 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
     @Override
     public void setScreenOrientation(int orientation) {
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        } else {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        }
+        setRequestedOrientation(orientation==Configuration.ORIENTATION_LANDSCAPE?
+                ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
     // end of implementing PlayerBasePresenter.BasePresentView
