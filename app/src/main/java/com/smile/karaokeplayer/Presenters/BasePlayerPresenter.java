@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.UriPermission;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,8 +33,8 @@ public abstract class BasePlayerPresenter {
 
     private static final String TAG = BasePlayerPresenter.class.getName();
 
-    private final Activity activity;
-    private final BasePresentView presentView;
+    private final Activity mActivity;
+    private final BasePresentView mPresentView;
 
     protected final float textFontSize;
     protected final float fontScale;
@@ -89,12 +88,12 @@ public abstract class BasePlayerPresenter {
 
     public BasePlayerPresenter(Activity activity, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
-        this.activity = activity;
-        this.presentView = presentView;
+        mActivity = activity;
+        mPresentView = presentView;
 
-        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this.activity, ScreenUtil.FontSize_Pixel_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(this.activity, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(this.activity, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(mActivity, ScreenUtil.FontSize_Pixel_Type, null);
+        textFontSize = ScreenUtil.suitableFontSize(mActivity, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        fontScale = ScreenUtil.suitableFontScale(mActivity, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.7f * textFontSize;
     }
 
@@ -187,7 +186,7 @@ public abstract class BasePlayerPresenter {
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
             SongInfo songInfo;
-            SongListSQLite songListSQLite = new SongListSQLite(activity);
+            SongListSQLite songListSQLite = new SongListSQLite(mActivity);
             songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
             songListSQLite.closeDatabase();
             if (songInfo != null) {
@@ -215,7 +214,7 @@ public abstract class BasePlayerPresenter {
             orderedSongList = new ArrayList<>(songListTemp);
             autoPlaySongList();
         }  else {
-            ScreenUtil.showToast(activity, activity.getString(R.string.noFilesSelectedString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noFilesSelectedString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
         }
     }
@@ -237,7 +236,7 @@ public abstract class BasePlayerPresenter {
     }
 
     @SuppressWarnings("unchecked")
-    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent, Configuration config) {
+    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
         Log.d(TAG, "PlayerBasePresenter --> initializeVariables()");
         if (savedInstanceState == null) {
             numberOfVideoTracks = 0;
@@ -256,7 +255,7 @@ public abstract class BasePlayerPresenter {
                     } else singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
                 }
             }
-            playingParam.setOrientationStatus(config.orientation);
+            playingParam.setOrientationStatus(mActivity.getResources().getConfiguration().orientation);
         } else {
             // needed to be set
             numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
@@ -289,7 +288,7 @@ public abstract class BasePlayerPresenter {
         int minutes = (int)(positionTime / 60.0f);    // minutes
         int seconds = (int)positionTime - (minutes * 60);
         String durationString = String.format(Locale.ENGLISH, "%3d:%02d", minutes, seconds);
-        presentView.setPlayingTimeTextView(durationString);
+        mPresentView.setPlayingTimeTextView(durationString);
         if (fromUser) {
             setPlayerTime(progress);
         }
@@ -330,7 +329,7 @@ public abstract class BasePlayerPresenter {
         Log.d(TAG, "filePath = " + filePath);
 
         try {
-            ContentResolver contentResolver = activity.getContentResolver();
+            ContentResolver contentResolver = mActivity.getContentResolver();
             for (UriPermission perm : contentResolver.getPersistedUriPermissions()) {
                 if (perm.getUri().equals(Uri.parse(filePath))) {
                     Log.d(TAG, "playSingleSong() has URI permission");
@@ -362,7 +361,7 @@ public abstract class BasePlayerPresenter {
 
     public void startAutoPlay(boolean isSelfFinished) {
         Log.d(TAG, "startAutoPlay() is called.");
-        if (activity.isFinishing()) {
+        if (mActivity.isFinishing()) {
             // activity is being destroyed
             return;
         }
@@ -420,27 +419,27 @@ public abstract class BasePlayerPresenter {
         } else {
             Log.d(TAG, "startAutoPlay() --> not stillPlayNext");
             // added on 2021-07-7
-            presentView.showNativeAndBannerAd();
+            mPresentView.showNativeAndBannerAd();
             if (orderedSongListSize > 0) {
-                presentView.showInterstitialAd(false);
+                mPresentView.showInterstitialAd(false);
             }
             //
         }
 
-        presentView.setImageButtonStatus();
+        mPresentView.setImageButtonStatus();
     }
 
     public void setAutoPlayStatusAndAction() {
         boolean isAutoPlay = playingParam.isAutoPlay();
         if (!isAutoPlay) {
             // previous is not auto play
-            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readSavedSongList(activity);
+            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readSavedSongList(mActivity);
             if (songListTemp.size() > 0) {
                 orderedSongList = new ArrayList<>(songListTemp);
                 playingParam.setAutoPlay(true); // must be above autoPlay savedSongList()
                 autoPlaySongList();
             } else {
-                ScreenUtil.showToast(activity, activity.getString(R.string.noPlaylistString)
+                ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPlaylistString)
                         , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             }
         } else {
@@ -454,7 +453,7 @@ public abstract class BasePlayerPresenter {
             playingParam.setAutoPlay(false);    // must be the last in this block
         }
 
-        presentView.setImageButtonStatus();
+        mPresentView.setImageButtonStatus();
     }
 
     public void selectFileToOpenPresenter(ActivityResult result) {
@@ -474,7 +473,7 @@ public abstract class BasePlayerPresenter {
         int orderedSongListSize = orderedSongList.size();
         if (orderedSongListSize <= 1 ) {
             // only file in the play list
-            ScreenUtil.showToast(activity, activity.getString(R.string.noPreviousSongString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPreviousSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return;
         }
@@ -487,7 +486,7 @@ public abstract class BasePlayerPresenter {
             case PlayerConstants.RepeatOneSong:
                 if (currentIndex <= 0) {
                     // no more previous
-                    ScreenUtil.showToast(activity, activity.getString(R.string.noPreviousSongString)
+                    ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPreviousSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return;
                 }
@@ -517,7 +516,7 @@ public abstract class BasePlayerPresenter {
         int repeatStatus = playingParam.getRepeatStatus();
         if (orderedSongListSize <= 1 ) {
             // only file in the play list
-            ScreenUtil.showToast(activity, activity.getString(R.string.noNextSongString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noNextSongString)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return; // no more next
         }
@@ -525,7 +524,7 @@ public abstract class BasePlayerPresenter {
             case PlayerConstants.NoRepeatPlaying:
             case PlayerConstants.RepeatOneSong:
                 if (currentIndex >= (orderedSongListSize-1)) {
-                    ScreenUtil.showToast(activity, activity.getString(R.string.noNextSongString)
+                    ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noNextSongString)
                             , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                     return; // no more next
                 }
@@ -569,7 +568,7 @@ public abstract class BasePlayerPresenter {
 
     public void setOrientationStatus(int orientation) {
         playingParam.setOrientationStatus(orientation);
-        presentView.setScreenOrientation(orientation);
+        mPresentView.setScreenOrientation(orientation);
     }
 
     public void setRepeatSongStatus() {
@@ -588,7 +587,7 @@ public abstract class BasePlayerPresenter {
                 playingParam.setRepeatStatus(PlayerConstants.NoRepeatPlaying);
                 break;
         }
-        presentView.setImageButtonStatus();
+        mPresentView.setImageButtonStatus();
     }
 
     public void startPlay() {
@@ -671,11 +670,11 @@ public abstract class BasePlayerPresenter {
         playingParam.setCurrentPlaybackState(currentState);
         if (currentState == PlaybackStateCompat.STATE_BUFFERING) {
             Log.d(TAG, "updateStatusAndUi.PlaybackStateCompat.STATE_BUFFERING");
-            presentView.hideNativeAndBannerAd();
-            presentView.showBufferingMessage();
+            mPresentView.hideNativeAndBannerAd();
+            mPresentView.showBufferingMessage();
             return;
         }
-        presentView.dismissBufferingMessage();
+        mPresentView.dismissBufferingMessage();
         switch (currentState) {
             case PlaybackStateCompat.STATE_NONE:
                 // 1. initial state
@@ -683,10 +682,10 @@ public abstract class BasePlayerPresenter {
                 // 3. vlcPlayer finished playing (Event.EndReached)
                 // 4. vlcPlayer is stopped by user
                 Log.d(TAG, "updateStatusAndUi.PlaybackStateCompat.STATE_NONE");
-                presentView.playButtonOnPauseButtonOff();
+                mPresentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
                 playingParam.setMediaPrepared(false);
-                presentView.showNativeAndBannerAd();
+                mPresentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 // when playing
@@ -698,34 +697,34 @@ public abstract class BasePlayerPresenter {
                 playingParam.setMediaPrepared(true);  // has been prepared
                 startDurationSeekBarHandler();   // start updating duration seekbar
                 // set up a timer for supportToolbar's visibility
-                presentView.setTimerToHideSupportAndAudioController();
-                presentView.playButtonOffPauseButtonOn();
+                mPresentView.setTimerToHideSupportAndAudioController();
+                mPresentView.playButtonOffPauseButtonOn();
                 Log.d(TAG, "updateStatusAndUi.PlaybackStateCompat.STATE_PLAYING-->hideNativeAndBannerAd()");
                 onlyMusicShowNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_PAUSED:
                 // when playing is paused
                 Log.d(TAG, "updateStatusAndUi.PlaybackStateCompat.STATE_PAUSED");
-                presentView.playButtonOnPauseButtonOff();
-                presentView.showNativeAndBannerAd();
+                mPresentView.playButtonOnPauseButtonOff();
+                mPresentView.showNativeAndBannerAd();
                 break;
             case PlaybackStateCompat.STATE_STOPPED:
                 // 1. exoPlayer finished playing
                 // 3. after vlcPlayer finished playing
                 Log.d(TAG, "updateStatusAndUi.PlaybackStateCompat.STATE_STOPPED");
                 playingParam.setMediaPrepared(false);
-                presentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
-                presentView.playButtonOnPauseButtonOff();
+                mPresentView.update_Player_duration_seekbar_progress((int) getMediaDuration());
+                mPresentView.playButtonOnPauseButtonOff();
                 removeCallbacksAndMessages();
                 // nextSongOrShowNativeAndBannerAd(true);
                 startAutoPlay(true);
                 break;
             case PlaybackStateCompat.STATE_ERROR:
-                String formatNotSupportedString = activity.getString(R.string.formatNotSupportedString);
+                String formatNotSupportedString = mActivity.getString(R.string.formatNotSupportedString);
                 if (isCanShowNotSupportedFormat()) {
                     // only show once
                     setCanShowNotSupportedFormat(false);
-                    ScreenUtil.showToast(activity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+                    ScreenUtil.showToast(mActivity, formatNotSupportedString, toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
                 }
                 setMediaUri(null);
                 // remove the song that is unable to be played
@@ -750,17 +749,17 @@ public abstract class BasePlayerPresenter {
         if (getNumberOfVideoTracks() == 0) {
             // no video is being played, show native ads
             Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() == 0 --> showNativeAndBannerAd()");
-            presentView.showNativeAndBannerAd();
+            mPresentView.showNativeAndBannerAd();
         } else {
             Log.d(TAG, "musicShowNativeAndBannerAd() --> getNumberOfVideoTracks() > 0 --> hideNativeAndBannerAd()");
-            presentView.hideNativeAndBannerAd();
+            mPresentView.hideNativeAndBannerAd();
         }
     }
 
     public void initMediaSessionCompat() {
         Log.d(TAG, "PlayerBasePresenter.initMediaSessionCompat() is called.");
         // Create a MediaSessionCompat
-        mediaSessionCompat = new MediaSessionCompat(activity, PlayerConstants.LOG_TAG);
+        mediaSessionCompat = new MediaSessionCompat(mActivity, PlayerConstants.LOG_TAG);
         // Do not let MediaButtons restart the player when the app is not visible
         mediaSessionCompat.setMediaButtonReceiver(null);
         mediaSessionCompat.setActive(true); // might need to find better place to put

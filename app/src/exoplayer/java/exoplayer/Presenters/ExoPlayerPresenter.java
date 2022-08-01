@@ -5,7 +5,6 @@ import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RE
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -442,9 +441,9 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     @SuppressWarnings("unchecked")
     @Override
-    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent, Configuration config) {
+    public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
         Log.d(TAG, "ExoPlayerPresenter --> initializeVariables()");
-        super.initializeVariables(savedInstanceState, callingIntent, config);
+        super.initializeVariables(savedInstanceState, callingIntent);
         if (savedInstanceState == null) {
             audioTrackIndicesList = new ArrayList<>();
             trackSelectorParameters = new TrackSelectionParameters.Builder(mActivity).build();

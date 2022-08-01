@@ -159,7 +159,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             return;
         }
         Intent callingIntent = getIntent();
-        mPresenter.initializeVariables(savedInstanceState, callingIntent, getResources().getConfiguration());
+        mPresenter.initializeVariables(savedInstanceState, callingIntent);
         final PlayingParameters playingParam = mPresenter.getPlayingParam();
 
         super.onCreate(savedInstanceState);
