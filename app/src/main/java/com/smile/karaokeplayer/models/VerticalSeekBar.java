@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Models;
+package com.smile.karaokeplayer.models;
 
 import android.content.Context;
 import android.graphics.Canvas;

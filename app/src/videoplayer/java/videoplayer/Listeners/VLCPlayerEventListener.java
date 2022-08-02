@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import com.smile.karaokeplayer.Models.PlayingParameters;
+import com.smile.karaokeplayer.models.PlayingParameters;
 
 import org.videolan.libvlc.MediaPlayer;
 import videoplayer.Presenters.VLCPlayerPresenter;

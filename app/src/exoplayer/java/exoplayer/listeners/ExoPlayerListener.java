@@ -1,4 +1,4 @@
-package exoplayer.Listeners;
+package exoplayer.listeners;
 
 import android.app.Activity;
 import android.util.Log;
@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 
-import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoPlayerListener implements Player.Listener {
 

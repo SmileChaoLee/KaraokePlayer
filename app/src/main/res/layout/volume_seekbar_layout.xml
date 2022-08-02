@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.smile.karaokeplayer.Models.VerticalSeekBar
+<com.smile.karaokeplayer.models.VerticalSeekBar
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/volumeSeekBar"
     android:layout_width="wrap_content"
@@ -16,4 +16,4 @@
     android:padding="0dp"
     android:layout_centerHorizontal="true"
     android:layout_centerInParent="true">
-</com.smile.karaokeplayer.Models.VerticalSeekBar>
+</com.smile.karaokeplayer.models.VerticalSeekBar>

@@ -22,10 +22,10 @@ import com.google.android.exoplayer2.ui.StyledPlayerView;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.BasePlayerActivity;
-import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.presenters.BasePlayerPresenter;
 import com.smile.karaokeplayer.R;
 
-import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = ExoPlayerActivity.class.getName();

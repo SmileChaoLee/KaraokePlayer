@@ -1,4 +1,4 @@
-package exoplayer.Presenters;
+package exoplayer.presenters;
 
 import static com.google.android.exoplayer2.DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON;
 
@@ -43,22 +43,22 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastState;
 import com.google.android.gms.dynamite.DynamiteModule;
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.constants.CommonConstants;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.presenters.BasePlayerPresenter;
 import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
-import exoplayer.Callbacks.ExoMediaControllerCallback;
-import exoplayer.Callbacks.ExoPlaybackPreparer;
-import exoplayer.ExoRenderersFactory.MyRenderersFactory;
-import exoplayer.Listeners.ExoPlayerCastStateListener;
-import exoplayer.Listeners.ExoPlayerListener;
-import exoplayer.Utilities.UriUtil;
+import exoplayer.audioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.callbacks.ExoMediaControllerCallback;
+import exoplayer.callbacks.ExoPlaybackPreparer;
+import exoplayer.exoRenderersFactory.MyRenderersFactory;
+import exoplayer.listeners.ExoPlayerCastStateListener;
+import exoplayer.listeners.ExoPlayerListener;
+import exoplayer.utilities.UriUtil;
 
 public class ExoPlayerPresenter extends BasePlayerPresenter {
 

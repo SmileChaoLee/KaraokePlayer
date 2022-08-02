@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.ArrayAdapters;
+package com.smile.karaokeplayer.arrayAdapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,7 +18,6 @@ import java.util.List;
 public class SpinnerAdapter extends ArrayAdapter {
 
     private static final String TAG = "ArrayAdapters.SpinnerAdapter";
-    private final Context mContext;
     private final Activity mActivity;
     private final int mResourceId;
     private final int mTextViewResourceId;
@@ -28,8 +27,7 @@ public class SpinnerAdapter extends ArrayAdapter {
     @SuppressWarnings("unchecked")
     public SpinnerAdapter(@NonNull Context context, int resource, int textViewResourceId, @NonNull List objects, float textSize, int scaleType) {
         super(context, resource, textViewResourceId, objects);
-        mContext = context;
-        mActivity = (Activity)mContext;
+        mActivity = (Activity)context;
         mResourceId = resource;
         mTextViewResourceId = textViewResourceId;
         mTextFontSize = textSize;

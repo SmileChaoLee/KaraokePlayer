@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Presenters;
+package com.smile.karaokeplayer.presenters;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -17,13 +17,13 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Models.SongInfo;
-import com.smile.karaokeplayer.Models.SongListSQLite;
+import com.smile.karaokeplayer.constants.CommonConstants;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.models.PlayingParameters;
+import com.smile.karaokeplayer.models.SongInfo;
+import com.smile.karaokeplayer.models.SongListSQLite;
 import com.smile.karaokeplayer.R;
-import com.smile.karaokeplayer.Utilities.DatabaseAccessUtil;
+import com.smile.karaokeplayer.utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -107,15 +107,6 @@ public abstract class BasePlayerPresenter {
         return toastTextSize;
     }
 
-    /*
-    public SongInfo getSingleSongInfo() {
-        return singleSongInfo;
-    }
-    public void setSingleSongInfo(SongInfo singleSongInfo) {
-        this.singleSongInfo = singleSongInfo;
-    }
-    */
-
     public Uri getMediaUri() {
         return mediaUri;
     }
@@ -138,24 +129,9 @@ public abstract class BasePlayerPresenter {
         this.canShowNotSupportedFormat = canShowNotSupportedFormat;
     }
 
-    /*
-    public ArrayList<SongInfo> getOrderedSongList() {
-        return orderedSongList;
-    }
-    public void setOrderedSongList(ArrayList<SongInfo> orderedSongList) {
-        this.orderedSongList = orderedSongList;
-    }
-    */
-
     public PlayingParameters getPlayingParam() {
         return playingParam;
     }
-
-    /*
-    public BasePresentView getPresentView() {
-        return presentView;
-    }
-    */
 
     private void setPlayingParameters(SongInfo songInfo) {
         playingParam.setInSongList(songInfo.getIncluded().equals("1"));
@@ -163,15 +139,22 @@ public abstract class BasePlayerPresenter {
         playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
         playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
         playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
+
+        playingParam.setCurrentAudioTrackIndexPlayed(songInfo.getVocalTrackNo());
+        playingParam.setCurrentChannelPlayed(songInfo.getVocalChannel());
     }
 
     private void autoPlaySongList() {
+        Log.d(TAG, "autoPlaySongList");
         canShowNotSupportedFormat = true;
         if ( (orderedSongList != null) && (orderedSongList.size() > 0) ) {
             // playingParam.setAutoPlay(true);
             playingParam.setCurrentSongIndex(-1); // next song that will be played, which the index is 0
             // start playing video from list
             startAutoPlay(false);
+        } else {
+            if (orderedSongList == null) Log.d(TAG, "autoPlaySongList.orderedSongList is null");
+            else Log.d(TAG, "autoPlaySongList.orderedSongList.size() = " + orderedSongList.size());
         }
     }
 
@@ -185,13 +168,16 @@ public abstract class BasePlayerPresenter {
         ArrayList<SongInfo> songListTemp = new ArrayList<>();
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
-            SongInfo songInfo;
             SongListSQLite songListSQLite = new SongListSQLite(mActivity);
-            songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
+            SongInfo songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
             songListSQLite.closeDatabase();
             if (songInfo != null) {
                 Log.d(TAG, "Found this song on song list.");
                 songInfo.setIncluded("1");  // set to in the list
+                Log.d(TAG, "songInfo.getMusicTrackNo() =" + songInfo.getMusicTrackNo());
+                Log.d(TAG, "songInfo.getVocalTrackNo() =" + songInfo.getVocalTrackNo());
+                Log.d(TAG, "songInfo.getMusicChannel() =" + songInfo.getMusicChannel());
+                Log.d(TAG, "songInfo.getVocalChannel() =" + songInfo.getVocalChannel());
             } else {
                 Log.d(TAG, "Could not find this song on song list.");
                 songInfo = new SongInfo();
@@ -220,6 +206,7 @@ public abstract class BasePlayerPresenter {
     }
 
     protected void playMediaFromUri(Uri uri) {
+        Log.d(TAG, "playMediaFromUri.uri = " + uri);
         // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
         // pass the saved instance of playingParam to
         // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
@@ -237,7 +224,7 @@ public abstract class BasePlayerPresenter {
 
     @SuppressWarnings("unchecked")
     public void initializeVariables(Bundle savedInstanceState, Intent callingIntent) {
-        Log.d(TAG, "PlayerBasePresenter --> initializeVariables()");
+        Log.d(TAG, "initializeVariables()");
         if (savedInstanceState == null) {
             numberOfVideoTracks = 0;
             numberOfAudioTracks = 0;
@@ -253,6 +240,7 @@ public abstract class BasePlayerPresenter {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {    // API 33
                         singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
                     } else singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
+                    Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
                 }
             }
             playingParam.setOrientationStatus(mActivity.getResources().getConfiguration().orientation);
@@ -261,14 +249,16 @@ public abstract class BasePlayerPresenter {
             numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
             numberOfAudioTracks = savedInstanceState.getInt(PlayerConstants.NumberOfAudioTracksState);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                orderedSongList = savedInstanceState.getParcelable(PlayerConstants.OrderedSongListState, ArrayList.class);
-            } else orderedSongList = savedInstanceState.getParcelable(PlayerConstants.OrderedSongListState);
+                orderedSongList = (ArrayList<SongInfo>)savedInstanceState.getSerializable(PlayerConstants.OrderedSongListState, ArrayList.class);
+            } else orderedSongList = (ArrayList<SongInfo>)savedInstanceState.getSerializable(PlayerConstants.OrderedSongListState);
+            Log.d(TAG, "initializeVariables.orderedSongList = " + orderedSongList);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState,Uri.class);
             } else mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState);
             if (Build.VERSION.SDK_INT >= 33) {
                 playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters.class);
             } else playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState);
+            Log.d(TAG, "initializeVariables.playingParam = " + playingParam);
             canShowNotSupportedFormat = savedInstanceState.getBoolean(PlayerConstants.CanShowNotSupportedFormatState);
             if (playingParam == null) {
                 initializePlayingParam();
@@ -276,6 +266,7 @@ public abstract class BasePlayerPresenter {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
             } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
+            Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
         }
         setOrientationStatus(playingParam.getOrientationStatus());
     }
@@ -314,10 +305,10 @@ public abstract class BasePlayerPresenter {
     }
 
     public void playSingleSong(SongInfo songInfo) {
+        Log.d(TAG, "playSingleSong().");
         if (songInfo == null) {
             return;
         }
-
         String filePath = songInfo.getFilePath();
         if (filePath==null) {
             return;
@@ -347,12 +338,6 @@ public abstract class BasePlayerPresenter {
         }
 
         setPlayingParameters(songInfo);
-        /*
-        // removed on 2022-01-03
-        playingParam.setCurrentVideoTrackIndexPlayed(0);
-        playingParam.setCurrentAudioTrackIndexPlayed(playingParam.getVocalAudioTrackIndex());
-        playingParam.setCurrentChannelPlayed(playingParam.getVocalAudioChannel());
-        */
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaPrepared(false);
@@ -371,12 +356,7 @@ public abstract class BasePlayerPresenter {
             orderedSongListSize = orderedSongList.size();
         }
 
-        Log.d(TAG, "startAutoPlay() --> orderedSongListSize = " + orderedSongListSize);
-        /*  removed on 2021-07-07
-        if (orderedSongListSize == 0) {
-            return;
-        }
-         */
+        Log.d(TAG, "startAutoPlay.orderedSongListSize = " + orderedSongListSize);
 
         boolean stillPlayNext = true;
         int repeatStatus = playingParam.getRepeatStatus();
@@ -412,12 +392,12 @@ public abstract class BasePlayerPresenter {
         }
 
         if (stillPlayNext) {    // still play the next song
-            SongInfo songInfo = orderedSongList.get(nextSongIndex);
-            playSingleSong(songInfo);
+            singleSongInfo = orderedSongList.get(nextSongIndex);
+            playSingleSong(singleSongInfo);
             playingParam.setCurrentSongIndex(nextSongIndex);    // set nextSongIndex to currentSongIndex
-            Log.d(TAG, "startAutoPlay() --> stillPlayNext--> setCurrentSongIndex() = " + nextSongIndex);
+            Log.d(TAG, "startAutoPlay.stillPlayNext.setCurrentSongIndex() = " + nextSongIndex);
         } else {
-            Log.d(TAG, "startAutoPlay() --> not stillPlayNext");
+            Log.d(TAG, "startAutoPlay.not stillPlayNext");
             // added on 2021-07-7
             mPresentView.showNativeAndBannerAd();
             if (orderedSongListSize > 0) {
@@ -537,18 +517,17 @@ public abstract class BasePlayerPresenter {
     }
 
     public Uri getValidatedUri(Uri tempUri) {
-        Log.d(TAG, "PlayerBasePresenter.getValidatedUri() is called.");
+        Log.d(TAG, "getValidatedUri");
         return tempUri;
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {
+        Log.d(TAG, "playTheSongThatWasPlayedBeforeActivityCreated");
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
                 // called by SongListActivity
-                if (singleSongInfo == null) {
-                    Log.d(TAG, "singleSongInfo is null");
-                } else {
-                    Log.d(TAG, "singleSongInfo is not null");
+                Log.d(TAG, "singleSongInfo = " + singleSongInfo);
+                if (singleSongInfo != null) {
                     playingParam.setAutoPlay(false);
                     // added on 2020-12-08
                     // set orderedSongList that only contains song info from SongListActivity
@@ -559,7 +538,7 @@ public abstract class BasePlayerPresenter {
             }
         } else {
             int playbackState = playingParam.getCurrentPlaybackState();
-            Log.d(TAG, "onActivityCreated() --> playingParam.getCurrentPlaybackState() = " + playbackState);
+            Log.d(TAG, "playTheSongThatWasPlayedBeforeActivityCreated.playingParam.getCurrentPlaybackState() = " + playbackState);
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
                 playMediaFromUri(mediaUri);
             }
@@ -596,6 +575,7 @@ public abstract class BasePlayerPresenter {
         if (playbackState==PlaybackStateCompat.STATE_NONE
             || playbackState==PlaybackStateCompat.STATE_STOPPED) {
             // start playing the first song in the list
+            Log.d(TAG, "startPlay.calling autoPlaySongList()");
             autoPlaySongList();
             return;
         }
@@ -782,10 +762,12 @@ public abstract class BasePlayerPresenter {
     public void saveInstanceState(@NonNull Bundle outState) {
         outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);
         outState.putInt(PlayerConstants.NumberOfAudioTracksState, numberOfAudioTracks);
-        outState.putParcelableArrayList(PlayerConstants.OrderedSongListState, orderedSongList);
+        Log.d(TAG, "saveInstanceState.orderedSongList = " + orderedSongList);
+        outState.putSerializable(PlayerConstants.OrderedSongListState, orderedSongList);
         outState.putParcelable(PlayerConstants.MediaUriState, mediaUri);
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
+        Log.d(TAG, "saveInstanceState.singleSongInfo = " + singleSongInfo);
         outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
     }
 }

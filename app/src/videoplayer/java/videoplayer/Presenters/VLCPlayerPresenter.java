@@ -16,9 +16,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.constants.CommonConstants;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.presenters.BasePlayerPresenter;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.MediaPlayer;

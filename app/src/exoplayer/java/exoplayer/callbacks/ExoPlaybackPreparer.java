@@ -1,4 +1,4 @@
-package exoplayer.Callbacks;
+package exoplayer.callbacks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -15,10 +15,10 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.PlayingParameters;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.models.PlayingParameters;
 
-import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPreparer {
 

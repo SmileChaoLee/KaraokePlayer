@@ -9,7 +9,7 @@ import com.smile.karaokeplayer.BaseSongDataActivity;
 import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
-import exoplayer.Utilities.UriUtil;
+import exoplayer.utilities.UriUtil;
 
 public class SongDataActivity extends BaseSongDataActivity {
 

@@ -10,7 +10,7 @@ import com.smile.karaokeplayer.BaseSongListActivity;
 import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
-import exoplayer.Utilities.UriUtil;
+import exoplayer.utilities.UriUtil;
 
 public class SongListActivity extends BaseSongListActivity {
     private static final String TAG = "SongListActivity";

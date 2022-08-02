@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.Receivers;
+package com.smile.karaokeplayer.receivers;
 
 import android.content.Context;
 import android.content.Intent;

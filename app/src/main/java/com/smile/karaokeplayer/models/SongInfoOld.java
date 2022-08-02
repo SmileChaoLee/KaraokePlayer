@@ -1,11 +1,11 @@
-package com.smile.karaokeplayer.Models;
+package com.smile.karaokeplayer.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
+import com.smile.karaokeplayer.constants.CommonConstants;
 
-public class SongInfo implements Parcelable {
+public class SongInfoOld implements Parcelable {
     private int id;
     private String songName;
     private String filePath;
@@ -15,7 +15,7 @@ public class SongInfo implements Parcelable {
     private int vocalChannel;
     private String included;   // is included in playlist
 
-    public SongInfo() {
+    public SongInfoOld() {
         songName = "";
         filePath = "";
         musicTrackNo = 1;
@@ -25,7 +25,7 @@ public class SongInfo implements Parcelable {
         included = "1"; // default is included in playlist
     }
 
-    public SongInfo(SongInfo songInfo) {
+    public SongInfoOld(SongInfoOld songInfo) {
         id = songInfo.id;
         songName = songInfo.songName;
         filePath = songInfo.filePath;
@@ -36,7 +36,7 @@ public class SongInfo implements Parcelable {
         included = songInfo.included;
     }
 
-    public SongInfo(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel, String included) {
+    public SongInfoOld(int id, String songName, String filePath, int musicTrackNo, int musicChannel, int vocalTrackNo, int vocalChannel, String included) {
         this.id = id;
         this.songName = songName;
         this.filePath = filePath;
@@ -142,7 +142,7 @@ public class SongInfo implements Parcelable {
         dest.writeString(this.included);
     }
 
-    protected SongInfo(Parcel in) {
+    protected SongInfoOld(Parcel in) {
         this.id = in.readInt();
         this.songName = in.readString();
         this.filePath = in.readString();
@@ -153,15 +153,15 @@ public class SongInfo implements Parcelable {
         this.included = in.readString();
     }
 
-    public static final Creator<SongInfo> CREATOR = new Creator<SongInfo>() {
+    public static final Creator<SongInfoOld> CREATOR = new Creator<SongInfoOld>() {
         @Override
-        public SongInfo createFromParcel(Parcel source) {
-            return new SongInfo(source);
+        public SongInfoOld createFromParcel(Parcel source) {
+            return new SongInfoOld(source);
         }
 
         @Override
-        public SongInfo[] newArray(int size) {
-            return new SongInfo[size];
+        public SongInfoOld[] newArray(int size) {
+            return new SongInfoOld[size];
         }
     };
 }

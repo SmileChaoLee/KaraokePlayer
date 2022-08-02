@@ -1,4 +1,4 @@
-package exoplayer.Listeners;
+package exoplayer.listeners;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -10,7 +10,7 @@ import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import exoplayer.ExoPlayerActivity;
-import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoPlayerCastStateListener implements com.google.android.gms.cast.framework.CastStateListener {
     private static final String TAG = "ExoPlayerCastStateListener";

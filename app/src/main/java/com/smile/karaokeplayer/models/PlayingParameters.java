@@ -1,12 +1,12 @@
-package com.smile.karaokeplayer.Models;
+package com.smile.karaokeplayer.models;
 
 import android.content.res.Configuration;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.media.session.PlaybackStateCompat;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
+import com.smile.karaokeplayer.constants.CommonConstants;
+import com.smile.karaokeplayer.constants.PlayerConstants;
 
 public class PlayingParameters implements Parcelable {
 

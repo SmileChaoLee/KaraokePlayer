@@ -1,4 +1,4 @@
-package exoplayer.ExoRenderersFactory;
+package exoplayer.exoRenderersFactory;
 
 import android.content.Context;
 import androidx.annotation.Nullable;
@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.audio.AudioProcessor;
 import com.google.android.exoplayer2.audio.AudioSink;
 import com.google.android.exoplayer2.audio.DefaultAudioSink;
 
-import exoplayer.AudioProcessors.StereoVolumeAudioProcessor;
+import exoplayer.audioProcessors.StereoVolumeAudioProcessor;
 
 public class MyRenderersFactory extends DefaultRenderersFactory {
 

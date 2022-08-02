@@ -1,11 +1,11 @@
-package exoplayer.Callbacks;
+package exoplayer.callbacks;
 
 import android.annotation.SuppressLint;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import exoplayer.Presenters.ExoPlayerPresenter;
+import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoMediaControllerCallback extends MediaControllerCompat.Callback {
 

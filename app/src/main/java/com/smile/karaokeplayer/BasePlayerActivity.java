@@ -46,11 +46,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
-import com.smile.karaokeplayer.Constants.CommonConstants;
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.PlayingParameters;
-import com.smile.karaokeplayer.Models.VerticalSeekBar;
-import com.smile.karaokeplayer.Presenters.BasePlayerPresenter;
+import com.smile.karaokeplayer.constants.CommonConstants;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.models.PlayingParameters;
+import com.smile.karaokeplayer.models.VerticalSeekBar;
+import com.smile.karaokeplayer.presenters.BasePlayerPresenter;
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate;
 import com.smile.smilelibraries.Models.ExitAppTimer;
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil;

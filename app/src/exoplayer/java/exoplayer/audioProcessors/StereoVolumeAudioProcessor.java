@@ -1,4 +1,4 @@
-package exoplayer.AudioProcessors;
+package exoplayer.audioProcessors;
 
 import android.util.Log;
 

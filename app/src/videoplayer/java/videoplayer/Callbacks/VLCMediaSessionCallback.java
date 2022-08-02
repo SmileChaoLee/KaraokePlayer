@@ -9,8 +9,8 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 
-import com.smile.karaokeplayer.Constants.PlayerConstants;
-import com.smile.karaokeplayer.Models.PlayingParameters;
+import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.models.PlayingParameters;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;

@@ -1,9 +1,9 @@
-package com.smile.karaokeplayer.Utilities;
+package com.smile.karaokeplayer.utilities;
 
 import android.content.Context;
 
-import com.smile.karaokeplayer.Models.SongInfo;
-import com.smile.karaokeplayer.Models.SongListSQLite;
+import com.smile.karaokeplayer.models.SongInfo;
+import com.smile.karaokeplayer.models.SongListSQLite;
 
 import java.util.ArrayList;
 
