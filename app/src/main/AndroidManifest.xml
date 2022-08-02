@@ -28,7 +28,7 @@
             android:value="com.google.android.exoplayer2.ext.cast.DefaultCastOptionsProvider"/>
 
         <receiver
-            android:name="com.smile.karaokeplayer.Receivers.MyMediaButtonReceiver"
+            android:name="com.smile.karaokeplayer.receivers.MyMediaButtonReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
