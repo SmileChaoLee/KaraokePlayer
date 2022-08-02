@@ -387,11 +387,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
-            int audioChannel;  // default channel
+            int audioChannelPlayed;  // default channel
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();
-                audioChannel = playingParam.getCurrentChannelPlayed();
+                audioChannelPlayed = playingParam.getCurrentChannelPlayed();
                 Log.d(TAG, "Auto play or playing single song.");
             } else {
                 // for open media. do not know the music track and vocal track
@@ -399,16 +399,16 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 // guess
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();
                 Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.playingParam.getCurrentAudioTrackIndexPlayed() = " + audioTrackIdPlayed);
-                audioChannel = playingParam.getCurrentChannelPlayed();
-                Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.playingParam.getCurrentChannelPlayed() = " + audioChannel);
+                audioChannelPlayed = playingParam.getCurrentChannelPlayed();
+                Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.playingParam.getCurrentChannelPlayed() = " + audioChannelPlayed);
                 Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.numberOfAudioTracks = " + numberOfAudioTracks);
                 if (numberOfAudioTracks >= 2) {
                     // more than 2 audio tracks
-                    audioChannel = CommonConstants.StereoChannel;
+                    audioChannelPlayed = CommonConstants.StereoChannel;
                     playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
-                    playingParam.setVocalAudioChannel(audioChannel);
+                    playingParam.setVocalAudioChannel(audioChannelPlayed);
                     playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed==1? 2:1);
-                    playingParam.setMusicAudioChannel(audioChannel);
+                    playingParam.setMusicAudioChannel(audioChannelPlayed);
                 } else {
                     // only one track
                     audioTrackIdPlayed = 1;
@@ -416,20 +416,20 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                     playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
                     if (playingParam.getVocalAudioChannel() == playingParam.getMusicAudioChannel()) {
                         // the originals are the same then it CommonConstants.StereoChannel
-                        audioChannel = CommonConstants.LeftChannel;
-                        playingParam.setVocalAudioChannel(audioChannel);
+                        audioChannelPlayed = CommonConstants.LeftChannel;
+                        playingParam.setVocalAudioChannel(audioChannelPlayed);
                         playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
                     }
                 }
             }
 
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
-            Log.d(TAG, "audioChannel = " + audioChannel);
+            Log.d(TAG, "audioChannelPlayed = " + audioChannelPlayed);
 
             if (audioTrackIdPlayed < 0) {
                 audioTrackIdPlayed = 1;
             }
-            setAudioTrackAndChannel(audioTrackIdPlayed, audioChannel);
+            setAudioTrackAndChannel(audioTrackIdPlayed, audioChannelPlayed);
         }
 
         // build R.id.audioTrack submenu
@@ -574,7 +574,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         exoPlayer.prepare();    // replace exoPlayer.retry();
         //
         exoPlayer.setPlayWhenReady(true);
-        Log.d(TAG, "replayMedia()--> exoPlayer.seekTo(currentAudioPosition).");
+        Log.d(TAG, "specificPlayerReplayMedia.exoPlayer.seekTo(currentAudioPosition).");
     }
 
     @Override

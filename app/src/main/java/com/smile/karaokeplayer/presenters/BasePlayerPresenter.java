@@ -133,15 +133,16 @@ public abstract class BasePlayerPresenter {
         return playingParam;
     }
 
-    private void setPlayingParameters(SongInfo songInfo) {
+    private void setPlayingParameters(SongInfo songInfo, boolean isSameOne) {
         playingParam.setInSongList(songInfo.getIncluded().equals("1"));
         playingParam.setMusicAudioTrackIndex(songInfo.getMusicTrackNo());
         playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
         playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
         playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-
-        playingParam.setCurrentAudioTrackIndexPlayed(songInfo.getVocalTrackNo());
-        playingParam.setCurrentChannelPlayed(songInfo.getVocalChannel());
+        if (!isSameOne) {
+            playingParam.setCurrentAudioTrackIndexPlayed(songInfo.getVocalTrackNo());
+            playingParam.setCurrentChannelPlayed(songInfo.getVocalChannel());
+        }
     }
 
     private void autoPlaySongList() {
@@ -304,7 +305,7 @@ public abstract class BasePlayerPresenter {
         setAudioVolume(playingParam.getCurrentVolume());
     }
 
-    public void playSingleSong(SongInfo songInfo) {
+    public void playSingleSong(SongInfo songInfo, boolean isSameOne) {
         Log.d(TAG, "playSingleSong().");
         if (songInfo == null) {
             return;
@@ -337,7 +338,7 @@ public abstract class BasePlayerPresenter {
             return;
         }
 
-        setPlayingParameters(songInfo);
+        setPlayingParameters(songInfo, isSameOne);
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaPrepared(false);
@@ -345,7 +346,7 @@ public abstract class BasePlayerPresenter {
     }
 
     public void startAutoPlay(boolean isSelfFinished) {
-        Log.d(TAG, "startAutoPlay() is called.");
+        Log.d(TAG, "startAutoPlay");
         if (mActivity.isFinishing()) {
             // activity is being destroyed
             return;
@@ -362,7 +363,7 @@ public abstract class BasePlayerPresenter {
         int repeatStatus = playingParam.getRepeatStatus();
         int currentSongIndex = playingParam.getCurrentSongIndex();
         int nextSongIndex = currentSongIndex + 1; // preparing the next
-        Log.d(TAG, "startAutoPlay() --> playingParam.getCurrentSongIndex()+1 = " + nextSongIndex);
+        Log.d(TAG, "startAutoPlay.playingParam.getCurrentSongIndex()+1 = " + nextSongIndex);
 
         if (orderedSongListSize == 0) {
             stillPlayNext = false;  // no more songs
@@ -376,10 +377,10 @@ public abstract class BasePlayerPresenter {
                     break;
                 case PlayerConstants.RepeatOneSong:
                     // repeat one song
-                    Log.d(TAG, "startAutoPlay() --> RepeatOneSong");
+                    Log.d(TAG, "startAutoPlay.RepeatOneSong");
                     if (isSelfFinished && (nextSongIndex > 0) && (nextSongIndex <= orderedSongListSize)) {
                         nextSongIndex--;
-                        Log.d(TAG, "startAutoPlay() --> RepeatOneSong --> nextSongIndex = " + nextSongIndex);
+                        Log.d(TAG, "startAutoPlay.RepeatOneSong.nextSongIndex = " + nextSongIndex);
                     }
                     break;
                 case PlayerConstants.RepeatAllSongs:
@@ -392,8 +393,14 @@ public abstract class BasePlayerPresenter {
         }
 
         if (stillPlayNext) {    // still play the next song
-            singleSongInfo = orderedSongList.get(nextSongIndex);
-            playSingleSong(singleSongInfo);
+
+            SongInfo songInfo = orderedSongList.get(nextSongIndex);
+            Log.d(TAG, "startAutoPlay.songInfo = " + songInfo);
+            Log.d(TAG, "startAutoPlay.singleSongInfo = " + singleSongInfo);
+            // songInfo.equals(singleSongInfo) = true, then use original audio track and channel
+            Log.d(TAG, "startAutoPlay.songInfo.equals(singleSongInfo) = " + songInfo.equals(singleSongInfo));
+            playSingleSong(songInfo, songInfo.equals(singleSongInfo));
+            singleSongInfo = songInfo;
             playingParam.setCurrentSongIndex(nextSongIndex);    // set nextSongIndex to currentSongIndex
             Log.d(TAG, "startAutoPlay.stillPlayNext.setCurrentSongIndex() = " + nextSongIndex);
         } else {
@@ -533,6 +540,7 @@ public abstract class BasePlayerPresenter {
                     // set orderedSongList that only contains song info from SongListActivity
                     orderedSongList = new ArrayList<>();
                     orderedSongList.add(singleSongInfo);
+                    singleSongInfo = new SongInfo();    // reset for cycle playing
                     autoPlaySongList();
                 }
             }
@@ -570,7 +578,7 @@ public abstract class BasePlayerPresenter {
     }
 
     public void startPlay() {
-        Log.d(TAG, "startPlay() is called.");
+        Log.d(TAG, "startPlay");
         int playbackState = playingParam.getCurrentPlaybackState();
         if (playbackState==PlaybackStateCompat.STATE_NONE
             || playbackState==PlaybackStateCompat.STATE_STOPPED) {
@@ -588,12 +596,12 @@ public abstract class BasePlayerPresenter {
                 if (mediaTransportControls != null) {
                     mediaTransportControls.play();
                 }
-                Log.d(TAG, "startPlay() --> mediaTransportControls.play() is called.");
+                Log.d(TAG, "startPlay.mediaTransportControls.play() is called.");
             } else {
                 // (playbackState == PlaybackStateCompat.STATE_STOPPED) or
                 // (playbackState == PlaybackStateCompat.STATE_NONE)
                 replayMedia();
-                Log.d(TAG, "startPlay() --> replayMedia() is called.");
+                Log.d(TAG, "startPlay.replayMedia() is called.");
             }
         }
     }
