@@ -46,7 +46,6 @@ import com.google.android.gms.dynamite.DynamiteModule;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter;
-import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +57,7 @@ import exoplayer.callbacks.ExoPlaybackPreparer;
 import exoplayer.exoRenderersFactory.MyRenderersFactory;
 import exoplayer.listeners.ExoPlayerCastStateListener;
 import exoplayer.listeners.ExoPlayerListener;
+import exoplayer.utilities.ContentUriAccessUtil;
 import exoplayer.utilities.UriUtil;
 
 public class ExoPlayerPresenter extends BasePlayerPresenter {

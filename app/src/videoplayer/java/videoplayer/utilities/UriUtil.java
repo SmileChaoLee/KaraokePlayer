@@ -8,7 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class UriUtil {
+public final class UriUtil {
     private UriUtil() {};
 
     private static final String TAG = "UriUtil";

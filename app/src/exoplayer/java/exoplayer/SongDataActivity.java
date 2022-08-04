@@ -6,9 +6,10 @@ import android.util.Log;
 import android.view.View;
 
 import com.smile.karaokeplayer.BaseSongDataActivity;
-import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
+
+import exoplayer.utilities.ContentUriAccessUtil;
 import exoplayer.utilities.UriUtil;
 
 public class SongDataActivity extends BaseSongDataActivity {

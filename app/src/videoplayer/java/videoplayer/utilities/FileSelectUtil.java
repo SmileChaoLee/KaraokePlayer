@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import com.aditya.filebrowser.FileChooser;
 
-public class FileSelectUtil {
+public final class FileSelectUtil {
     private FileSelectUtil() {};
 
     public static Intent selectFileToOpenIntent(Activity activity, boolean isSingle) {

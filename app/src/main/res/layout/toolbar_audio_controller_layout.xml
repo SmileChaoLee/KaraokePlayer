@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
+    <include layout="@layout/custom_toolbar_layout" />
+
     <LinearLayout
         android:id="@+id/audioControllerView"
         android:orientation="vertical"

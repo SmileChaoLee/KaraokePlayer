@@ -43,11 +43,6 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
 
         mPresenter = new VLCPlayerPresenter(this, this);
 
-        // removed on 2020-12-08
-        // Intent callingIntent = getIntent();
-        // mPresenter.initializeVariables(savedInstanceState, callingIntent);
-        //
-
         super.onCreate(savedInstanceState);
 
         mPresenter.initVLCPlayer();   // must be before volumeSeekBar settings
@@ -73,7 +68,7 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!hasPermissionForExternalStorage) {
-                String permissions[] = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                String[] permissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE};
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
             }
         } else {
@@ -89,15 +84,8 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             int rLen = grantResults.length;
-            if (rLen > 0) {
-                if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    hasPermissionForExternalStorage = false;
-                } else {
-                    hasPermissionForExternalStorage = true;
-                }
-            } else {
-                hasPermissionForExternalStorage = false;
-            }
+            hasPermissionForExternalStorage = (rLen>0) &&
+                    (grantResults[0] == PackageManager.PERMISSION_GRANTED);
         }
         if (!hasPermissionForExternalStorage) {
             ScreenUtil.showToast(this, "Permission Denied", 60, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);

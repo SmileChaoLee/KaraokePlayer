@@ -7,9 +7,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.smile.karaokeplayer.BaseSongListActivity;
-import com.smile.smilelibraries.utilities.ContentUriAccessUtil;
 
 import java.util.ArrayList;
+
+import exoplayer.utilities.ContentUriAccessUtil;
 import exoplayer.utilities.UriUtil;
 
 public class SongListActivity extends BaseSongListActivity {

@@ -58,6 +58,8 @@ import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdM
 import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
+import java.util.Locale;
+
 public abstract class BasePlayerActivity extends AppCompatActivity implements BasePlayerPresenter.BasePresentView {
 
     private static final String TAG = BasePlayerActivity.class.getName();
@@ -229,6 +231,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         actionMenuImageButton = findViewById(R.id.actionMenuImageButton);
 
         bannerLinearLayout = findViewById(R.id.bannerLinearLayout);
+        bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
         myBannerAdView = new SetBannerAdViewForAdMobOrFacebook(this, null, bannerLinearLayout
                 , BaseApplication.googleAdMobBannerID, BaseApplication.facebookBannerID);
         myBannerAdView.showBannerAdViewFromAdMobOrFacebook(BaseApplication.AdProvider);
@@ -255,15 +258,16 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         durationTimeTextView.setText((CharSequence) "000:00");
         ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
+        // nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
+        // nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
+        // String nativeAdvancedId0 = BaseApplication.googleAdMobNativeID;     // real ad unit id
+        // nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
+
         nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdViewVisibility = nativeAdsFrameLayout.getVisibility();
-
-        String nativeAdvancedId0 = BaseApplication.googleAdMobNativeID;     // real ad unit id
-        nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
-        FrameLayout nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
         nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView);
         nativeTemplate = new GoogleAdMobNativeTemplate(this, nativeAdsFrameLayout
-                , nativeAdvancedId0, nativeAdTemplateView);
+                , BaseApplication.googleAdMobNativeID, nativeAdTemplateView);
 
         setImageButtonStatus(); // must before setButtonsPositionAndSize()
         setButtonsPositionAndSize(getResources().getConfiguration());
@@ -553,6 +557,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
     }
 
     private void showSupportToolbarAndAudioController() {
+        bannerLinearLayout.setVisibility(View.GONE);
         supportToolbar.setVisibility(View.VISIBLE);
         audioControllerView.setVisibility(View.VISIBLE);
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
@@ -563,6 +568,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         audioControllerView.setVisibility(View.GONE);
         nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
         closeMenu(mainMenu);
+        bannerLinearLayout.setVisibility(View.VISIBLE);
     }
 
     private void setOnClickEvents() {
@@ -759,7 +765,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         layoutParams.width = imageButtonHeight;
         layoutParams.setMargins(0, 0, 0, 0);
 
-        //
         layoutParams = (ViewGroup.MarginLayoutParams) previousMediaImageButton.getLayoutParams();
         layoutParams.height = imageButtonHeight;
         layoutParams.width = imageButtonHeight;
@@ -837,9 +842,9 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         ConstraintLayout.LayoutParams bannerToolbarLayoutLP = (ConstraintLayout.LayoutParams)bannerAds_toobar_layout.getLayoutParams();
         FrameLayout message_nativeAd_Layout = findViewById(R.id.message_nativeAd_Layout);
         ConstraintLayout.LayoutParams messageNativeAdLayoutLP = (ConstraintLayout.LayoutParams)message_nativeAd_Layout.getLayoutParams();
-        float bannerToobarHeightPercent = bannerToolbarLayoutLP.matchConstraintPercentHeight;
-        Log.d(TAG, "bannerToobarHeightPercent = " + bannerToobarHeightPercent);
-        float heightPercent = 1.0f - bannerToobarHeightPercent - (imageButtonHeight*3.0f/screenSize.y);
+        float bannerToolbarHeightPercent = bannerToolbarLayoutLP.matchConstraintPercentHeight;
+        Log.d(TAG, "bannerToolbarHeightPercent = " + bannerToolbarHeightPercent);
+        float heightPercent = 1.0f - bannerToolbarHeightPercent - (imageButtonHeight*3.0f/screenSize.y);
         Log.d(TAG, "heightPercent = " + heightPercent);
         messageNativeAdLayoutLP.matchConstraintPercentHeight = ((int)(heightPercent*100.0f)) / 100.0f;
         Log.d(TAG, "messageNativeAdLayoutLP.matchConstraintPercentHeight = " + messageNativeAdLayoutLP.matchConstraintPercentHeight);
@@ -927,7 +932,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         duration /= 1000.0f;   // seconds
         int minutes = (int)(duration / 60.0f);    // minutes
         int seconds = (int)duration - (minutes * 60);
-        String durationString = String.format("%3d:%02d", minutes, seconds);
+        String durationString = String.format(Locale.ENGLISH,"%3d:%02d", minutes, seconds);
         durationTimeTextView.setText(durationString);
     }
 
@@ -947,7 +952,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         Log.d(TAG, "showNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.VISIBLE;
         nativeTemplate.showNativeAd();
-        bannerLinearLayout.setVisibility(View.VISIBLE);    // Show Banner Ad
     }
 
     @Override
@@ -955,7 +959,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         Log.d(TAG, "hideNativeAndBannerAd() is called.");
         nativeAdViewVisibility = View.GONE;
         nativeTemplate.hideNativeAd();
-        bannerLinearLayout.setVisibility(View.GONE);    // hide Banner Ad
     }
 
     @Override

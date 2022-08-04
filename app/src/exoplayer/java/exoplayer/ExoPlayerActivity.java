@@ -42,11 +42,6 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
 
         presenter = new ExoPlayerPresenter(this, this);
 
-        // removed on 2020-12-08
-        // Intent callingIntent = getIntent();
-        // presenter.initializeVariables(savedInstanceState, callingIntent);
-        //
-
         super.onCreate(savedInstanceState);
 
         presenter.initExoPlayerAndCastPlayer();   // must be before volumeSeekBar settings

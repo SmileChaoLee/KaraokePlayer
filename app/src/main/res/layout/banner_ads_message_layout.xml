@@ -24,8 +24,6 @@
             android:gravity="center_horizontal|top">
         </LinearLayout>
 
-        <include layout="@layout/custom_toolbar_layout" />
-
     </LinearLayout>
 
     <FrameLayout

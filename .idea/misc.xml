@@ -13,6 +13,9 @@
         <entry key="app/src/main/res/drawable/music_imagebutton_source.xml" value="0.1245" />
         <entry key="app/src/main/res/drawable/popupmenu_background.xml" value="0.1245" />
         <entry key="app/src/main/res/drawable/vocal_imagebutton_source.xml" value="0.1245" />
+        <entry key="app/src/main/res/layout/audio_control_buttons_layout.xml" value="0.109375" />
+        <entry key="app/src/main/res/layout/banner_ads_toolbar_message_layout.xml" value="0.109375" />
+        <entry key="app/src/main/res/layout/custom_toolbar_layout.xml" value="0.109375" />
         <entry key="app/src/main/res/layout/menu_control_buttons_layout.xml" value="0.13177083333333334" />
         <entry key="app/src/main/res/layout/player_audio_controller_layout.xml" value="0.13177083333333334" />
       </map>
