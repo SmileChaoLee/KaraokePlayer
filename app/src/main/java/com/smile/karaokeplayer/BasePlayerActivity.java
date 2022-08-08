@@ -32,8 +32,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -173,19 +171,6 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             mWindow.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        /*
-        mPresenter = getPlayerBasePresenter();
-        Log.d(TAG, "mPresenter = " + mPresenter);
-        if (mPresenter == null) {
-            Log.d(TAG, "mPresenter is null so exit activity.");
-            returnToPrevious();
-            return;
-        }
-        Intent callingIntent = getIntent();
-        mPresenter.initializeVariables(savedInstanceState, callingIntent);
-        final PlayingParameters playingParam = mPresenter.getPlayingParam();
-        */
-
         textFontSize = mPresenter.getTextFontSize();
         fontScale = mPresenter.getFontScale();
         toastTextSize = mPresenter.getToastTextSize();
@@ -249,13 +234,13 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
 
         float durationTextSize = textFontSize * 0.6f;
         playingTimeTextView = findViewById(R.id.playingTimeTextView);
-        playingTimeTextView.setText((CharSequence) "000:00");
+        playingTimeTextView.setText("000:00");
         ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         player_duration_seekbar = findViewById(R.id.player_duration_seekbar);
 
         durationTimeTextView = findViewById(R.id.durationTimeTextView);
-        durationTimeTextView.setText((CharSequence) "000:00");
+        durationTimeTextView.setText("000:00");
         ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type);
 
         // nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout);
@@ -276,17 +261,14 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         showNativeAndBannerAd();
 
         selectSongsToPlayActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
-                        if (result == null) {
-                            return;
-                        }
-                        Log.d(TAG, "selectFileToOpenActivityLauncher --> onActivityResult() is called.");
-                        int resultCode = result.getResultCode();
-                        if (resultCode == Activity.RESULT_OK) {
-                            mPresenter.selectFileToOpenPresenter(result);
-                        }
+                result -> {
+                    if (result == null) {
+                        return;
+                    }
+                    Log.d(TAG, "selectFileToOpenActivityLauncher --> onActivityResult() is called.");
+                    int resultCode = result.getResultCode();
+                    if (resultCode == Activity.RESULT_OK) {
+                        mPresenter.selectFileToOpenPresenter(result);
                     }
                 });
 
@@ -382,119 +364,98 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             subMenu.clearHeader();
         }
         int id = item.getItemId();
-        switch (id) {
-            case R.id.autoPlay:
-                // item.isChecked() return the previous value
-                mPresenter.setAutoPlayStatusAndAction();
-                break;
-            case R.id.songList:
-                Intent songListIntent = createIntentForSongListActivity();
-                startActivity(songListIntent);
-                break;
-            case R.id.open:
-                // mPresenter.selectFileToOpenPresenter();
-                Intent selectFileIntent = mPresenter.createSelectFilesToOpenIntent();
-                selectSongsToPlayActivityLauncher.launch(selectFileIntent);
-                break;
-            case R.id.privacyPolicy:
-                PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
-                break;
-            case R.id.exit:
-                showInterstitialAd(true);
-                break;
-            case R.id.audioTrack:
-                // if there are audio tracks
-                SubMenu subMenu = item.getSubMenu();
-                // check if MenuItems of audioTrack need CheckBox
-                for (int i=0; i<subMenu.size(); i++) {
-                    MenuItem mItem = subMenu.getItem(i);
-                    // audio track index start from 1 for user interface
-                    if ( (i+1) == playingParam.getCurrentAudioTrackIndexPlayed() ) {
-                        mItem.setCheckable(true);
-                        mItem.setChecked(true);
-                    } else {
-                        mItem.setCheckable(false);
-                    }
+        if (id == R.id.autoPlay) {
+            // item.isChecked() return the previous value
+            mPresenter.setAutoPlayStatusAndAction();
+        } else if (id == R.id.songList) {
+            Intent songListIntent = createIntentForSongListActivity();
+            startActivity(songListIntent);
+        } else if (id == R.id.open) {
+            // mPresenter.selectFileToOpenPresenter();
+            Intent selectFileIntent = mPresenter.createSelectFilesToOpenIntent();
+            selectSongsToPlayActivityLauncher.launch(selectFileIntent);
+        } else if (id == R.id.privacyPolicy) {
+            PrivacyPolicyUtil.startPrivacyPolicyActivity(this, PlayerConstants.PrivacyPolicyActivityRequestCode);
+        } else if (id == R.id.exit) {
+            showInterstitialAd(true);
+        } else if (id ==R.id.audioTrack) {
+            // if there are audio tracks
+            SubMenu subMenu = item.getSubMenu();
+            // check if MenuItems of audioTrack need CheckBox
+            for (int i = 0; i < subMenu.size(); i++) {
+                MenuItem mItem = subMenu.getItem(i);
+                // audio track index start from 1 for user interface
+                if ((i + 1) == playingParam.getCurrentAudioTrackIndexPlayed()) {
+                    mItem.setCheckable(true);
+                    mItem.setChecked(true);
+                } else {
+                    mItem.setCheckable(false);
                 }
-                //
-                break;
-            case R.id.audioTrack1:
-                mPresenter.setAudioTrackAndChannel(1, currentChannelPlayed);
-                break;
-            case R.id.audioTrack2:
-                mPresenter.setAudioTrackAndChannel(2, currentChannelPlayed);
-                break;
-            case R.id.audioTrack3:
-                mPresenter.setAudioTrackAndChannel(3, currentChannelPlayed);
-                break;
-            case R.id.audioTrack4:
-                mPresenter.setAudioTrackAndChannel(4, currentChannelPlayed);
-                break;
-            case R.id.audioTrack5:
-                mPresenter.setAudioTrackAndChannel(5, currentChannelPlayed);
-                break;
-            case R.id.audioTrack6:
-                mPresenter.setAudioTrackAndChannel(6, currentChannelPlayed);
-                break;
-            case R.id.audioTrack7:
-                mPresenter.setAudioTrackAndChannel(7, currentChannelPlayed);
-                break;
-            case R.id.audioTrack8:
-                mPresenter.setAudioTrackAndChannel(8, currentChannelPlayed);
-                break;
-            case R.id.channel:
-                Uri mediaUri = mPresenter.getMediaUri();
-                int numberOfAudioTracks = mPresenter.getNumberOfAudioTracks();
-                if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks>0) {
-                    leftChannelMenuItem.setEnabled(true);
-                    rightChannelMenuItem.setEnabled(true);
-                    stereoChannelMenuItem.setEnabled(true);
-                    if (playingParam.isMediaPrepared()) {
-                        if (currentChannelPlayed == CommonConstants.LeftChannel) {
-                            leftChannelMenuItem.setCheckable(true);
-                            leftChannelMenuItem.setChecked(true);
-                        } else {
-                            leftChannelMenuItem.setCheckable(false);
-                            leftChannelMenuItem.setChecked(false);
-                        }
-                        if (currentChannelPlayed == CommonConstants.RightChannel) {
-                            rightChannelMenuItem.setCheckable(true);
-                            rightChannelMenuItem.setChecked(true);
-                        } else {
-                            rightChannelMenuItem.setCheckable(false);
-                            rightChannelMenuItem.setChecked(false);
-                        }
-                        if (currentChannelPlayed == CommonConstants.StereoChannel) {
-                            stereoChannelMenuItem.setCheckable(true);
-                            stereoChannelMenuItem.setChecked(true);
-                        } else {
-                            stereoChannelMenuItem.setCheckable(false);
-                            stereoChannelMenuItem.setChecked(false);
-                        }
+            }
+        } else if (id == R.id.audioTrack1) {
+            mPresenter.setAudioTrackAndChannel(1, currentChannelPlayed);
+        } else if (id == R.id.audioTrack2) {
+            mPresenter.setAudioTrackAndChannel(2, currentChannelPlayed);
+        } else if (id == R.id.audioTrack3) {
+            mPresenter.setAudioTrackAndChannel(3, currentChannelPlayed);
+        } else if (id ==R.id.audioTrack4) {
+            mPresenter.setAudioTrackAndChannel(4, currentChannelPlayed);
+        } else if (id == R.id.audioTrack5) {
+            mPresenter.setAudioTrackAndChannel(5, currentChannelPlayed);
+        } else if (id == R.id.audioTrack6) {
+            mPresenter.setAudioTrackAndChannel(6, currentChannelPlayed);
+        } else if (id == R.id.audioTrack7) {
+            mPresenter.setAudioTrackAndChannel(7, currentChannelPlayed);
+        } else if (id == R.id.audioTrack8) {
+            mPresenter.setAudioTrackAndChannel(8, currentChannelPlayed);
+        } else if (id == R.id.channel) {
+            Uri mediaUri = mPresenter.getMediaUri();
+            int numberOfAudioTracks = mPresenter.getNumberOfAudioTracks();
+            if (mediaUri != null && !Uri.EMPTY.equals(mediaUri) && numberOfAudioTracks > 0) {
+                leftChannelMenuItem.setEnabled(true);
+                rightChannelMenuItem.setEnabled(true);
+                stereoChannelMenuItem.setEnabled(true);
+                if (playingParam.isMediaPrepared()) {
+                    if (currentChannelPlayed == CommonConstants.LeftChannel) {
+                        leftChannelMenuItem.setCheckable(true);
+                        leftChannelMenuItem.setChecked(true);
                     } else {
                         leftChannelMenuItem.setCheckable(false);
                         leftChannelMenuItem.setChecked(false);
+                    }
+                    if (currentChannelPlayed == CommonConstants.RightChannel) {
+                        rightChannelMenuItem.setCheckable(true);
+                        rightChannelMenuItem.setChecked(true);
+                    } else {
                         rightChannelMenuItem.setCheckable(false);
                         rightChannelMenuItem.setChecked(false);
+                    }
+                    if (currentChannelPlayed == CommonConstants.StereoChannel) {
+                        stereoChannelMenuItem.setCheckable(true);
+                        stereoChannelMenuItem.setChecked(true);
+                    } else {
                         stereoChannelMenuItem.setCheckable(false);
                         stereoChannelMenuItem.setChecked(false);
                     }
                 } else {
-                    leftChannelMenuItem.setEnabled(false);
-                    rightChannelMenuItem.setEnabled(false);
-                    stereoChannelMenuItem.setEnabled(false);
+                    leftChannelMenuItem.setCheckable(false);
+                    leftChannelMenuItem.setChecked(false);
+                    rightChannelMenuItem.setCheckable(false);
+                    rightChannelMenuItem.setChecked(false);
+                    stereoChannelMenuItem.setCheckable(false);
+                    stereoChannelMenuItem.setChecked(false);
                 }
-
-                break;
-            case R.id.leftChannel:
-                mPresenter.playLeftChannel();
-                break;
-            case R.id.rightChannel:
-                mPresenter.playRightChannel();
-                break;
-            case R.id.stereoChannel:
-                mPresenter.playStereoChannel();
-                break;
+            } else {
+                leftChannelMenuItem.setEnabled(false);
+                rightChannelMenuItem.setEnabled(false);
+                stereoChannelMenuItem.setEnabled(false);
+            }
+        } else if (id ==R.id.leftChannel) {
+            mPresenter.playLeftChannel();
+        } else if (id ==R.id.rightChannel) {
+            mPresenter.playRightChannel();
+        } else if (id == R.id.stereoChannel) {
+            mPresenter.playStereoChannel();
         }
 
         return super.onOptionsItemSelected(item);
@@ -588,109 +549,50 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             }
         });
 
-        volumeImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int volumeSeekBarVisibility = volumeSeekBar.getVisibility();
-                if ( (volumeSeekBarVisibility == View.GONE) || (volumeSeekBarVisibility == View.INVISIBLE) ) {
-                    volumeSeekBar.setVisibility(View.VISIBLE);
-                    nativeAdsFrameLayout.setVisibility(View.GONE);
-                } else {
-                    volumeSeekBar.setVisibility(View.INVISIBLE);
-                    nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
-                }
+        volumeImageButton.setOnClickListener(view -> {
+            int volumeSeekBarVisibility = volumeSeekBar.getVisibility();
+            if ( (volumeSeekBarVisibility == View.GONE) || (volumeSeekBarVisibility == View.INVISIBLE) ) {
+                volumeSeekBar.setVisibility(View.VISIBLE);
+                nativeAdsFrameLayout.setVisibility(View.GONE);
+            } else {
+                volumeSeekBar.setVisibility(View.INVISIBLE);
+                nativeAdsFrameLayout.setVisibility(nativeAdViewVisibility);
             }
         });
 
-        previousMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.playPreviousSong();
-            }
+        previousMediaImageButton.setOnClickListener(v -> mPresenter.playPreviousSong());
+
+        playMediaImageButton.setOnClickListener(v -> mPresenter.startPlay());
+
+        pauseMediaImageButton.setOnClickListener(v -> mPresenter.pausePlay());
+
+        replayMediaImageButton.setOnClickListener(v -> mPresenter.replayMedia());
+
+        stopMediaImageButton.setOnClickListener(v -> mPresenter.stopPlay());
+
+        nextMediaImageButton.setOnClickListener(v -> mPresenter.playNextSong());
+
+        orientationImageButton.setOnClickListener(v -> {
+            Configuration config = getResources().getConfiguration();
+            int orientation = config.orientation==Configuration.ORIENTATION_PORTRAIT?
+                    Configuration.ORIENTATION_LANDSCAPE : Configuration.ORIENTATION_PORTRAIT;
+            Log.d(TAG, "orientationImageButton.onClick.orientation = " + orientation);
+            mPresenter.setOrientationStatus(orientation);
+            setImageButtonStatus();
         });
 
-        playMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.startPlay();
-            }
+        repeatImageButton.setOnClickListener(v -> mPresenter.setRepeatSongStatus());
+
+        switchToMusicImageButton.setOnClickListener(v -> mPresenter.switchAudioToMusic());
+
+        switchToVocalImageButton.setOnClickListener(v -> mPresenter.switchAudioToVocal());
+
+        actionMenuImageButton.setOnClickListener(v -> {
+            actionMenuView.showOverflowMenu();
+            autoPlayMenuItem.setChecked(mPresenter.getPlayingParam().isAutoPlay());
         });
 
-        pauseMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.pausePlay();
-            }
-        });
-
-        replayMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.replayMedia();
-            }
-        });
-
-        stopMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.stopPlay();
-            }
-        });
-
-        nextMediaImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.playNextSong();
-            }
-        });
-
-        orientationImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Configuration config = getResources().getConfiguration();
-                int orientation = config.orientation==Configuration.ORIENTATION_PORTRAIT?
-                        Configuration.ORIENTATION_LANDSCAPE : Configuration.ORIENTATION_PORTRAIT;
-                Log.d(TAG, "orientationImageButton.onClick.orientation = " + orientation);
-                mPresenter.setOrientationStatus(orientation);
-                setImageButtonStatus();
-            }
-        });
-
-        repeatImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.setRepeatSongStatus();
-            }
-        });
-
-        switchToMusicImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.switchAudioToMusic();
-            }
-        });
-
-        switchToVocalImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.switchAudioToVocal();
-            }
-        });
-
-        actionMenuImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                actionMenuView.showOverflowMenu();
-                autoPlayMenuItem.setChecked(mPresenter.getPlayingParam().isAutoPlay());
-            }
-        });
-
-        actionMenuView.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
+        actionMenuView.setOnMenuItemClickListener(item -> onOptionsItemSelected(item));
 
 
         player_duration_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -707,32 +609,26 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
             }
         });
 
-        supportToolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int visibility = v.getVisibility();
-                if (visibility == View.VISIBLE) {
-                    // use custom toolbar
-                    hideSupportToolbarAndAudioController();
-                    Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.");
-                } else {
-                    // use custom toolbar
-                    showSupportToolbarAndAudioController();
-                    setTimerToHideSupportAndAudioController();
-                    Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.");
-                }
-                volumeSeekBar.setVisibility(View.INVISIBLE);
-
-                Log.d(TAG, "supportToolbar.onClick() is called.");
+        supportToolbar.setOnClickListener(v -> {
+            int visibility = v.getVisibility();
+            if (visibility == View.VISIBLE) {
+                // use custom toolbar
+                hideSupportToolbarAndAudioController();
+                Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.");
+            } else {
+                // use custom toolbar
+                showSupportToolbarAndAudioController();
+                setTimerToHideSupportAndAudioController();
+                Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.");
             }
+            volumeSeekBar.setVisibility(View.INVISIBLE);
+
+            Log.d(TAG, "supportToolbar.onClick() is called.");
         });
 
-        playerViewLinearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "playerViewLinearLayout.onClick() is called.");
-                supportToolbar.performClick();
-            }
+        playerViewLinearLayout.setOnClickListener(v -> {
+            Log.d(TAG, "playerViewLinearLayout.onClick() is called.");
+            supportToolbar.performClick();
         });
     }
 
@@ -838,13 +734,13 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         }
         supportToolbar.getLayoutParams().height = volumeImageButton.getLayoutParams().height;
 
-        LinearLayout bannerAds_toobar_layout = findViewById(R.id.bannerAds_toobar_layout);
-        ConstraintLayout.LayoutParams bannerToolbarLayoutLP = (ConstraintLayout.LayoutParams)bannerAds_toobar_layout.getLayoutParams();
+        LinearLayout bannerAdsLayout = findViewById(R.id.bannerAdsLayout);
+        ConstraintLayout.LayoutParams bannerAdsLayoutLP = (ConstraintLayout.LayoutParams)bannerAdsLayout.getLayoutParams();
         FrameLayout message_nativeAd_Layout = findViewById(R.id.message_nativeAd_Layout);
         ConstraintLayout.LayoutParams messageNativeAdLayoutLP = (ConstraintLayout.LayoutParams)message_nativeAd_Layout.getLayoutParams();
-        float bannerToolbarHeightPercent = bannerToolbarLayoutLP.matchConstraintPercentHeight;
-        Log.d(TAG, "bannerToolbarHeightPercent = " + bannerToolbarHeightPercent);
-        float heightPercent = 1.0f - bannerToolbarHeightPercent - (imageButtonHeight*3.0f/screenSize.y);
+        float bannerAdsLayoutHeightPercent = bannerAdsLayoutLP.matchConstraintPercentHeight;
+        Log.d(TAG, "bannerToolbarHeightPercent = " + bannerAdsLayoutHeightPercent);
+        float heightPercent = 1.0f - bannerAdsLayoutHeightPercent - (imageButtonHeight*3.0f/screenSize.y);
         Log.d(TAG, "heightPercent = " + heightPercent);
         messageNativeAdLayoutLP.matchConstraintPercentHeight = ((int)(heightPercent*100.0f)) / 100.0f;
         Log.d(TAG, "messageNativeAdLayoutLP.matchConstraintPercentHeight = " + messageNativeAdLayoutLP.matchConstraintPercentHeight);

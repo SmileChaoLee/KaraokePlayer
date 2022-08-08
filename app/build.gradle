@@ -137,7 +137,7 @@ dependencies {
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
     videoplayerImplementation 'com.adityak:browsemyfiles:1.9'   // file chooser
 
-    implementation 'androidx.core:core-ktx:1.8.0'
+    implementation 'androidx.core:core-ktx:1.9.0-alpha05'
 }
 
 apply plugin: 'com.google.gms.google-services'

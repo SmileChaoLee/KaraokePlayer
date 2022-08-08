@@ -1,0 +1,40 @@
+{
+  "stringTable": {},
+  "buildFiles": [
+    "/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/ffmpeg/src/main/jni/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/chaolee/Android/Sdk/cmake/3.10.2.4988404/bin/ninja",
+      "-C",
+      "/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/ffmpeg/.cxx/Debug/4p2l3d6c/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/chaolee/Android/Sdk/cmake/3.10.2.4988404/bin/ninja",
+    "-C",
+    "/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/ffmpeg/.cxx/Debug/4p2l3d6c/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "ffmpegJNI-Debug-x86": {
+      "buildCommandComponents": [
+        "/home/chaolee/Android/Sdk/cmake/3.10.2.4988404/bin/ninja",
+        "-C",
+        "/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/ffmpeg/.cxx/Debug/4p2l3d6c/x86",
+        "ffmpegJNI"
+      ],
+      "buildType": "debug",
+      "abi": "x86",
+      "artifactName": "ffmpegJNI",
+      "output": "/home/chaolee/AndroidStudioProjects/KaraokePlayer/extensions/ffmpeg/build/intermediates/cxx/Debug/4p2l3d6c/obj/x86/libffmpegJNI.so",
+      "runtimeFiles": []
+    }
+  },
+  "toolchains": {},
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cc"
+  ]
+}

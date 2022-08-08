@@ -8,7 +8,7 @@
     android:background="@android:color/transparent">
 
     <LinearLayout
-        android:id="@+id/bannerAds_toobar_layout"
+        android:id="@+id/bannerAdsLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -33,7 +33,7 @@
         android:layout_height="0dp"
         android:background="@android:color/transparent"
         app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintTop_toBottomOf="@id/bannerAds_toobar_layout">
+        app:layout_constraintTop_toBottomOf="@id/bannerAdsLayout">
 
         <LinearLayout
             android:id="@+id/message_area_LinearLayout"
@@ -47,7 +47,7 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 android:textColor="@android:color/white"
-                android:textAllCaps="false"
+                app:textAllCaps="false"
                 android:text="@string/bufferingString"
                 android:gravity="center">
             </TextView>

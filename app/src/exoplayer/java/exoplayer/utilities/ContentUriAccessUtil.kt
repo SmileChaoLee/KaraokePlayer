@@ -30,55 +30,41 @@ object ContentUriAccessUtil {
     }
 
     @JvmStatic
-    fun getUrisList(context: Context, data: Intent?): ArrayList<Uri?> {
-        val urisList = ArrayList<Uri?>()
-        var contentUri: Uri?
-        if (data != null) {
-            var isPermitted: Boolean
-            if (data.clipData != null) {
-                // multiple files
-                for (i in 0 until data.clipData!!.itemCount) {
-                    try {
-                        contentUri = data.clipData!!.getItemAt(i).uri
-                        if (contentUri != null && Uri.EMPTY != contentUri) {
-                            isPermitted = getPermissionForContentUri(context, contentUri)
-                            if (isPermitted) {
-                                urisList.add(contentUri)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        Log.d(TAG, "data.getClipData exception: ")
-                        e.printStackTrace()
+    fun getUrisList(context: Context, data: Intent): ArrayList<Uri> {
+        val urisList = ArrayList<Uri>()
+        val clipData = data.clipData
+        if ( clipData != null) {
+            // multiple files
+            Log.d(TAG, "getUrisList.multiple files")
+            for (i in 0 until clipData.itemCount) {
+                clipData.getItemAt(i).uri?.let{
+                    if (!Uri.EMPTY.equals(it) && getPermissionForContentUri(context, it)) {
+                        urisList.add(it)
                     }
                 }
-            } else {
-                // single file
-                contentUri = data.data
-                if (contentUri != null && Uri.EMPTY != contentUri) {
-                    isPermitted = getPermissionForContentUri(context, contentUri)
-                    if (isPermitted) {
-                        urisList.add(data.data)
-                    }
+            }
+        } else {
+            // single file
+            data.data?.let {
+                if (!Uri.EMPTY.equals(it) && getPermissionForContentUri(context, it)) {
+                    urisList.add(it)
+                    Log.d(TAG, "getUrisList.single file.it = $it")
                 }
             }
         }
         return urisList
     }
 
-    private fun getPermissionForContentUri(context: Context, contentUri: Uri?): Boolean {
-        var isPermitted = true
+    private fun getPermissionForContentUri(context: Context, contentUri: Uri): Boolean {
         try {
-            val takeFlags =
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-            Log.d(TAG, "getPermissionForContentUri.takeFlags = $takeFlags")
             context.contentResolver.takePersistableUriPermission(
-                contentUri!!,
-                takeFlags
+                contentUri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
             )
         } catch (e: Exception) {
             e.printStackTrace()
-            isPermitted = false
+            return false
         }
-        return isPermitted
+        return true
     }
 }

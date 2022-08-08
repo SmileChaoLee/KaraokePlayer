@@ -7,7 +7,7 @@ import java.util.ArrayList
 
 object UriUtil {
     @JvmStatic
-    fun getUrisListFromIntent(context: Context, data: Intent?): ArrayList<Uri?> {
+    fun getUrisListFromIntent(context: Context, data: Intent): ArrayList<Uri> {
         return ContentUriAccessUtil.getUrisList(context, data)
     }
 }

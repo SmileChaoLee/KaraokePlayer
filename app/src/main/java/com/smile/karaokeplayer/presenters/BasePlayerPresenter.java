@@ -225,7 +225,7 @@ public abstract class BasePlayerPresenter {
 
     public void initializePlayingParam() {
         playingParam = new PlayingParameters();
-        playingParam.initializePlayingParameters();
+        // playingParam.initializePlayingParameters();
     }
 
     @SuppressWarnings("unchecked")
