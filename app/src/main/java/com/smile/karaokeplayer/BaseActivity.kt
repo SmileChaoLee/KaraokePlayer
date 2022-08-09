@@ -2,6 +2,7 @@ package com.smile.karaokeplayer
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 
 interface FragmentInterface {
@@ -12,7 +13,7 @@ private const val fragmentTag : String = "FragmentTag"
 private const val TAG : String = "BaseActivity"
 
 abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
-    protected lateinit var playerFragment: PlayerBaseViewFragment
+    private lateinit var playerFragment: PlayerBaseViewFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
@@ -27,10 +28,12 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
             ft.replace(R.id.activity_base_layout, playerFragment, fragmentTag)
         }
         ft.commit()
-    }
 
-    override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed() is called")
-        playerFragment.onBackPressed()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "Back Key is Pressed()")
+                playerFragment.onBackPressed()
+            }
+        })
     }
 }
