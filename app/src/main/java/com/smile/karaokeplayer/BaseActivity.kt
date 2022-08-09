@@ -3,21 +3,20 @@ package com.smile.karaokeplayer
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 
 interface FragmentInterface {
-    fun getFragment() : Fragment
-    fun onBackPressed()
+    fun getFragment() : PlayerBaseViewFragment
 }
 
 private const val fragmentTag : String = "FragmentTag"
 private const val TAG : String = "BaseActivity"
 
 abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
-    protected lateinit var playerFragment: Fragment
+    protected lateinit var playerFragment: PlayerBaseViewFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+
         playerFragment = getFragment()
         val fmManager = supportFragmentManager
         val ft = fmManager.beginTransaction()
@@ -32,6 +31,6 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
 
     override fun onBackPressed() {
         Log.d(TAG, "onBackPressed() is called")
-        onBackPressed()
+        playerFragment.onBackPressed()
     }
 }
