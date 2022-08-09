@@ -632,7 +632,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         });
     }
 
-    public void setButtonsPositionAndSize(Configuration config) {
+    private void setButtonsPositionAndSize(Configuration config) {
         int buttonMarginLeft = (int)(60.0f * fontScale);    // 60 pixels = 20dp on Nexus 5
         Log.d(TAG, "buttonMarginLeft = " + buttonMarginLeft);
         Point screenSize = ScreenUtil.getScreenSize(this);
@@ -753,7 +753,7 @@ public abstract class BasePlayerActivity extends AppCompatActivity implements Ba
         //
     }
 
-    public void closeMenu(Menu menu) {
+    private void closeMenu(Menu menu) {
         if (menu == null) {
             return;
         }

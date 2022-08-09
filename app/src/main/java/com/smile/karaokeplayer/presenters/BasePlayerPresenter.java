@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
@@ -86,9 +87,9 @@ public abstract class BasePlayerPresenter {
     public abstract void getPlayingMediaInfoAndSetAudioActionSubMenu();
     public abstract boolean isSeekable();
 
-    public BasePlayerPresenter(Activity activity, BasePresentView presentView) {
+    public BasePlayerPresenter(Fragment fragment, BasePresentView presentView) {
         Log.d(TAG, "PlayerBasePresenter() constructor is called.");
-        mActivity = activity;
+        mActivity = fragment.getActivity();
         mPresentView = presentView;
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(mActivity, ScreenUtil.FontSize_Pixel_Type, null);
@@ -219,7 +220,10 @@ public abstract class BasePlayerPresenter {
         Bundle playingParamOriginExtras = new Bundle();
         playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
         if (mediaTransportControls != null) {
+            Log.d(TAG, "playMediaFromUri.mediaTransportControls is not null");
             mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
+        } else {
+            Log.w(TAG, "playMediaFromUri.mediaTransportControls is null");
         }
     }
 

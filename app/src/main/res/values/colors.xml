@@ -22,4 +22,8 @@
     <color name="transparentDarkGray">#B3D5D5D5</color>
     <color name="transparentMediumGray">#80D5D5D5</color>
     <color name="transparentLightGray">#33D5D5D5</color>
+    <color name="light_blue_600">#FF039BE5</color>
+    <color name="light_blue_900">#FF01579B</color>
+    <color name="light_blue_A200">#FF40C4FF</color>
+    <color name="light_blue_A400">#FF00B0FF</color>
 </resources>

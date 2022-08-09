@@ -14,6 +14,7 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.mediarouter.media.MediaRouter;
 
 import com.google.android.exoplayer2.C;
@@ -64,6 +65,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     private static final String TAG = "ExoPlayerPresenter";
 
+    private final Fragment mFragment;
     private final Activity mActivity;
     private final ExoPlayerPresentView presentView;
     private CastContext castContext;
@@ -108,11 +110,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         void setCurrentPlayerToPlayerView();
     }
 
-    public ExoPlayerPresenter(Activity activity, ExoPlayerPresentView presentView) {
-        super(activity, presentView);
-        mActivity = activity;
+    public ExoPlayerPresenter(Fragment fragment, ExoPlayerPresentView presentView) {
+        super(fragment, presentView);
+        mFragment = fragment;
+        mActivity = fragment.getActivity();
         this.presentView = presentView;
-        // this.mActivity = (Activity)(this.presentView);
 
         castContext = null;
         currentCastState = CastState.NO_DEVICES_AVAILABLE;
@@ -134,7 +136,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             }
             if (castContext != null) {
                 Log.d(TAG, "castContext is " + castContext);
-                exoPlayerCastStateListener = new ExoPlayerCastStateListener(mActivity, this);
+                exoPlayerCastStateListener = new ExoPlayerCastStateListener(mFragment, this);
                 currentCastState = castContext.getCastState();
             }
         }
@@ -171,11 +173,11 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             mSessionAvailabilityListener = new SessionAvailabilityListener() {
                 @Override
                 public synchronized void onCastSessionAvailable() {
-                    Log.d(TAG, "onCastSessionAvailable() is called.");
-                    Log.d(TAG, "onCastSessionAvailable() --> mediaUri = " + mediaUri);
+                    Log.d(TAG, "onCastSessionAvailable");
+                    Log.d(TAG, "onCastSessionAvailable.mediaUri = " + mediaUri);
                     if (mediaUri==null || !isOnInternet) {
-                        Log.d(TAG, "Stopped casting because mediaUri is null or not online");
-                        Log.d(TAG, "Set current player back to exoPlayer");
+                        Log.d(TAG, "onCastSessionAvailable.Stopped casting because mediaUri is null or not online");
+                        Log.d(TAG, "onCastSessionAvailable.Set current player back to exoPlayer");
                         MediaRouter mRouter = MediaRouter.getInstance(mActivity);  // singleton
                         mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
                         return;
@@ -260,14 +262,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
         Log.d(TAG, "selectAudioTrack.trackSelectorParameters = " + trackSelectorParameters);
         TrackSelectionParameters.Builder parametersBuilder= trackSelectorParameters.buildUpon();
-        /*
-        TrackSelectionOverride overrides =
-                new TrackSelectionOverrides.Builder()
-                        .setOverrideForType(
-                                new TrackSelectionOverrides.TrackSelectionOverride(mappedTrackInfo.getTrackGroups(audioRendererIndex).get(audioTrackGroupIndex)))
-                        .build();
-        trackSelectorParameters = parametersBuilder.setTrackSelectionOverrides(overrides).build();
-        */
         TrackGroup trackGroup = mappedTrackInfo.getTrackGroups(audioRendererIndex).get(audioTrackGroupIndex);
         TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, audioTrackIndex);
         trackSelectorParameters = parametersBuilder.setOverrideForType(override).build();
@@ -557,7 +551,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
 
     @Override
     public Uri getValidatedUri(Uri tempUri) {
-        Log.d(TAG, "ExoPlayerPresenter.java --> getValidatedUri() is called.");
+        Log.d(TAG, "ExoPlayerPresenter.getValidatedUri() is called.");
         return super.getValidatedUri(tempUri);
     }
 

@@ -27,7 +27,7 @@ import com.smile.karaokeplayer.R;
 
 import exoplayer.presenters.ExoPlayerPresenter;
 
-public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
+public class ExoPlayerActivity_old extends BasePlayerActivity implements ExoPlayerPresenter.ExoPlayerPresentView {
     private static final String TAG = ExoPlayerActivity.class.getName();
 
     private ExoPlayerPresenter presenter;
@@ -40,7 +40,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
 
-        presenter = new ExoPlayerPresenter(this, this);
+        // presenter = new ExoPlayerPresenter(this, this);  // removed for testing 2022-08-08
 
         super.onCreate(savedInstanceState);
 
@@ -83,13 +83,13 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG,"onStart() is finished.");
+        Log.d(TAG,"onStart() is called.");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume() is finished.");
+        Log.d(TAG,"onResume() is called.");
         presenter.setSessionAvailabilityListener();
         presenter.addBaseCastStateListener();
     }
@@ -97,7 +97,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause() is finished.");
+        Log.d(TAG,"onPause() is called.");
         presenter.releaseSessionAvailabilityListener();
         presenter.removeBaseCastStateListener();
     }
@@ -105,7 +105,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(TAG,"onStop() is finished.");
+        Log.d(TAG,"onStop() is called.");
     }
 
     @Override
@@ -120,7 +120,6 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
     }
 
     // implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
-
     @Override
     public void setCurrentPlayerToPlayerView() {
         Player currentPlayer = presenter.getCurrentPlayer();
@@ -139,7 +138,7 @@ public class ExoPlayerActivity extends BasePlayerActivity implements ExoPlayerPr
             Log.d(TAG, "Current player is castPlayer." );
         }
     }
-    // end of implementing methods of PlayerBasePresenter.BasePresentView
+    // end of implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
 
     // implement abstract methods of super class
     @Override
