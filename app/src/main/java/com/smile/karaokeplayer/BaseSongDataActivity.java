@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -295,6 +296,13 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
                     }
                 });
 
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d(TAG, "getOnBackPressedDispatcher.handleOnBackPressed");
+                returnToPrevious();
+            }
+        });
     }
 
     @Override
@@ -327,13 +335,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         mSongInfo = null;
     }
 
-    @Override
-    public void onBackPressed() {
-        returnToPrevious();
-    }
-
     private void returnToPrevious() {
-
         Intent returnIntent = new Intent();
         Bundle extras = new Bundle();
         extras.putParcelable(PlayerConstants.SongInfoState, mSongInfo);

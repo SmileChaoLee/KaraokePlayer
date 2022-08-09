@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.activity.OnBackPressedCallback;
 
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
@@ -137,6 +138,14 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Log.d(TAG, "getOnBackPressedDispatcher.handleOnBackPressed");
+                returnToPrevious();
+            }
+        });
     }
 
     @Override
@@ -151,11 +160,6 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             songListSQLite.closeDatabase();
             songListSQLite = null;
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        returnToPrevious();
     }
 
     private void returnToPrevious() {

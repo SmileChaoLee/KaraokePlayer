@@ -29,9 +29,9 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
         }
         ft.commit()
 
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.d(TAG, "Back Key is Pressed()")
+                Log.d(TAG, "onBackPressedDispatcher.handleOnBackPressed")
                 playerFragment.onBackPressed()
             }
         })
