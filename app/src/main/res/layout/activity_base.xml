@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_base_layout"
@@ -7,4 +7,33 @@
     android:layout_height="match_parent"
     tools:context=".BaseActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@+id/basePlayViewFragmentLlayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutForTabLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/playTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black"
+            app:tabIconTint="@color/yellow"
+            app:tabIndicatorColor="@color/yellow"
+            app:tabSelectedTextColor="@color/red"
+            app:tabMode="scrollable"
+            app:tabTextAppearance="@style/TabLayoutTextStyle"/>
+        <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/playViewPager2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+    </LinearLayout>
+
+</FrameLayout >

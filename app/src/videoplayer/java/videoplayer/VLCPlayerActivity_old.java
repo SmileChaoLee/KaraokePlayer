@@ -25,7 +25,7 @@ import org.videolan.libvlc.util.VLCVideoLayout;
 
 import videoplayer.Presenters.VLCPlayerPresenter;
 
-public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
+public class VLCPlayerActivity_old extends BasePlayerActivity { // implements VLCPlayerPresenter.VLCPlayerPresentView {
 
     private static final String TAG = "VLCPlayerActivity";
     private static final boolean ENABLE_SUBTITLES = true;
@@ -34,19 +34,19 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
     private static final int PERMISSION_REQUEST_CODE = 0x11;
     private boolean hasPermissionForExternalStorage;
 
-    private VLCPlayerPresenter mPresenter;
+    private VLCPlayerPresenter presenter;
     private VLCVideoLayout videoVLCPlayerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG,"onCreate() is called.");
 
-        mPresenter = new VLCPlayerPresenter(this, this);
+        // presenter = new VLCPlayerPresenter(this, this);
 
         super.onCreate(savedInstanceState);
 
-        mPresenter.initVLCPlayer();   // must be before volumeSeekBar settings
-        mPresenter.initMediaSessionCompat();
+        presenter.initVLCPlayer();   // must be before volumeSeekBar settings
+        presenter.initMediaSessionCompat();
 
         // Video player view
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
@@ -58,10 +58,10 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
 
         videoVLCPlayerView.setVisibility(View.VISIBLE);
 
-        int currentProgress = mPresenter.getCurrentProgressForVolumeSeekBar();
+        int currentProgress = presenter.getCurrentProgressForVolumeSeekBar();
         volumeSeekBar.setProgressAndThumb(currentProgress);
 
-        mPresenter.playTheSongThatWasPlayedBeforeActivityCreated();
+        presenter.playTheSongThatWasPlayedBeforeActivityCreated();
 
         hasPermissionForExternalStorage = (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED);
@@ -100,8 +100,8 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
         if (videoVLCPlayerView != null) {
             videoVLCPlayerView.requestFocus();
         }
-        if (mPresenter != null) {
-            mPresenter.attachPlayerViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
+        if (presenter != null) {
+            presenter.attachPlayerViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW);
         }
     }
 
@@ -109,8 +109,8 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
     protected void onStop() {
         Log.d(TAG,"onStop() is called.");
         super.onStop();
-        if (mPresenter != null) {
-            mPresenter.detachPlayerViews();
+        if (presenter != null) {
+            presenter.detachPlayerViews();
         }
     }
 
@@ -118,16 +118,16 @@ public class VLCPlayerActivity extends BasePlayerActivity { // implements VLCPla
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG,"onDestroy() is called.");
-        if (mPresenter != null) {
-            mPresenter.releaseMediaSessionCompat();
-            mPresenter.releaseVLCPlayer();
+        if (presenter != null) {
+            presenter.releaseMediaSessionCompat();
+            presenter.releaseVLCPlayer();
         }
     }
 
     // implement abstract methods of super class
     @Override
     public BasePlayerPresenter getPlayerBasePresenter() {
-        return mPresenter;
+        return presenter;
     }
 
     @Override

@@ -26,7 +26,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.smile.karaokeplayer.arrayAdapters.SpinnerAdapter;
+import com.smile.karaokeplayer.adapters.SpinnerAdapter;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.SongInfo;

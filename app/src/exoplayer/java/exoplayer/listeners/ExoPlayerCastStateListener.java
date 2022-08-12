@@ -1,7 +1,6 @@
 package exoplayer.listeners;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -12,8 +11,7 @@ import com.google.android.gms.cast.framework.CastState;
 import com.smile.karaokeplayer.R;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
-import exoplayer.ExoPlayerActivity;
-import exoplayer.ExoPlayerFragment;
+import exoplayer.fragments.ExoPlayerFragment;
 import exoplayer.presenters.ExoPlayerPresenter;
 
 public class ExoPlayerCastStateListener implements com.google.android.gms.cast.framework.CastStateListener {

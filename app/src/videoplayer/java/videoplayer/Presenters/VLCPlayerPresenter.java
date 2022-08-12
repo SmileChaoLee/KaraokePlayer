@@ -15,6 +15,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
@@ -39,7 +40,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     private static final String TAG = "VLCPlayerPresenter";
 
     private final BasePresentView presentView;
-    // private final Context callingContext;
+    private final Fragment mFragment;
     private final Activity mActivity;
     private final AudioManager audioManager;
     private final int mStreamType = AudioManager.STREAM_MUSIC;
@@ -58,13 +59,14 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     // public interface VLCPlayerPresentView extends BasePresentView {
     // }
 
-    public VLCPlayerPresenter(Activity activity, BasePresentView presentView) {
-        super(activity, presentView);
-        mActivity = activity;
+    public VLCPlayerPresenter(Fragment fragment, BasePresentView presentView) {
+        super(fragment, presentView);
+        mFragment = fragment;
+        mActivity = fragment.getActivity();
         // this.callingContext = activity;
         this.presentView = presentView;
         // this.mActivity = (Activity)(this.presentView);
-        this.audioManager = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
+        this.audioManager = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
         // set volume control stream to STREAM_MUSIC
         mActivity.setVolumeControlStream(mStreamType);
     }

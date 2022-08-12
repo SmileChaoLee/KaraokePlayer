@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer
+package com.smile.karaokeplayer.fragments
 
 import android.app.Activity
 import android.content.Context
@@ -33,6 +33,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.ads.nativetemplates.TemplateView
+import com.smile.karaokeplayer.BaseApplication
+import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.models.VerticalSeekBar

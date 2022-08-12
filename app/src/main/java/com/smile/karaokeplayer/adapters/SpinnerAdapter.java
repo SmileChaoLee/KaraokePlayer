@@ -1,4 +1,4 @@
-package com.smile.karaokeplayer.arrayAdapters;
+package com.smile.karaokeplayer.adapters;
 
 import android.app.Activity;
 import android.content.Context;

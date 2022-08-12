@@ -1,17 +1,17 @@
-package exoplayer
+package videoplayer
 
 import android.os.Bundle
 import android.util.Log
 import com.smile.karaokeplayer.BaseActivity
-import exoplayer.fragments.ExoPlayerFragment
+import videoplayer.fragments.VLCPlayerFragment
 
-private const val TAG : String = "ExoPlayerActivity"
+private const val TAG : String = "VLCPlayerActivity"
 
-class ExoPlayerActivity : BaseActivity() {
+class VLCPlayerActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
         super.onCreate(savedInstanceState)
     }
 
-    override fun getFragment() = ExoPlayerFragment()
+    override fun getFragment() = VLCPlayerFragment()
 }

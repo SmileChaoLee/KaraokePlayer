@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.activity.OnBackPressedCallback;
 
+import com.smile.karaokeplayer.BaseApplication;
+import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.SongInfo;

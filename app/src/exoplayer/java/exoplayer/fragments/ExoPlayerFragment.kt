@@ -1,4 +1,4 @@
-package exoplayer
+package exoplayer.fragments
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -21,25 +21,16 @@ import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastState
-import com.smile.karaokeplayer.PlayerBaseViewFragment
+import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
+import exoplayer.SongListActivity
 import exoplayer.presenters.ExoPlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter.ExoPlayerPresentView
 
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 private const val TAG: String = "ExoPlayerFragment"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ExoPlayerFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
-    private var param1: String? = null
-    private var param2: String? = null
     private lateinit var presenter: ExoPlayerPresenter
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var playerView: StyledPlayerView
@@ -52,8 +43,6 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
 
         super.onCreate(savedInstanceState)  // must be after ExoPlayerPresenter(this, this)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
         }
 
         // must be after super.onCreate(savedInstanceState)
@@ -63,14 +52,6 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
         castPlayer = presenter.castPlayer
 
         Log.d(TAG, "onCreate() is finished")
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -129,25 +110,6 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
         presenter.releaseMediaSessionCompat()
         presenter.releaseExoPlayerAndCastPlayer()
         playerView.player = null
-    }
-
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ExoPlayerFragment.
-         */
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ExoPlayerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
     }
 
     // implementing methods of ExoPlayerPresenter.ExoPlayerPresentView

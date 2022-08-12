@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="ThemeOverlay.KaraokePlayer.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_900</item>
+        <item name="fullscreenTextColor">@color/light_blue_A400</item>
+    </style>
+
+    <style name="TabLayoutTextStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+</resources>
