@@ -716,10 +716,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     visibility = View.INVISIBLE
                     hideVideoImageButton.setImageResource(R.drawable.show_video)
                     nativeAdsFrameLayout.visibility = View.GONE
+                    controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
                 } else {
                     visibility = View.VISIBLE
                     hideVideoImageButton.setImageResource(R.drawable.hide_video)
                     nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+                    setTimerToHideSupportAndAudioController()   // reset the timer
                 }
             }
         }
