@@ -80,7 +80,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private lateinit var orientationImageButton: ImageButton
     private lateinit var repeatImageButton: ImageButton
     private lateinit var switchToMusicImageButton: ImageButton
-    private lateinit var switchToVocalImageButton: ImageButton
+    protected lateinit var switchToVocalImageButton: ImageButton
     private lateinit var hideVideoImageButton: ImageButton
 
     private lateinit var actionMenuImageButton: ImageButton
@@ -632,15 +632,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private fun closeMenu(menu: Menu?) {
         menu?.let {
-            var menuItem: MenuItem
-            var subMenu: Menu?
-            val mSize = menu.size()
-            for (i in 0 until mSize) {
-                menuItem = menu.getItem(i)
-                subMenu = menuItem.subMenu
-                closeMenu(subMenu)
+            for (i in 0 until menu.size()) {
+                menu.getItem(i).subMenu?.let { it2 ->
+                    closeMenu(it2)
+                }
             }
-            menu.close()
+            it.close()
         }
     }
 
@@ -656,6 +653,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         supportToolbar.visibility = View.VISIBLE
         audioControllerView.visibility = View.VISIBLE
         nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+        setTimerToHideSupportAndAudioController()   // reset the timer
     }
 
     private fun hideSupportToolbarAndAudioController() {
@@ -681,14 +679,16 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
         volumeImageButton.setOnClickListener {
-            val volumeSeekBarVisibility = volumeSeekBar.visibility
-            if (volumeSeekBarVisibility != View.VISIBLE) {
-                volumeSeekBar.visibility = View.VISIBLE
-                nativeAdsFrameLayout.visibility = View.GONE
-            } else {
-                volumeSeekBar.visibility = View.INVISIBLE
-                nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+            volumeSeekBar.apply {
+                if (visibility != View.VISIBLE) {
+                    visibility = View.VISIBLE
+                    nativeAdsFrameLayout.visibility = View.GONE
+                } else {
+                    visibility = View.INVISIBLE
+                    nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+                }
             }
+            setTimerToHideSupportAndAudioController()   // reset timer
         }
         previousMediaImageButton.setOnClickListener { mPresenter.playPreviousSong() }
         playMediaImageButton.setOnClickListener { mPresenter.startPlay() }
@@ -728,6 +728,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         actionMenuImageButton.setOnClickListener {
             actionMenuView.showOverflowMenu()
             autoPlayMenuItem.isChecked = mPresenter.playingParam.isAutoPlay
+            setTimerToHideSupportAndAudioController()   // reset the timer
         }
         actionMenuView.setOnMenuItemClickListener { item: MenuItem? ->
             item?.let { onOptionsItemSelected(it) } == true
@@ -742,15 +743,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
         supportToolbar.setOnClickListener { v: View ->
-            val visibility = v.visibility
-            if (visibility == View.VISIBLE) {
+            if (v.visibility == View.VISIBLE) {
                 // use custom toolbar
                 hideSupportToolbarAndAudioController()
                 Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.")
             } else {
                 // use custom toolbar
                 showSupportToolbarAndAudioController()
-                setTimerToHideSupportAndAudioController()
                 Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.")
             }
             volumeSeekBar.visibility = View.INVISIBLE
@@ -813,23 +812,19 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     override fun update_Player_duration_seekbar(duration: Float) {
         var durationTmp = duration
         player_duration_seekbar.progress = 0
-        player_duration_seekbar.max = duration.toInt()
+        player_duration_seekbar.max = durationTmp.toInt()
         durationTmp /= 1000.0f // seconds
-        val minutes = (duration / 60.0f).toInt() // minutes
-        val seconds = duration.toInt() - minutes * 60
-        val durationString = String.format(Locale.ENGLISH, "%3d:%02d", minutes, seconds)
+        val minutes = (durationTmp / 60.0f).toInt() // minutes
+        val seconds = durationTmp.toInt() - minutes * 60
+        val durationString = String.format("%3d:%02d", minutes, seconds)
         durationTimeTextView.text = durationString
     }
 
     override fun showMusicAndVocalIsNotSet() {
-        ScreenUtil.showToast(
-            activity,
-            getString(R.string.musicAndVocalNotSet),
-            toastTextSize,
-            ScreenUtil.FontSize_Pixel_Type,
-            Toast.LENGTH_SHORT
-        )
         Log.d(TAG, "showMusicAndVocalIsNotSet is called.")
+        ScreenUtil.showToast(activity, getString(R.string.musicAndVocalNotSet),
+            toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT
+        )
     }
 
     override fun update_Player_duration_seekbar_progress(progress: Int) {
@@ -881,8 +876,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun setTimerToHideSupportAndAudioController() {
         controllerTimerHandler.removeCallbacksAndMessages(null)
-        controllerTimerHandler.postDelayed(
-            controllerTimerRunnable,
+        controllerTimerHandler.postDelayed(controllerTimerRunnable,
             PlayerConstants.PlayerView_Timeout.toLong()
         ) // 10 seconds
     }
@@ -890,23 +884,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     override fun showInterstitialAd(isExit: Boolean) {
         if (isExit) {
             returnToPrevious()
-            if (mPresenter.playingParam.isPlaySingleSong) {
-                return
-            }
+            if (mPresenter.playingParam.isPlaySingleSong) return
         }
-        BaseApplication.InterstitialAd?.let {
-            // free version
-            val entryPoint = 0 //  no used
-            val showAdAsyncTask = it.ShowInterstitialAdThread(
-                entryPoint,
-                BaseApplication.AdProvider
-            )
-            showAdAsyncTask.startShowAd()
+        BaseApplication.InterstitialAd?.apply {
+            ShowInterstitialAdThread(0, BaseApplication.AdProvider).startShowAd()
         }
     }
 
     override fun setScreenOrientation(orientation: Int) {
-        activity?.requestedOrientation = if (orientation==Configuration.ORIENTATION_LANDSCAPE) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        activity?.requestedOrientation =
+            if (orientation==Configuration.ORIENTATION_LANDSCAPE) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
     }
     // end of implementing PlayerBasePresenter.BasePresentView
 }
