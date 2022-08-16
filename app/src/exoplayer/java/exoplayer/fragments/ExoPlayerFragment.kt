@@ -91,8 +91,8 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
     }
 
     override fun onResume() {
-        super.onResume()
         Log.d(TAG, "onResume() is called.")
+        super.onResume()
         presenter.setSessionAvailabilityListener()
         presenter.addBaseCastStateListener()
     }

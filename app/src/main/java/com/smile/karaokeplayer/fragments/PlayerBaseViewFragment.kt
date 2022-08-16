@@ -24,15 +24,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatSeekBar
-import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.ads.nativetemplates.TemplateView
+import com.smile.karaokeplayer.BaseActivity
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
@@ -52,16 +51,16 @@ private const val TAG: String = "PlayerBaseViewFragment"
 
 abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
-    private lateinit var mPresenter: BasePlayerPresenter
+    lateinit var mPresenter: BasePlayerPresenter
     private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
 
     protected lateinit var fragmentView: View
     protected var textFontSize = 0f
-    protected var fontScale = 0f
-    protected var toastTextSize = 0f
+    private var fontScale = 0f
+    private var toastTextSize = 0f
     protected lateinit var playerViewLinearLayout: LinearLayout
-    protected lateinit var supportToolbar // use customized ToolBar
-            : Toolbar
+    private lateinit var supportToolbar // use customized ToolBar
+            : android.widget.Toolbar
 
     private lateinit var actionMenuView: ActionMenuView
     private lateinit var audioControllerView: LinearLayout
@@ -75,13 +74,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private lateinit var nextMediaImageButton: ImageButton
 
     private lateinit var playingTimeTextView: TextView
-    protected lateinit var player_duration_seekbar: AppCompatSeekBar
+    private lateinit var player_duration_seekbar: AppCompatSeekBar
     private lateinit var durationTimeTextView: TextView
 
     private lateinit var orientationImageButton: ImageButton
     private lateinit var repeatImageButton: ImageButton
     private lateinit var switchToMusicImageButton: ImageButton
-    protected lateinit var switchToVocalImageButton: ImageButton
+    private lateinit var switchToVocalImageButton: ImageButton
+    private lateinit var hideVideoImageButton: ImageButton
 
     private lateinit var actionMenuImageButton: ImageButton
     private var volumeSeekBarHeightForLandscape = 0
@@ -194,9 +194,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         supportToolbar.visibility = View.VISIBLE
 
         activity?.let {
-            val appActivity = it as AppCompatActivity
-            appActivity.setSupportActionBar(supportToolbar)
-            appActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
+            // val appActivity = it as AppCompatActivity
+            // appActivity.setSupportActionBar(supportToolbar)
+            // appActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
+
+            // val appActivity = it as FragmentActivity
+            it.setActionBar(supportToolbar)
+            it.actionBar?.setDisplayShowTitleEnabled(false)
         }
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout) // main menu
         audioControllerView = fragmentView.findViewById(R.id.audioControllerView)
@@ -222,6 +226,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton)
         switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton)
         switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton)
+        hideVideoImageButton = fragmentView.findViewById(R.id.hideVideoImageButton)
         actionMenuImageButton = fragmentView.findViewById(R.id.actionMenuImageButton)
 
         bannerLinearLayout = fragmentView.findViewById(R.id.bannerLinearLayout)
@@ -278,7 +283,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         setImageButtonStatus() // must before setButtonsPositionAndSize()
         setButtonsPositionAndSize(resources.configuration)
-        // moved to onCreateOptionsMenu() because onCreateOptionsMenu() is after onViewCreated
         setOnClickEvents()
 
         showNativeAndBannerAd()
@@ -303,8 +307,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onCreateOptionsMenu() is called")
         // Inflate the menu; this adds items to the action bar if it is present.
         // mainMenu = menu;
-
+        // menu.clear() does not work for the issue of onCreateOptionsMenu being called multiple times
         mainMenu = actionMenuView.menu
+        mainMenu.clear()    // to avoid the issue of onCreateOptionsMenu being called multiple times
         inflater.inflate(R.menu.menu_main, mainMenu)
         // final Context wrapper = new ContextThemeWrapper(this, R.style.menu_text_style);
         // or
@@ -348,8 +353,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         val currentChannelPlayed = playingParam.currentChannelPlayed
 
         if (item.hasSubMenu()) {
-            val subMenu = item.subMenu
-            subMenu!!.clearHeader()
+            item.subMenu?.clearHeader()
         }
         val id = item.itemId
         if (id == R.id.autoPlay) {
@@ -359,9 +363,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             val songListIntent = createIntentForSongListActivity()
             startActivity(songListIntent)
         } else if (id == R.id.open) {
-            // mPresenter.selectFileToOpenPresenter();
-            val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
-            selectSongsToPlayActivityLauncher.launch(selectFileIntent)
+            selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {
             PrivacyPolicyUtil.startPrivacyPolicyActivity(
                 activity,
@@ -504,6 +506,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
     }
 
+    fun selectFilesToOpen() {
+        val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
+        selectSongsToPlayActivityLauncher.launch(selectFileIntent)
+    }
+
     private fun setButtonsPositionAndSize(config: Configuration) {
         var buttonMarginLeft = (60.0f * fontScale).toInt() // 60 pixels = 20dp on Nexus 5
         Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
@@ -516,7 +523,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
         }
         val imageButtonHeight = (textFontSize * 1.5f).toInt()
-        val buttonNum = 6 // 6 buttons
+        val buttonNum = 7 // 7 buttons
         val maxWidth = buttonNum * imageButtonHeight + (buttonNum - 1) * buttonMarginLeft
         if (maxWidth > screenSize.x) {
             // greater than the width of screen
@@ -568,6 +575,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams = hideVideoImageButton.layoutParams as MarginLayoutParams
+        layoutParams.height = imageButtonHeight
+        layoutParams.width = imageButtonHeight
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
         setMediaRouteButtonView(buttonMarginLeft, imageButtonHeight)
         layoutParams = actionMenuImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
@@ -576,7 +587,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams = actionMenuView.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
-        val tempBitmap = BitmapFactory.decodeResource(resources, R.mipmap.circle_and_three_dots)
+        val tempBitmap = BitmapFactory.decodeResource(resources, R.drawable.circle_and_three_dots)
         val iconDrawable: Drawable = BitmapDrawable(
             resources,
             Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true)
@@ -607,8 +618,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "heightPercent = $heightPercent")
         messageNativeAdLayoutLP.matchConstraintPercentHeight =
             (heightPercent * 100.0f).toInt() / 100.0f
-        Log.d(TAG,
-            "messageNativeAdLayoutLP.matchConstraintPercentHeight = " + messageNativeAdLayoutLP.matchConstraintPercentHeight
+        Log.d(TAG, "messageNativeAdLayoutLP.matchConstraintPercentHeight = " +
+                messageNativeAdLayoutLP.matchConstraintPercentHeight
         )
 
         // setting the width and the margins for nativeAdTemplateView
@@ -648,11 +659,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun hideSupportToolbarAndAudioController() {
-        supportToolbar.visibility = View.GONE
-        audioControllerView.visibility = View.GONE
-        nativeAdsFrameLayout.visibility = nativeAdViewVisibility
-        closeMenu(mainMenu)
-        bannerLinearLayout.visibility = View.VISIBLE
+        if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            supportToolbar.visibility = View.GONE
+            audioControllerView.visibility = View.GONE
+            nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+            closeMenu(mainMenu)
+            bannerLinearLayout.visibility = View.VISIBLE
+        }
     }
 
     private fun setOnClickEvents() {
@@ -669,7 +682,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         })
         volumeImageButton.setOnClickListener {
             val volumeSeekBarVisibility = volumeSeekBar.visibility
-            if (volumeSeekBarVisibility == View.GONE || volumeSeekBarVisibility == View.INVISIBLE) {
+            if (volumeSeekBarVisibility != View.VISIBLE) {
                 volumeSeekBar.visibility = View.VISIBLE
                 nativeAdsFrameLayout.visibility = View.GONE
             } else {
@@ -694,14 +707,28 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         repeatImageButton.setOnClickListener { mPresenter.setRepeatSongStatus() }
         switchToMusicImageButton.setOnClickListener { mPresenter.switchAudioToMusic() }
         switchToVocalImageButton.setOnClickListener { mPresenter.switchAudioToVocal() }
+        hideVideoImageButton.setOnClickListener {
+            activity?.let {
+                (it as BaseActivity).tablayoutViewLayout.visibility = playerViewLinearLayout.visibility
+            }
+            playerViewLinearLayout.apply {
+                if (visibility==View.VISIBLE) {
+                    visibility = View.INVISIBLE
+                    hideVideoImageButton.setImageResource(R.drawable.show_video)
+                    nativeAdsFrameLayout.visibility = View.GONE
+                } else {
+                    visibility = View.VISIBLE
+                    hideVideoImageButton.setImageResource(R.drawable.hide_video)
+                    nativeAdsFrameLayout.visibility = nativeAdViewVisibility
+                }
+            }
+        }
         actionMenuImageButton.setOnClickListener {
             actionMenuView.showOverflowMenu()
             autoPlayMenuItem.isChecked = mPresenter.playingParam.isAutoPlay
         }
         actionMenuView.setOnMenuItemClickListener { item: MenuItem? ->
-            onOptionsItemSelected(
-                item!!
-            )
+            item?.let { onOptionsItemSelected(it) } == true
         }
         player_duration_seekbar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
@@ -809,14 +836,18 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun showNativeAndBannerAd() {
         Log.d(TAG, "showNativeAndBannerAd() is called.")
-        nativeAdViewVisibility = View.VISIBLE
-        nativeTemplate!!.showNativeAd()
+        if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            nativeAdViewVisibility = View.VISIBLE
+            nativeTemplate?.showNativeAd()
+        }
     }
 
     override fun hideNativeAndBannerAd() {
         Log.d(TAG, "hideNativeAndBannerAd() is called.")
-        nativeAdViewVisibility = View.GONE
-        nativeTemplate!!.hideNativeAd()
+        if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            nativeAdViewVisibility = View.GONE
+            nativeTemplate?.hideNativeAd()
+        }
     }
 
     override fun showBufferingMessage() {
@@ -833,16 +864,16 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun buildAudioTrackMenuItem(audioTrackNumber: Int) {
         // build R.id.audioTrack submenu
-        val subMenu = audioTrackMenuItem.subMenu
-        var index = 0
-        while (index < audioTrackNumber) {
-
-            // audio track index start from 1 for user interface
-            subMenu!!.getItem(index).isVisible = true
-            index++
-        }
-        for (j in index until subMenu!!.size()) {
-            subMenu.getItem(j).isVisible = false
+        audioTrackMenuItem.subMenu?.let {
+            var index = 0
+            while (index < audioTrackNumber) {
+                // audio track index start from 1 for user interface
+                it.getItem(index).isVisible = true
+                index++
+            }
+            for (j in index until it.size()) {
+                it.getItem(j).isVisible = false
+            }
         }
     }
 
@@ -857,15 +888,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     override fun showInterstitialAd(isExit: Boolean) {
         if (isExit) {
             returnToPrevious()
-            val playingParam = mPresenter.playingParam
-            if (playingParam.isPlaySingleSong) {
+            if (mPresenter.playingParam.isPlaySingleSong) {
                 return
             }
         }
-        if (BaseApplication.InterstitialAd != null) {
+        BaseApplication.InterstitialAd?.let {
             // free version
             val entryPoint = 0 //  no used
-            val showAdAsyncTask = BaseApplication.InterstitialAd!!.ShowInterstitialAdThread(
+            val showAdAsyncTask = it.ShowInterstitialAdThread(
                 entryPoint,
                 BaseApplication.AdProvider
             )

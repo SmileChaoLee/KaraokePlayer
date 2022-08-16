@@ -7,9 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -22,7 +20,8 @@ import org.videolan.libvlc.util.VLCVideoLayout
 import videoplayer.Presenters.VLCPlayerPresenter
 import videoplayer.SongListActivity
 
-private const val TAG: String = "ExoPlayerFragment"
+private const val TAG: String = "VLCPlayerFragment"
+
 class VLCPlayerFragment : PlayerBaseViewFragment() {
     private val ENABLE_SUBTITLES = true
     private val USE_TEXTURE_VIEW = false

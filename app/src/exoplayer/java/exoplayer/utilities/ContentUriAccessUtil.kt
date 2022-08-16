@@ -12,20 +12,16 @@ object ContentUriAccessUtil {
     private const val TAG = "ContentUriAccessUtil"
 
     @JvmStatic
-    fun selectFileToOpen(activity: Activity, requestCode: Int, isSingleFile: Boolean) {
-        val intent = createIntentForSelectingFile(isSingleFile)
-        activity.startActivityForResult(intent, requestCode)
-    }
-
-    @JvmStatic
     fun createIntentForSelectingFile(isSingleFile: Boolean): Intent {
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, !isSingleFile)
-        intent.type = "*/*"
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            putExtra(Intent.EXTRA_ALLOW_MULTIPLE, !isSingleFile)
+            type = "*/*"
+        }
+
         return intent
     }
 

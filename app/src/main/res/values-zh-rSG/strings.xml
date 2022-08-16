@@ -66,4 +66,8 @@
     <string name="chromecast_is_connected">Chromecaste已连线</string>
     <string name="guessedAudioTrackValue">音轨设置是猜测的,\n需要再确认</string>
     <string name="duplicate_in_database">资料重複在资料库中</string>
+    <string name="play_video">视频</string>
+    <string name="open_files">开启档案</string>
+    <string name="my_list">我的清单</string>
+    <string name="my_favorites">我的最爱</string>
 </resources>

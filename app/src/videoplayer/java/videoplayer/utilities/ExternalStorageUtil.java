@@ -48,7 +48,7 @@ public final class ExternalStorageUtil {
     @Deprecated
     public static String getUriRealPath(Context ctx, Uri uri) {
         String ret = "";
-        if ( isAboveKitKat() ) {
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ) {
             // Android OS above sdk version 19.
             ret = getUriRealPathAboveKitkat(ctx, uri);
         } else {
@@ -62,11 +62,11 @@ public final class ExternalStorageUtil {
     @SuppressLint("NewApi")
     private static String getUriRealPathAboveKitkat(Context ctx, Uri uri) {
         String ret = "";
-        Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat() is called");
+        Log.d(TAG, "getUriRealPathAboveKitkat() is called");
         if (ctx != null && uri != null) {
-            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> ctx and uri are not null");
+            Log.d(TAG, "getUriRealPathAboveKitkat()--> ctx and uri are not null");
             if (isDocumentUri(ctx, uri)) {
-                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isDocumentUri()");
+                Log.d(TAG, "getUriRealPathAboveKitkat()--> isDocumentUri()");
                 // Get uri related document id.
                 String documentId = DocumentsContract.getDocumentId(uri);
 
@@ -98,7 +98,7 @@ public final class ExternalStorageUtil {
                         ret = getImageRealPath(ctx.getContentResolver(), mediaContentUri, whereClause);
                     }
                 } else if (isDownloadDoc(uriAuthority)) {
-                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isDownloadDoc()");
+                    Log.d(TAG, "getUriRealPathAboveKitkat()--> isDownloadDoc()");
                     // Build download uri.
                     Uri downloadUri = Uri.parse("content://downloads/public_downloads");
 
@@ -110,17 +110,17 @@ public final class ExternalStorageUtil {
                         ex.printStackTrace();
                     }
                 } else if(isExternalStoreDoc(uriAuthority)) {
-                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isExternalStoreDoc()");
+                    Log.d(TAG, "getUriRealPathAboveKitkat()--> isExternalStoreDoc()");
                     String idArr[] = documentId.split(":");
                     if (idArr.length == 2) {
-                        Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> idArr.length == 2");
+                        Log.d(TAG, "getUriRealPathAboveKitkat()--> idArr.length == 2");
                         String type = idArr[0];
-                        Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> type = " + type);
+                        Log.d(TAG, "getUriRealPathAboveKitkat()--> type = " + type);
                         String realDocId = idArr[1];
                         String relativePath = "/" + realDocId;
-                        Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> realDocId = " + realDocId);
+                        Log.d(TAG, "getUriRealPathAboveKitkat()--> realDocId = " + realDocId);
                         if ("primary".equalsIgnoreCase(type)) {
-                            Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> primary");
+                            Log.d(TAG, "getUriRealPathAboveKitkat()--> primary");
                             ret = Environment.getExternalStorageDirectory() + relativePath;
                             // ret = Environment.getExternalStorageDirectory().getAbsolutePath() + relativePath;
                         } else {
@@ -131,45 +131,38 @@ public final class ExternalStorageUtil {
                             }
                             if (pos>=0) {
                                 ret = retTemp.substring(0, pos) + relativePath;
-                                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);
+                                Log.d(TAG, "getUriRealPathAboveKitkat()--> SECONDARY_STORAGE = " + ret);
                             } else {
                                 // mnt directory
                                 ret = Environment.getExternalStorageDirectory() + relativePath;
-                                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> not primary -->getExternalStorageDirectory() = " + ret);
+                                Log.d(TAG, "getUriRealPathAboveKitkat()--> not primary -->getExternalStorageDirectory() = " + ret);
                                 if (!fileExists(ret)) {
                                     ret = "/mnt/sdcard" + relativePath;
                                     if (!fileExists(ret)) {
                                         // secondary storage
                                         ret = "/mnt/sdcard1" + relativePath;
                                     }
-                                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> mnt-->mnt = " + ret);
+                                    Log.d(TAG, "getUriRealPathAboveKitkat()--> mnt-->mnt = " + ret);
                                 }
                             }
                         }
                     }
                 }
             } else if (isContentUri(uri)) {
-                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isContentUri()");
+                Log.d(TAG, "getUriRealPathAboveKitkat()--> isContentUri()");
                 if (isGooglePhotoDoc(uri.getAuthority())) {
-                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isGooglePhotoDoc()");
+                    Log.d(TAG, "getUriRealPathAboveKitkat()--> isGooglePhotoDoc()");
                     ret = uri.getLastPathSegment();
                 } else {
-                    Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> not isGooglePhotoDoc()");
+                    Log.d(TAG, "getUriRealPathAboveKitkat()--> not isGooglePhotoDoc()");
                     ret = getImageRealPath(ctx.getContentResolver(), uri, null);
                 }
             } else if (isFileUri(uri)) {
-                Log.d(TAG, "ExternalStorageUtil.getUriRealPathAboveKitkat()--> isFileUri()");
+                Log.d(TAG, "getUriRealPathAboveKitkat()--> isFileUri()");
                 ret = uri.getPath();
             }
         }
 
-        return ret;
-    }
-
-    /* Check whether current android os version is bigger than kitkat or not. */
-    private static boolean isAboveKitKat() {
-        boolean ret = false;
-        ret = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
         return ret;
     }
 

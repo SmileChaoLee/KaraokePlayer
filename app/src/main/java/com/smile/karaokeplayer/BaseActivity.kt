@@ -1,78 +1,115 @@
 package com.smile.karaokeplayer
 
+import android.content.res.Configuration
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
-import com.smile.karaokeplayer.adapters.FragmentAdapter
-import com.smile.karaokeplayer.fragments.MyFavoriteFragment
-import com.smile.karaokeplayer.fragments.MyListFragment
-import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
+import androidx.fragment.app.FragmentActivity
+import com.smile.karaokeplayer.fragments.*
+import com.smile.karaokeplayer.interfaces.FragmentInterface
 
-interface FragmentInterface {
-    fun getFragment() : PlayerBaseViewFragment
-}
-
-private const val fragmentTag : String = "FragmentTag"
 private const val TAG : String = "BaseActivity"
 
-abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
-    private lateinit var playerFragment: PlayerBaseViewFragment
-    private lateinit var basePlayViewFragmentLlayout : LinearLayout
-    private lateinit var linearLayoutForTabLayout: LinearLayout
-    private var isHide : Boolean = true
+abstract class BaseActivity : FragmentActivity(), FragmentInterface {
+    lateinit var playerFragment: PlayerBaseViewFragment
+    lateinit var tablayoutFragment : TablayoutFragment
+    lateinit var basePlayViewLayout : LinearLayout
+    lateinit var tablayoutViewLayout: LinearLayout
+    // private var previousPlayParentView : ViewGroup? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
-        basePlayViewFragmentLlayout = findViewById(R.id.basePlayViewFragmentLlayout)
+        basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
+        tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
+
         playerFragment = getFragment()
-        val fmManager = supportFragmentManager
-        val ft = fmManager.beginTransaction()
-        val curFragment = fmManager.findFragmentByTag(fragmentTag)
-        if (curFragment != null) {
-            ft.add(R.id.basePlayViewFragmentLlayout, playerFragment, fragmentTag)
-        } else {
-            ft.replace(R.id.basePlayViewFragmentLlayout, playerFragment, fragmentTag)
+        tablayoutFragment = TablayoutFragment()
+
+        supportFragmentManager.beginTransaction().apply {
+            add(R.id.basePlayViewLayout, playerFragment)
+            add(R.id.tablayoutViewLayout, tablayoutFragment)
+            commit()
         }
-        ft.commit()
-        basePlayViewFragmentLlayout.visibility = View.GONE
-        isHide = true
 
-        linearLayoutForTabLayout = findViewById(R.id.linearLayoutForTabLayout)
-        var playTablayout : TabLayout = findViewById(R.id.playTabLayout)
-        val playViewPager2 : ViewPager2 = findViewById(R.id.playViewPager2)
-        val fragmentStateAdapter = FragmentAdapter(supportFragmentManager, lifecycle)
-
-        val listFragment = MyListFragment();
-        fragmentStateAdapter.addFragment(listFragment, "My List")
-        val favoriteFragment = MyFavoriteFragment()
-        fragmentStateAdapter.addFragment(favoriteFragment, "My Favorites")
-
-        playViewPager2.adapter = fragmentStateAdapter
-        TabLayoutMediator(playTablayout, playViewPager2) { tab, position ->
-            tab.text = fragmentStateAdapter.getTitle(position)
-        }.attach()
+        basePlayViewLayout.visibility = View.VISIBLE
+        tablayoutViewLayout.visibility = View.INVISIBLE
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "onBackPressedDispatcher.handleOnBackPressed")
                 playerFragment.onBackPressed()
-
-                if (isHide) {
-                    basePlayViewFragmentLlayout.visibility = View.VISIBLE
-                    linearLayoutForTabLayout.visibility = View.GONE
-                } else {
-                    basePlayViewFragmentLlayout.visibility = View.GONE
-                    linearLayoutForTabLayout.visibility = View.VISIBLE
-                }
-                isHide = !isHide
             }
         })
+
+        val activityBaseLayout : FrameLayout = findViewById(R.id.activity_base_layout)
+        activityBaseLayout.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    // Layout has been finished
+                    // hove to use removeGlobalOnLayoutListener() method after API 16 or is API 16
+                    activityBaseLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    createViewDependingOnOrientation(resources.configuration.orientation)
+                    /*  // using adding and removing view to implement
+                    val view = playerFragment.view  // not null now
+                    view?.let {
+                        previousPlayParentView = view.parent as ViewGroup
+                    }
+                    */
+                }
+            })
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "onResume() is called")
+        super.onResume()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        Log.d(TAG, "onSaveInstanceState() is called")
+        super.onSaveInstanceState(outState, outPersistentState)
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG, "onConfigurationChanged() is called")
+        createViewDependingOnOrientation(newConfig.orientation)
+        super.onConfigurationChanged(newConfig)
+    }
+
+    /*
+    private fun createViewDependingOnOrientation(orientation: Int) {
+        val view = playerFragment.view
+        Log.d(TAG, "createViewDependingOnOrientation.playerFragment.view = $view")
+        view?.let {
+            val currentParentView = it.parent as ViewGroup
+            currentParentView.removeView(it)
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_LANDSCAPE")
+                basePlayViewLayout.addView(it)
+                basePlayViewLayout.visibility = View.VISIBLE
+                tablayoutViewLayout.visibility = View.INVISIBLE
+            } else {
+                Log.d(TAG, "createViewDependingOnOrientation.previousPlayParentView = $previousPlayParentView")
+                previousPlayParentView?.addView(it)
+                basePlayViewLayout.visibility = View.INVISIBLE
+                tablayoutViewLayout.visibility = View.VISIBLE
+            }
+            previousPlayParentView = currentParentView
+        }
+    }
+    */
+
+    private fun createViewDependingOnOrientation(orientation : Int) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_LANDSCAPE")
+        } else {
+            Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_PORTRAIT")
+        }
     }
 }

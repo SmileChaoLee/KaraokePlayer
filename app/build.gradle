@@ -28,14 +28,14 @@ android {
     productFlavors {
         exoplayer {
             dimension("player")
-            minSdkVersion 19
+            minSdkVersion 21
             applicationId "com.smile.karaokeplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "false",
                                     google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
         }
         videoplayer {
             dimension("player")
-            minSdkVersion 19
+            minSdkVersion 21
             applicationId = "com.smile.videoplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true",
                                     google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]

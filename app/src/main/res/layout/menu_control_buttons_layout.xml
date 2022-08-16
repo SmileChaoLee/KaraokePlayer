@@ -51,6 +51,17 @@
         android:src="@drawable/vocal_imagebutton_source"
         android:background="@drawable/main_menuitem_background_color">
     </ImageButton>
+    <ImageButton
+        android:id="@+id/hideVideoImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:padding="0dp"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"
+        android:src="@drawable/hide_video"
+        android:background="@drawable/main_menuitem_background_color">
+    </ImageButton>
     <include layout="@layout/media_route_button_layout" />
     <ImageButton
         android:id="@+id/actionMenuImageButton"
@@ -60,7 +71,7 @@
         android:padding="0dp"
         android:scaleType="centerInside"
         android:adjustViewBounds="true"
-        android:src="@mipmap/circle_and_three_dots"
+        android:src="@drawable/circle_and_three_dots"
         android:background="@drawable/main_menuitem_background_color">
     </ImageButton>
 </LinearLayout>
