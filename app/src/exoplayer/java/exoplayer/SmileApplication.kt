@@ -5,6 +5,8 @@ import com.facebook.ads.AudienceNetworkAds
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds
 import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil
 
+private const val TAG: String = "SmileApplication"
+
 class SmileApplication : BaseApplication() {
     override fun setGoogleAdMobAndFacebookAudioNetwork() {
         AudienceNetworkAds.initialize(this)
@@ -17,9 +19,5 @@ class SmileApplication : BaseApplication() {
         googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571"
         googleAdMobNativeID = "ca-app-pub-8354869049759576/7985456524"
         AdProvider = ShowingInterstitialAdsUtil.FacebookAdProvider
-    }
-
-    companion object {
-        private val TAG: String = "SmileApplication"
     }
 }

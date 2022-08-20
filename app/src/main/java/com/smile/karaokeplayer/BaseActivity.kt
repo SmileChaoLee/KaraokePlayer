@@ -1,26 +1,32 @@
 package com.smile.karaokeplayer
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.FragmentActivity
-import com.smile.karaokeplayer.fragments.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
+import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.FragmentInterface
 
 private const val TAG : String = "BaseActivity"
 
-abstract class BaseActivity : FragmentActivity(), FragmentInterface {
+abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
     lateinit var playerFragment: PlayerBaseViewFragment
-    lateinit var tablayoutFragment : TablayoutFragment
-    lateinit var basePlayViewLayout : LinearLayout
-    lateinit var tablayoutViewLayout: LinearLayout
+    private lateinit var tablayoutFragment : TablayoutFragment
+    private lateinit var basePlayViewLayout : LinearLayout
+    private lateinit var tablayoutViewLayout: LinearLayout
+    private lateinit var baseReceiver : BroadcastReceiver
     // private var previousPlayParentView : ViewGroup? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,15 +38,36 @@ abstract class BaseActivity : FragmentActivity(), FragmentInterface {
 
         playerFragment = getFragment()
         tablayoutFragment = TablayoutFragment()
-
         supportFragmentManager.beginTransaction().apply {
             add(R.id.basePlayViewLayout, playerFragment)
             add(R.id.tablayoutViewLayout, tablayoutFragment)
             commit()
         }
 
-        basePlayViewLayout.visibility = View.VISIBLE
-        tablayoutViewLayout.visibility = View.INVISIBLE
+        // setting BroadcastReceiver
+        object: BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.d(TAG, "intent?.action = ${intent?.action}")
+                when (intent?.action) {
+                    PlayerBaseViewFragment.Hide_PlayerView -> {
+                        tablayoutViewLayout.visibility = View.VISIBLE
+                        Log.d(TAG, "tablayoutViewLayout.visibility = View.VISIBLE")
+                    }
+                    PlayerBaseViewFragment.Show_PlayerView -> {
+                        tablayoutViewLayout.visibility = View.GONE
+                        Log.d(TAG, "tablayoutViewLayout.visibility = View.GONE")
+                    }
+                }
+            }
+        }.also { baseReceiver = it }
+
+        LocalBroadcastManager.getInstance(this).apply {
+            registerReceiver(baseReceiver, IntentFilter().apply {
+                addAction(PlayerBaseViewFragment.Hide_PlayerView)
+                addAction(PlayerBaseViewFragment.Show_PlayerView)
+            })
+        }
+        //
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -49,12 +76,12 @@ abstract class BaseActivity : FragmentActivity(), FragmentInterface {
             }
         })
 
-        val activityBaseLayout : FrameLayout = findViewById(R.id.activity_base_layout)
-        activityBaseLayout.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+        findViewById<FrameLayout?>(R.id.activity_base_layout).apply {
+            viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     // Layout has been finished
                     // hove to use removeGlobalOnLayoutListener() method after API 16 or is API 16
-                    activityBaseLayout.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    viewTreeObserver.removeOnGlobalLayoutListener(this)
                     createViewDependingOnOrientation(resources.configuration.orientation)
                     /*  // using adding and removing view to implement
                     val view = playerFragment.view  // not null now
@@ -64,6 +91,7 @@ abstract class BaseActivity : FragmentActivity(), FragmentInterface {
                     */
                 }
             })
+        }
     }
 
     override fun onResume() {
@@ -82,7 +110,13 @@ abstract class BaseActivity : FragmentActivity(), FragmentInterface {
         super.onConfigurationChanged(newConfig)
     }
 
-    /*
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).apply {
+            unregisterReceiver(baseReceiver)
+        }
+        super.onDestroy()
+    }
+/*
     private fun createViewDependingOnOrientation(orientation: Int) {
         val view = playerFragment.view
         Log.d(TAG, "createViewDependingOnOrientation.playerFragment.view = $view")
@@ -111,5 +145,6 @@ abstract class BaseActivity : FragmentActivity(), FragmentInterface {
         } else {
             Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_PORTRAIT")
         }
+        playerFragment.hidePlayerView()
     }
 }

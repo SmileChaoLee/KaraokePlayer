@@ -12,11 +12,12 @@
         android:id="@+id/fragmentsTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/black"
-        app:tabIconTint="@color/yellow"
-        app:tabIndicatorColor="@color/yellow"
-        app:tabSelectedTextColor="@color/red"
+        android:background="@color/transparentLightGray"
+        app:tabGravity="center"
         app:tabMode="scrollable"
+        app:tabIconTint="@color/yellow"
+        app:tabIndicatorColor="@color/red"
+        app:tabSelectedTextColor="@color/red"
         app:tabTextAppearance="@style/TabLayoutTextStyle"/>
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fragmentsViewPager2"

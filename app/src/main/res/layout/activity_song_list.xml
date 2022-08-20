@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,8 +11,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="@drawable/layout_horizontal_divider"
-        android:showDividers="end" >
+        app:divider="@drawable/layout_horizontal_divider"
+        app:showDividers="end" >
         <TextView
             android:id="@+id/songListStringTextView"
             android:layout_width="match_parent"
@@ -26,15 +27,17 @@
         android:id="@+id/songListListView"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:divider="@android:color/background_dark"
+        android:divider="@color/darkerGray"
+        android:dividerHeight="1dp"
         android:layout_weight="1"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:baselineAligned="false"
         android:weightSum="3">
         <LinearLayout
             android:orientation="horizontal"
@@ -48,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/addOneString"
-                android:textAllCaps="false"
+                app:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
                 android:textColor="@color/blue" >
@@ -66,7 +69,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/addManyString"
-                android:textAllCaps="false"
+                app:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
                 android:textColor="@color/blue" >
@@ -84,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/exitString"
-                android:textAllCaps="false"
+                app:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
                 android:textColor="@android:color/holo_red_dark" >

@@ -24,12 +24,14 @@ import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.ads.nativetemplates.TemplateView
 import com.smile.karaokeplayer.BaseActivity
 import com.smile.karaokeplayer.BaseApplication
@@ -40,16 +42,20 @@ import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter.BasePresentView
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
-import com.smile.smilelibraries.Models.ExitAppTimer
+import com.smile.smilelibraries.models.ExitAppTimer
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
-import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdViewForAdMobOrFacebook
+import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
 import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
-import java.util.*
 
 private const val TAG: String = "PlayerBaseViewFragment"
 
 abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
+
+    companion object {
+        const val Hide_PlayerView : String = "Hide_PlayerView"
+        const val Show_PlayerView : String = "Show_PlayerView"
+    }
 
     lateinit var mPresenter: BasePlayerPresenter
     private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
@@ -60,7 +66,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private var toastTextSize = 0f
     protected lateinit var playerViewLinearLayout: LinearLayout
     private lateinit var supportToolbar // use customized ToolBar
-            : android.widget.Toolbar
+            : androidx.appcompat.widget.Toolbar
 
     private lateinit var actionMenuView: ActionMenuView
     private lateinit var audioControllerView: LinearLayout
@@ -87,7 +93,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private var volumeSeekBarHeightForLandscape = 0
 
     private lateinit var bannerLinearLayout: LinearLayout
-    private var myBannerAdView: SetBannerAdViewForAdMobOrFacebook? = null
+    private var myBannerAdView: SetBannerAdView? = null
     private var nativeTemplate: GoogleAdMobNativeTemplate? = null
 
     // private AdView bannerAdView;
@@ -115,19 +121,25 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private val controllerTimerHandler = Handler(Looper.getMainLooper())
     private val controllerTimerRunnable = Runnable {
+        Log.d(TAG, "controllerTimerRunnable() is called")
         controllerTimerHandler.removeCallbacksAndMessages(null)
         val playingParam = mPresenter.playingParam
         if (playingParam != null) {
             if (playingParam.isMediaPrepared) {
+                Log.d(TAG, "controllerTimerRunnable.playingParam.isMediaPrepared")
                 if (supportToolbar.visibility == View.VISIBLE) {
+                    Log.d(TAG, "controllerTimerRunnable.hideSupportToolbarAndAudioController")
                     // hide supportToolbar
                     hideSupportToolbarAndAudioController()
                 }
             } else {
+                Log.d(TAG, "controllerTimerRunnable.showSupportToolbarAndAudioController")
                 showSupportToolbarAndAudioController()
             }
         }
     }
+
+    private var interstitialAd: ShowingInterstitialAdsUtil? = null
 
     abstract fun getPlayerBasePresenter(): BasePlayerPresenter?
     abstract fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int)
@@ -148,11 +160,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
         setHasOptionsMenu(true) // must have because it has menu
 
-        BaseApplication.InterstitialAd = ShowingInterstitialAdsUtil(
-            activity,
-            BaseApplication.facebookAds,
-            BaseApplication.googleInterstitialAd
-        )
+        activity?.let {
+            interstitialAd = ShowingInterstitialAdsUtil(it,
+                    (it.application as BaseApplication).facebookAds,
+                    (it.application as BaseApplication).googleInterstitialAd)
+        }
 
         val presenter = getPlayerBasePresenter()
         if (presenter == null) {
@@ -194,13 +206,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         supportToolbar.visibility = View.VISIBLE
 
         activity?.let {
-            // val appActivity = it as AppCompatActivity
-            // appActivity.setSupportActionBar(supportToolbar)
-            // appActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
+            val appActivity = it as AppCompatActivity
+            appActivity.setSupportActionBar(supportToolbar)
+            appActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
 
-            // val appActivity = it as FragmentActivity
-            it.setActionBar(supportToolbar)
-            it.actionBar?.setDisplayShowTitleEnabled(false)
+            // it.setActionBar(supportToolbar)
+            // it.actionBar?.setDisplayShowTitleEnabled(false)
         }
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout) // main menu
         audioControllerView = fragmentView.findViewById(R.id.audioControllerView)
@@ -231,24 +242,16 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         bannerLinearLayout = fragmentView.findViewById(R.id.bannerLinearLayout)
         bannerLinearLayout.visibility = View.VISIBLE // Show Banner Ad
-        myBannerAdView = SetBannerAdViewForAdMobOrFacebook(
-            activity,
-            null,
-            bannerLinearLayout,
-            BaseApplication.googleAdMobBannerID,
-            BaseApplication.facebookBannerID
-        )
-        myBannerAdView?.showBannerAdViewFromAdMobOrFacebook(BaseApplication.AdProvider)
+        myBannerAdView = SetBannerAdView(
+            activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
+            BaseApplication.facebookBannerID)
+        myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
 
         // message area
         message_area_LinearLayout = fragmentView.findViewById(R.id.message_area_LinearLayout)
         message_area_LinearLayout.visibility = View.GONE
         bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView)
-        ScreenUtil.resizeTextSize(
-            bufferingStringTextView,
-            textFontSize,
-            ScreenUtil.FontSize_Pixel_Type
-        )
+        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type)
         animationText = AlphaAnimation(0.0f, 1.0f)
         animationText.duration = 500
         animationText.startOffset = 0
@@ -258,21 +261,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         val durationTextSize = textFontSize * 0.6f
         playingTimeTextView = fragmentView.findViewById(R.id.playingTimeTextView)
         playingTimeTextView.text = "000:00"
-        ScreenUtil.resizeTextSize(
-            playingTimeTextView,
-            durationTextSize,
-            ScreenUtil.FontSize_Pixel_Type
-        )
+        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
 
         player_duration_seekbar = fragmentView.findViewById(R.id.player_duration_seekbar)
 
         durationTimeTextView = fragmentView.findViewById(R.id.durationTimeTextView)
         durationTimeTextView.text = "000:00"
-        ScreenUtil.resizeTextSize(
-            durationTimeTextView,
-            durationTextSize,
-            ScreenUtil.FontSize_Pixel_Type
-        )
+        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
 
         nativeAdsFrameLayout = fragmentView.findViewById(R.id.nativeAdsFrameLayout)
         nativeAdViewVisibility = nativeAdsFrameLayout.visibility
@@ -281,10 +276,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             activity, nativeAdsFrameLayout, BaseApplication.googleAdMobNativeID, nativeAdTemplateView
         )
 
+        // must before setImageButtonStatus() and showNativeAndBannerAd
+        if (playingParam.isPlayerViewVisible) showPlayerView() else hidePlayerView()
+
         setImageButtonStatus() // must before setButtonsPositionAndSize()
         setButtonsPositionAndSize(resources.configuration)
         setOnClickEvents()
-
         showNativeAndBannerAd()
 
         selectSongsToPlayActivityLauncher = registerForActivityResult(
@@ -496,27 +493,38 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             showInterstitialAd(true)
         } else {
             exitAppTimer.start()
-            ScreenUtil.showToast(
-                activity,
-                getString(R.string.backKeyToExitApp),
-                toastTextSize,
-                ScreenUtil.FontSize_Pixel_Type,
-                Toast.LENGTH_SHORT
-            )
+            ScreenUtil.showToast(activity, getString(R.string.backKeyToExitApp), toastTextSize,
+                ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT)
         }
     }
 
-    fun selectFilesToOpen() {
+    fun hidePlayerView() {
+        playerViewLinearLayout.visibility = View.INVISIBLE
+        hideNativeAndBannerAd()
+        setImageButtonStatus()
+        // must be after statement of playerViewLinearLayout.visibility = View.INVISIBLE
+        controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
+    }
+    fun showPlayerView() {
+        playerViewLinearLayout.visibility = View.VISIBLE
+        if (mPresenter.playingParam.currentPlaybackState != PlaybackStateCompat.STATE_PLAYING) {
+            // not playing video then show ads
+            showNativeAndBannerAd()
+        }
+        setImageButtonStatus()
+        // must be after statement of playerViewLinearLayout.visibility = View.VISIBLE
+        setTimerToHideSupportAndAudioController()   // reset the timer
+    }
+
+    private fun selectFilesToOpen() {
         val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
         selectSongsToPlayActivityLauncher.launch(selectFileIntent)
     }
 
     private fun setButtonsPositionAndSize(config: Configuration) {
         var buttonMarginLeft = (60.0f * fontScale).toInt() // 60 pixels = 20dp on Nexus 5
-        Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
         val screenSize = ScreenUtil.getScreenSize(activity)
-        Log.d(TAG, "screenSize.x = " + screenSize.x)
-        Log.d(TAG, "screenSize.y = " + screenSize.y)
+        Log.d(TAG, "screenSize.x = ${screenSize.x}, screenSize.y = ${screenSize.y}, buttonMarginLeft = $buttonMarginLeft")
         if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             buttonMarginLeft =
                 (buttonMarginLeft.toFloat() * (screenSize.x.toFloat() / screenSize.y.toFloat())).toInt()
@@ -708,24 +716,21 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         switchToMusicImageButton.setOnClickListener { mPresenter.switchAudioToMusic() }
         switchToVocalImageButton.setOnClickListener { mPresenter.switchAudioToVocal() }
         hideVideoImageButton.setOnClickListener {
-            activity?.let {
-                (it as BaseActivity).tablayoutViewLayout.visibility = playerViewLinearLayout.visibility
+            var actionName = Hide_PlayerView
+            if (playerViewLinearLayout.visibility==View.VISIBLE) {
+                hidePlayerView()
+            } else {
+                showPlayerView()
+                actionName = Show_PlayerView
             }
-            playerViewLinearLayout.apply {
-                if (visibility==View.VISIBLE) {
-                    visibility = View.INVISIBLE
-                    hideVideoImageButton.setImageResource(R.drawable.show_video)
-                    nativeAdsFrameLayout.visibility = View.GONE
-                    controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
-                } else {
-                    visibility = View.VISIBLE
-                    hideVideoImageButton.setImageResource(R.drawable.hide_video)
-                    nativeAdsFrameLayout.visibility = nativeAdViewVisibility
-                    setTimerToHideSupportAndAudioController()   // reset the timer
+            activity?.let {
+                LocalBroadcastManager.getInstance(it.applicationContext).apply {
+                    sendBroadcast(Intent(actionName))
                 }
             }
         }
         actionMenuImageButton.setOnClickListener {
+            Log.d(TAG, "actionMenuImageButton.setOnClickListener")
             actionMenuView.showOverflowMenu()
             autoPlayMenuItem.isChecked = mPresenter.playingParam.isAutoPlay
             setTimerToHideSupportAndAudioController()   // reset the timer
@@ -757,7 +762,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
         playerViewLinearLayout.setOnClickListener {
             Log.d(TAG, "playerViewLinearLayout.onClick() is called.")
-            supportToolbar.performClick()
+            if (playerViewLinearLayout.visibility == View.VISIBLE) {
+                supportToolbar.performClick()
+            }
         }
     }
 
@@ -792,6 +799,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     backgroundColor
                 )
             )
+        }
+
+        if (playerViewLinearLayout.visibility==View.VISIBLE) {
+            hideVideoImageButton.setImageResource(R.drawable.hide_video)
+        } else {
+            hideVideoImageButton.setImageResource(R.drawable.show_video)
         }
     }
 
@@ -832,19 +845,22 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     override fun showNativeAndBannerAd() {
-        Log.d(TAG, "showNativeAndBannerAd() is called.")
         if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            Log.d(TAG, "showNativeAndBannerAd.View.VISIBLE")
             nativeAdViewVisibility = View.VISIBLE
             nativeTemplate?.showNativeAd()
+        } else {
+            Log.d(TAG, "showNativeAndBannerAd.View.INVISIBLE")
         }
     }
 
     override fun hideNativeAndBannerAd() {
         Log.d(TAG, "hideNativeAndBannerAd() is called.")
-        if (playerViewLinearLayout.visibility == View.VISIBLE) {
+        // if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            // Log.d(TAG, "hideNativeAndBannerAd.View.VISIBLE")
             nativeAdViewVisibility = View.GONE
             nativeTemplate?.hideNativeAd()
-        }
+        // }
     }
 
     override fun showBufferingMessage() {
@@ -875,10 +891,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     override fun setTimerToHideSupportAndAudioController() {
-        controllerTimerHandler.removeCallbacksAndMessages(null)
-        controllerTimerHandler.postDelayed(controllerTimerRunnable,
-            PlayerConstants.PlayerView_Timeout.toLong()
-        ) // 10 seconds
+        Log.d(TAG, "setTimerToHideSupportAndAudioController() is called.")
+        if (playerViewLinearLayout.visibility == View.VISIBLE) {
+            controllerTimerHandler.removeCallbacksAndMessages(null)
+            controllerTimerHandler.postDelayed(controllerTimerRunnable,
+                    PlayerConstants.PlayerView_Timeout.toLong()
+            ) // 10 seconds
+        }
     }
 
     override fun showInterstitialAd(isExit: Boolean) {
@@ -886,7 +905,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             returnToPrevious()
             if (mPresenter.playingParam.isPlaySingleSong) return
         }
-        BaseApplication.InterstitialAd?.apply {
+        interstitialAd?.apply {
             ShowInterstitialAdThread(0, BaseApplication.AdProvider).startShowAd()
         }
     }

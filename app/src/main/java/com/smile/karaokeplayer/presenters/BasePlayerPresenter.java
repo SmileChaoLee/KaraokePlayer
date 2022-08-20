@@ -32,18 +32,14 @@ import java.util.Locale;
 
 public abstract class BasePlayerPresenter {
 
-    private static final String TAG = BasePlayerPresenter.class.getName();
-
+    private static final String TAG = "BasePlayerPresenter";
     private final Activity mActivity;
     private final BasePresentView mPresentView;
-
     protected final float textFontSize;
     protected final float fontScale;
     protected final float toastTextSize;
-
     protected MediaSessionCompat mediaSessionCompat;
     protected MediaControllerCompat.TransportControls mediaTransportControls;
-
     // instances of the following members have to be saved when configuration changed
     protected Uri mediaUri;
     protected int numberOfVideoTracks;
@@ -229,7 +225,6 @@ public abstract class BasePlayerPresenter {
 
     public void initializePlayingParam() {
         playingParam = new PlayingParameters();
-        // playingParam.initializePlayingParameters();
     }
 
     @SuppressWarnings("unchecked")
