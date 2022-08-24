@@ -52,11 +52,6 @@ private const val TAG: String = "PlayerBaseViewFragment"
 
 abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
-    companion object {
-        const val Hide_PlayerView : String = "Hide_PlayerView"
-        const val Show_PlayerView : String = "Show_PlayerView"
-    }
-
     lateinit var mPresenter: BasePlayerPresenter
     private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
 
@@ -504,6 +499,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.INVISIBLE
         controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
+        activity?.let {
+            LocalBroadcastManager.getInstance(it.applicationContext).apply {
+                sendBroadcast(Intent(PlayerConstants.Hide_PlayerView))
+            }
+        }
     }
     fun showPlayerView() {
         playerViewLinearLayout.visibility = View.VISIBLE
@@ -514,6 +514,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.VISIBLE
         setTimerToHideSupportAndAudioController()   // reset the timer
+        activity?.let {
+            LocalBroadcastManager.getInstance(it.applicationContext).apply {
+                sendBroadcast(Intent(PlayerConstants.Show_PlayerView))
+            }
+        }
     }
 
     private fun selectFilesToOpen() {
@@ -716,17 +721,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         switchToMusicImageButton.setOnClickListener { mPresenter.switchAudioToMusic() }
         switchToVocalImageButton.setOnClickListener { mPresenter.switchAudioToVocal() }
         hideVideoImageButton.setOnClickListener {
-            var actionName = Hide_PlayerView
+            var actionName = PlayerConstants.Hide_PlayerView
             if (playerViewLinearLayout.visibility==View.VISIBLE) {
                 hidePlayerView()
             } else {
                 showPlayerView()
-                actionName = Show_PlayerView
-            }
-            activity?.let {
-                LocalBroadcastManager.getInstance(it.applicationContext).apply {
-                    sendBroadcast(Intent(actionName))
-                }
+                actionName = PlayerConstants.Show_PlayerView
             }
         }
         actionMenuImageButton.setOnClickListener {

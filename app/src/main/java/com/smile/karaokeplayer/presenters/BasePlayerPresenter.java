@@ -161,7 +161,7 @@ public abstract class BasePlayerPresenter {
         }
     }
 
-    private void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
+    public void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
 
         if (tempUriList==null || tempUriList.size()==0) {
             return;

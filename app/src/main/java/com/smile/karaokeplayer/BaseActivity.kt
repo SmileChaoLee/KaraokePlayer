@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -15,9 +17,11 @@ import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.FragmentInterface
+import com.smile.karaokeplayer.models.SongInfo
 
 private const val TAG : String = "BaseActivity"
 
@@ -49,13 +53,25 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
             override fun onReceive(context: Context?, intent: Intent?) {
                 Log.d(TAG, "intent?.action = ${intent?.action}")
                 when (intent?.action) {
-                    PlayerBaseViewFragment.Hide_PlayerView -> {
-                        tablayoutViewLayout.visibility = View.VISIBLE
+                    PlayerConstants.Hide_PlayerView -> {
                         Log.d(TAG, "tablayoutViewLayout.visibility = View.VISIBLE")
+                        tablayoutViewLayout.visibility = View.VISIBLE
                     }
-                    PlayerBaseViewFragment.Show_PlayerView -> {
-                        tablayoutViewLayout.visibility = View.GONE
+                    PlayerConstants.Show_PlayerView -> {
                         Log.d(TAG, "tablayoutViewLayout.visibility = View.GONE")
+                        tablayoutViewLayout.visibility = View.GONE
+                    }
+                    PlayerConstants.Play_Songs -> {
+                        Log.d(TAG, "playSelectedUrisFromStorage()")
+                        intent?.let {
+                            val uris =
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                                        it.getSerializableExtra(PlayerConstants.Song_Uri_List, ArrayList::class.java) as ArrayList<Uri>
+                                    else it.getSerializableExtra(PlayerConstants.Song_Uri_List) as ArrayList<Uri>
+                            Log.d(TAG, "playSelectedUrisFromStorage().uris.size = ${uris.size}")
+                            playerFragment.mPresenter.playSelectedUrisFromStorage(uris)
+                            playerFragment.showPlayerView()
+                        }
                     }
                 }
             }
@@ -63,8 +79,9 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
 
         LocalBroadcastManager.getInstance(this).apply {
             registerReceiver(baseReceiver, IntentFilter().apply {
-                addAction(PlayerBaseViewFragment.Hide_PlayerView)
-                addAction(PlayerBaseViewFragment.Show_PlayerView)
+                addAction(PlayerConstants.Hide_PlayerView)
+                addAction(PlayerConstants.Show_PlayerView)
+                addAction(PlayerConstants.Play_Songs)
             })
         }
         //
