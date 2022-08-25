@@ -52,24 +52,36 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
         object: BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 Log.d(TAG, "intent?.action = ${intent?.action}")
-                when (intent?.action) {
-                    PlayerConstants.Hide_PlayerView -> {
-                        Log.d(TAG, "tablayoutViewLayout.visibility = View.VISIBLE")
-                        tablayoutViewLayout.visibility = View.VISIBLE
-                    }
-                    PlayerConstants.Show_PlayerView -> {
-                        Log.d(TAG, "tablayoutViewLayout.visibility = View.GONE")
-                        tablayoutViewLayout.visibility = View.GONE
-                    }
-                    PlayerConstants.Play_Songs -> {
-                        Log.d(TAG, "playSelectedUrisFromStorage()")
-                        intent?.let {
+                intent?.run {
+                    when (action) {
+                        PlayerConstants.Hide_PlayerView -> {
+                            Log.d(TAG, "tablayoutViewLayout.visibility = View.VISIBLE")
+                            tablayoutViewLayout.visibility = View.VISIBLE
+                        }
+                        PlayerConstants.Show_PlayerView -> {
+                            Log.d(TAG, "tablayoutViewLayout.visibility = View.GONE")
+                            tablayoutViewLayout.visibility = View.GONE
+                        }
+                        PlayerConstants.Play_Songs -> {
                             val uris =
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                                        it.getSerializableExtra(PlayerConstants.Song_Uri_List, ArrayList::class.java) as ArrayList<Uri>
-                                    else it.getSerializableExtra(PlayerConstants.Song_Uri_List) as ArrayList<Uri>
-                            Log.d(TAG, "playSelectedUrisFromStorage().uris.size = ${uris.size}")
+                                        getSerializableExtra(PlayerConstants.Song_Uri_List, ArrayList::class.java)
+                                                as ArrayList<Uri>
+                                    else getSerializableExtra(PlayerConstants.Song_Uri_List)
+                                            as ArrayList<Uri>
+                            Log.d(TAG, "PlayerConstants.Play_Songs.uris.size = ${uris.size}")
                             playerFragment.mPresenter.playSelectedUrisFromStorage(uris)
+                            playerFragment.showPlayerView()
+                        }
+                        PlayerConstants.Auto_Play -> {
+                            val songList =
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                                        getSerializableExtra(PlayerConstants.Auto_Song_List, ArrayList::class.java)
+                                                as ArrayList<SongInfo>
+                                    else getSerializableExtra(PlayerConstants.Auto_Song_List)
+                                            as ArrayList<SongInfo>
+                            Log.d(TAG, "PlayerConstants.Auto_Play.songList.size = ${songList.size}")
+                            playerFragment.mPresenter.playSongList(songList)
                             playerFragment.showPlayerView()
                         }
                     }
@@ -82,6 +94,7 @@ abstract class BaseActivity : AppCompatActivity(), FragmentInterface {
                 addAction(PlayerConstants.Hide_PlayerView)
                 addAction(PlayerConstants.Show_PlayerView)
                 addAction(PlayerConstants.Play_Songs)
+                addAction(PlayerConstants.Auto_Play)
             })
         }
         //

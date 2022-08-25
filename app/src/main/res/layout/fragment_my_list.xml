@@ -1,8 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.MyListFragment">
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/myListButtonLayout"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageButton
+            android:id="@+id/myListSelectAllButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_menuitem_background_color"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/select_all"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10sp">
+        </ImageButton>
+        <ImageButton
+            android:id="@+id/myListUnselectButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_menuitem_background_color"
+            android:padding="0dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/unselect"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10sp">
+        </ImageButton>
+        <ImageButton
+            android:id="@+id/myListRefreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_menuitem_background_color"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/refresh"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10sp">
+        </ImageButton>
+        <ImageButton
+            android:id="@+id/myListPlaySelectedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_menuitem_background_color"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/play_media_button_image"
+            android:layout_gravity="center">
+        </ImageButton>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myListRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/myListButtonLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </androidx.recyclerview.widget.RecyclerView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

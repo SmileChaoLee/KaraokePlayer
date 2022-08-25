@@ -27,8 +27,6 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
         fun onRecyclerItemClick(v: View?, position: Int)
     }
 
-    private lateinit var myHolder: MyViewHolder
-
     class MyViewHolder(itemView: View,
                        recyclerItemClickListener : OnRecyclerItemClickListener,
                        textFontSize: Float)
@@ -37,7 +35,7 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
         val folderImageView: ImageView
         init {
             Log.d(TAG, "MyViewHolder() is called")
-            fileNameTextView = itemView.findViewById(R.id.fileNameTextView)
+            fileNameTextView = itemView.findViewById(R.id.openFileNameTextView)
             ScreenUtil.resizeTextSize(fileNameTextView, textFontSize, BaseApplication.FontSize_Scale_Type)
 
             folderImageView = itemView.findViewById(R.id.folderImageView)
@@ -46,7 +44,6 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
             layoutParams.height = layoutParams.width
 
             itemView.setOnClickListener {
-                Log.d(TAG, "itemView.setOnClickListener.bindingAdapterPosition = $bindingAdapterPosition")
                 recyclerItemClickListener.onRecyclerItemClick(
                     itemView, bindingAdapterPosition
                 )
@@ -58,8 +55,7 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         val fileView = layoutInflater.inflate(R.layout.files_list_item, parent, false)
-        myHolder = MyViewHolder(fileView, recyclerItemClickListener, textFontSize)
-        return myHolder
+        return MyViewHolder(fileView, recyclerItemClickListener, textFontSize)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {

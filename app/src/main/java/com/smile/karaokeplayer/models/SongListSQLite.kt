@@ -40,7 +40,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
     }
 
     private fun openScoreDatabase() {
-        if (songDatabase != null) {
+        songDatabase?.let {
             // already opened
             return
         }
@@ -78,13 +78,13 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         try {
             // get only one record
             val cur = database.query(tableName, null, null, null, null, null, null, "1")
-            if (cur != null) {
-                val index = cur.getColumnIndex(columnName)
+            cur?.run {
+                val index = getColumnIndex(columnName)
                 if (index != -1) {
                     // exist
                     isExist = true
                 }
-                cur.close()
+                close()
             }
         } catch (ex: SQLException) {
             ex.printStackTrace()
@@ -94,32 +94,24 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
 
     private fun getSongInfoFromCursor(cur: Cursor?): ArrayList<SongInfo> {
         val songList = ArrayList<SongInfo>()
-        if (cur != null) {
+        cur?.run {
             try {
-                if (cur.moveToFirst()) {
+                if (moveToFirst()) {
                     do {
-                        val id = cur.getInt(0)
-                        val songName = cur.getString(1)
-                        val filePath = cur.getString(2)
-                        val musicTrackNo = cur.getInt(3)
-                        val musicChannel = cur.getInt(4)
-                        val vocalTrackNo = cur.getInt(5)
-                        val vocalChannel = cur.getInt(6)
-                        val included = cur.getString(7)
-                        val songInfo = SongInfo(
-                            id,
-                            songName,
-                            filePath,
-                            musicTrackNo,
-                            musicChannel,
-                            vocalTrackNo,
-                            vocalChannel,
-                            included
-                        )
+                        val id = getInt(0)
+                        val songName = getString(1)
+                        val filePath = getString(2)
+                        val musicTrackNo = getInt(3)
+                        val musicChannel = getInt(4)
+                        val vocalTrackNo = getInt(5)
+                        val vocalChannel = getInt(6)
+                        val included = getString(7)
+                        val songInfo = SongInfo(id, songName, filePath, musicTrackNo, musicChannel,
+                                vocalTrackNo, vocalChannel, included)
                         songList.add(songInfo)
-                    } while (cur.moveToNext())
+                    } while (moveToNext())
                 }
-                cur.close()
+                close()
             } catch (ex: SQLException) {
                 Log.d("TAG", "getSongInfoFromCursor() exception.")
                 ex.printStackTrace()
@@ -132,45 +124,41 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         Log.d("TAG", "readSongList() is called.")
         var songList = ArrayList<SongInfo>()
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
                 // String sql = "select * from " + tableName + " order by " + _id + " asc";
                 // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
-                val cur =
-                    songDatabase!!.query(tableName, null, null, null, null, null, "$mId asc")
+                val cur = it.query(tableName, null, null, null, null, null, "$mId asc")
                 songList = getSongInfoFromCursor(cur)
             } catch (ex: SQLException) {
                 Log.d("TAG", "readSongList() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return songList
     }
 
-    fun readPlaylist(): ArrayList<SongInfo> {
+    fun readPlaylist(isIncluded: Boolean): ArrayList<SongInfo> {
         Log.d("TAG", "readPlaylist() is called.")
         var playlist = ArrayList<SongInfo>()
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
                 // String sql = "select * from " + tableName + " order by " + _id + " asc";
                 // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
-                val cur = songDatabase!!.query(
-                    tableName,
-                    null,
-                    "$included = ?",
-                    arrayOf("1"),
-                    null,
-                    null,
-                    "$mId asc"
-                )
+                var selectionArgs: Array<String>? = null
+                var selection: String? = null
+                if (isIncluded) {
+                    selectionArgs = arrayOf("1")
+                    selection = "$included = ?"
+                }
+                val cur = it.query(tableName, null, selection, selectionArgs,
+                        null, null,"$mId asc")
                 playlist = getSongInfoFromCursor(cur)
             } catch (ex: SQLException) {
                 Log.d("TAG", "readPlaylist() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return playlist
     }
@@ -182,14 +170,13 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         }
         val contentValues = getContentValues(songInfo, createAction)
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
-                result = songDatabase!!.insert(tableName, null, contentValues)
+                result = it.insert(tableName, null, contentValues)
             } catch (ex: SQLException) {
                 Log.d("TAG", "addSongToSongList() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return result
     }
@@ -202,14 +189,13 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         val contentValues = getContentValues(songInfo, updateAction)
         val whereClause = mId + " = " + songInfo.id
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
-                result = songDatabase!!.update(tableName, contentValues, whereClause, null).toLong()
+                result = it.update(tableName, contentValues, whereClause, null).toLong()
             } catch (ex: SQLException) {
                 Log.d("TAG", "updateOneSongFromSongList() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return result
     }
@@ -220,85 +206,74 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
             return result
         }
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
                 val id = songInfo.id
                 val whereClause = "$mId = $id"
-                result = songDatabase!!.delete(tableName, whereClause, null).toLong()
+                result = it.delete(tableName, whereClause, null).toLong()
             } catch (ex: SQLException) {
                 Log.d("TAG", "deleteOneSongFromSongList() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return result
     }
 
     fun deleteAllSongList() {
         openScoreDatabase()
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
-                songDatabase!!.delete(tableName, null, null)
+                it.delete(tableName, null, null)
             } catch (ex: SQLException) {
                 Log.d("TAG", "deleteAllSongList() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
     }
 
     fun findOneSongByUriString(uriString: String?): SongInfo? {
-        var songInfo: SongInfo? = null
         if (uriString == null || uriString.isEmpty()) {
-            return songInfo
+            return null
         }
         openScoreDatabase()
-        if (songDatabase != null) {
+        var songInfo: SongInfo? = null
+        songDatabase?.let {
             try {
                 val whereClause = "$filePath = \"$uriString\""
-                val cur = songDatabase!!.query(tableName, null, whereClause, null, null, null, null)
-                if (cur != null) {
-                    if (cur.moveToFirst()) {
-                        val id = cur.getInt(0)
-                        val songName = cur.getString(1)
-                        val filePath = cur.getString(2)
-                        val musicTrackNo = cur.getInt(3)
-                        val musicChannel = cur.getInt(4)
-                        val vocalTrackNo = cur.getInt(5)
-                        val vocalChannel = cur.getInt(6)
-                        val included = cur.getString(7)
-                        songInfo = SongInfo(
-                            id,
-                            songName,
-                            filePath,
-                            musicTrackNo,
-                            musicChannel,
-                            vocalTrackNo,
-                            vocalChannel,
-                            included
-                        )
+                val cur = it.query(tableName, null, whereClause, null, null, null, null)
+                cur?.run {
+                    if (moveToFirst()) {
+                        val id = getInt(0)
+                        val songName = getString(1)
+                        val filePath = getString(2)
+                        val musicTrackNo = getInt(3)
+                        val musicChannel = getInt(4)
+                        val vocalTrackNo = getInt(5)
+                        val vocalChannel = getInt(6)
+                        val included = getString(7)
+                        songInfo = SongInfo(id, songName, filePath, musicTrackNo,
+                                musicChannel, vocalTrackNo, vocalChannel, included)
                     }
-                    cur.close()
+                    close()
                 }
             } catch (ex: SQLException) {
                 Log.d("TAG", "findOneSongByContentUri() exception.")
                 ex.printStackTrace()
             }
-            // closeDatabase();
         }
         return songInfo
     }
 
     fun closeDatabase() {
-        if (songDatabase != null) {
+        songDatabase?.let {
             try {
-                songDatabase!!.close()
-                songDatabase = null
+                it.close()
             } catch (ex: SQLException) {
                 Log.d("TAG", "closeDatabase() exception.")
                 ex.printStackTrace()
             }
         }
+        songDatabase = null
     }
 
     companion object {

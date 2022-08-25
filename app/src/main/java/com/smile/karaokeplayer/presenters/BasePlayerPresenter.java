@@ -168,7 +168,7 @@ public abstract class BasePlayerPresenter {
         }
 
         // clear orderedSongList but orderedSongList might be null
-        ArrayList<SongInfo> songListTemp = new ArrayList<>();
+        ArrayList<SongInfo> songList = new ArrayList<>();
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
             SongListSQLite songListSQLite = new SongListSQLite(mActivity);
@@ -177,10 +177,6 @@ public abstract class BasePlayerPresenter {
             if (songInfo != null) {
                 Log.d(TAG, "Found this song on song list.");
                 songInfo.setIncluded("1");  // set to in the list
-                Log.d(TAG, "songInfo.getMusicTrackNo() =" + songInfo.getMusicTrackNo());
-                Log.d(TAG, "songInfo.getVocalTrackNo() =" + songInfo.getVocalTrackNo());
-                Log.d(TAG, "songInfo.getMusicChannel() =" + songInfo.getMusicChannel());
-                Log.d(TAG, "songInfo.getVocalChannel() =" + songInfo.getVocalChannel());
             } else {
                 Log.d(TAG, "Could not find this song on song list.");
                 songInfo = new SongInfo();
@@ -195,17 +191,11 @@ public abstract class BasePlayerPresenter {
                 // not in the list and unknown music and vocal setting
                 songInfo.setIncluded("0");  // set to not in the list
             }
-            songListTemp.add(songInfo);
+            songList.add(songInfo);
         }
 
+        playSongList(songList);
         playingParam.setAutoPlay(false);
-        if (songListTemp.size() > 0) {
-            orderedSongList = new ArrayList<>(songListTemp);
-            autoPlaySongList();
-        }  else {
-            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noFilesSelectedString)
-                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-        }
     }
 
     protected void playMediaFromUri(Uri uri) {
@@ -417,15 +407,8 @@ public abstract class BasePlayerPresenter {
         boolean isAutoPlay = playingParam.isAutoPlay();
         if (!isAutoPlay) {
             // previous is not auto play
-            ArrayList<SongInfo> songListTemp = DatabaseAccessUtil.readSavedSongList(mActivity);
-            if (songListTemp.size() > 0) {
-                orderedSongList = new ArrayList<>(songListTemp);
-                playingParam.setAutoPlay(true); // must be above autoPlay savedSongList()
-                autoPlaySongList();
-            } else {
-                ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPlaylistString)
-                        , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
-            }
+            ArrayList<SongInfo> songList = DatabaseAccessUtil.readSavedSongList(mActivity, true);
+            playingParam.setAutoPlay(playSongList(songList)); // must be above autoPlay savedSongList()
         } else {
             // previous is auto play
             int playbackState = playingParam.getCurrentPlaybackState();
@@ -436,8 +419,19 @@ public abstract class BasePlayerPresenter {
             }
             playingParam.setAutoPlay(false);    // must be the last in this block
         }
-
         mPresentView.setImageButtonStatus();
+    }
+
+    public boolean playSongList(ArrayList<SongInfo> songList) {
+        if (songList.size() > 0) {
+            orderedSongList = new ArrayList<>(songList);
+            autoPlaySongList();
+            return true;
+        } else {
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPlaylistString)
+                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
+            return false;
+        }
     }
 
     public void selectFileToOpenPresenter(ActivityResult result) {

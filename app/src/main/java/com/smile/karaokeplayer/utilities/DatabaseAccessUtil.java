@@ -12,11 +12,11 @@ public final class DatabaseAccessUtil {
     private static final String TAG = "DatabaseAccessUtil";
 
     private DatabaseAccessUtil() {}
-    public static ArrayList<SongInfo> readSavedSongList(Context callingContext) {
+    public static ArrayList<SongInfo> readSavedSongList(Context callingContext, boolean isIncluded) {
         ArrayList<SongInfo> playlist;
         SongListSQLite songListSQLite = new SongListSQLite(callingContext);
         if (songListSQLite != null) {
-            playlist = songListSQLite.readPlaylist();
+            playlist = songListSQLite.readPlaylist(isIncluded);
             songListSQLite.closeDatabase();
             songListSQLite = null;
         } else {

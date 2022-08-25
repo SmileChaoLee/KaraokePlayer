@@ -34,7 +34,6 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
     private lateinit var fileList : ArrayList<FileDescription>
     private lateinit var currentPath : String
-    private lateinit var selectedFiles : ArrayList<Uri>
     private var broadcastManager: LocalBroadcastManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +43,6 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         Log.d(TAG, "onCreate() is called")
         currentPath = "/"
         fileList = ArrayList()
-        selectedFiles = ArrayList()
         activity?.let {
             broadcastManager = LocalBroadcastManager.getInstance(it)
         }
@@ -67,10 +65,10 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         val buttonWidth = (textFontSize*1.5f).toInt()
 
         fragmentView?.let {
-            filesRecyclerView = it.findViewById(R.id.filesRecyclerView)
+            filesRecyclerView = it.findViewById(R.id.openFilesRecyclerView)
             pathTextView = it.findViewById(R.id.pathTextView)
             ScreenUtil.resizeTextSize(pathTextView, textFontSize, BaseApplication.FontSize_Scale_Type)
-            val backKeyButton: ImageButton = it.findViewById(R.id.backKeyButton)
+            val backKeyButton: ImageButton = it.findViewById(R.id.openFileBackKeyButton)
             var layoutParams: ViewGroup.MarginLayoutParams = backKeyButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
@@ -84,7 +82,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     }
                 }
             }
-            val selectAllButton: ImageButton = it.findViewById(R.id.selectAllButton)
+            val selectAllButton: ImageButton = it.findViewById(R.id.openFileSelectAllButton)
             layoutParams = selectAllButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
@@ -98,7 +96,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     }
                 }
             }
-            val unselectButton: ImageButton = it.findViewById(R.id.unselectButton)
+            val unselectButton: ImageButton = it.findViewById(R.id.openFileUnselectButton)
             layoutParams = unselectButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
@@ -112,25 +110,24 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     }
                 }
             }
-            val refreshButton: ImageButton = it.findViewById(R.id.refreshButton)
+            val refreshButton: ImageButton = it.findViewById(R.id.openFileRefreshButton)
             layoutParams = refreshButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             refreshButton.setOnClickListener {
                 searchCurrentFolder()
             }
-            val playSelectedButton: ImageButton = it.findViewById(R.id.playSelectedButton)
+            val playSelectedButton: ImageButton = it.findViewById(R.id.openFilePlaySelectedButton)
             layoutParams = playSelectedButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             playSelectedButton.setOnClickListener {
                 // open the files to play
-                val uris = ArrayList<Uri>().apply {
-                    for (element in fileList) {
-                        element.run {
+                val uris = ArrayList<Uri>().also { uriIt ->
+                    for (i in 0 until fileList.size) {
+                        fileList[i].run {
                             if (selected) {
-                                add(file.toUri())
-                                selected = false
+                                uriIt.add(file.toUri())
                             }
                         }
                     }

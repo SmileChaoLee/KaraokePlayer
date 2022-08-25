@@ -28,4 +28,6 @@ object PlayerConstants {
     const val Show_PlayerView: String = "Show_PlayerView"
     const val Play_Songs: String = "Play_Songs"
     const val Song_Uri_List: String = "Song_Uri_List"
+    const val Auto_Play: String = "Auto_Play"
+    const val Auto_Song_List: String = "Auto_Song_List"
 }
