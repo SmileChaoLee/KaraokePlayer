@@ -19,7 +19,7 @@ private const val TAG = "ListRecyclerVAdapter"
 class MyListRecyclerViewAdapter(private val context: Context,
                                 private val recyclerItemClickListener: OnRecyclerItemClickListener,
                                 private val textFontSize: Float,
-                                private val songs: java.util.ArrayList<SongInfo>)
+                                private val songInfoList: java.util.ArrayList<SongInfo>)
     : RecyclerView.Adapter<MyListRecyclerViewAdapter.MyViewHolder>() {
 
     interface OnRecyclerItemClickListener {
@@ -55,7 +55,7 @@ class MyListRecyclerViewAdapter(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        songs[position].also {
+        songInfoList[position].also {
             holder.songNameTextView.apply {
                 text = it.songName
                 setTextColor(Color.WHITE)
@@ -81,6 +81,6 @@ class MyListRecyclerViewAdapter(private val context: Context,
     }
 
     override fun getItemCount(): Int {
-        return songs.size
+        return songInfoList.size
     }
 }

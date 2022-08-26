@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.smile.karaokeplayer.BuildConfig
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FragmentAdapter
 
@@ -21,6 +22,11 @@ class TablayoutFragment : Fragment() {
         const val ListFragmentTag : String = "MY_LIST"
         const val FavoriteFragmentTag : String = "MY_FAVORITES"
     }
+
+    private lateinit var openFragment: OpenFileFragment
+    private lateinit var listFragment: MyListFragment
+    private lateinit var favoriteFragment: MyFavoriteFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,12 +45,14 @@ class TablayoutFragment : Fragment() {
 
         activity?.let {
             val fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
-            val openFragment = OpenFileFragment()
+            openFragment = OpenFileFragment()
             fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
-            val listFragment = MyListFragment()
+            listFragment = MyListFragment()
             fragmentAdapter.addFragment(listFragment, ListFragmentTag)
-            val favoriteFragment = MyFavoriteFragment()
-            fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
+            if (BuildConfig.DEBUG) {    // only debug version
+                favoriteFragment = MyFavoriteFragment()
+                fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
+            }
             val tabText = arrayOf(getString(R.string.open_files),
                 getString(R.string.my_list), getString(R.string.my_favorites))
             playViewPager2.adapter = fragmentAdapter
@@ -53,7 +61,6 @@ class TablayoutFragment : Fragment() {
                 tab.text = tabText[position]
             }.attach()
         }
-
         return view
     }
 }

@@ -1,6 +1,5 @@
 package com.smile.karaokeplayer.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,13 +8,11 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.MyListRecyclerViewAdapter
-import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
@@ -23,23 +20,26 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 private const val TAG : String = "MyListFragment"
 
 class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClickListener {
-
+    interface PlayMyList {
+        fun playSongList(songs: ArrayList<SongInfo>)
+    }
     private var fragmentView : View? = null
     private var textFontSize = 0f
+    private lateinit var playMyList: PlayMyList
     private lateinit var myListRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : MyListRecyclerViewAdapter
-    private lateinit var songList : ArrayList<SongInfo>
-    private var broadcastManager: LocalBroadcastManager? = null
+    private lateinit var songInfoList : ArrayList<SongInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
         Log.d(TAG, "onCreate() is called")
-        songList = ArrayList()
-        activity?.let {
-            broadcastManager = LocalBroadcastManager.getInstance(it)
-        }
+
+        playMyList = (activity as PlayMyList)
+        Log.d(TAG, "onCreate.playMyList = $playMyList")
+
+        songInfoList = ArrayList()
     }
 
     override fun onCreateView(
@@ -64,8 +64,8 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             selectAllButton.setOnClickListener {
-                for (i in 0 until songList.size) {
-                    songList[i].run {
+                for (i in 0 until songInfoList.size) {
+                    songInfoList[i].run {
                         included = "1"
                         myRecyclerViewAdapter.notifyItemChanged(i)
                     }
@@ -76,8 +76,8 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             unselectButton.setOnClickListener {
-                for (i in 0 until songList.size) {
-                    songList[i].run {
+                for (i in 0 until songInfoList.size) {
+                    songInfoList[i].run {
                         included = "0"
                         myRecyclerViewAdapter.notifyItemChanged(i)
                     }
@@ -96,25 +96,21 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
             layoutParams.height = buttonWidth
             playSelectedButton.setOnClickListener {
                 // open the files to play
-                val songList = ArrayList<SongInfo>().also { uriIt ->
-                    for (i in 0 until songList.size) {
-                        songList[i].run {
+                val songs = ArrayList<SongInfo>().also { uriIt ->
+                    for (i in 0 until songInfoList.size) {
+                        songInfoList[i].run {
                             if (included == "1") {
                                 uriIt.add(this)
                             }
                         }
                     }
                 }
-                if (songList.size == 0) {
+                if (songs.size == 0) {
                     ScreenUtil.showToast(
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
-                    broadcastManager?.apply {
-                        sendBroadcast(Intent(PlayerConstants.Auto_Play).apply {
-                            putExtra(PlayerConstants.Auto_Song_List, songList)
-                        })
-                    }
+                    playMyList.playSongList(songs)
                 }
             }
         }
@@ -128,9 +124,9 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
         ScreenUtil.showToast(
-                activity, songList[position].songName, textFontSize,
+                activity, songInfoList[position].songName, textFontSize,
                 BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-        songList[position].apply {
+        songInfoList[position].apply {
             included = if (included == "1") "0" else "1"
             myRecyclerViewAdapter.notifyItemChanged(position)
         }
@@ -138,24 +134,24 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
 
     private fun searchCurrentFolder() {
         Log.d(TAG, "searchCurrentFolder() is called")
-        val listSize = songList.size
-        songList.clear()
+        val listSize = songInfoList.size
+        songInfoList.clear()
         myRecyclerViewAdapter.notifyItemRangeRemoved(0, listSize)
         // get the all list
         DatabaseAccessUtil.readSavedSongList(activity, false)?.let {
             for (element in it) {
                 element.included = "0"
-                songList.add(element)
+                songInfoList.add(element)
             }
         }
-        myRecyclerViewAdapter.notifyItemRangeInserted(0, songList.size)
+        myRecyclerViewAdapter.notifyItemRangeInserted(0, songInfoList.size)
     }
 
     private fun initFilesRecyclerView() {
         Log.d(TAG, "initFilesRecyclerView() is called")
         activity?.let {
             myRecyclerViewAdapter = MyListRecyclerViewAdapter(
-                    it, this, textFontSize, songList)
+                    it, this, textFontSize, songInfoList)
             myListRecyclerView.adapter = myRecyclerViewAdapter
             myListRecyclerView.layoutManager = LinearLayoutManager(context)
         }

@@ -31,9 +31,7 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.ads.nativetemplates.TemplateView
-import com.smile.karaokeplayer.BaseActivity
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
@@ -52,7 +50,12 @@ private const val TAG: String = "PlayerBaseViewFragment"
 
 abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
+    interface PlayBaseFragmentFunc {
+        fun baseHidePlayerView()
+        fun baseShowPlayerView()
+    }
     lateinit var mPresenter: BasePlayerPresenter
+    private lateinit var playBaseFragmentFunc: PlayBaseFragmentFunc
     private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
 
     protected lateinit var fragmentView: View
@@ -118,9 +121,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private val controllerTimerRunnable = Runnable {
         Log.d(TAG, "controllerTimerRunnable() is called")
         controllerTimerHandler.removeCallbacksAndMessages(null)
-        val playingParam = mPresenter.playingParam
-        if (playingParam != null) {
-            if (playingParam.isMediaPrepared) {
+        mPresenter.playingParam?.let {
+            if (it.isMediaPrepared) {
                 Log.d(TAG, "controllerTimerRunnable.playingParam.isMediaPrepared")
                 if (supportToolbar.visibility == View.VISIBLE) {
                     Log.d(TAG, "controllerTimerRunnable.hideSupportToolbarAndAudioController")
@@ -167,6 +169,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             returnToPrevious()
             return
         }
+
+        playBaseFragmentFunc = (activity as PlayBaseFragmentFunc)
+        Log.d(TAG, "onCreate.playBaseFragmentFunc = $playBaseFragmentFunc")
+
         mPresenter = presenter
         val callingIntent: Intent? = activity?.intent
         Log.d(TAG, "callingIntent = $callingIntent")
@@ -189,7 +195,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         fragmentView = view
 
-        // val playingParam = mPresenter.playingParam
         textFontSize = mPresenter.textFontSize
         fontScale = mPresenter.fontScale
         toastTextSize = mPresenter.toastTextSize
@@ -217,11 +222,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton)
         pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton)
 
-        val playingParam = mPresenter.playingParam
-        if (playingParam.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
-            playButtonOffPauseButtonOn()
-        } else {
-            playButtonOnPauseButtonOff()
+        mPresenter.playingParam.let {
+            if (it.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
+                playButtonOffPauseButtonOn()
+            } else {
+                playButtonOnPauseButtonOff()
+            }
         }
 
         replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton)
@@ -272,7 +278,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         )
 
         // must before setImageButtonStatus() and showNativeAndBannerAd
-        if (playingParam.isPlayerViewVisible) showPlayerView() else hidePlayerView()
+        mPresenter.playingParam.let {
+            if (it.isPlayerViewVisible) showPlayerView() else hidePlayerView()
+        }
 
         setImageButtonStatus() // must before setButtonsPositionAndSize()
         setButtonsPositionAndSize(resources.configuration)
@@ -322,18 +330,19 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         rightChannelMenuItem = mainMenu.findItem(R.id.rightChannel)
         stereoChannelMenuItem = mainMenu.findItem(R.id.stereoChannel)
 
-        val playingParam = mPresenter.playingParam
-        if (playingParam.isPlaySingleSong) {
-            autoPlayMenuItem.isVisible = false
-            val songListMenuItem = mainMenu.findItem(R.id.songList)
-            songListMenuItem.isVisible = false
-            openMenuItem.isVisible = false
-            audioMenuItem.isVisible = false
-            audioTrackMenuItem.isVisible = false
-            val channelMenuItem = mainMenu.findItem(R.id.channel)
-            channelMenuItem.isVisible = false
-            val privacyPolicyMenuItem = mainMenu.findItem(R.id.privacyPolicy)
-            privacyPolicyMenuItem.isVisible = false
+        mPresenter.playingParam.let {
+            if (it.isPlaySingleSong) {
+                autoPlayMenuItem.isVisible = false
+                val songListMenuItem = mainMenu.findItem(R.id.songList)
+                songListMenuItem.isVisible = false
+                openMenuItem.isVisible = false
+                audioMenuItem.isVisible = false
+                audioTrackMenuItem.isVisible = false
+                val channelMenuItem = mainMenu.findItem(R.id.channel)
+                channelMenuItem.isVisible = false
+                val privacyPolicyMenuItem = mainMenu.findItem(R.id.privacyPolicy)
+                privacyPolicyMenuItem.isVisible = false
+            }
         }
         setMenuItemsVisibility() // abstract method
 
@@ -343,7 +352,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val playingParam = mPresenter.playingParam
         val currentChannelPlayed = playingParam.currentChannelPlayed
-
         if (item.hasSubMenu()) {
             item.subMenu?.clearHeader()
         }
@@ -494,18 +502,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     fun hidePlayerView() {
+        Log.d(TAG, "hidePlayerView() is called")
         playerViewLinearLayout.visibility = View.INVISIBLE
         hideNativeAndBannerAd()
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.INVISIBLE
         controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
-        activity?.let {
-            LocalBroadcastManager.getInstance(it.applicationContext).apply {
-                sendBroadcast(Intent(PlayerConstants.Hide_PlayerView))
-            }
-        }
+        playBaseFragmentFunc.baseHidePlayerView()
+        mPresenter.playingParam.isPlayerViewVisible = false
     }
     fun showPlayerView() {
+        Log.d(TAG, "showPlayerView() is called")
         playerViewLinearLayout.visibility = View.VISIBLE
         if (mPresenter.playingParam.currentPlaybackState != PlaybackStateCompat.STATE_PLAYING) {
             // not playing video then show ads
@@ -514,11 +521,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.VISIBLE
         setTimerToHideSupportAndAudioController()   // reset the timer
-        activity?.let {
-            LocalBroadcastManager.getInstance(it.applicationContext).apply {
-                sendBroadcast(Intent(PlayerConstants.Show_PlayerView))
-            }
-        }
+        playBaseFragmentFunc.baseShowPlayerView()
+        mPresenter.playingParam.isPlayerViewVisible = true
     }
 
     private fun selectFilesToOpen() {
@@ -721,13 +725,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         switchToMusicImageButton.setOnClickListener { mPresenter.switchAudioToMusic() }
         switchToVocalImageButton.setOnClickListener { mPresenter.switchAudioToVocal() }
         hideVideoImageButton.setOnClickListener {
-            var actionName = PlayerConstants.Hide_PlayerView
-            if (playerViewLinearLayout.visibility==View.VISIBLE) {
-                hidePlayerView()
-            } else {
-                showPlayerView()
-                actionName = PlayerConstants.Show_PlayerView
-            }
+            if (playerViewLinearLayout.visibility==View.VISIBLE) hidePlayerView() else showPlayerView()
         }
         actionMenuImageButton.setOnClickListener {
             Log.d(TAG, "actionMenuImageButton.setOnClickListener")
@@ -771,7 +769,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     // implementing PlayerBasePresenter.BasePresentView
     override fun setImageButtonStatus() {
         val playingParam = mPresenter.playingParam
-        // boolean isAutoPlay = playingParam.isAutoPlay();
         switchToMusicImageButton.isEnabled = true
         switchToMusicImageButton.visibility = View.VISIBLE
         setSwitchToVocalImageButtonVisibility() // abstract method
@@ -801,10 +798,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             )
         }
 
-        if (playerViewLinearLayout.visibility==View.VISIBLE) {
-            hideVideoImageButton.setImageResource(R.drawable.hide_video)
-        } else {
-            hideVideoImageButton.setImageResource(R.drawable.show_video)
+        hideVideoImageButton.apply {
+            setImageResource(if (playerViewLinearLayout.visibility==View.VISIBLE) R.drawable.hide_video
+                else R.drawable.show_video)
+            visibility = if (playingParam.isPlaySingleSong) View.GONE else View.VISIBLE
         }
     }
 

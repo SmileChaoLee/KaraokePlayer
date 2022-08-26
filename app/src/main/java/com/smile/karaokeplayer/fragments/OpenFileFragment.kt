@@ -1,6 +1,5 @@
 package com.smile.karaokeplayer.fragments
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -12,13 +11,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
-import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.models.FileDescription
 import com.smile.smilelibraries.utilities.ScreenUtil
 import java.io.File
@@ -26,26 +23,29 @@ import java.io.File
 private const val TAG : String = "OpenFileFragment"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
-
+    interface PlayOpenFiles {
+        fun playUriList(uris: ArrayList<Uri>)
+    }
     private var fragmentView : View? = null
     private var textFontSize = 0f
+    private lateinit var playOpenFiles: PlayOpenFiles
     private lateinit var pathTextView: TextView
     private lateinit var filesRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
     private lateinit var fileList : ArrayList<FileDescription>
     private lateinit var currentPath : String
-    private var broadcastManager: LocalBroadcastManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
         Log.d(TAG, "onCreate() is called")
+
+        playOpenFiles = (activity as PlayOpenFiles)
+        Log.d(TAG, "onCreate.playOpenFiles = $playOpenFiles")
+
         currentPath = "/"
         fileList = ArrayList()
-        activity?.let {
-            broadcastManager = LocalBroadcastManager.getInstance(it)
-        }
     }
 
     override fun onCreateView(
@@ -137,11 +137,14 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
+                    playOpenFiles.playUriList(uris)
+                    /*
                     broadcastManager?.apply {
                         sendBroadcast(Intent(PlayerConstants.Play_Songs).apply {
                             putExtra(PlayerConstants.Song_Uri_List, uris)
                         })
                     }
+                     */
                 }
             }
         }
