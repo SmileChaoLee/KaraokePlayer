@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
+import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.models.FileDescription
 import com.smile.smilelibraries.utilities.ScreenUtil
 import java.io.File
@@ -34,12 +35,15 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
     private lateinit var fileList : ArrayList<FileDescription>
     private lateinit var currentPath : String
+    private var isPlayButton: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate() is called")
         super.onCreate(savedInstanceState)
         arguments?.let {
+            isPlayButton = it.getBoolean(CommonConstants.IsButtonForPlay, true)
+            Log.d(TAG, "onCreate.isPlayButton = $isPlayButton")
         }
-        Log.d(TAG, "onCreate() is called")
 
         playOpenFiles = (activity as PlayOpenFiles)
         Log.d(TAG, "onCreate.playOpenFiles = $playOpenFiles")
@@ -121,6 +125,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams = playSelectedButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
+            playSelectedButton.setImageResource(
+                if (isPlayButton) R.drawable.play_media_button_image else R.drawable.open_files)
             playSelectedButton.setOnClickListener {
                 // open the files to play
                 val uris = ArrayList<Uri>().also { uriIt ->

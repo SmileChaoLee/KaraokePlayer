@@ -70,7 +70,7 @@
             android:background="@drawable/main_menuitem_background_color"
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
-            android:src="@drawable/open_files"
+            android:src="@drawable/play_media_button_image"
             android:layout_gravity="center">
         </ImageButton>
 

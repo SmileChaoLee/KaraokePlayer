@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.fragments.OpenFileFragment
 
@@ -16,7 +17,14 @@ class OpenFileActivity : AppCompatActivity(), OpenFileFragment.PlayOpenFiles {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_open_file)
 
-        val openFragment = OpenFileFragment()
+        val isPlayButton = intent.getBooleanExtra(CommonConstants.IsButtonForPlay, true)
+        Log.d(TAG, "onCreate.isPlayButton = $isPlayButton")
+        val openFragment = OpenFileFragment().also {
+            val args = Bundle().apply {
+                putBoolean(CommonConstants.IsButtonForPlay, isPlayButton)
+            }
+            it.arguments = args
+        }
         supportFragmentManager.beginTransaction().apply {
             add(R.id.openFileConstraintLayout, openFragment)
             commit()

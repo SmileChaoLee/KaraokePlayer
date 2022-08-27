@@ -1,5 +1,6 @@
 package com.smile.karaokeplayer;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,20 +34,15 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public abstract class BaseSongListActivity extends AppCompatActivity {
 
     private static final String TAG = "BaseSongListActivity";
-
     private SongListSQLite songListSQLite;
     private float textFontSize;
-    private float fontScale;
     private float toastTextSize;
     private ArrayList<SongInfo> mSongList = new ArrayList<>();
-    private ListView songListView = null;
     private MySongListAdapter mySongListAdapter;
-
     private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
     private ActivityResultLauncher<Intent> selectMultipleSongActivityLauncher;
 
@@ -61,7 +55,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, ScreenUtil.FontSize_Pixel_Type, null);
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        // float fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
 
         songListSQLite = new SongListSQLite(getApplicationContext());
@@ -75,34 +69,21 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
         Button addSongsListButton = findViewById(R.id.addSongsListButton);
         ScreenUtil.resizeTextSize(addSongsListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        addSongsListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                selectMultipleSong();
-            }
-        });
+        addSongsListButton.setOnClickListener(v -> selectMultipleSong());
 
         Button exitSongListButton = (Button)findViewById(R.id.exitSongListButton);
         ScreenUtil.resizeTextSize(exitSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        exitSongListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                returnToPrevious();
-            }
-        });
+        exitSongListButton.setOnClickListener(v -> returnToPrevious());
 
         mSongList = songListSQLite.readSongList();
 
         mySongListAdapter = new MySongListAdapter(this, R.layout.song_list_item, mSongList);
         mySongListAdapter.setNotifyOnChange(false);
 
-        songListView = findViewById(R.id.songListListView);
+        ListView songListView = findViewById(R.id.songListListView);
         songListView.setAdapter(mySongListAdapter);
-        songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
+        songListView.setOnItemClickListener((adapterView, view, position, rowId) -> {
 
-            }
         });
 
         selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
@@ -114,7 +95,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                     }
                     int resultCode = result.getResultCode();
                     if (resultCode == Activity.RESULT_OK) {
-                        Intent data= result.getData();
+                        Intent data = result.getData();
                         addMultipleSongToSongList(data);
                     }
                 });
@@ -151,6 +132,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
     private void selectMultipleSong() {
         Intent selectFileIntent = new Intent(this, OpenFileActivity.class);
+        selectFileIntent.putExtra(CommonConstants.IsButtonForPlay, false);
         selectMultipleSongActivityLauncher.launch(selectFileIntent);
     }
 
@@ -218,19 +200,16 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         private final float buttonTextSize = textFontSize * 0.8f;
         private final int yellow2Color;
         private final int yellow3Color;
-
-        private final Context context;
         private final int layoutId;
-        private ArrayList<SongInfo> mSongListInAdapter;
+        private final ArrayList<SongInfo> mSongListInAdapter;
 
         @SuppressWarnings("unchecked")
         MySongListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
             super(context, layoutId, _songList);
-            this.context = context;
             this.layoutId = layoutId;
             this.mSongListInAdapter = _songList;
-            yellow2Color = ContextCompat.getColor(this.context, R.color.yellow2);
-            yellow3Color = ContextCompat.getColor(this.context, R.color.yellow3);
+            yellow2Color = ContextCompat.getColor(context, R.color.yellow2);
+            yellow3Color = ContextCompat.getColor(context, R.color.yellow3);
         }
 
         @Nullable
@@ -249,7 +228,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
-            View view = getLayoutInflater().inflate(layoutId, parent,false);
+            @SuppressLint("ViewHolder") View view = getLayoutInflater().inflate(layoutId, parent,false);
 
             if (getCount() == 0) {
                 return view;
@@ -328,47 +307,31 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
                 boolean inPlaylist = (singleSongInfo.getIncluded().equals("1"));
                 includedPlaylistCheckBox.setChecked(inPlaylist);
-                includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        includedPlaylistCheckBox.setChecked(isChecked);
-                        includedPlaylistCheckBox.jumpDrawablesToCurrentState();
-                        String included = isChecked ? "1" : "0";
-                        singleSongInfo.setIncluded(included);
-                        songListSQLite.updateOneSongFromSongList(singleSongInfo);
-                    }
+                includedPlaylistCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    includedPlaylistCheckBox.setChecked(isChecked);
+                    includedPlaylistCheckBox.jumpDrawablesToCurrentState();
+                    String included = isChecked ? "1" : "0";
+                    singleSongInfo.setIncluded(included);
+                    songListSQLite.updateOneSongFromSongList(singleSongInfo);
                 });
 
-                editSongListButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        editOneSongFromSongList(singleSongInfo);
-                    }
-                });
+                editSongListButton.setOnClickListener(view1 -> editOneSongFromSongList(singleSongInfo));
 
-                deleteSongListButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        deleteOneSongFromSongList(singleSongInfo);
-                    }
-                });
+                deleteSongListButton.setOnClickListener(view12 -> deleteOneSongFromSongList(singleSongInfo));
 
-                playSongListButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        // play this item (media file)
-                        Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
-                        Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
-                        if (callingIntent != null) {
-                            Log.d(TAG, "playSongListButton.createPlayerActivityIntent");
-                            Intent playerActivityIntent = createPlayerActivityIntent();
-                            Bundle extras = new Bundle();
-                            extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                            extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
-                            playerActivityIntent.putExtras(extras);
-                            Log.d(TAG, "playSongListButton.activityResultLauncher.launch(playerActivityIntent)");
-                            selectOneSongActivityLauncher.launch(playerActivityIntent);
-                        }
+                playSongListButton.setOnClickListener(v -> {
+                    // play this item (media file)
+                    Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
+                    Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
+                    if (callingIntent != null) {
+                        Log.d(TAG, "playSongListButton.createPlayerActivityIntent");
+                        Intent playerActivityIntent = createPlayerActivityIntent();
+                        Bundle extras = new Bundle();
+                        extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+                        extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
+                        playerActivityIntent.putExtras(extras);
+                        Log.d(TAG, "playSongListButton.activityResultLauncher.launch(playerActivityIntent)");
+                        selectOneSongActivityLauncher.launch(playerActivityIntent);
                     }
                 });
             }
@@ -382,7 +345,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             super.addAll(collection);
         }
 
-        public void updateData(List newData) {
+        public void updateData(ArrayList<SongInfo> newData) {
             clear();
             addAll(newData);
             notifyDataSetChanged();

@@ -2,25 +2,19 @@ package com.smile.karaokeplayer;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,19 +29,8 @@ import java.util.ArrayList;
 
 public abstract class BaseSongDataActivity extends AppCompatActivity {
 
-    private static final String TAG = BaseSongDataActivity.class.getName();
-
-    private float textFontSize;
-    private float fontScale;
+    private static final String TAG = "BaseSongDataActivity";
     private float toastTextSize;
-
-    private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
-
-    private SpinnerAdapter audioMusicTrackAdapter;
-    private SpinnerAdapter audioMusicChannelAdapter;
-    private SpinnerAdapter audioVocalTrackAdapter;
-    private SpinnerAdapter audioVocalChannelAdapter;
-
     private EditText edit_titleNameEditText;
     protected EditText edit_filePathEditText;
     private Spinner edit_musicTrackSpinner;
@@ -58,7 +41,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     protected LinearLayout karaokeSettingLayout;
 
     private String actionButtonString;
-    private String crudAction;;
+    private String crudAction;
     private SongInfo mSongInfo;
     public abstract void setKaraokeSettingLayoutVisibility();
 
@@ -68,8 +51,8 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate() is called.");
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, ScreenUtil.FontSize_Pixel_Type, null);
-        textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
-        fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        float textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
+        // float fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         textFontSize *= 0.8f;
         toastTextSize = 0.9f * textFontSize;
 
@@ -132,11 +115,15 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         numList.add("6");
         numList.add("7");
         numList.add("8");
-        audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        SpinnerAdapter audioMusicTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout,
+                R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        SpinnerAdapter audioVocalTrackAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout,
+                R.id.spinnerTextView, numList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         ArrayList<String> aList = new ArrayList<>(BaseApplication.audioChannelMap.values());
-        audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout, R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        SpinnerAdapter audioMusicChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout,
+                R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        SpinnerAdapter audioVocalChannelAdapter = new SpinnerAdapter(this, R.layout.spinner_item_layout,
+                R.id.spinnerTextView, aList, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         // audioVocalChannelAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item_layout);
 
         TextView edit_titleStringTextView = findViewById(R.id.edit_titleStringTextView);
@@ -186,101 +173,71 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_includedPlaylistCheckBox = findViewById(R.id.edit_includedPlaylistCheckBox);
         ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        boolean isChecked = (mSongInfo.getIncluded().equals("1")) ? true : false;
+        boolean isChecked = mSongInfo.getIncluded().equals("1");
         edit_includedPlaylistCheckBox.setChecked(isChecked);
-        edit_includedPlaylistCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                edit_includedPlaylistCheckBox.setChecked(isChecked);
-                edit_includedPlaylistCheckBox.jumpDrawablesToCurrentState();
-            }
+        edit_includedPlaylistCheckBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
+            edit_includedPlaylistCheckBox.setChecked(isChecked1);
+            edit_includedPlaylistCheckBox.jumpDrawablesToCurrentState();
         });
 
         final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
         ScreenUtil.resizeTextSize(edit_saveOneSongButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_saveOneSongButton.setText(actionButtonString);
-        edit_saveOneSongButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final boolean isValid = setSongInfoFromInput(true);
-                SongListSQLite songListSQLite = new SongListSQLite(getApplicationContext());
-                SongInfo songInfo;
-                long databaseResult = -1;
-                switch (crudAction.toUpperCase()) {
-                    case CommonConstants.AddActionString:
-                        // add one record
-                        if (isValid) {
-                            // check if this file is already in database
-                            songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
-                            if (songInfo == null) {
-                                databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+        edit_saveOneSongButton.setOnClickListener(view -> {
+            final boolean isValid = setSongInfoFromInput(true);
+            SongListSQLite songListSQLite = new SongListSQLite(getApplicationContext());
+            SongInfo songInfo;
+            long databaseResult = -1;
+            switch (crudAction.toUpperCase()) {
+                case CommonConstants.AddActionString:
+                    // add one record
+                    if (isValid) {
+                        // check if this file is already in database
+                        songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
+                        if (songInfo == null) {
+                            databaseResult = songListSQLite.addSongToSongList(mSongInfo);
+                        } else {
+                            ScreenUtil.showToast(BaseSongDataActivity.this, getString(R.string.duplicate_in_database),
+                                    toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
+                        }
+                    }
+                    break;
+                case CommonConstants.EditActionString:
+                    // = "EDIT". Edit one record
+                    if (isValid) {
+                        songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
+                        if (songInfo == null) {
+                            // not in the database
+                            databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
+                        } else {
+                            // already in the database
+                            // if (songInfo.getFilePath() == mSongInfo.getFilePath()) {
+                            if (songInfo.getId() == mSongInfo.getId()) {
+                                // same record because same id so update
+                                databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
                             } else {
+                                // different id then duplicate
                                 ScreenUtil.showToast(BaseSongDataActivity.this, getString(R.string.duplicate_in_database),
                                         toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
                             }
                         }
-                        break;
-                    case CommonConstants.EditActionString:
-                        // = "EDIT". Edit one record
-                        if (isValid) {
-                            songInfo = songListSQLite.findOneSongByUriString(mSongInfo.getFilePath());
-                            if (songInfo == null) {
-                                // not in the database
-                                databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
-                            } else {
-                                // already in the database
-                                // if (songInfo.getFilePath() == mSongInfo.getFilePath()) {
-                                if (songInfo.getId() == mSongInfo.getId()) {
-                                    // same record because same id so update
-                                    databaseResult = songListSQLite.updateOneSongFromSongList(mSongInfo);
-                                } else {
-                                    // different id then duplicate
-                                    ScreenUtil.showToast(BaseSongDataActivity.this, getString(R.string.duplicate_in_database),
-                                            toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
-                                }
-                            }
-                        }
-                        break;
-                    case CommonConstants.DeleteActionString:
-                        // = "DELETE". Delete one record
-                        databaseResult = songListSQLite.deleteOneSongFromSongList(mSongInfo);
-                        break;
-                }
-                songListSQLite.closeDatabase();
+                    }
+                    break;
+                case CommonConstants.DeleteActionString:
+                    // = "DELETE". Delete one record
+                    databaseResult = songListSQLite.deleteOneSongFromSongList(mSongInfo);
+                    break;
+            }
+            songListSQLite.closeDatabase();
 
-                if (databaseResult != -1) {
-                    returnToPrevious();
-                }
+            if (databaseResult != -1) {
+                returnToPrevious();
             }
         });
 
         final Button edit_exitEditSongButton = findViewById(R.id.edit_exitEditSongButton);
         ScreenUtil.resizeTextSize(edit_exitEditSongButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        edit_exitEditSongButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                returnToPrevious();
-            }
-        });
-
-        selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        ArrayList<Uri> uris;
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
-                        } else
-                            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
-
-                        // ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
-                        // this activity allows only one file selected
-                        if (uris.size() > 0) {
-                            // single file selected (first uri)
-                            edit_filePathEditText.setText(uris.get(0).toString());
-                        }
-                    }
-                });
+        edit_exitEditSongButton.setOnClickListener(view -> returnToPrevious());
 
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -327,8 +284,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         extras.putParcelable(PlayerConstants.SongInfoState, mSongInfo);
         returnIntent.putExtras(extras);
 
-        int resultYn = Activity.RESULT_OK;
-        setResult(resultYn, returnIntent);    // can bundle some data to previous activity
+        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
 
         finish();
     }
@@ -356,9 +312,9 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
 
         mSongInfo.setSongName(title);
         mSongInfo.setFilePath(filePath);
-        mSongInfo.setMusicTrackNo(Integer.valueOf(musicTrack));
+        mSongInfo.setMusicTrackNo(Integer.parseInt(musicTrack));
         mSongInfo.setMusicChannel(BaseApplication.audioChannelReverseMap.get(musicChannel));
-        mSongInfo.setVocalTrackNo(Integer.valueOf(vocalTrack));
+        mSongInfo.setVocalTrackNo(Integer.parseInt(vocalTrack));
         mSongInfo.setVocalChannel(BaseApplication.audioChannelReverseMap.get(vocalChannel));
         mSongInfo.setIncluded(included);
 
