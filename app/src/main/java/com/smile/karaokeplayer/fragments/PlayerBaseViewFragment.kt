@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.ads.nativetemplates.TemplateView
 import com.smile.karaokeplayer.BaseApplication
+import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
@@ -501,7 +502,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
     }
 
-    fun hidePlayerView() {
+    override fun hidePlayerView() {
         Log.d(TAG, "hidePlayerView() is called")
         playerViewLinearLayout.visibility = View.INVISIBLE
         hideNativeAndBannerAd()
@@ -511,7 +512,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         playBaseFragmentFunc.baseHidePlayerView()
         mPresenter.playingParam.isPlayerViewVisible = false
     }
-    fun showPlayerView() {
+    override fun showPlayerView() {
         Log.d(TAG, "showPlayerView() is called")
         playerViewLinearLayout.visibility = View.VISIBLE
         if (mPresenter.playingParam.currentPlaybackState != PlaybackStateCompat.STATE_PLAYING) {
@@ -526,7 +527,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun selectFilesToOpen() {
-        val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
+        // val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
+        val selectFileIntent = Intent(activity, OpenFileActivity::class.java)
         selectSongsToPlayActivityLauncher.launch(selectFileIntent)
     }
 

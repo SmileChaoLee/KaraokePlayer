@@ -19,8 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -52,7 +50,6 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
 
     private EditText edit_titleNameEditText;
     protected EditText edit_filePathEditText;
-    private ImageButton edit_selectOneFilePathButton;
     private Spinner edit_musicTrackSpinner;
     private Spinner edit_musicChannelSpinner;
     private Spinner edit_vocalTrackSpinner;
@@ -63,9 +60,6 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private String actionButtonString;
     private String crudAction;;
     private SongInfo mSongInfo;
-
-    public abstract Intent createSelectOneFileToOpenIntent();
-    public abstract ArrayList<Uri> getUrisListFromIntentSongData(Intent data);
     public abstract void setKaraokeSettingLayoutVisibility();
 
     @Override
@@ -157,14 +151,6 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         edit_filePathEditText.setEnabled(false);
         ScreenUtil.resizeTextSize(edit_filePathEditText, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         edit_filePathEditText.setText(mSongInfo.getFilePath());
-
-        edit_selectOneFilePathButton = findViewById(R.id.edit_selectOneFilePathButton);
-        edit_selectOneFilePathButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectOneFilePathSongData();
-            }
-        });
 
         karaokeSettingLayout = findViewById(R.id.karaokeSettingLayout);
         //
@@ -278,20 +264,20 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         });
 
         selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                new ActivityResultCallback<ActivityResult>() {
-                    @Override
-                    public void onActivityResult(ActivityResult result) {
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
+                        ArrayList<Uri> uris;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
+                        } else
+                            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
+
+                        // ArrayList<Uri> uris = getUrisListFromIntentSongData(data);
                         // this activity allows only one file selected
-                        switch (uris.size()) {
-                            case 0:
-                                // no files selected
-                                break;
-                            case 1:
-                                // single file selected
-                                edit_filePathEditText.setText(uris.get(0).toString());
-                                break;
+                        if (uris.size() > 0) {
+                            // single file selected (first uri)
+                            edit_filePathEditText.setText(uris.get(0).toString());
                         }
                     }
                 });
@@ -385,11 +371,5 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         }
 
         return isValid;
-    }
-
-    private void selectOneFilePathSongData() {
-        Log.d(TAG, "selectOneFilePathSongData() is called.");
-        Intent selectOneFileIntent = createSelectOneFileToOpenIntent();
-        selectOneSongActivityLauncher.launch(selectOneFileIntent);
     }
 }

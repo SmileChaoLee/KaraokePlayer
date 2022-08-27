@@ -32,8 +32,6 @@ import java.util.ArrayList;
 import videoplayer.Callbacks.VLCMediaControllerCallback;
 import videoplayer.Callbacks.VLCMediaSessionCallback;
 import videoplayer.Listeners.VLCPlayerEventListener;
-import videoplayer.utilities.FileSelectUtil;
-import videoplayer.utilities.UriUtil;
 
 public class VLCPlayerPresenter extends BasePlayerPresenter {
 
@@ -55,9 +53,6 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
 
     // instances of the following members have to be saved when configuration changed
     private ArrayList<Integer> audioTrackIndicesList = new ArrayList<>();
-
-    // public interface VLCPlayerPresentView extends BasePresentView {
-    // }
 
     public VLCPlayerPresenter(Fragment fragment, BasePresentView presentView) {
         super(fragment, presentView);
@@ -242,30 +237,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     public Uri getValidatedUri(Uri tempUri) {
         Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() is called.");
         tempUri = super.getValidatedUri(tempUri);
-
         return tempUri;
-
-        /*
-        // removed on 2020-12-21
-        // because of using file picker to select file
-        // so the uri is already file uri
-
-        Uri resultUri = null;
-        try {
-            String filePath = ExternalStorageUtil.getUriRealPath(callingContext, tempUri);
-            Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() --> filePath == " + filePath);
-            if (filePath != null) {
-                if (!filePath.isEmpty()) {
-                    File songFile = new File(filePath);
-                    resultUri = Uri.fromFile(songFile);
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        return resultUri;
-        */
     }
 
     @Override
@@ -318,17 +290,6 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         outState.putIntegerArrayList("AudioTrackIndexList", audioTrackIndicesList);
 
         super.saveInstanceState(outState);
-    }
-
-    @Override
-    public Intent createSelectFilesToOpenIntent() {
-        return FileSelectUtil.selectFileToOpenIntent(mActivity, false);
-    }
-
-    @Override
-    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
-        // return UriUtil.getUrisListFromIntent(callingContext, data);
-        return UriUtil.getUrisListFromIntent(mActivity, data);
     }
 
     @Override

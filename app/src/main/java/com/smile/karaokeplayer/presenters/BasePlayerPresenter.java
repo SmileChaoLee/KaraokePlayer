@@ -65,6 +65,8 @@ public abstract class BasePlayerPresenter {
         void showMusicAndVocalIsNotSet();
         void showInterstitialAd(boolean isExit);
         void setScreenOrientation(int orientation);
+        void hidePlayerView();
+        void showPlayerView();
     }
 
     public abstract void setPlayerTime(int progress);
@@ -73,8 +75,6 @@ public abstract class BasePlayerPresenter {
     public abstract int getCurrentProgressForVolumeSeekBar();
     public abstract void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel);
     public abstract void specificPlayerReplayMedia(long currentAudioPosition);
-    public abstract Intent createSelectFilesToOpenIntent();
-    public abstract ArrayList<Uri> getUrisListFromIntentPresenter(Intent data);
     public abstract void switchAudioToMusic();
     public abstract void switchAudioToVocal();
     public abstract void startDurationSeekBarHandler();
@@ -193,9 +193,9 @@ public abstract class BasePlayerPresenter {
             }
             songList.add(songInfo);
         }
-
         playSongList(songList);
         playingParam.setAutoPlay(false);
+        mPresentView.showPlayerView();
     }
 
     protected void playMediaFromUri(Uri uri) {
@@ -436,11 +436,18 @@ public abstract class BasePlayerPresenter {
 
     public void selectFileToOpenPresenter(ActivityResult result) {
         Intent data = result.getData();
-        ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
+        ArrayList<Uri> uris;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
+        } else uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
+
+        // ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
         if (uris != null && uris.size() > 0) {
-            Log.d(TAG, "selectFileToOpenPresenter() --> uris.size() = " + uris.size());
+            Log.d(TAG, "selectFileToOpenPresenter.uris.size() = " + uris.size());
             // There are files selected
             playSelectedUrisFromStorage(uris);
+        } else {
+            Log.d(TAG, "selectFileToOpenPresenter.uris is null or empty");
         }
     }
 

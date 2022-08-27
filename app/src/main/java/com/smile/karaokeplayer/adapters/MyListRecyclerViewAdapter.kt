@@ -55,29 +55,26 @@ class MyListRecyclerViewAdapter(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        songInfoList[position].also {
-            holder.songNameTextView.apply {
-                text = it.songName
-                setTextColor(Color.WHITE)
-                visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
-            }
-            holder.songPathTextView.apply {
-                text = ""
-                setTextColor(Color.WHITE)
-                it.filePath?.let { pathIt ->
-                    val lastIndex = pathIt.lastIndexOf('/')
-                    if (lastIndex >=0 ) text = pathIt.substring(lastIndex+1)
-                }
-            }
-            if (it.included == "1") {
-                holder.songNameTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow2))
-                holder.songPathTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow2))
+        holder.songNameTextView.apply {
+            text = songInfoList[position].songName
+            setTextColor(Color.WHITE)
+            visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
+        }
+        holder.songPathTextView.apply {
+            text = ""
+            setTextColor(Color.WHITE)
+            songInfoList[position].filePath?.let {
+                val lastIndex = it.lastIndexOf('/')
+                if (lastIndex >=0 ) text = it.substring(lastIndex+1)
             }
         }
+        if (songInfoList[position].included == "1") {
+            holder.songNameTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+            holder.songPathTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow))
+        }
 
-        val backgroundColor = if (position % 2 == 0) Color.BLACK
-        else ContextCompat.getColor(context, R.color.transparentLightGray)
-        holder.itemView.setBackgroundColor(backgroundColor)
+        holder.itemView.setBackgroundColor(if (position % 2 == 0) Color.BLACK
+        else ContextCompat.getColor(context, R.color.transparentLightGray))
     }
 
     override fun getItemCount(): Int {

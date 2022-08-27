@@ -59,16 +59,17 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.fileNameTextView.let {
-            it.text = files[position].file.name
-            if (files[position].selected) it.setTextColor(ContextCompat.getColor(context, R.color.yellow3))
-            else it.setTextColor(Color.WHITE)
+        holder.folderImageView.apply {
+            visibility = if (files[position].file.isDirectory) View.VISIBLE else View.INVISIBLE
         }
-        if (files[position].file.isDirectory) holder.folderImageView.visibility = View.VISIBLE
-        else holder.folderImageView.visibility = View.INVISIBLE
-        val backgroundColor = if (position % 2 == 0) Color.BLACK
-        else ContextCompat.getColor(context, R.color.transparentLightGray)
-        holder.itemView.setBackgroundColor(backgroundColor)
+        holder.fileNameTextView.apply {
+            text = files[position].file.name
+            setTextColor(Color.WHITE)
+            if (files[position].selected) setTextColor(ContextCompat.getColor(context, R.color.yellow))
+        }
+
+        holder.itemView.setBackgroundColor(if (position % 2 == 0) Color.BLACK
+        else ContextCompat.getColor(context, R.color.transparentLightGray))
     }
 
     override fun getItemCount(): Int {

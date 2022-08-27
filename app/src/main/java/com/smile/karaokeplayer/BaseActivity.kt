@@ -1,12 +1,7 @@
 package com.smile.karaokeplayer
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -32,8 +27,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
     private lateinit var playerFragment: PlayerBaseViewFragment
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
-    private var tablayoutViewLayout: LinearLayout? = null
-    private lateinit var baseReceiver : BroadcastReceiver
+    private lateinit var tablayoutViewLayout: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG,"onCreate() is called")
@@ -41,11 +35,11 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
         setContentView(R.layout.activity_base)
 
         basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
+        tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
 
         playerFragment = getFragment()
         if (callingActivity == null) {
             Log.d(TAG,"callingActivity is null")
-            tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
             tablayoutFragment = TablayoutFragment()
         } else {
             Log.d(TAG,"callingActivity is not null")
@@ -54,6 +48,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
             add(R.id.basePlayViewLayout, playerFragment)
             tablayoutFragment?.let {
                 add(R.id.tablayoutViewLayout, it)
+                tablayoutViewLayout.visibility = View.GONE
             }
             commit()
         }
@@ -71,7 +66,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
                     // Layout has been finished
                     // hove to use removeGlobalOnLayoutListener() method after API 16 or is API 16
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    createViewDependingOnOrientation(resources.configuration.orientation, )
+                    createViewDependingOnOrientation(resources.configuration.orientation)
                 }
             })
         }
@@ -93,18 +88,19 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
     }
 
     override fun onDestroy() {
+        Log.d(TAG, "onDestroy() is called.")
         super.onDestroy()
     }
 
     // implementing interface PlayerBaseViewFragment.PlayBaseFragmentFunc
     override fun baseHidePlayerView() {
         Log.d(TAG, "baseHidePlayerView() is called.")
-        tablayoutViewLayout?.visibility = View.VISIBLE
+        tablayoutViewLayout.visibility = View.VISIBLE
     }
 
     override fun baseShowPlayerView() {
         Log.d(TAG, "baseShowPlayerView() is called.")
-        tablayoutViewLayout?.visibility = View.GONE
+        tablayoutViewLayout.visibility = View.GONE
     }
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
 
@@ -112,7 +108,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
     override fun playUriList(uris: ArrayList<Uri>) {
         Log.d(TAG, "playUriList.uris.size = ${uris.size}")
         playerFragment.mPresenter.playSelectedUrisFromStorage(uris)
-        playerFragment.showPlayerView()
     }
     // Finishes implementing interface OpenFileFragment.PlayOpenFiles
 

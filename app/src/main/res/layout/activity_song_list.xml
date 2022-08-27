@@ -38,25 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
-        android:weightSum="3">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_weight="1">
-            <Button
-                android:id="@+id/addOneSongListButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/addOneString"
-                app:textAllCaps="false"
-                android:textStyle="normal"
-                android:background="@android:drawable/btn_default"
-                android:textColor="@color/blue" >
-            </Button>
-        </LinearLayout>
+        android:weightSum="2">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="0dp"
@@ -68,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/addManyString"
+                android:text="@string/addOneString"
                 app:textAllCaps="false"
                 android:textStyle="normal"
                 android:background="@android:drawable/btn_default"
