@@ -17,22 +17,20 @@
             android:textColor="@android:color/background_dark"
             android:textStyle="bold"
             android:text="@string/titleWithColonString"
-            android:gravity="left|center_vertical"
+            android:gravity="start|center_vertical"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentStart="true">
         </TextView>
         <TextView android:id="@+id/titleNameTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:maxLines="2"
             android:textColor="@color/red"
             android:textStyle="bold"
-            android:layout_marginLeft="5dp"
-            android:gravity="left|center_vertical"
-            android:layout_toRightOf="@+id/titleStringTextView"
+            android:layout_marginStart="5dp"
+            android:gravity="start|center_vertical"
+            android:layout_toEndOf="@+id/titleStringTextView"
             android:layout_alignTop="@+id/titleStringTextView">
         </TextView>
     </RelativeLayout>
@@ -49,22 +47,20 @@
             android:textColor="@android:color/background_dark"
             android:textStyle="bold"
             android:text="@string/filePathWithColonString"
-            android:gravity="left|center_vertical"
+            android:gravity="start|center_vertical"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentStart="true">
         </TextView>
         <TextView android:id="@+id/filePathTextView"
             android:textScaleX="1.0"
             android:typeface="monospace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:maxLines="5"
             android:textColor="@color/blue"
             android:textStyle="bold"
-            android:layout_marginLeft="5dp"
-            android:gravity="left|center_vertical"
-            android:layout_toRightOf="@+id/filePathStringTextView"
+            android:layout_marginStart="5dp"
+            android:gravity="start|center_vertical"
+            android:layout_toEndOf="@+id/filePathStringTextView"
             android:layout_alignTop="@+id/filePathStringTextView">
         </TextView>
     </RelativeLayout>
@@ -88,9 +84,9 @@
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold"
                 android:text="@string/musicTrackWithColonString"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true">
+                android:layout_alignParentStart="true">
             </TextView>
             <TextView android:id="@+id/musicTrackTextView"
                 android:textScaleX="1.0"
@@ -99,9 +95,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/blue"
                 android:textStyle="bold"
-                android:layout_marginLeft="5dp"
-                android:gravity="left|center_vertical"
-                android:layout_toRightOf="@+id/musicTrackStringTextView"
+                android:layout_marginStart="5dp"
+                android:gravity="start|center_vertical"
+                android:layout_toEndOf="@+id/musicTrackStringTextView"
                 android:layout_alignTop="@+id/musicTrackStringTextView">
             </TextView>
         </RelativeLayout>
@@ -118,9 +114,9 @@
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold"
                 android:text="@string/musicChannelWithColonString"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true">
+                android:layout_alignParentStart="true">
             </TextView>
             <TextView android:id="@+id/musicChannelTextView"
                 android:textScaleX="1.0"
@@ -129,9 +125,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/blue"
                 android:textStyle="bold"
-                android:layout_marginLeft="5dp"
-                android:gravity="left|center_vertical"
-                android:layout_toRightOf="@+id/musicChannelStringTextView"
+                android:layout_marginStart="5dp"
+                android:gravity="start|center_vertical"
+                android:layout_toEndOf="@+id/musicChannelStringTextView"
                 android:layout_alignTop="@+id/musicChannelStringTextView">
             </TextView>
         </RelativeLayout>
@@ -156,9 +152,9 @@
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold"
                 android:text="@string/vocalTrackWithColonString"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true">
+                android:layout_alignParentStart="true">
             </TextView>
             <TextView android:id="@+id/vocalTrackTextView"
                 android:textScaleX="1.0"
@@ -167,9 +163,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/blue"
                 android:textStyle="bold"
-                android:layout_marginLeft="5dp"
-                android:gravity="left|center_vertical"
-                android:layout_toRightOf="@+id/vocalTrackStringTextView"
+                android:layout_marginStart="5dp"
+                android:gravity="start|center_vertical"
+                android:layout_toEndOf="@+id/vocalTrackStringTextView"
                 android:layout_alignTop="@+id/vocalTrackStringTextView">
             </TextView>
         </RelativeLayout>
@@ -186,9 +182,9 @@
                 android:textColor="@android:color/background_dark"
                 android:textStyle="bold"
                 android:text="@string/vocalChannelWithColonString"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true">
+                android:layout_alignParentStart="true">
             </TextView>
             <TextView android:id="@+id/vocalChannelTextView"
                 android:textScaleX="1.0"
@@ -197,9 +193,9 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/blue"
                 android:textStyle="bold"
-                android:layout_marginLeft="5dp"
-                android:gravity="left|center_vertical"
-                android:layout_toRightOf="@+id/vocalChannelStringTextView"
+                android:layout_marginStart="5dp"
+                android:gravity="start|center_vertical"
+                android:layout_toEndOf="@+id/vocalChannelStringTextView"
                 android:layout_alignTop="@+id/vocalChannelStringTextView">
             </TextView>
         </RelativeLayout>
@@ -209,25 +205,25 @@
         android:id="@+id/includedPlaylistLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView android:id="@+id/includedPlaylistStringTextView"
-            android:textScaleX="1.0"
-            android:typeface="monospace"
+        <TextView android:id="@+id/includedPlaylistTextView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:textColor="@android:color/background_dark"
+            android:textScaleX="1.0"
+            android:typeface="monospace"
             android:textStyle="bold"
-            android:text="@string/includedPlaylistColonString"
-            android:gravity="left|center_vertical"
+            android:text="@string/includedPlayListColonString"
+            android:gravity="start|center_vertical"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentStart="true">
         </TextView>
         <CheckBox android:id="@+id/includedPlaylistCheckBox"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:gravity="left|center_vertical"
-            android:layout_toRightOf="@+id/includedPlaylistStringTextView"
-            android:layout_alignTop="@+id/includedPlaylistStringTextView">
+            android:layout_marginStart="5dp"
+            android:gravity="start|center_vertical"
+            android:layout_toEndOf="@+id/includedPlaylistTextView"
+            android:layout_alignTop="@+id/includedPlaylistTextView">
         </CheckBox>
     </RelativeLayout>
 
@@ -241,9 +237,9 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true">
+            android:layout_alignParentStart="true">
             <Button
-                android:id="@+id/editSongListButton"
+                android:id="@+id/editSongButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/editString"
@@ -258,12 +254,12 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:gravity="center"
-            android:layout_toRightOf="@+id/editButtonLinearLayout"
+            android:layout_toEndOf="@+id/editButtonLinearLayout"
             android:layout_alignTop="@+id/editButtonLinearLayout">
             <Button
-                android:id="@+id/deleteSongListButton"
+                android:id="@+id/deleteSongButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/deleteString"
@@ -278,12 +274,12 @@
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             android:gravity="center"
-            android:layout_toRightOf="@+id/deleteButtonLinearLayout"
+            android:layout_toEndOf="@+id/deleteButtonLinearLayout"
             android:layout_alignTop="@+id/deleteButtonLinearLayout">
             <Button
-                android:id="@+id/playSongListButton"
+                android:id="@+id/playSongButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/playString"

@@ -11,23 +11,23 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.smile.karaokeplayer.fragments.MyListFragment
+import com.smile.karaokeplayer.fragments.MyFavoritesFragment
 import com.smile.karaokeplayer.fragments.OpenFileFragment
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
-import com.smile.karaokeplayer.interfaces.BaseFragmentFunc
 import com.smile.karaokeplayer.models.SongInfo
 
 private const val TAG : String = "BaseActivity"
 
-abstract class BaseActivity : AppCompatActivity(), BaseFragmentFunc,
-        PlayerBaseViewFragment.PlayBaseFragmentFunc,
-        OpenFileFragment.PlayOpenFiles, MyListFragment.PlayMyList {
+abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
+        OpenFileFragment.PlayOpenFiles, MyFavoritesFragment.PlayMyFavorites {
 
     private lateinit var playerFragment: PlayerBaseViewFragment
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
     private lateinit var tablayoutViewLayout: LinearLayout
+
+    abstract fun getFragment() : PlayerBaseViewFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG,"onCreate() is called")

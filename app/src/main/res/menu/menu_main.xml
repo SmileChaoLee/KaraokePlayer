@@ -12,7 +12,7 @@
         app:showAsAction="never">
     </item>
     <item android:id="@+id/songList"
-        android:title="@string/songListString"
+        android:title="@string/my_favorites"
         android:orderInCategory="2"
         android:checkable="false"
         android:visible="true"

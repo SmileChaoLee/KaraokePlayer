@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/edit_includedPlaylistStringTextView"
+    android:id="@+id/editIncludedPlayListTextView"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:textColor="@android:color/background_dark"
     android:typeface="monospace"
     android:textStyle="normal"
-    android:text="@string/includedPlaylistColonString"
-    android:gravity="left|center_vertical"
+    android:text="@string/includedPlayListColonString"
+    android:gravity="start|center_vertical"
     android:layout_alignParentTop="true"
-    android:layout_alignParentLeft="true">
+    android:layout_alignParentStart="true">
 </TextView>

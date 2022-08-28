@@ -17,7 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="videoplayer.SongListActivity" />
+        <activity android:name="videoplayer.FavoriteListActivity" />
         <activity android:name="videoplayer.SongDataActivity" />
     </application>
 

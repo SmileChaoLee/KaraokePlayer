@@ -34,20 +34,19 @@
     <string name="rightChannelString">Betul</string>
     <string name="stereoChannelString">Stereo</string>
     <string name="formatNotSupportedString">Kesilapan atau tidak disokong.</string>
-    <string name="songListString">senarai lagu</string>
-    <string name="playlistString">senarai main</string>
+    <string name="my_favorites">My Favorites</string>
     <string name="titleWithColonString">Tajuk:</string>
     <string name="filePathWithColonString">Laluan fail:</string>
     <string name="musicTrackWithColonString">Trek muzik:</string>
     <string name="vocalTrackWithColonString">Trek lantang:</string>
     <string name="musicChannelWithColonString">Saluran muzik:</string>
     <string name="vocalChannelWithColonString">Saluran lantang:</string>
-    <string name="includedPlaylistColonString">Dalam Senarai Main:</string>
+    <string name="includedPlayListColonString">Dalam Senarai Main:</string>
     <string name="addOneString">Tambah</string>
     <string name="addManyString">Tambah banyak</string>
     <string name="editString">Mengedit</string>
     <string name="deleteString">Padam</string>
-    <string name="noPlaylistString">Tiada senarai</string>
+    <string name="no_my_favorites">No Favorites</string>
     <string name="noFilesSelectedString">No files selected</string>
     <string name="bufferingString">Penimbunan .....</string>
     <string name="saveString">berjimat</string>
@@ -68,6 +67,4 @@
     <string name="duplicate_in_database">Duplicate in database</string>
     <string name="play_video">Video</string>
     <string name="open_files">Open</string>
-    <string name="my_list">List</string>
-    <string name="my_favorites">Favorites</string>
 </resources>

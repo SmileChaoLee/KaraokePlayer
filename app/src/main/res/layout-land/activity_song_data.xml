@@ -92,11 +92,11 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/edit_includedSongListLayout"
+            android:id="@+id/edit_includedMyFavoritesLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10">
-            <include layout="@layout/edit_included_playlist_string_textview_layout" />
+            <include layout="@layout/edit_included_playlist_textview_layout" />
             <include layout="@layout/edit_included_playlist_checkbox_layout" />
         </RelativeLayout>
         <RelativeLayout

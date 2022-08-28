@@ -33,20 +33,19 @@
     <string name="rightChannelString">Right</string>
     <string name="stereoChannelString">Stereo</string>
     <string name="formatNotSupportedString">Error or not Supported.</string>
-    <string name="songListString">Song List</string>
-    <string name="playlistString">Play List</string>
+    <string name="my_favorites">My Favorites</string>
     <string name="titleWithColonString">Title:</string>
     <string name="filePathWithColonString">Path:</string>
     <string name="musicTrackWithColonString">Music Track:</string>
     <string name="vocalTrackWithColonString">vocal Track:</string>
     <string name="musicChannelWithColonString">Music Channel:</string>
     <string name="vocalChannelWithColonString">vocal Channel:</string>
-    <string name="includedPlaylistColonString">In Playlist:</string>
+    <string name="includedPlayListColonString">In Playlist:</string>
     <string name="addOneString">Add</string>
     <string name="addManyString">Add many</string>
     <string name="editString">Edit</string>
     <string name="deleteString">Delete</string>
-    <string name="noPlaylistString">No Play List</string>
+    <string name="no_my_favorites">No Favorites</string>
     <string name="noFilesSelectedString">No files selected</string>
     <string name="bufferingString">Buffering .....</string>
     <string name="saveString">Save</string>
@@ -67,6 +66,4 @@
     <string name="duplicate_in_database">Duplicate in database</string>
     <string name="play_video">Video</string>
     <string name="open_files">Open</string>
-    <string name="my_list">List</string>
-    <string name="my_favorites">Favorites</string>
 </resources>

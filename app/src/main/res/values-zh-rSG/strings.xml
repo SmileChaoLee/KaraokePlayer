@@ -34,20 +34,19 @@
     <string name="rightChannelString">右声道</string>
     <string name="stereoChannelString">立体声</string>
     <string name="formatNotSupportedString">播放错误或没有支援</string>
-    <string name="songListString">歌曲清单</string>
-    <string name="playlistString">播放清单</string>
+    <string name="my_favorites">我的最爱</string>
     <string name="titleWithColonString">名称:</string>
     <string name="filePathWithColonString">路径:</string>
     <string name="musicTrackWithColonString">音乐音轨:</string>
     <string name="vocalTrackWithColonString">人声音轨:</string>
     <string name="musicChannelWithColonString">音乐声道:</string>
     <string name="vocalChannelWithColonString">人声声道:</string>
-    <string name="includedPlaylistColonString">在播放清单中:</string>
+    <string name="includedPlayListColonString">在播放清单中:</string>
     <string name="addOneString">新增</string>
     <string name="addManyString">新增多数</string>
     <string name="editString">修改</string>
     <string name="deleteString">删除</string>
-    <string name="noPlaylistString">没有播放清单</string>
+    <string name="no_my_favorites">没有我的最爱</string>
     <string name="noFilesSelectedString">没有选择档案</string>
     <string name="bufferingString">缓衝中 .....</string>
     <string name="saveString">储存</string>
@@ -68,6 +67,4 @@
     <string name="duplicate_in_database">资料重複在资料库中</string>
     <string name="play_video">视频</string>
     <string name="open_files">开启档案</string>
-    <string name="my_list">我的清单</string>
-    <string name="my_favorites">我的最爱</string>
 </resources>

@@ -108,6 +108,17 @@
             android:src="@drawable/next_media_button_image"
             android:background="@drawable/main_menuitem_background_color">
         </ImageButton>
+        <ImageButton
+            android:id="@+id/heartImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="0dp"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/heart"
+            android:background="@drawable/main_menuitem_background_color">
+        </ImageButton>
     </LinearLayout>
 
 </LinearLayout>

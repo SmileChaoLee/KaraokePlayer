@@ -37,7 +37,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private Spinner edit_musicChannelSpinner;
     private Spinner edit_vocalTrackSpinner;
     private Spinner edit_vocalChannelSpinner;
-    private CheckBox edit_includedPlaylistCheckBox;
+    private CheckBox editIncludedPlaylistCheckBox;
     protected LinearLayout karaokeSettingLayout;
 
     private String actionButtonString;
@@ -169,15 +169,15 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         setKaraokeSettingLayoutVisibility();    // abstract method
         //
 
-        TextView edit_includedPlaylistStringTextView = findViewById(R.id.edit_includedPlaylistStringTextView);
-        ScreenUtil.resizeTextSize(edit_includedPlaylistStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        edit_includedPlaylistCheckBox = findViewById(R.id.edit_includedPlaylistCheckBox);
-        ScreenUtil.resizeTextSize(edit_includedPlaylistCheckBox, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        TextView editIncludedPlaylistTextView = findViewById(R.id.editIncludedPlayListTextView);
+        ScreenUtil.resizeTextSize(editIncludedPlaylistTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        editIncludedPlaylistCheckBox = findViewById(R.id.editIncludedPlaylistCheckBox);
+        ScreenUtil.resizeTextSize(editIncludedPlaylistCheckBox, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         boolean isChecked = mSongInfo.getIncluded().equals("1");
-        edit_includedPlaylistCheckBox.setChecked(isChecked);
-        edit_includedPlaylistCheckBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
-            edit_includedPlaylistCheckBox.setChecked(isChecked1);
-            edit_includedPlaylistCheckBox.jumpDrawablesToCurrentState();
+        editIncludedPlaylistCheckBox.setChecked(isChecked);
+        editIncludedPlaylistCheckBox.setOnCheckedChangeListener((buttonView, isChecked1) -> {
+            editIncludedPlaylistCheckBox.setChecked(isChecked1);
+            editIncludedPlaylistCheckBox.jumpDrawablesToCurrentState();
         });
 
         final Button edit_saveOneSongButton = findViewById(R.id.edit_saveOneSongButton);
@@ -308,7 +308,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
         String musicChannel = edit_musicChannelSpinner.getSelectedItem().toString();
         String vocalTrack = edit_vocalTrackSpinner.getSelectedItem().toString();
         String vocalChannel = edit_vocalChannelSpinner.getSelectedItem().toString();
-        String included = edit_includedPlaylistCheckBox.isChecked() ? "1" : "0";
+        String included = editIncludedPlaylistCheckBox.isChecked() ? "1" : "0";
 
         mSongInfo.setSongName(title);
         mSongInfo.setFilePath(filePath);

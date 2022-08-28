@@ -14,13 +14,13 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
-private const val TAG = "ListRecyclerVAdapter"
+private const val TAG = "FavoritesRecyclerVAdapter"
 
-class MyListRecyclerViewAdapter(private val context: Context,
-                                private val recyclerItemClickListener: OnRecyclerItemClickListener,
-                                private val textFontSize: Float,
-                                private val songInfoList: java.util.ArrayList<SongInfo>)
-    : RecyclerView.Adapter<MyListRecyclerViewAdapter.MyViewHolder>() {
+class MyFavoritesRecyclerViewAdapter(private val context: Context,
+                                     private val recyclerItemClickListener: OnRecyclerItemClickListener,
+                                     private val textFontSize: Float,
+                                     private val songInfoList: java.util.ArrayList<SongInfo>)
+    : RecyclerView.Adapter<MyFavoritesRecyclerViewAdapter.MyViewHolder>() {
 
     interface OnRecyclerItemClickListener {
         fun onRecyclerItemClick(v: View?, position: Int)
@@ -50,27 +50,25 @@ class MyListRecyclerViewAdapter(private val context: Context,
     // Involves populating data into the item through holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val fileView = layoutInflater.inflate(R.layout.my_list_item, parent, false)
+        val fileView = layoutInflater.inflate(R.layout.fragment_my_favorites_item, parent, false)
         return MyViewHolder(fileView, recyclerItemClickListener, textFontSize)
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.songNameTextView.apply {
             text = songInfoList[position].songName
-            setTextColor(Color.WHITE)
             visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
         }
         holder.songPathTextView.apply {
             text = ""
-            setTextColor(Color.WHITE)
-            songInfoList[position].filePath?.let {
-                val lastIndex = it.lastIndexOf('/')
-                if (lastIndex >=0 ) text = it.substring(lastIndex+1)
+            songInfoList[position].let {
+                if (it.included == "1") setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                else setTextColor(Color.WHITE)
+                it.filePath?.let {pathIt ->
+                    val lastIndex = pathIt.lastIndexOf('/')
+                    if (lastIndex >=0 ) text = pathIt.substring(lastIndex+1)
+                }
             }
-        }
-        if (songInfoList[position].included == "1") {
-            holder.songNameTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow))
-            holder.songPathTextView.setTextColor(ContextCompat.getColor(context, R.color.yellow))
         }
 
         holder.itemView.setBackgroundColor(if (position % 2 == 0) Color.BLACK

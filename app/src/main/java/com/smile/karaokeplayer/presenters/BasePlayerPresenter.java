@@ -44,7 +44,7 @@ public abstract class BasePlayerPresenter {
     protected Uri mediaUri;
     protected int numberOfVideoTracks;
     protected int numberOfAudioTracks;
-    protected ArrayList<SongInfo> orderedSongList;
+    public ArrayList<SongInfo> orderedSongList;
     protected PlayingParameters playingParam;
     protected boolean canShowNotSupportedFormat;
     protected SongInfo singleSongInfo;    // when playing single song in songs list
@@ -409,6 +409,7 @@ public abstract class BasePlayerPresenter {
             // previous is not auto play
             ArrayList<SongInfo> songList = DatabaseAccessUtil.readSavedSongList(mActivity, true);
             playingParam.setAutoPlay(playSongList(songList)); // must be above autoPlay savedSongList()
+            mPresentView.showPlayerView();
         } else {
             // previous is auto play
             int playbackState = playingParam.getCurrentPlaybackState();
@@ -418,6 +419,7 @@ public abstract class BasePlayerPresenter {
                 stopPlay();
             }
             playingParam.setAutoPlay(false);    // must be the last in this block
+            mPresentView.hidePlayerView();
         }
         mPresentView.setImageButtonStatus();
     }
@@ -428,7 +430,7 @@ public abstract class BasePlayerPresenter {
             autoPlaySongList();
             return true;
         } else {
-            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.noPlaylistString)
+            ScreenUtil.showToast(mActivity, mActivity.getString(R.string.no_my_favorites)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return false;
         }

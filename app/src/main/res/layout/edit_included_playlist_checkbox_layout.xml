@@ -5,14 +5,14 @@
     android:orientation="vertical"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:layout_marginLeft="5dp"
-    android:gravity="left|center_vertical"
-    android:layout_toRightOf="@+id/edit_includedPlaylistStringTextView"
-    android:layout_alignTop="@+id/edit_includedPlaylistStringTextView">
+    android:layout_marginStart="5dp"
+    android:gravity="start|center_vertical"
+    android:layout_toEndOf="@+id/editIncludedPlayListTextView"
+    android:layout_alignTop="@+id/editIncludedPlayListTextView">
     <CheckBox
-        android:id="@+id/edit_includedPlaylistCheckBox"
+        android:id="@+id/editIncludedPlaylistCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="left|center_vertical">
+        android:gravity="start|center_vertical">
     </CheckBox>
 </LinearLayout>

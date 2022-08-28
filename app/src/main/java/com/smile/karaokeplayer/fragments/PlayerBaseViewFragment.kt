@@ -37,6 +37,8 @@ import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
+import com.smile.karaokeplayer.models.SongInfo
+import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter.BasePresentView
@@ -46,6 +48,7 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
 import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
+import java.util.*
 
 private const val TAG: String = "PlayerBaseViewFragment"
 
@@ -77,6 +80,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private lateinit var pauseMediaImageButton: ImageButton
     private lateinit var stopMediaImageButton: ImageButton
     private lateinit var nextMediaImageButton: ImageButton
+    private lateinit var heartImageButton: ImageButton
 
     private lateinit var playingTimeTextView: TextView
     private lateinit var player_duration_seekbar: AppCompatSeekBar
@@ -234,6 +238,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton)
         stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton)
         nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton)
+        heartImageButton = fragmentView.findViewById(R.id.heartImageButton)
 
         orientationImageButton = fragmentView.findViewById(R.id.orientationImageButton)
         repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton)
@@ -534,6 +539,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private fun setButtonsPositionAndSize(config: Configuration) {
         var buttonMarginLeft = (60.0f * fontScale).toInt() // 60 pixels = 20dp on Nexus 5
+        var buttonMarginLeft2 = buttonMarginLeft
         val screenSize = ScreenUtil.getScreenSize(activity)
         Log.d(TAG, "screenSize.x = ${screenSize.x}, screenSize.y = ${screenSize.y}, buttonMarginLeft = $buttonMarginLeft")
         if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -541,12 +547,18 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 (buttonMarginLeft.toFloat() * (screenSize.x.toFloat() / screenSize.y.toFloat())).toInt()
             Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
         }
-        val imageButtonHeight = (textFontSize * 1.5f).toInt()
         val buttonNum = 7 // 7 buttons
+        val imageButtonHeight = (textFontSize * 1.5f).toInt()
         val maxWidth = buttonNum * imageButtonHeight + (buttonNum - 1) * buttonMarginLeft
         if (maxWidth > screenSize.x) {
             // greater than the width of screen
             buttonMarginLeft = (screenSize.x - 10 - buttonNum * imageButtonHeight) / (buttonNum - 1)
+        }
+        val buttonNum2 = 7
+        val maxWidth2 = buttonNum2 * imageButtonHeight + (buttonNum2 - 1) * buttonMarginLeft2
+        if (maxWidth2 > screenSize.x) {
+            // greater than the width of screen
+            buttonMarginLeft2 = (screenSize.x - 10 - buttonNum2 * imageButtonHeight) / (buttonNum2 - 1)
         }
         var layoutParams: MarginLayoutParams = volumeSeekBar.layoutParams as MarginLayoutParams
         layoutParams.width = imageButtonHeight
@@ -577,6 +589,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams = heartImageButton.layoutParams as MarginLayoutParams
+        layoutParams.height = imageButtonHeight
+        layoutParams.width = imageButtonHeight
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
 
         layoutParams = orientationImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
@@ -585,27 +601,28 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams = repeatImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
         layoutParams = switchToMusicImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
         layoutParams = switchToVocalImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
         layoutParams = hideVideoImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
-        setMediaRouteButtonView(buttonMarginLeft, imageButtonHeight)
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
+        setMediaRouteButtonView(buttonMarginLeft2, imageButtonHeight)
         layoutParams = actionMenuImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
         layoutParams = actionMenuView.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams.width = imageButtonHeight
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
         val tempBitmap = BitmapFactory.decodeResource(resources, R.drawable.circle_and_three_dots)
         val iconDrawable: Drawable = BitmapDrawable(
             resources,
@@ -715,6 +732,28 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         replayMediaImageButton.setOnClickListener { mPresenter.replayMedia() }
         stopMediaImageButton.setOnClickListener { mPresenter.stopPlay() }
         nextMediaImageButton.setOnClickListener { mPresenter.playNextSong() }
+        heartImageButton.setOnClickListener {
+            // add this media file to my favorite
+            mPresenter.let { pIt ->
+                if (pIt.playingParam.currentSongIndex >= 0) {
+                    Log.d(TAG,"heartImageButton.onClick.currentSongIndex = ${pIt.playingParam.currentSongIndex}")
+                    activity?.let {
+                        SongListSQLite(it.applicationContext).also { sqlIt ->
+                            pIt.orderedSongList[pIt.playingParam.currentSongIndex]?.run {
+                                // check if this file is already in database
+                                if (sqlIt.findOneSongByUriString(filePath) == null) {
+                                    Log.d(TAG, "heartImageButton.onClick.findOneSongByUriString() is null")
+                                    included = "1"
+                                    sqlIt.addSongToSongList(this)
+                                }
+                            }
+                            sqlIt.closeDatabase()
+                        }
+                    }
+                }
+            }
+        }
+
         orientationImageButton.setOnClickListener {
             val config = resources.configuration
             val orientation =

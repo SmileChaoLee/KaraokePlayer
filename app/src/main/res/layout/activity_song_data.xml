@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:weightSum="100"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintTop_toBottomOf="parent">
@@ -54,7 +54,7 @@
                 android:id="@+id/edit_audioMusicChannelLayout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:gravity="left|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_weight="10">
                 <include layout="@layout/edit_music_channel_string_textview_layout" />
                 <include layout="@layout/edit_music_channel_spinner_layout" />
@@ -78,11 +78,11 @@
         </LinearLayout>
 
         <RelativeLayout
-            android:id="@+id/edit_includedSongListLayout"
+            android:id="@+id/edit_includedMyFavoritesLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10">
-            <include layout="@layout/edit_included_playlist_string_textview_layout" />
+            <include layout="@layout/edit_included_playlist_textview_layout" />
             <include layout="@layout/edit_included_playlist_checkbox_layout" />
         </RelativeLayout>
         <RelativeLayout

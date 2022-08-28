@@ -12,22 +12,22 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
-import com.smile.karaokeplayer.adapters.MyListRecyclerViewAdapter
+import com.smile.karaokeplayer.adapters.MyFavoritesRecyclerViewAdapter
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
 
-private const val TAG : String = "MyListFragment"
+private const val TAG : String = "MyFavoritesFragment"
 
-class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClickListener {
-    interface PlayMyList {
+class MyFavoritesFragment : Fragment(), MyFavoritesRecyclerViewAdapter.OnRecyclerItemClickListener {
+    interface PlayMyFavorites {
         fun playSongList(songs: ArrayList<SongInfo>)
     }
     private var fragmentView : View? = null
     private var textFontSize = 0f
-    private lateinit var playMyList: PlayMyList
+    private lateinit var playMyFavorites: PlayMyFavorites
     private lateinit var myListRecyclerView : RecyclerView
-    private lateinit var myRecyclerViewAdapter : MyListRecyclerViewAdapter
+    private lateinit var myRecyclerViewAdapter : MyFavoritesRecyclerViewAdapter
     private lateinit var songInfoList : ArrayList<SongInfo>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +36,8 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
         }
         Log.d(TAG, "onCreate() is called")
 
-        playMyList = (activity as PlayMyList)
-        Log.d(TAG, "onCreate.playMyList = $playMyList")
+        playMyFavorites = (activity as PlayMyFavorites)
+        Log.d(TAG, "onCreate.playMyList = $playMyFavorites")
 
         songInfoList = ArrayList()
     }
@@ -48,7 +48,7 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
     ): View? {
         // Inflate the layout for this fragment
         Log.d(TAG, "onCreateView() is called")
-        fragmentView = inflater.inflate(R.layout.fragment_my_list, container, false)
+        fragmentView = inflater.inflate(R.layout.fragment_my_favorites, container, false)
 
         val defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(activity,
                 BaseApplication.FontSize_Scale_Type, null)
@@ -110,7 +110,7 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
-                    playMyList.playSongList(songs)
+                    playMyFavorites.playSongList(songs)
                 }
             }
         }
@@ -150,7 +150,7 @@ class MyListFragment : Fragment(), MyListRecyclerViewAdapter.OnRecyclerItemClick
     private fun initFilesRecyclerView() {
         Log.d(TAG, "initFilesRecyclerView() is called")
         activity?.let {
-            myRecyclerViewAdapter = MyListRecyclerViewAdapter(
+            myRecyclerViewAdapter = MyFavoritesRecyclerViewAdapter(
                     it, this, textFontSize, songInfoList)
             myListRecyclerView.adapter = myRecyclerViewAdapter
             myListRecyclerView.layoutManager = LinearLayoutManager(context)

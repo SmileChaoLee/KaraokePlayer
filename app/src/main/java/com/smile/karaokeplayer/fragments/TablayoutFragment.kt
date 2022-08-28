@@ -19,13 +19,11 @@ class TablayoutFragment : Fragment() {
 
     companion object {
         const val OpenFragmentTag : String = "OPEN_FILES"
-        const val ListFragmentTag : String = "MY_LIST"
         const val FavoriteFragmentTag : String = "MY_FAVORITES"
     }
 
     private lateinit var openFragment: OpenFileFragment
-    private lateinit var listFragment: MyListFragment
-    private lateinit var favoriteFragment: MyFavoriteFragment
+    private lateinit var favoriteFragment: MyFavoritesFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,14 +45,9 @@ class TablayoutFragment : Fragment() {
             val fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
             openFragment = OpenFileFragment()
             fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
-            listFragment = MyListFragment()
-            fragmentAdapter.addFragment(listFragment, ListFragmentTag)
-            if (BuildConfig.DEBUG) {    // only debug version
-                favoriteFragment = MyFavoriteFragment()
-                fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
-            }
-            val tabText = arrayOf(getString(R.string.open_files),
-                getString(R.string.my_list), getString(R.string.my_favorites))
+            favoriteFragment = MyFavoritesFragment()
+            fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
+            val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
             playViewPager2.adapter = fragmentAdapter
             Log.d(TAG, "TabLayoutMediator.attach()")
             TabLayoutMediator(playTabLayout, playViewPager2) { tab, position ->

@@ -35,14 +35,14 @@ import com.smile.smilelibraries.utilities.ScreenUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public abstract class BaseSongListActivity extends AppCompatActivity {
+public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
-    private static final String TAG = "BaseSongListActivity";
+    private static final String TAG = "BFavoriteListActivity";
     private SongListSQLite songListSQLite;
     private float textFontSize;
     private float toastTextSize;
-    private ArrayList<SongInfo> mSongList = new ArrayList<>();
-    private MySongListAdapter mySongListAdapter;
+    private ArrayList<SongInfo> mFavoriteList = new ArrayList<>();
+    private FavoriteListAdapter favoriteListAdapter;
     private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
     private ActivityResultLauncher<Intent> selectMultipleSongActivityLauncher;
 
@@ -62,32 +62,32 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_song_list);
+        setContentView(R.layout.activity_favorite_list);
 
-        TextView songListStringTextView = findViewById(R.id.songListStringTextView);
-        ScreenUtil.resizeTextSize(songListStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        TextView myFavoritesTextView = findViewById(R.id.myFavoritesTextView);
+        ScreenUtil.resizeTextSize(myFavoritesTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
 
-        Button addSongsListButton = findViewById(R.id.addSongsListButton);
-        ScreenUtil.resizeTextSize(addSongsListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        addSongsListButton.setOnClickListener(v -> selectMultipleSong());
+        Button addFavoriteListButton = findViewById(R.id.addFavoriteListButton);
+        ScreenUtil.resizeTextSize(addFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        addFavoriteListButton.setOnClickListener(v -> selectMultipleSong());
 
-        Button exitSongListButton = (Button)findViewById(R.id.exitSongListButton);
-        ScreenUtil.resizeTextSize(exitSongListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        exitSongListButton.setOnClickListener(v -> returnToPrevious());
+        Button exitFavoriteListButton = findViewById(R.id.exitFavoriteListButton);
+        ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
+        exitFavoriteListButton.setOnClickListener(v -> returnToPrevious());
 
-        mSongList = songListSQLite.readSongList();
+        mFavoriteList = songListSQLite.readSongList();
 
-        mySongListAdapter = new MySongListAdapter(this, R.layout.song_list_item, mSongList);
-        mySongListAdapter.setNotifyOnChange(false);
+        favoriteListAdapter = new FavoriteListAdapter(this, R.layout.activity_favorite_list_item, mFavoriteList);
+        favoriteListAdapter.setNotifyOnChange(false);
 
-        ListView songListView = findViewById(R.id.songListListView);
-        songListView.setAdapter(mySongListAdapter);
-        songListView.setOnItemClickListener((adapterView, view, position, rowId) -> {
+        ListView favoriteListListView = findViewById(R.id.favoriteListListView);
+        favoriteListListView.setAdapter(favoriteListAdapter);
+        favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {
 
         });
 
         selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> updateSongList());
+                result -> updateFavoriteList());
         selectMultipleSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result == null) {
@@ -96,7 +96,7 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                     int resultCode = result.getResultCode();
                     if (resultCode == Activity.RESULT_OK) {
                         Intent data = result.getData();
-                        addMultipleSongToSongList(data);
+                        addMultipleSongToFavoriteList(data);
                     }
                 });
 
@@ -136,21 +136,21 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
         selectMultipleSongActivityLauncher.launch(selectFileIntent);
     }
 
-    private void deleteOneSongFromSongList(SongInfo singleSongInfo) {
+    private void deleteOneSongFromFavoriteList(SongInfo singleSongInfo) {
         Intent deleteIntent = createIntentFromSongDataActivity();
         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
         deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
         selectOneSongActivityLauncher.launch(deleteIntent);
     }
 
-    private void editOneSongFromSongList(SongInfo singleSongInfo) {
+    private void editOneSongFromFavoriteList(SongInfo singleSongInfo) {
         Intent editIntent = createIntentFromSongDataActivity();
         editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
         editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
         selectOneSongActivityLauncher.launch(editIntent);
     }
 
-    protected void addMultipleSongToSongList(Intent data) {
+    protected void addMultipleSongToFavoriteList(Intent data) {
         ArrayList<Uri> uris;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
@@ -185,29 +185,29 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
         }
 
-        updateSongList();
+        updateFavoriteList();
     }
 
-    protected void updateSongList() {
-        Log.d(TAG, "updateSongList()");
-        mSongList = songListSQLite.readSongList();
-        mySongListAdapter.updateData(mSongList);    // update the UI
+    protected void updateFavoriteList() {
+        Log.d(TAG, "updateFavoriteList()");
+        mFavoriteList = songListSQLite.readSongList();
+        favoriteListAdapter.updateData(mFavoriteList);    // update the UI
     }
 
-    private class MySongListAdapter extends ArrayAdapter {
+    private class FavoriteListAdapter extends ArrayAdapter {
 
         private final float itemTextSize = textFontSize * 0.6f;
         private final float buttonTextSize = textFontSize * 0.8f;
         private final int yellow2Color;
         private final int yellow3Color;
         private final int layoutId;
-        private final ArrayList<SongInfo> mSongListInAdapter;
+        private final ArrayList<SongInfo> mFavoriteList;
 
         @SuppressWarnings("unchecked")
-        MySongListAdapter(Context context, int layoutId, ArrayList<SongInfo> _songList) {
-            super(context, layoutId, _songList);
+        FavoriteListAdapter(Context context, int layoutId, ArrayList<SongInfo> favoriteList) {
+            super(context, layoutId, favoriteList);
             this.layoutId = layoutId;
-            this.mSongListInAdapter = _songList;
+            this.mFavoriteList = favoriteList;
             yellow2Color = ContextCompat.getColor(context, R.color.yellow2);
             yellow3Color = ContextCompat.getColor(context, R.color.yellow3);
         }
@@ -277,26 +277,26 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
             setAudioLinearLayoutVisibility(audioMusicLinearLayout); // abstract method
             setAudioLinearLayoutVisibility(audioVocalLinearLayout);
             //
-            final TextView includedPlaylistStringTextView = view.findViewById(R.id.includedPlaylistStringTextView);
-            ScreenUtil.resizeTextSize(includedPlaylistStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
+            final TextView includedPlaylistTextView = view.findViewById(R.id.includedPlaylistTextView);
+            ScreenUtil.resizeTextSize(includedPlaylistTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
             final CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);
             ScreenUtil.resizeTextSize(includedPlaylistCheckBox, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
 
-            final Button editSongListButton = view.findViewById(R.id.editSongListButton);
-            ScreenUtil.resizeTextSize(editSongListButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
+            final Button editSongButton = view.findViewById(R.id.editSongButton);
+            ScreenUtil.resizeTextSize(editSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
 
-            final Button deleteSongListButton = view.findViewById(R.id.deleteSongListButton);
-            ScreenUtil.resizeTextSize(deleteSongListButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
+            final Button deleteSongButton = view.findViewById(R.id.deleteSongButton);
+            ScreenUtil.resizeTextSize(deleteSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
 
-            final Button playSongListButton = view.findViewById(R.id.playSongListButton);
-            ScreenUtil.resizeTextSize(playSongListButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
+            final Button playSongButton = view.findViewById(R.id.playSongButton);
+            ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
 
-            int songListSize = 0;
-            if (mSongListInAdapter != null) {
-                songListSize = mSongListInAdapter.size();
+            int favoriteListSize = 0;
+            if (mFavoriteList != null) {
+                favoriteListSize = mFavoriteList.size();
             }
-            if (songListSize > 0) {
-                final SongInfo singleSongInfo = mSongListInAdapter.get(position);
+            if (favoriteListSize > 0) {
+                final SongInfo singleSongInfo = mFavoriteList.get(position);
 
                 titleNameTextView.setText(singleSongInfo.getSongName());
                 filePathTextView.setText(singleSongInfo.getFilePath());
@@ -315,22 +315,22 @@ public abstract class BaseSongListActivity extends AppCompatActivity {
                     songListSQLite.updateOneSongFromSongList(singleSongInfo);
                 });
 
-                editSongListButton.setOnClickListener(view1 -> editOneSongFromSongList(singleSongInfo));
+                editSongButton.setOnClickListener(view1 -> editOneSongFromFavoriteList(singleSongInfo));
 
-                deleteSongListButton.setOnClickListener(view12 -> deleteOneSongFromSongList(singleSongInfo));
+                deleteSongButton.setOnClickListener(view12 -> deleteOneSongFromFavoriteList(singleSongInfo));
 
-                playSongListButton.setOnClickListener(v -> {
+                playSongButton.setOnClickListener(v -> {
                     // play this item (media file)
                     Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
-                    Log.d(TAG, "playSongListButton()-->callingIntent = " + callingIntent);
+                    Log.d(TAG, "playSongButton.callingIntent = " + callingIntent);
                     if (callingIntent != null) {
-                        Log.d(TAG, "playSongListButton.createPlayerActivityIntent");
+                        Log.d(TAG, "playSongButton.createPlayerActivityIntent");
                         Intent playerActivityIntent = createPlayerActivityIntent();
                         Bundle extras = new Bundle();
                         extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                         extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                         playerActivityIntent.putExtras(extras);
-                        Log.d(TAG, "playSongListButton.activityResultLauncher.launch(playerActivityIntent)");
+                        Log.d(TAG, "playSongButton.activityResultLauncher.launch(playerActivityIntent)");
                         selectOneSongActivityLauncher.launch(playerActivityIntent);
                     }
                 });

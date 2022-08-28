@@ -18,7 +18,7 @@ import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import com.smile.smilelibraries.utilities.ScreenUtil
 import org.videolan.libvlc.util.VLCVideoLayout
 import videoplayer.Presenters.VLCPlayerPresenter
-import videoplayer.SongListActivity
+import videoplayer.FavoriteListActivity
 
 private const val TAG: String = "VLCPlayerFragment"
 
@@ -124,7 +124,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {}
 
     override fun createIntentForSongListActivity(): Intent {
-        return Intent(activity, SongListActivity::class.java)
+        return Intent(activity, FavoriteListActivity::class.java)
     }
 
     override fun setMenuItemsVisibility() {

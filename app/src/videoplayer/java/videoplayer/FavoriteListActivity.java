@@ -3,9 +3,9 @@ package videoplayer;
 import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
-import com.smile.karaokeplayer.BaseSongListActivity;
+import com.smile.karaokeplayer.BaseFavoriteListActivity;
 
-public class SongListActivity extends BaseSongListActivity {
+public class FavoriteListActivity extends BaseFavoriteListActivity {
 
     @Override
     public Intent createIntentFromSongDataActivity() {
