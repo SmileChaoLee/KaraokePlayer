@@ -138,10 +138,14 @@ class MyFavoritesFragment : Fragment(), MyFavoritesRecyclerViewAdapter.OnRecycle
         songInfoList.clear()
         myRecyclerViewAdapter.notifyItemRangeRemoved(0, listSize)
         // get the all list
-        DatabaseAccessUtil.readSavedSongList(activity, false)?.let {
-            for (element in it) {
-                element.included = "0"
-                songInfoList.add(element)
+        activity?.let {
+            DatabaseAccessUtil.readSavedSongList(it, false)?.let {sqlIt ->
+                for (element in sqlIt) {
+                    element.apply {
+                        included = "0"
+                        songInfoList.add(this)
+                    }
+                }
             }
         }
         myRecyclerViewAdapter.notifyItemRangeInserted(0, songInfoList.size)

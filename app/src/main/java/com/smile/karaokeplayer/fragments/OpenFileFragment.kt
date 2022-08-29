@@ -34,8 +34,9 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     private lateinit var filesRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
     private lateinit var fileList : ArrayList<FileDescription>
-    private lateinit var currentPath : String
+    private var currentPath : String = "/"
     private var isPlayButton: Boolean = true
+    private var rootPathSet: java.util.HashSet<String> = HashSet()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
@@ -48,7 +49,24 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         playOpenFiles = (activity as PlayOpenFiles)
         Log.d(TAG, "onCreate.playOpenFiles = $playOpenFiles")
 
+        // currentPath = Environment.getExternalStorageDirectory().toString()
         currentPath = "/"
+        activity?.applicationContext?.externalCacheDirs?.let {
+            for (element in it) {
+                Log.d(TAG, "element.absolutePath = ${element.absolutePath}")
+                element.absolutePath.let { pathIt ->
+                    pathIt.indexOf("/Android/data").let {indexIt ->
+                        if (indexIt >= 0) {
+                            pathIt.substring(0, indexIt).let {subIt ->
+                                Log.d(TAG, "element.substring(0, indexIt) = $subIt")
+                                rootPathSet.add(subIt)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         fileList = ArrayList()
     }
 
@@ -77,14 +95,13 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             backKeyButton.setOnClickListener {
-                currentPath.lastIndexOf('/').let { indexIt ->
-                    if (indexIt >= 0) {
-                        currentPath = currentPath.substring(0, indexIt).run {
-                            this.ifEmpty { "/" }
-                        }
-                        searchCurrentFolder()
-                    }
+                if (currentPath == "/") return@setOnClickListener
+                if (!rootPathSet.contains(currentPath)) {
+                    val index = currentPath.lastIndexOf('/')
+                    currentPath = if (index >= 0 ) currentPath.substring(0, index) else "/"
                 }
+                if (rootPathSet.contains(currentPath) || currentPath.isEmpty()) currentPath = "/"
+                searchCurrentFolder()
             }
             val selectAllButton: ImageButton = it.findViewById(R.id.openFileSelectAllButton)
             layoutParams = selectAllButton.layoutParams as ViewGroup.MarginLayoutParams
@@ -144,13 +161,6 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
                     playOpenFiles.playUriList(uris)
-                    /*
-                    broadcastManager?.apply {
-                        sendBroadcast(Intent(PlayerConstants.Play_Songs).apply {
-                            putExtra(PlayerConstants.Song_Uri_List, uris)
-                        })
-                    }
-                     */
                 }
             }
         }
@@ -192,16 +202,32 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         val listSize = fileList.size
         fileList.clear()
         myRecyclerViewAdapter.notifyItemRangeRemoved(0, listSize)
-        File(currentPath).listFiles()?.let {
-            Log.d(TAG, "file.list().size() = ${it.size}")
-            for (f in it) {
-                if (f.canRead()) {
-                    Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
-                            "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
-                    fileList.add(FileDescription(f, false))
+
+        currentPath.let {
+            if (it == "/") {
+                for (element in rootPathSet) {
+                    Log.d(TAG, "searchCurrentFolder.element = $element")
+                    FileDescription(File(element), false).apply {
+                        Log.d(TAG, "searchCurrentFolder. = ${file.path}, ${file.absolutePath}")
+                        fileList.add(this)
+                    }
+                }
+            } else {
+                val fList = File(it).listFiles()
+                Log.d(TAG, "fList = $fList")
+                fList?.let { fIt ->
+                    Log.d(TAG, "file.list().size() = ${fIt.size}")
+                    for (f in fIt) {
+                        if (f.canRead()) {
+                            Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
+                                    "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
+                            fileList.add(FileDescription(f, false))
+                        }
+                    }
                 }
             }
         }
+
         pathTextView.text = currentPath
         // myRecyclerViewAdapter.notifyDataSetChanged()
         myRecyclerViewAdapter.notifyItemRangeInserted(0, fileList.size)

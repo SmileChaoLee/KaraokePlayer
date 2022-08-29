@@ -95,8 +95,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                     }
                     int resultCode = result.getResultCode();
                     if (resultCode == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        addMultipleSongToFavoriteList(data);
+                        addMultipleSongToFavoriteList(result.getData());
                     }
                 });
 

@@ -8,13 +8,10 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.mediarouter.app.MediaRouteButton
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ext.cast.CastPlayer
@@ -24,7 +21,7 @@ import com.google.android.gms.cast.framework.CastState
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
-import exoplayer.SongListActivity
+import exoplayer.FavoriteListActivity
 import exoplayer.presenters.ExoPlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter.ExoPlayerPresentView
 
@@ -154,7 +151,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
     }
 
     override fun createIntentForSongListActivity(): Intent {
-        return Intent(activity, SongListActivity::class.java)
+        return Intent(activity, FavoriteListActivity::class.java)
     }
 
     override fun setMenuItemsVisibility() {

@@ -58,8 +58,6 @@ import exoplayer.callbacks.ExoPlaybackPreparer;
 import exoplayer.exoRenderersFactory.MyRenderersFactory;
 import exoplayer.listeners.ExoPlayerCastStateListener;
 import exoplayer.listeners.ExoPlayerListener;
-import exoplayer.utilities.ContentUriAccessUtil;
-import exoplayer.utilities.UriUtil;
 
 public class ExoPlayerPresenter extends BasePlayerPresenter {
 
@@ -141,12 +139,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             }
         }
     }
-
-    /*
-    public ExoPlayerPresentView getPresentView() {
-        return presentView;
-    }
-    */
 
     public void initExoPlayerAndCastPlayer() {
         DefaultTrackSelector trackSelector = new DefaultTrackSelector(mActivity, new AdaptiveTrackSelection.Factory());
@@ -616,17 +608,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         outState.putBundle(PlayerConstants.TrackSelectorParametersState, trackSelectorParameters.toBundle());
         super.saveInstanceState(outState);
     }
-
-    @Override
-    public Intent createSelectFilesToOpenIntent() {
-        return ContentUriAccessUtil.createIntentForSelectingFile(false);
-    }
-
-    @Override
-    public ArrayList<Uri> getUrisListFromIntentPresenter(Intent data) {
-        return UriUtil.getUrisListFromIntent(mActivity, data);
-    }
-
     @Override
     public void switchAudioToMusic() {
         if (!playingParam.isInSongList()) {

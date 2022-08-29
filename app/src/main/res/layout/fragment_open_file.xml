@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="normal"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:background="@android:color/transparent">
         </TextView>
     </LinearLayout>

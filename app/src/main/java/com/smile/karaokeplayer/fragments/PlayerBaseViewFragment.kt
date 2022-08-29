@@ -37,7 +37,6 @@ import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
-import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
@@ -48,7 +47,6 @@ import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
 import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
 import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
-import java.util.*
 
 private const val TAG: String = "PlayerBaseViewFragment"
 
@@ -58,18 +56,18 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         fun baseHidePlayerView()
         fun baseShowPlayerView()
     }
+
     lateinit var mPresenter: BasePlayerPresenter
     private lateinit var playBaseFragmentFunc: PlayBaseFragmentFunc
     private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
-
     protected lateinit var fragmentView: View
+
     protected var textFontSize = 0f
     private var fontScale = 0f
     private var toastTextSize = 0f
     protected lateinit var playerViewLinearLayout: LinearLayout
     private lateinit var supportToolbar // use customized ToolBar
             : androidx.appcompat.widget.Toolbar
-
     private lateinit var actionMenuView: ActionMenuView
     private lateinit var audioControllerView: LinearLayout
     protected lateinit var volumeSeekBar: VerticalSeekBar

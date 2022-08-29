@@ -1,7 +1,10 @@
 package com.smile.karaokeplayer
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
@@ -9,18 +12,24 @@ import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.smile.karaokeplayer.fragments.MyFavoritesFragment
 import com.smile.karaokeplayer.fragments.OpenFileFragment
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.models.SongInfo
+import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "BaseActivity"
 
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
         OpenFileFragment.PlayOpenFiles, MyFavoritesFragment.PlayMyFavorites {
+
+    private val PERMISSION_REQUEST_CODE = 0x11
+    private var hasPermissionForExternalStorage = false
 
     private lateinit var playerFragment: PlayerBaseViewFragment
     private lateinit var basePlayViewLayout : LinearLayout
@@ -33,6 +42,23 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         Log.d(TAG,"onCreate() is called")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
+
+        hasPermissionForExternalStorage =
+                (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        == PackageManager.PERMISSION_GRANTED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!hasPermissionForExternalStorage) {
+                val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+            }
+        } else {
+            if (!hasPermissionForExternalStorage) {
+                ScreenUtil.showToast(this, "Permission Denied", 60f,
+                        ScreenUtil.FontSize_Pixel_Type,
+                        Toast.LENGTH_LONG)
+                finish()
+            }
+        }
 
         basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
@@ -69,6 +95,18 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                     createViewDependingOnOrientation(resources.configuration.orientation)
                 }
             })
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            val rLen = grantResults.size
+            hasPermissionForExternalStorage = rLen > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+        }
+        if (!hasPermissionForExternalStorage) {
+            ScreenUtil.showToast(this, "Permission Denied", 60f, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG)
+            finish() // exit the activity immediately
         }
     }
 

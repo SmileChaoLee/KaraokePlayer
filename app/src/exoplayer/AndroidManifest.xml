@@ -14,7 +14,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="exoplayer.SongListActivity"
+            android:name="exoplayer.FavoriteListActivity"
             android:exported="true">
         </activity>
         <activity

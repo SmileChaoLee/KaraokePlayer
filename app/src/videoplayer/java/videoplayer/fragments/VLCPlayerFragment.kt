@@ -25,10 +25,6 @@ private const val TAG: String = "VLCPlayerFragment"
 class VLCPlayerFragment : PlayerBaseViewFragment() {
     private val ENABLE_SUBTITLES = true
     private val USE_TEXTURE_VIEW = false
-
-    private val PERMISSION_REQUEST_CODE = 0x11
-    private var hasPermissionForExternalStorage = false
-
     private lateinit var presenter: VLCPlayerPresenter
     private lateinit var videoVLCPlayerView: VLCVideoLayout
 
@@ -69,27 +65,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
 
         val currentProgress = presenter.currentProgressForVolumeSeekBar
         volumeSeekBar.setProgressAndThumb(currentProgress)
-
         presenter.playTheSongThatWasPlayedBeforeActivityCreated()
-
-        activity?.let {
-            hasPermissionForExternalStorage =
-                (ActivityCompat.checkSelfPermission(it.applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!hasPermissionForExternalStorage) {
-                    val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    ActivityCompat.requestPermissions(it, permissions, PERMISSION_REQUEST_CODE)
-                }
-            } else {
-                if (!hasPermissionForExternalStorage) {
-                    ScreenUtil.showToast(it, "Permission Denied", 60f,
-                        ScreenUtil.FontSize_Pixel_Type,
-                        Toast.LENGTH_LONG)
-                    it.finish()
-                }
-            }
-        }
 
         Log.d(TAG, "onViewCreated() is finished.")
     }
