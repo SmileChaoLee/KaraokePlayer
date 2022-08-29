@@ -185,9 +185,9 @@ public abstract class BasePlayerPresenter {
                 songInfo.setFilePath(tempUri.toString());
                 int currentAudioTrack = 1;
                 songInfo.setMusicTrackNo(currentAudioTrack);
-                songInfo.setMusicChannel(CommonConstants.LeftChannel);
+                songInfo.setMusicChannel(CommonConstants.StereoChannel);
                 songInfo.setVocalTrackNo(currentAudioTrack);
-                songInfo.setVocalChannel(CommonConstants.RightChannel);
+                songInfo.setVocalChannel(CommonConstants.StereoChannel);
                 // not in the list and unknown music and vocal setting
                 songInfo.setIncluded("0");  // set to not in the list
             }
@@ -438,12 +438,14 @@ public abstract class BasePlayerPresenter {
 
     public void selectFileToOpenPresenter(ActivityResult result) {
         Intent data = result.getData();
+        if (data == null) {
+            return;
+        }
         ArrayList<Uri> uris;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
         } else uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
 
-        // ArrayList<Uri> uris = getUrisListFromIntentPresenter(data);
         if (uris != null && uris.size() > 0) {
             Log.d(TAG, "selectFileToOpenPresenter.uris.size() = " + uris.size());
             // There are files selected

@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 440
-        versionName "4.40"
+        versionCode 441
+        versionName "4.41"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }

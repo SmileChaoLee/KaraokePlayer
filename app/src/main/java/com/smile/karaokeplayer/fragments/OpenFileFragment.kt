@@ -52,9 +52,10 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         // currentPath = Environment.getExternalStorageDirectory().toString()
         currentPath = "/"
         activity?.applicationContext?.externalCacheDirs?.let {
+            Log.d(TAG, "externalCacheDirs = $it, externalCacheDirs.size = ${it.size}")
             for (element in it) {
-                Log.d(TAG, "element.absolutePath = ${element.absolutePath}")
-                element.absolutePath.let { pathIt ->
+                Log.d(TAG, "externalCacheDirs.element = $element")
+                element?.absolutePath?.let { pathIt ->
                     pathIt.indexOf("/Android/data").let {indexIt ->
                         if (indexIt >= 0) {
                             pathIt.substring(0, indexIt).let {subIt ->

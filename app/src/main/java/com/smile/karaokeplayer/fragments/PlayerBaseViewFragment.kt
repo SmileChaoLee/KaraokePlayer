@@ -530,7 +530,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun selectFilesToOpen() {
-        // val selectFileIntent = mPresenter.createSelectFilesToOpenIntent()
         val selectFileIntent = Intent(activity, OpenFileActivity::class.java)
         selectSongsToPlayActivityLauncher.launch(selectFileIntent)
     }
