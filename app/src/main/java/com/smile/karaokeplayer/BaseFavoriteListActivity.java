@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -30,6 +28,7 @@ import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.SongInfo;
 import com.smile.karaokeplayer.models.SongListSQLite;
+import com.smile.karaokeplayer.utilities.SelectFavoritesUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -192,40 +191,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
     protected void addMultipleSongToFavoriteList(Intent data) {
         currentAction = CommonConstants.AddActionString;
-        ArrayList<Uri> uris;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
-        } else
-            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
-
-        Log.d(TAG, "addMultipleSongToFavoriteList.uris.size() = " + uris.size());
-        if (uris.size()>0) {
-            // There are files selected
-            SongInfo mSongInfo;
-            String uriString;
-            for (int i=0; i<uris.size(); i++) {
-                Uri uri = uris.get(i);
-                if (uri!=null && !Uri.EMPTY.equals(uri)) {
-                    uriString = uri.toString();
-                    // check if this file is already in database
-                    if (songListSQLite.findOneSongByUriString(uriString) == null) {
-                        // not exist
-                        mSongInfo = new SongInfo();
-                        mSongInfo.setSongName("");
-                        mSongInfo.setFilePath(uriString);
-                        mSongInfo.setMusicTrackNo(1);   // guess
-                        mSongInfo.setMusicChannel(CommonConstants.StereoChannel);    // guess
-                        mSongInfo.setVocalTrackNo(2);   // guess
-                        mSongInfo.setVocalChannel(CommonConstants.StereoChannel); // guess
-                        mSongInfo.setIncluded("1"); // guess
-                        songListSQLite.addSongToSongList(mSongInfo);
-                    }
-                }
-            }
-            ScreenUtil.showToast(this, getString(R.string.guessedAudioTrackValue)
-                    , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
-        }
-
+        SelectFavoritesUtil.addDataToFavoriteList(data, songListSQLite);
         updateFavoriteList(data);
     }
 

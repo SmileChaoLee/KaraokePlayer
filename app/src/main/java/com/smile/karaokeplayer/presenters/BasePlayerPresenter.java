@@ -162,23 +162,20 @@ public abstract class BasePlayerPresenter {
     }
 
     public void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
-
         if (tempUriList==null || tempUriList.size()==0) {
             return;
         }
-
-        // clear orderedSongList but orderedSongList might be null
+        SongListSQLite songListSQLite = new SongListSQLite(mActivity);
         ArrayList<SongInfo> songList = new ArrayList<>();
+        SongInfo songInfo;
         for (Uri tempUri : tempUriList) {
             // searching song list for the information of tempUri
-            SongListSQLite songListSQLite = new SongListSQLite(mActivity);
-            SongInfo songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
-            songListSQLite.closeDatabase();
+            songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
             if (songInfo != null) {
-                Log.d(TAG, "Found this song on song list.");
+                Log.d(TAG, "playSelectedUrisFromStorage.Found");
                 songInfo.setIncluded("1");  // set to in the list
             } else {
-                Log.d(TAG, "Could not find this song on song list.");
+                Log.d(TAG, "playSelectedUrisFromStorage.Not find");
                 songInfo = new SongInfo();
                 songInfo.setSongName("");
                 // has to be tempUri not mediaUri
@@ -193,6 +190,7 @@ public abstract class BasePlayerPresenter {
             }
             songList.add(songInfo);
         }
+        songListSQLite.closeDatabase();
         playSongList(songList);
         playingParam.setAutoPlay(false);
         mPresentView.showPlayerView();
