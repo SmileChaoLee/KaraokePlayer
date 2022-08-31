@@ -20,7 +20,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
     override fun onUpgrade(database: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         // database.execSQL("DROP TABLE IF EXISTS " + tableName);
         // onCreate(database);
-        Log.d("TAG", "onUpgrade() is called.")
+        Log.d(TAG, "onUpgrade() is called.")
         try {
             val oldTableName = "playList"
             var sqlString = "ALTER TABLE $oldTableName RENAME TO $tableName"
@@ -34,7 +34,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
                 database.execSQL(sqlString)
             }
         } catch (ex: Exception) {
-            Log.d("TAG", "Exception in onUpgrade().")
+            Log.e(TAG, "Exception in onUpgrade().")
             ex.printStackTrace()
         }
     }
@@ -47,7 +47,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         try {
             songDatabase = writableDatabase
         } catch (ex: SQLException) {
-            Log.d("TAG", "Open database exception.")
+            Log.e(TAG, "Open database exception.")
             ex.printStackTrace()
         }
     }
@@ -113,33 +113,20 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
                 }
                 close()
             } catch (ex: SQLException) {
-                Log.d("TAG", "getSongInfoFromCursor() exception.")
+                Log.e(TAG, "getSongInfoFromCursor() exception.")
                 ex.printStackTrace()
             }
         }
         return songList
     }
 
-    fun readSongList(): ArrayList<SongInfo> {
-        Log.d("TAG", "readSongList() is called.")
-        var songList = ArrayList<SongInfo>()
-        openScoreDatabase()
-        songDatabase?.let {
-            try {
-                // String sql = "select * from " + tableName + " order by " + _id + " asc";
-                // Cursor cur = songDatabase.rawQuery(sql, new String[]{});
-                val cur = it.query(tableName, null, null, null, null, null, "$mId asc")
-                songList = getSongInfoFromCursor(cur)
-            } catch (ex: SQLException) {
-                Log.d("TAG", "readSongList() exception.")
-                ex.printStackTrace()
-            }
-        }
-        return songList
+    fun readPlayList(): ArrayList<SongInfo> {
+        Log.d(TAG, "readSongList() is called.")
+        return readPlaylist(false)
     }
 
     fun readPlaylist(isIncluded: Boolean): ArrayList<SongInfo> {
-        Log.d("TAG", "readPlaylist() is called.")
+        Log.d(TAG, "readPlaylist().isIncluded = $isIncluded")
         var playlist = ArrayList<SongInfo>()
         openScoreDatabase()
         songDatabase?.let {
@@ -156,7 +143,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
                         null, null,"$mId asc")
                 playlist = getSongInfoFromCursor(cur)
             } catch (ex: SQLException) {
-                Log.d("TAG", "readPlaylist() exception.")
+                Log.e(TAG, "readPlaylist() exception.")
                 ex.printStackTrace()
             }
         }
@@ -174,7 +161,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
             try {
                 result = it.insert(tableName, null, contentValues)
             } catch (ex: SQLException) {
-                Log.d("TAG", "addSongToSongList() exception.")
+                Log.e(TAG, "addSongToSongList() exception.")
                 ex.printStackTrace()
             }
         }
@@ -193,7 +180,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
             try {
                 result = it.update(tableName, contentValues, whereClause, null).toLong()
             } catch (ex: SQLException) {
-                Log.d("TAG", "updateOneSongFromSongList() exception.")
+                Log.e(TAG, "updateOneSongFromSongList() exception.")
                 ex.printStackTrace()
             }
         }
@@ -212,7 +199,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
                 val whereClause = "$mId = $id"
                 result = it.delete(tableName, whereClause, null).toLong()
             } catch (ex: SQLException) {
-                Log.d("TAG", "deleteOneSongFromSongList() exception.")
+                Log.e(TAG, "deleteOneSongFromSongList() exception.")
                 ex.printStackTrace()
             }
         }
@@ -225,7 +212,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
             try {
                 it.delete(tableName, null, null)
             } catch (ex: SQLException) {
-                Log.d("TAG", "deleteAllSongList() exception.")
+                Log.e(TAG, "deleteAllSongList() exception.")
                 ex.printStackTrace()
             }
         }
@@ -257,7 +244,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
                     close()
                 }
             } catch (ex: SQLException) {
-                Log.d("TAG", "findOneSongByContentUri() exception.")
+                Log.e(TAG, "findOneSongByContentUri() exception.")
                 ex.printStackTrace()
             }
         }
@@ -269,7 +256,7 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
             try {
                 it.close()
             } catch (ex: SQLException) {
-                Log.d("TAG", "closeDatabase() exception.")
+                Log.e(TAG, "closeDatabase() exception.")
                 ex.printStackTrace()
             }
         }

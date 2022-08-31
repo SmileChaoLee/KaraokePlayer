@@ -18,7 +18,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
-            android:id="@+id/myListSelectAllButton"
+            android:id="@+id/favoriteSelectAllButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/main_menuitem_background_color"
@@ -29,7 +29,7 @@
             android:layout_marginEnd="10sp">
         </ImageButton>
         <ImageButton
-            android:id="@+id/myListUnselectButton"
+            android:id="@+id/favoriteUnselectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/main_menuitem_background_color"
@@ -41,7 +41,7 @@
             android:layout_marginEnd="10sp">
         </ImageButton>
         <ImageButton
-            android:id="@+id/myListRefreshButton"
+            android:id="@+id/favoriteRefreshButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/main_menuitem_background_color"
@@ -52,7 +52,7 @@
             android:layout_marginEnd="10sp">
         </ImageButton>
         <ImageButton
-            android:id="@+id/myListPlaySelectedButton"
+            android:id="@+id/favoritePlaySelectedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/main_menuitem_background_color"
@@ -61,6 +61,30 @@
             android:src="@drawable/play_media_button_image"
             android:layout_gravity="center">
         </ImageButton>
+        <Button
+            android:id="@+id/favoriteEditButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/editString"
+            app:textAllCaps="false"
+            android:textStyle="normal"
+            android:background="@drawable/main_menuitem_background_color"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center">
+        </Button>
+        <Button
+            android:id="@+id/favoriteAddButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/addString"
+            app:textAllCaps="false"
+            android:textStyle="normal"
+            android:background="@drawable/main_menuitem_background_color"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center">
+        </Button>
 
     </LinearLayout>
 

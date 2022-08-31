@@ -38,6 +38,7 @@ import java.util.Collection;
 public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
     private static final String TAG = "BFavoriteListActivity";
+    private final String CrudActionState = "CrudAction";
     private SongListSQLite songListSQLite;
     private float textFontSize;
     private float toastTextSize;
@@ -45,12 +46,14 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     private FavoriteListAdapter favoriteListAdapter;
     private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
     private ActivityResultLauncher<Intent> selectMultipleSongActivityLauncher;
+    private String currentAction = CommonConstants.AddActionString;
 
     public abstract Intent createIntentFromSongDataActivity();
     public abstract void setAudioLinearLayoutVisibility(LinearLayout linearLayout);
     public abstract Intent createPlayerActivityIntent();
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
 
         float defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(this, ScreenUtil.FontSize_Pixel_Type, null);
@@ -75,7 +78,35 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         exitFavoriteListButton.setOnClickListener(v -> returnToPrevious());
 
-        mFavoriteList = songListSQLite.readSongList();
+        if (savedInstanceState != null) {
+            Log.d(TAG, "onCreate.savedInstanceState is not null");
+            currentAction = savedInstanceState.getString(CrudActionState);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                mFavoriteList = (ArrayList<SongInfo>) savedInstanceState
+                        .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
+            else
+                mFavoriteList = (ArrayList<SongInfo>) savedInstanceState
+                        .getSerializable(PlayerConstants.MyFavoriteListState);
+        } else {
+            Bundle arguments = getIntent().getExtras();
+            if (arguments == null) {
+                Log.d(TAG, "onCreate.savedInstanceState is null, arguments is null");
+                currentAction = CommonConstants.AddActionString;
+                mFavoriteList = songListSQLite.readPlayList();
+            } else {
+                Log.d(TAG, "onCreate.savedInstanceState is null, arguments is not null");
+                currentAction = CommonConstants.EditActionString;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                    mFavoriteList = (ArrayList<SongInfo>) arguments
+                            .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
+                else
+                    mFavoriteList = (ArrayList<SongInfo>) arguments
+                            .getSerializable(PlayerConstants.MyFavoriteListState);
+            }
+        }
+
+        addFavoriteListButton.setVisibility(currentAction.equals(CommonConstants.AddActionString)?
+                View.VISIBLE : View.GONE) ;
 
         favoriteListAdapter = new FavoriteListAdapter(this, R.layout.activity_favorite_list_item, mFavoriteList);
         favoriteListAdapter.setNotifyOnChange(false);
@@ -83,18 +114,24 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         ListView favoriteListListView = findViewById(R.id.favoriteListListView);
         favoriteListListView.setAdapter(favoriteListAdapter);
         favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {
-
         });
 
         selectOneSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> updateFavoriteList());
+                result -> {
+                    if (result == null) {
+                        return;
+                    }
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        updateFavoriteList(result.getData());
+                    }
+                });
+
         selectMultipleSongActivityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result == null) {
                         return;
                     }
-                    int resultCode = result.getResultCode();
-                    if (resultCode == Activity.RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         addMultipleSongToFavoriteList(result.getData());
                     }
                 });
@@ -110,6 +147,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putString(CrudActionState, currentAction);
+        outState.putSerializable(PlayerConstants.MyFavoriteListState, mFavoriteList);
         super.onSaveInstanceState(outState);
     }
 
@@ -136,6 +175,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     }
 
     private void deleteOneSongFromFavoriteList(SongInfo singleSongInfo) {
+        currentAction = CommonConstants.DeleteActionString;
         Intent deleteIntent = createIntentFromSongDataActivity();
         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
         deleteIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
@@ -143,6 +183,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     }
 
     private void editOneSongFromFavoriteList(SongInfo singleSongInfo) {
+        currentAction = CommonConstants.EditActionString;
         Intent editIntent = createIntentFromSongDataActivity();
         editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
         editIntent.putExtra(PlayerConstants.SongInfoState, singleSongInfo);
@@ -150,12 +191,14 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     }
 
     protected void addMultipleSongToFavoriteList(Intent data) {
+        currentAction = CommonConstants.AddActionString;
         ArrayList<Uri> uris;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
         } else
             uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
 
+        Log.d(TAG, "addMultipleSongToFavoriteList.uris.size() = " + uris.size());
         if (uris.size()>0) {
             // There are files selected
             SongInfo mSongInfo;
@@ -171,26 +214,79 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         mSongInfo.setSongName("");
                         mSongInfo.setFilePath(uriString);
                         mSongInfo.setMusicTrackNo(1);   // guess
-                        mSongInfo.setMusicChannel(CommonConstants.RightChannel);    // guess
-                        mSongInfo.setVocalTrackNo(1);   // guess
-                        mSongInfo.setVocalChannel(CommonConstants.LeftChannel); // guess
+                        mSongInfo.setMusicChannel(CommonConstants.StereoChannel);    // guess
+                        mSongInfo.setVocalTrackNo(2);   // guess
+                        mSongInfo.setVocalChannel(CommonConstants.StereoChannel); // guess
                         mSongInfo.setIncluded("1"); // guess
                         songListSQLite.addSongToSongList(mSongInfo);
                     }
                 }
             }
-            songListSQLite.closeDatabase();
             ScreenUtil.showToast(this, getString(R.string.guessedAudioTrackValue)
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG);
         }
 
-        updateFavoriteList();
+        updateFavoriteList(data);
     }
 
-    protected void updateFavoriteList() {
+    private void updateFavoriteList() {
         Log.d(TAG, "updateFavoriteList()");
-        mFavoriteList = songListSQLite.readSongList();
+        mFavoriteList = songListSQLite.readPlayList();
         favoriteListAdapter.updateData(mFavoriteList);    // update the UI
+    }
+
+    private void updateFavoriteList(Intent data) {
+        switch (currentAction) {
+            case CommonConstants.AddActionString:
+                mFavoriteList = songListSQLite.readPlayList();
+                Log.d(TAG, "updateFavoriteList.Add.mFavoriteList.size() = " + mFavoriteList.size());
+                favoriteListAdapter.updateData(mFavoriteList);    // update the UI
+                break;
+            case CommonConstants.EditActionString:
+            case CommonConstants.DeleteActionString:
+                if (data != null) {
+                    SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SongInfoState);
+                    int id = songInfo.getId();
+                    Log.d(TAG, "updateFavoriteList.id = " + id);
+                    for (int i = 0; i < mFavoriteList.size(); i++) {
+                        if (mFavoriteList.get(i).getId() == id) {
+                            if (currentAction.equals(CommonConstants.EditActionString)) {
+                                mFavoriteList.set(i, new SongInfo(songInfo));
+                            } else {
+                                mFavoriteList.remove(i);
+                            }
+                            break;
+                        }
+                    }
+                    favoriteListAdapter.updateData(mFavoriteList);    // update the UI
+                }
+                break;
+            default:
+                Log.d(TAG, "updateFavoriteList." + CommonConstants.AddActionString);
+        }
+        /*
+        if (currentAction.equals(CommonConstants.PlayActionString)) {
+            return;
+        } else if (currentAction.equals(CommonConstants.AddActionString)) {
+            mFavoriteList = songListSQLite.readPlayList();
+            Log.d(TAG, "updateFavoriteList.Add.mFavoriteList.size() = " + mFavoriteList.size());
+        } else if (data != null) {
+            SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SongInfoState);
+            int id = songInfo.getId();
+            Log.d(TAG, "updateFavoriteList.id = " + id);
+            for (int i = 0; i < mFavoriteList.size(); i++) {
+                if (mFavoriteList.get(i).getId() == id) {
+                    if (currentAction.equals(CommonConstants.EditActionString)) {
+                        mFavoriteList.set(i, new SongInfo(songInfo));
+                    } else {
+                        mFavoriteList.remove(i);
+                    }
+                    break;
+                }
+            }
+        }
+        favoriteListAdapter.updateData(mFavoriteList);    // update the UI
+        */
     }
 
     private class FavoriteListAdapter extends ArrayAdapter {
@@ -200,15 +296,21 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         private final int yellow2Color;
         private final int yellow3Color;
         private final int layoutId;
-        private final ArrayList<SongInfo> mFavoriteList;
+        private final ArrayList<SongInfo> favoriteList;
 
         @SuppressWarnings("unchecked")
         FavoriteListAdapter(Context context, int layoutId, ArrayList<SongInfo> favoriteList) {
             super(context, layoutId, favoriteList);
             this.layoutId = layoutId;
-            this.mFavoriteList = favoriteList;
+            this.favoriteList = new ArrayList<>(favoriteList);
             yellow2Color = ContextCompat.getColor(context, R.color.yellow2);
             yellow3Color = ContextCompat.getColor(context, R.color.yellow3);
+        }
+
+        // getCount() must be overridden
+        @Override
+        public int getCount() {
+            return favoriteList.size();
         }
 
         @Nullable
@@ -291,11 +393,11 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
             ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
 
             int favoriteListSize = 0;
-            if (mFavoriteList != null) {
-                favoriteListSize = mFavoriteList.size();
+            if (favoriteList != null) {
+                favoriteListSize = favoriteList.size();
             }
             if (favoriteListSize > 0) {
-                final SongInfo singleSongInfo = mFavoriteList.get(position);
+                final SongInfo singleSongInfo = favoriteList.get(position);
 
                 titleNameTextView.setText(singleSongInfo.getSongName());
                 filePathTextView.setText(singleSongInfo.getFilePath());
@@ -323,6 +425,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                     Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
                     Log.d(TAG, "playSongButton.callingIntent = " + callingIntent);
                     if (callingIntent != null) {
+                        currentAction = CommonConstants.PlayActionString;
                         Log.d(TAG, "playSongButton.createPlayerActivityIntent");
                         Intent playerActivityIntent = createPlayerActivityIntent();
                         Bundle extras = new Bundle();
@@ -330,7 +433,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                         playerActivityIntent.putExtras(extras);
                         Log.d(TAG, "playSongButton.activityResultLauncher.launch(playerActivityIntent)");
-                        selectOneSongActivityLauncher.launch(playerActivityIntent);
+                        startActivity(playerActivityIntent);
+                        // selectOneSongActivityLauncher.launch(playerActivityIntent);
                     }
                 });
             }
@@ -345,8 +449,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         }
 
         public void updateData(ArrayList<SongInfo> newData) {
-            clear();
-            addAll(newData);
+            favoriteList.clear();
+            favoriteList.addAll(newData);
             notifyDataSetChanged();
         }
     }

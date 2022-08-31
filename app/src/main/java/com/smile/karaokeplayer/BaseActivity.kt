@@ -64,11 +64,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
 
         playerFragment = getFragment()
-        if (callingActivity == null) {
-            Log.d(TAG,"callingActivity is null")
+
+        if (intent.extras == null) {
+            Log.d(TAG,"intent.extras is null")
             tablayoutFragment = TablayoutFragment()
         } else {
-            Log.d(TAG,"callingActivity is not null")
+            Log.d(TAG,"intent.extras is not null")
         }
         supportFragmentManager.beginTransaction().apply {
             add(R.id.basePlayViewLayout, playerFragment)
@@ -162,7 +163,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         } else {
             Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_PORTRAIT")
         }
-        if (callingActivity == null) {
+        if (intent.extras == null) {
             playerFragment.hidePlayerView()
         }
     }

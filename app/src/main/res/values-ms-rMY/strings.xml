@@ -42,8 +42,7 @@
     <string name="musicChannelWithColonString">Saluran muzik:</string>
     <string name="vocalChannelWithColonString">Saluran lantang:</string>
     <string name="includedPlayListColonString">Dalam Senarai Main:</string>
-    <string name="addOneString">Tambah</string>
-    <string name="addManyString">Tambah banyak</string>
+    <string name="addString">Tambah</string>
     <string name="editString">Mengedit</string>
     <string name="deleteString">Padam</string>
     <string name="no_my_favorites">No Favorites</string>

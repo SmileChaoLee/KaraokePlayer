@@ -144,7 +144,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     abstract fun getPlayerBasePresenter(): BasePlayerPresenter?
     abstract fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int)
     abstract fun setMediaRouteButtonVisible(isVisible: Boolean)
-    abstract fun createIntentForSongListActivity(): Intent?
+    abstract fun intentForFavoriteListActivity(): Intent?
     abstract fun setMenuItemsVisibility()
     abstract fun setSwitchToVocalImageButtonVisibility()
 
@@ -177,9 +177,25 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onCreate.playBaseFragmentFunc = $playBaseFragmentFunc")
 
         mPresenter = presenter
+        textFontSize = mPresenter.textFontSize
+        fontScale = mPresenter.fontScale
+        toastTextSize = mPresenter.toastTextSize
         val callingIntent: Intent? = activity?.intent
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
+
+        selectSongsToPlayActivityLauncher = registerForActivityResult(
+                StartActivityForResult()) { result: ActivityResult? ->
+            Log.d(TAG, "selectSongsToPlayActivityLauncher.onActivityResult() is called.")
+            result?.let {
+                Log.d(TAG, "selectSongsToPlayActivityLauncher.result = $it")
+                val resultCode = it.resultCode
+                if (resultCode == Activity.RESULT_OK) {
+                    Log.d(TAG, "selectSongsToPlayActivityLauncher.resultCode = Activity.RESULT_OK")
+                    mPresenter.selectFileToOpenPresenter(it)
+                }
+            }
+        }
 
         Log.d(TAG, "onCreate() is finished")
     }
@@ -188,6 +204,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView() is called")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_player_base_view, container, false)
     }
@@ -198,21 +215,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         fragmentView = view
 
-        textFontSize = mPresenter.textFontSize
-        fontScale = mPresenter.fontScale
-        toastTextSize = mPresenter.toastTextSize
-
         // Video player view
         playerViewLinearLayout = fragmentView.findViewById(R.id.playerViewLinearLayout)
         // use custom toolbar
-        supportToolbar = fragmentView.findViewById(R.id.custom_toolbar)
+        supportToolbar = fragmentView.findViewById(R.id.player_view_toolbar)
         supportToolbar.visibility = View.VISIBLE
 
         activity?.let {
-            val appActivity = it as AppCompatActivity
-            appActivity.setSupportActionBar(supportToolbar)
-            appActivity.supportActionBar?.setDisplayShowTitleEnabled(false)
-
+            (it as AppCompatActivity).apply {
+                setSupportActionBar(supportToolbar)
+                supportActionBar?.setDisplayShowTitleEnabled(false)
+            }
             // it.setActionBar(supportToolbar)
             // it.actionBar?.setDisplayShowTitleEnabled(false)
         }
@@ -291,19 +304,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setOnClickEvents()
         showNativeAndBannerAd()
 
-        selectSongsToPlayActivityLauncher = registerForActivityResult(
-            StartActivityForResult()) { result: ActivityResult? ->
-            Log.d(TAG, "selectSongsToPlayActivityLauncher.onActivityResult() is called.")
-            result?.let {
-                Log.d(TAG, "selectSongsToPlayActivityLauncher.result = $it")
-                val resultCode = it.resultCode
-                if (resultCode == Activity.RESULT_OK) {
-                    Log.d(TAG, "selectSongsToPlayActivityLauncher.resultCode = Activity.RESULT_OK")
-                    mPresenter.selectFileToOpenPresenter(it)
-                }
-            }
-        }
-
         Log.d(TAG, "onViewCreated() is finished.")
     }
 
@@ -337,8 +337,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         mPresenter.playingParam.let {
             if (it.isPlaySingleSong) {
                 autoPlayMenuItem.isVisible = false
-                val songListMenuItem = mainMenu.findItem(R.id.songList)
-                songListMenuItem.isVisible = false
+                val favoriteListMenuItem = mainMenu.findItem(R.id.favoriteList)
+                favoriteListMenuItem.isVisible = false
                 openMenuItem.isVisible = false
                 audioMenuItem.isVisible = false
                 audioTrackMenuItem.isVisible = false
@@ -363,9 +363,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         if (id == R.id.autoPlay) {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
-        } else if (id == R.id.songList) {
-            val songListIntent = createIntentForSongListActivity()
-            startActivity(songListIntent)
+        } else if (id == R.id.favoriteList) {
+            val favoritesFragment = intentForFavoriteListActivity()
+            startActivity(favoritesFragment)
         } else if (id == R.id.open) {
             selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {

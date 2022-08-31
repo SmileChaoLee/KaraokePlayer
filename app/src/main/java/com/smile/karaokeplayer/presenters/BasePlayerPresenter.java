@@ -325,8 +325,8 @@ public abstract class BasePlayerPresenter {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        mediaUri = getValidatedUri(Uri.parse(filePath));
 
+        mediaUri = Uri.parse(filePath);
         Log.d(TAG, "mediaUri = " + mediaUri);
         if ((mediaUri == null) || (Uri.EMPTY.equals(mediaUri))) {
             return;
@@ -521,13 +521,7 @@ public abstract class BasePlayerPresenter {
             case PlayerConstants.RepeatAllSongs:
                 break;
         }
-        Log.d(TAG, "PlayerBasePresenter.getValidatedUri() is called.");
         startAutoPlay(false);    // go to next round
-    }
-
-    public Uri getValidatedUri(Uri tempUri) {
-        Log.d(TAG, "getValidatedUri");
-        return tempUri;
     }
 
     public void playTheSongThatWasPlayedBeforeActivityCreated() {

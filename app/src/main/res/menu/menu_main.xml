@@ -11,7 +11,7 @@
         android:visible="true"
         app:showAsAction="never">
     </item>
-    <item android:id="@+id/songList"
+    <item android:id="@+id/favoriteList"
         android:title="@string/my_favorites"
         android:orderInCategory="2"
         android:checkable="false"

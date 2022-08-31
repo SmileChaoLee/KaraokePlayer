@@ -1,5 +1,6 @@
 package exoplayer
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.smile.karaokeplayer.BaseActivity
@@ -14,4 +15,10 @@ class ExoPlayerActivity : BaseActivity() {
     }
 
     override fun getFragment() = ExoPlayerFragment()
+
+    // implementing interface MyFavoritesFragment.PlayMyFavorites
+    override fun intentForFavoriteListActivity(): Intent {
+        return Intent(this, FavoriteListActivity::class.java)
+    }
+    // Finishes implementing interface MyFavoritesFragment.PlayMyFavorites
 }

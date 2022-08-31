@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.smile.karaokeplayer.BuildConfig
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FragmentAdapter
 

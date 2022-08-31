@@ -18,7 +18,6 @@ public final class DatabaseAccessUtil {
         if (songListSQLite != null) {
             playlist = songListSQLite.readPlaylist(isIncluded);
             songListSQLite.closeDatabase();
-            songListSQLite = null;
         } else {
             playlist = new ArrayList<>();
         }

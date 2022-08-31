@@ -27,7 +27,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     interface PlayOpenFiles {
         fun playUriList(uris: ArrayList<Uri>)
     }
-    private var fragmentView : View? = null
+    private lateinit var fragmentView : View
     private var textFontSize = 0f
     private lateinit var playOpenFiles: PlayOpenFiles
     private lateinit var pathTextView: TextView
@@ -45,6 +45,11 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             isPlayButton = it.getBoolean(CommonConstants.IsButtonForPlay, true)
             Log.d(TAG, "onCreate.isPlayButton = $isPlayButton")
         }
+
+        val defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(activity,
+                BaseApplication.FontSize_Scale_Type, null)
+        textFontSize = ScreenUtil.suitableFontSize(activity, defaultTextFontSize,
+                BaseApplication.FontSize_Scale_Type,0.0f)
 
         playOpenFiles = (activity as PlayOpenFiles)
         Log.d(TAG, "onCreate.playOpenFiles = $playOpenFiles")
@@ -77,17 +82,16 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         savedInstanceState: Bundle?
     ): View? {
         Log.d(TAG, "onCreateView() is called")
+        return inflater.inflate(R.layout.fragment_open_file, container, false)
+    }
 
-        fragmentView = inflater.inflate(R.layout.fragment_open_file, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val defaultTextFontSize = ScreenUtil.getDefaultTextSizeFromTheme(activity,
-            BaseApplication.FontSize_Scale_Type, null)
-        textFontSize = ScreenUtil.suitableFontSize(activity, defaultTextFontSize,
-            BaseApplication.FontSize_Scale_Type,0.0f)
+        fragmentView = view
 
         val buttonWidth = (textFontSize*1.5f).toInt()
-
-        fragmentView?.let {
+        fragmentView.let {
             filesRecyclerView = it.findViewById(R.id.openFilesRecyclerView)
             pathTextView = it.findViewById(R.id.pathTextView)
             ScreenUtil.resizeTextSize(pathTextView, textFontSize, BaseApplication.FontSize_Scale_Type)
@@ -144,7 +148,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             playSelectedButton.setImageResource(
-                if (isPlayButton) R.drawable.play_media_button_image else R.drawable.open_files)
+                    if (isPlayButton) R.drawable.play_media_button_image else R.drawable.open_files)
             playSelectedButton.setOnClickListener {
                 // open the files to play
                 val uris = ArrayList<Uri>().also { uriIt ->
@@ -168,8 +172,6 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
 
         initFilesRecyclerView()
         searchCurrentFolder()
-
-        return fragmentView
     }
 
     override fun onResume() {

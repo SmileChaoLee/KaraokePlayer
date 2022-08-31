@@ -141,7 +141,7 @@ dependencies {
     exoplayerImplementation project(':extension-vp9')
     exoplayerImplementation project(':extension-av1')
 
-    videoplayerImplementation 'org.videolan.android:libvlc-all:3.4.7'
+    videoplayerImplementation 'org.videolan.android:libvlc-all:3.5.1'
     // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'

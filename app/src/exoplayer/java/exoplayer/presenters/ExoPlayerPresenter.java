@@ -542,12 +542,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
     }
 
     @Override
-    public Uri getValidatedUri(Uri tempUri) {
-        Log.d(TAG, "ExoPlayerPresenter.getValidatedUri() is called.");
-        return super.getValidatedUri(tempUri);
-    }
-
-    @Override
     public void specificPlayerReplayMedia(long currentAudioPosition) {
         // song is playing, paused, or finished playing
         // cannot do the following statement (exoPlayer.setPlayWhenReady(false); )

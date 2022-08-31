@@ -1,10 +1,12 @@
 package videoplayer.Presenters;
 
+import static android.media.AudioManager.GET_DEVICES_OUTPUTS;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,9 +60,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         super(fragment, presentView);
         mFragment = fragment;
         mActivity = fragment.getActivity();
-        // this.callingContext = activity;
         this.presentView = presentView;
-        // this.mActivity = (Activity)(this.presentView);
         this.audioManager = (AudioManager) mActivity.getSystemService(Context.AUDIO_SERVICE);
         // set volume control stream to STREAM_MUSIC
         mActivity.setVolumeControlStream(mStreamType);
@@ -88,8 +88,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
     public void initVLCPlayer() {
         // final ArrayList<String> args = new ArrayList<>();
         // args.add("-vvv");
-        // mLibVLC = new LibVLC(callingContext, args);
-        // mLibVLC = new LibVLC(callingContext);
+        // mLibVLC = new LibVLC(mActivity, args);
         mLibVLC = new LibVLC(mActivity);
         vlcPlayer = new MediaPlayer(mLibVLC);
         vlcPlayer.setEventListener(new VLCPlayerEventListener(mActivity, this));
@@ -169,15 +168,23 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
                 leftVolume = rightVolume;
                 break;
         }
-        vlcPlayer.setVolume((int) (volume * vlcMaxVolume));
         playingParam.setCurrentVolume(volume);
+        // removed on 2022-08-29 for testing
+        vlcPlayer.setVolume((int) (volume * vlcMaxVolume));
 
-        /*
         // added on 2020-08-10 for testing
         // works
+        /*
         int maxStreamVolume = audioManager.getStreamMaxVolume(mStreamType);
         audioManager.setStreamVolume(mStreamType, (int) (volume * maxStreamVolume),0);
-        //
+        AudioDeviceInfo[] a = audioManager.getDevices(GET_DEVICES_OUTPUTS);
+        Log.d(TAG, "setAudioVolume.a = " + a.length);
+        for (AudioDeviceInfo temp : a) {
+            int[] channels = temp.getChannelCounts();
+            for (int i=0; i<channels.length; i++) {
+                Log.d(TAG, "setAudioVolume.channels[" + i + "] = " + channels[i]);
+            }
+        }
         */
     }
 
@@ -208,36 +215,24 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
 
     @Override
     public void setAudioTrackAndChannel(int audioTrackIndex, int audioChannel) {
+        Log.d(TAG, "setAudioTrackAndChannel().audioTrackIndex = " + audioTrackIndex +
+                ", audioChannel = " + audioChannel + "numberOfAudioTracks = " + numberOfAudioTracks);
+        if (audioTrackIndex <= 0) {
+            return;
+        }
         if (numberOfAudioTracks > 0) {
             // select audio track
-            if (audioTrackIndex<=0) {
-                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
-                return;
-            }
-            if (audioTrackIndex>numberOfAudioTracks) {
-                Log.d(TAG, "No such audio Track Index = " + audioTrackIndex);
+            if (audioTrackIndex > numberOfAudioTracks) {
                 // set to first track
                 audioTrackIndex = 1;
             }
-            int indexInArrayList = audioTrackIndex - 1;
-
-            int audioTrackId = audioTrackIndicesList.get(indexInArrayList);
+            int audioTrackId = audioTrackIndicesList.get(audioTrackIndex - 1);
             vlcPlayer.setAudioTrack(audioTrackId);
-
             playingParam.setCurrentAudioTrackIndexPlayed(audioTrackIndex);
-
             // select audio channel
             playingParam.setCurrentChannelPlayed(audioChannel);
-
             setAudioVolume(playingParam.getCurrentVolume());
         }
-    }
-
-    @Override
-    public Uri getValidatedUri(Uri tempUri) {
-        Log.d(TAG, "VLCPlayerPresenter.getValidatedUri() is called.");
-        tempUri = super.getValidatedUri(tempUri);
-        return tempUri;
     }
 
     @Override
@@ -344,15 +339,15 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
             public void run() {
                 Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu() --> run()");
                 handler.removeCallbacksAndMessages(null);
-                getVlcPlayingMediaInfoAndSetAudioActionSubMenu();
+                getMediaInfoSetAudioSubMenu();
                 onlyMusicShowNativeAndBannerAd();
             }
         };
         handler.postDelayed(runnable, 1000); // delay 1 seconds
     }
 
-    private void getVlcPlayingMediaInfoAndSetAudioActionSubMenu() {
-        Log.d(TAG, "getVlcPlayingMediaInfoAndSetAudioActionSubMenu()");
+    private void getMediaInfoSetAudioSubMenu() {
+        Log.d(TAG, "getMediaInfoSetAudioSubMenu()");
         MediaPlayer.TrackDescription videoDis[] = vlcPlayer.getVideoTracks();
         int videoTrackId;
         String videoTrackName;
@@ -362,8 +357,8 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
             for (int i = 0; i < videoDis.length; i++) {
                 videoTrackId = videoDis[i].id;
                 videoTrackName = videoDis[i].name;
-                Log.d(TAG, "videoDis[i].id = " + videoTrackId);
-                Log.d(TAG, "videoDis[i].name = " + videoTrackName);
+                Log.d(TAG, "getMediaInfoSetAudioSubMenu.videoDis[i].id = " + videoTrackId);
+                Log.d(TAG, "getMediaInfoSetAudioSubMenu.videoDis[i].name = " + videoTrackName);
                 // exclude disabled
                 if (videoTrackId >=0 ) {
                     // enabled video track
@@ -371,42 +366,42 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
                 }
             }
         }
-        Log.d(TAG, "numberOfVideoTracks = " + numberOfVideoTracks);
+        Log.d(TAG, "getMediaInfoSetAudioSubMenu.numberOfVideoTracks = " + numberOfVideoTracks);
 
         //
-        MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();
         int audioTrackId;
         String audioTrackName;
         audioTrackIndicesList.clear();
+        MediaPlayer.TrackDescription audioDis[] = vlcPlayer.getAudioTracks();
         if (audioDis != null) {
             // because it is null sometimes
             for (int i = 0; i < audioDis.length; i++) {
                 audioTrackId = audioDis[i].id;
                 audioTrackName = audioDis[i].name;
-                Log.d(TAG, "audioDis[i].id = " + audioTrackId);
-                Log.d(TAG, "audioDis[i].name = " + audioTrackName);
+                Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioDis[i].id = " + audioTrackId);
+                Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioDis[i].name = " + audioTrackName);
                 // exclude disabled
-                if (audioTrackId >=0 ) {
+                if (audioTrackId >= 0 ) {
                     // enabled audio track
                     audioTrackIndicesList.add(audioTrackId);
                 }
             }
         }
         numberOfAudioTracks = audioTrackIndicesList.size();
-        Log.d(TAG, "numberOfAudioTracks = " + numberOfAudioTracks);
+        Log.d(TAG, "getMediaInfoSetAudioSubMenu.numberOfAudioTracks = " + numberOfAudioTracks);
         if (numberOfAudioTracks == 0) {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
             int audioTrackIdPlayed = vlcPlayer.getAudioTrack(); // currently played audio track
-            Log.d(TAG, "vlcPlayer.getAudioTrack() = " + audioTrackIdPlayed);
-            Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
+            Log.d(TAG, "getMediaInfoSetAudioSubMenu.getAudioTrack() = " + audioTrackIdPlayed);
+            Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioTrackIdPlayed = " + audioTrackIdPlayed);
             int audioTrackIndex = 1;    // default audio track index
             int audioChannel = CommonConstants.StereoChannel;
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIndex = playingParam.getCurrentAudioTrackIndexPlayed();
                 audioChannel = playingParam.getCurrentChannelPlayed();
-                Log.d(TAG, "Auto play or playing single song.");
+                Log.d(TAG, "getMediaInfoSetAudioSubMenu.Auto play or playing single song.");
             } else {
                 for (int index = 0; index< audioTrackIndicesList.size(); index++) {
                     int audioId = audioTrackIndicesList.get(index);
@@ -448,9 +443,9 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
                 if (track.type == IMedia.Track.Type.Audio) {
                     // audio
                     IMedia.AudioTrack audioTrack = (IMedia.AudioTrack)track;
-                    Log.d(TAG, "audioTrack id = " + track.id);
-                    Log.d(TAG, "audioTrack.channels = " + audioTrack.channels);
-                    Log.d(TAG, "audioTrack.rate = " + audioTrack.rate);
+                    Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioTrack id = " + track.id);
+                    Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioTrack.channels = " + audioTrack.channels);
+                    Log.d(TAG, "getMediaInfoSetAudioSubMenu.audioTrack.rate = " + audioTrack.rate);
                 }
             }
             //

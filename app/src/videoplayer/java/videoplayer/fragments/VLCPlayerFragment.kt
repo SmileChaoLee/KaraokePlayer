@@ -1,21 +1,15 @@
 package videoplayer.fragments
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
-import com.smile.smilelibraries.utilities.ScreenUtil
 import org.videolan.libvlc.util.VLCVideoLayout
 import videoplayer.Presenters.VLCPlayerPresenter
 import videoplayer.FavoriteListActivity
@@ -23,8 +17,8 @@ import videoplayer.FavoriteListActivity
 private const val TAG: String = "VLCPlayerFragment"
 
 class VLCPlayerFragment : PlayerBaseViewFragment() {
-    private val ENABLE_SUBTITLES = true
-    private val USE_TEXTURE_VIEW = false
+    private val enableSubtitles = true
+    private val useTextureView = false
     private lateinit var presenter: VLCPlayerPresenter
     private lateinit var videoVLCPlayerView: VLCVideoLayout
 
@@ -74,7 +68,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
         Log.d(TAG, "onStart() is called.")
         super.onStart()
         videoVLCPlayerView.requestFocus()
-        presenter.attachPlayerViews(videoVLCPlayerView, null, ENABLE_SUBTITLES, USE_TEXTURE_VIEW)
+        presenter.attachPlayerViews(videoVLCPlayerView, null, enableSubtitles, useTextureView)
     }
 
     override fun onStop() {

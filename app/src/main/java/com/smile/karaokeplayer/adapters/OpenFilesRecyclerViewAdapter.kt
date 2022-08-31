@@ -54,7 +54,7 @@ class OpenFilesRecyclerViewAdapter(private val context: Context,
     // Involves populating data into the item through holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        val fileView = layoutInflater.inflate(R.layout.files_list_item, parent, false)
+        val fileView = layoutInflater.inflate(R.layout.fragment_open_file_item, parent, false)
         return MyViewHolder(fileView, recyclerItemClickListener, textFontSize)
     }
 

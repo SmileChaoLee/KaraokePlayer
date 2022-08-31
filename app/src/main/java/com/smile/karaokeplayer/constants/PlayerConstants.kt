@@ -25,4 +25,5 @@ object PlayerConstants {
     const val SongInfoState = "SingleSongInfo"
 
     const val Uri_List: String = "Uri_List"
+    const val MyFavoriteListState = "MyFavoriteList"
 }

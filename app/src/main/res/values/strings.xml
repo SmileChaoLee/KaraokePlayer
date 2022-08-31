@@ -41,8 +41,7 @@
     <string name="musicChannelWithColonString">Music Channel:</string>
     <string name="vocalChannelWithColonString">vocal Channel:</string>
     <string name="includedPlayListColonString">In Playlist:</string>
-    <string name="addOneString">Add</string>
-    <string name="addManyString">Add many</string>
+    <string name="addString">Add</string>
     <string name="editString">Edit</string>
     <string name="deleteString">Delete</string>
     <string name="no_my_favorites">No Favorites</string>

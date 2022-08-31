@@ -150,7 +150,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
         mediaRouteButton.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
-    override fun createIntentForSongListActivity(): Intent {
+    override fun intentForFavoriteListActivity(): Intent {
         return Intent(activity, FavoriteListActivity::class.java)
     }
 

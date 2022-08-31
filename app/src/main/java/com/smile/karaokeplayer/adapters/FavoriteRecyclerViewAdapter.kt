@@ -14,13 +14,13 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
-private const val TAG = "FavoritesRecyclerVAdapter"
+private const val TAG = "FaRecyclerVAdapter"
 
-class MyFavoritesRecyclerViewAdapter(private val context: Context,
-                                     private val recyclerItemClickListener: OnRecyclerItemClickListener,
-                                     private val textFontSize: Float,
-                                     private val songInfoList: java.util.ArrayList<SongInfo>)
-    : RecyclerView.Adapter<MyFavoritesRecyclerViewAdapter.MyViewHolder>() {
+class FavoriteRecyclerViewAdapter(private val context: Context,
+                                  private val recyclerItemClickListener: OnRecyclerItemClickListener,
+                                  private val textFontSize: Float,
+                                  private val favoriteList: java.util.ArrayList<SongInfo>)
+    : RecyclerView.Adapter<FavoriteRecyclerViewAdapter.MyViewHolder>() {
 
     interface OnRecyclerItemClickListener {
         fun onRecyclerItemClick(v: View?, position: Int)
@@ -56,12 +56,12 @@ class MyFavoritesRecyclerViewAdapter(private val context: Context,
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.songNameTextView.apply {
-            text = songInfoList[position].songName
+            text = favoriteList[position].songName
             visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
         }
         holder.songPathTextView.apply {
             text = ""
-            songInfoList[position].let {
+            favoriteList[position].let {
                 if (it.included == "1") setTextColor(ContextCompat.getColor(context, R.color.yellow))
                 else setTextColor(Color.WHITE)
                 it.filePath?.let {pathIt ->
@@ -76,6 +76,6 @@ class MyFavoritesRecyclerViewAdapter(private val context: Context,
     }
 
     override fun getItemCount(): Int {
-        return songInfoList.size
+        return favoriteList.size
     }
 }
