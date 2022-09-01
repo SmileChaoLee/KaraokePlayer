@@ -19,6 +19,6 @@ public class FavoriteListActivity extends BaseFavoriteListActivity {
 
     @Override
     public Intent createPlayerActivityIntent() {
-        return new Intent(this, VLCPlayerActivity.class);
+        return new Intent(this, VLCSongPlayerActivity.class);
     }
 }

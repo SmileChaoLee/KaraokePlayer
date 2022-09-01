@@ -93,10 +93,9 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
 
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {}
 
-    override fun createIntentForSongListActivity(): Intent {
+    override fun intentForFavoriteListActivity(): Intent {
         return Intent(activity, FavoriteListActivity::class.java)
     }
-
     override fun setMenuItemsVisibility() {
         val channelMenuItem = mainMenu.findItem(R.id.channel)
         channelMenuItem.isVisible = false

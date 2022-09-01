@@ -1,5 +1,6 @@
 package videoplayer
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.smile.karaokeplayer.BaseActivity
@@ -14,4 +15,10 @@ class VLCPlayerActivity : BaseActivity() {
     }
 
     override fun getFragment() = VLCPlayerFragment()
+
+    // implementing interface MyFavoritesFragment.PlayMyFavorites
+    override fun intentForFavoriteListActivity(): Intent {
+        return Intent(this, FavoriteListActivity::class.java)
+    }
+    // Finishes implementing interface MyFavoritesFragment.PlayMyFavorites
 }

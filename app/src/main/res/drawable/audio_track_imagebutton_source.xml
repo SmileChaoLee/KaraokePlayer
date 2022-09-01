@@ -2,10 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:state_enabled="true"
-        android:drawable="@drawable/music">
+        android:drawable="@drawable/audio_track">
     </item>
     <item
         android:state_enabled="false"
-        android:drawable="@drawable/music">
+        android:drawable="@drawable/no_audio_track_sign">
     </item>
 </selector>

@@ -66,4 +66,5 @@
     <string name="duplicate_in_database">资料重複在资料库中</string>
     <string name="play_video">视频</string>
     <string name="open_files">开启档案</string>
+    <string name="unknown">不知道</string>
 </resources>

@@ -50,6 +50,10 @@
             android:exported="true">
         </activity>
         <activity
+            android:name=".SongPlayerActivity"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".BaseFavoriteListActivity"
             android:exported="true">
         </activity>

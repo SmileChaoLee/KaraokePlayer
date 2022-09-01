@@ -14,8 +14,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="videoplayer.FavoriteListActivity" />
-        <activity android:name="videoplayer.SongDataActivity" />
+        <activity
+            android:name="videoplayer.VLCSongPlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name="videoplayer.FavoriteListActivity">
+        </activity>
+        <activity
+            android:name="videoplayer.SongDataActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -195,12 +195,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         updateFavoriteList(data);
     }
 
-    private void updateFavoriteList() {
-        Log.d(TAG, "updateFavoriteList()");
-        mFavoriteList = songListSQLite.readPlayList();
-        favoriteListAdapter.updateData(mFavoriteList);    // update the UI
-    }
-
     private void updateFavoriteList(Intent data) {
         switch (currentAction) {
             case CommonConstants.AddActionString:
@@ -228,31 +222,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                 }
                 break;
             default:
-                Log.d(TAG, "updateFavoriteList." + CommonConstants.AddActionString);
+                Log.d(TAG, "updateFavoriteList." + CommonConstants.PlayActionString);
         }
-        /*
-        if (currentAction.equals(CommonConstants.PlayActionString)) {
-            return;
-        } else if (currentAction.equals(CommonConstants.AddActionString)) {
-            mFavoriteList = songListSQLite.readPlayList();
-            Log.d(TAG, "updateFavoriteList.Add.mFavoriteList.size() = " + mFavoriteList.size());
-        } else if (data != null) {
-            SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SongInfoState);
-            int id = songInfo.getId();
-            Log.d(TAG, "updateFavoriteList.id = " + id);
-            for (int i = 0; i < mFavoriteList.size(); i++) {
-                if (mFavoriteList.get(i).getId() == id) {
-                    if (currentAction.equals(CommonConstants.EditActionString)) {
-                        mFavoriteList.set(i, new SongInfo(songInfo));
-                    } else {
-                        mFavoriteList.remove(i);
-                    }
-                    break;
-                }
-            }
-        }
-        favoriteListAdapter.updateData(mFavoriteList);    // update the UI
-        */
     }
 
     private class FavoriteListAdapter extends ArrayAdapter {
@@ -398,7 +369,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                         extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                         playerActivityIntent.putExtras(extras);
-                        Log.d(TAG, "playSongButton.activityResultLauncher.launch(playerActivityIntent)");
                         startActivity(playerActivityIntent);
                         // selectOneSongActivityLauncher.launch(playerActivityIntent);
                     }

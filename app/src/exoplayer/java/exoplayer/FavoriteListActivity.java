@@ -25,6 +25,6 @@ public class FavoriteListActivity extends BaseFavoriteListActivity {
     @Override
     public Intent createPlayerActivityIntent() {
         Log.d(TAG, "createPlayerActivityIntent() is called");
-        return new Intent(this, ExoPlayerActivity.class);
+        return new Intent(this, ExoSongPlayerActivity.class);
     }
 }

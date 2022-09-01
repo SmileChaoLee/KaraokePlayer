@@ -89,8 +89,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private lateinit var switchToMusicImageButton: ImageButton
     protected lateinit var switchToVocalImageButton: ImageButton
     private lateinit var hideVideoImageButton: ImageButton
-
     private lateinit var actionMenuImageButton: ImageButton
+    private lateinit var audioChannelImageButton: ImageButton
+    private lateinit var audioTrackImageButton: ImageButton
+
     private var volumeSeekBarHeightForLandscape = 0
 
     private lateinit var bannerLinearLayout: LinearLayout
@@ -216,10 +218,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         fragmentView = view
 
         // Video player view
-        playerViewLinearLayout = fragmentView.findViewById(R.id.playerViewLinearLayout)
-        // use custom toolbar
-        supportToolbar = fragmentView.findViewById(R.id.player_view_toolbar)
-        supportToolbar.visibility = View.VISIBLE
+        fragmentView.apply {
+            playerViewLinearLayout = findViewById(R.id.playerViewLinearLayout)
+            supportToolbar = findViewById(R.id.player_view_toolbar)
+            supportToolbar.visibility = View.VISIBLE
+        }
 
         activity?.let {
             (it as AppCompatActivity).apply {
@@ -229,14 +232,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // it.setActionBar(supportToolbar)
             // it.actionBar?.setDisplayShowTitleEnabled(false)
         }
+
         actionMenuView = supportToolbar.findViewById(R.id.actionMenuViewLayout) // main menu
-        audioControllerView = fragmentView.findViewById(R.id.audioControllerView)
-        volumeSeekBar = fragmentView.findViewById(R.id.volumeSeekBar)
-        volumeSeekBarHeightForLandscape = volumeSeekBar.layoutParams.height
-        volumeImageButton = fragmentView.findViewById(R.id.volumeImageButton)
-        previousMediaImageButton = fragmentView.findViewById(R.id.previousMediaImageButton)
-        playMediaImageButton = fragmentView.findViewById(R.id.playMediaImageButton)
-        pauseMediaImageButton = fragmentView.findViewById(R.id.pauseMediaImageButton)
+        fragmentView.apply {
+            audioControllerView = findViewById(R.id.audioControllerView)
+            volumeSeekBar = findViewById(R.id.volumeSeekBar)
+            volumeSeekBarHeightForLandscape = volumeSeekBar.layoutParams.height
+            volumeImageButton = findViewById(R.id.volumeImageButton)
+            previousMediaImageButton = findViewById(R.id.previousMediaImageButton)
+            playMediaImageButton = findViewById(R.id.playMediaImageButton)
+            pauseMediaImageButton = findViewById(R.id.pauseMediaImageButton)
+        }
 
         mPresenter.playingParam.let {
             if (it.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
@@ -246,53 +252,60 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             }
         }
 
-        replayMediaImageButton = fragmentView.findViewById(R.id.replayMediaImageButton)
-        stopMediaImageButton = fragmentView.findViewById(R.id.stopMediaImageButton)
-        nextMediaImageButton = fragmentView.findViewById(R.id.nextMediaImageButton)
-        heartImageButton = fragmentView.findViewById(R.id.heartImageButton)
+        fragmentView.apply {
+            replayMediaImageButton = findViewById(R.id.replayMediaImageButton)
+            stopMediaImageButton = findViewById(R.id.stopMediaImageButton)
+            nextMediaImageButton = findViewById(R.id.nextMediaImageButton)
+            heartImageButton = findViewById(R.id.heartImageButton)
 
-        orientationImageButton = fragmentView.findViewById(R.id.orientationImageButton)
-        repeatImageButton = fragmentView.findViewById(R.id.repeatImageButton)
-        switchToMusicImageButton = fragmentView.findViewById(R.id.switchToMusicImageButton)
-        switchToVocalImageButton = fragmentView.findViewById(R.id.switchToVocalImageButton)
-        hideVideoImageButton = fragmentView.findViewById(R.id.hideVideoImageButton)
-        actionMenuImageButton = fragmentView.findViewById(R.id.actionMenuImageButton)
+            orientationImageButton = findViewById(R.id.orientationImageButton)
+            repeatImageButton = findViewById(R.id.repeatImageButton)
+            switchToMusicImageButton = findViewById(R.id.switchToMusicImageButton)
+            switchToVocalImageButton = findViewById(R.id.switchToVocalImageButton)
+            hideVideoImageButton = findViewById(R.id.hideVideoImageButton)
+            actionMenuImageButton = findViewById(R.id.actionMenuImageButton)
 
-        bannerLinearLayout = fragmentView.findViewById(R.id.bannerLinearLayout)
-        bannerLinearLayout.visibility = View.VISIBLE // Show Banner Ad
-        myBannerAdView = SetBannerAdView(
-            activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
-            BaseApplication.facebookBannerID)
-        myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+            audioChannelImageButton = findViewById(R.id.audioChannelImageButton)
+            audioTrackImageButton = findViewById(R.id.audioTrackImageButton)
 
-        // message area
-        message_area_LinearLayout = fragmentView.findViewById(R.id.message_area_LinearLayout)
-        message_area_LinearLayout.visibility = View.GONE
-        bufferingStringTextView = fragmentView.findViewById(R.id.bufferingStringTextView)
-        ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type)
+            bannerLinearLayout = findViewById(R.id.bannerLinearLayout)
+            bannerLinearLayout.visibility = View.VISIBLE // Show Banner Ad
+            myBannerAdView = SetBannerAdView(
+                    activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
+                    BaseApplication.facebookBannerID)
+            myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+
+            // message area
+            message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout)
+            message_area_LinearLayout.visibility = View.GONE
+            bufferingStringTextView = findViewById(R.id.bufferingStringTextView)
+            ScreenUtil.resizeTextSize(bufferingStringTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type)
+        }
+
         animationText = AlphaAnimation(0.0f, 1.0f)
         animationText.duration = 500
         animationText.startOffset = 0
         animationText.repeatMode = Animation.REVERSE
         animationText.repeatCount = Animation.INFINITE
 
-        val durationTextSize = textFontSize * 0.6f
-        playingTimeTextView = fragmentView.findViewById(R.id.playingTimeTextView)
-        playingTimeTextView.text = "000:00"
-        ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
+        fragmentView.apply {
+            val durationTextSize = textFontSize * 0.6f
+            playingTimeTextView = findViewById(R.id.playingTimeTextView)
+            playingTimeTextView.text = "000:00"
+            ScreenUtil.resizeTextSize(playingTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
 
-        player_duration_seekbar = fragmentView.findViewById(R.id.player_duration_seekbar)
+            player_duration_seekbar = findViewById(R.id.player_duration_seekbar)
+            durationTimeTextView = findViewById(R.id.durationTimeTextView)
+            durationTimeTextView.text = "000:00"
+            ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
 
-        durationTimeTextView = fragmentView.findViewById(R.id.durationTimeTextView)
-        durationTimeTextView.text = "000:00"
-        ScreenUtil.resizeTextSize(durationTimeTextView, durationTextSize, ScreenUtil.FontSize_Pixel_Type)
-
-        nativeAdsFrameLayout = fragmentView.findViewById(R.id.nativeAdsFrameLayout)
-        nativeAdViewVisibility = nativeAdsFrameLayout.visibility
-        nativeAdTemplateView = fragmentView.findViewById(R.id.nativeAdTemplateView)
-        nativeTemplate = GoogleAdMobNativeTemplate(
-            activity, nativeAdsFrameLayout, BaseApplication.googleAdMobNativeID, nativeAdTemplateView
-        )
+            nativeAdsFrameLayout = findViewById(R.id.nativeAdsFrameLayout)
+            nativeAdViewVisibility = nativeAdsFrameLayout.visibility
+            nativeAdTemplateView = findViewById(R.id.nativeAdTemplateView)
+            nativeTemplate = GoogleAdMobNativeTemplate(
+                    activity, nativeAdsFrameLayout, BaseApplication.googleAdMobNativeID, nativeAdTemplateView
+            )
+        }
 
         // must before setImageButtonStatus() and showNativeAndBannerAd
         mPresenter.playingParam.let {
@@ -545,13 +558,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
         }
         val buttonNum = 7 // 7 buttons
-        val imageButtonHeight = (textFontSize * 1.5f).toInt()
+        val imageButtonHeight = (textFontSize * 1.2f).toInt()
         val maxWidth = buttonNum * imageButtonHeight + (buttonNum - 1) * buttonMarginLeft
         if (maxWidth > screenSize.x) {
             // greater than the width of screen
             buttonMarginLeft = (screenSize.x - 10 - buttonNum * imageButtonHeight) / (buttonNum - 1)
         }
-        val buttonNum2 = 7
+        val buttonNum2 = 9
         val maxWidth2 = buttonNum2 * imageButtonHeight + (buttonNum2 - 1) * buttonMarginLeft2
         if (maxWidth2 > screenSize.x) {
             // greater than the width of screen
@@ -627,6 +640,15 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         )
         actionMenuView.overflowIcon = iconDrawable // set icon of three dots for ActionMenuView
         // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots for toolbar
+
+        layoutParams = audioChannelImageButton.layoutParams as MarginLayoutParams
+        layoutParams.height = imageButtonHeight
+        layoutParams.width = imageButtonHeight
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
+        layoutParams = audioTrackImageButton.layoutParams as MarginLayoutParams
+        layoutParams.height = imageButtonHeight
+        layoutParams.width = imageButtonHeight
+        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
 
         // reset the heights of volumeBar and supportToolbar
         val timesOfVolumeBarForPortrait = 1.5f
@@ -765,6 +787,50 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         hideVideoImageButton.setOnClickListener {
             if (playerViewLinearLayout.visibility==View.VISIBLE) hidePlayerView() else showPlayerView()
         }
+
+        audioChannelImageButton.setOnClickListener(View.OnClickListener {
+            mPresenter.playingParam.apply {
+                if (currentChannelPlayed == CommonConstants.LeftChannel) {
+                    currentChannelPlayed = CommonConstants.RightChannel
+                } else if (currentChannelPlayed == CommonConstants.RightChannel) {
+                    currentChannelPlayed = CommonConstants.StereoChannel
+                } else if (currentChannelPlayed == CommonConstants.StereoChannel) {
+                    currentChannelPlayed = CommonConstants.LeftChannel
+                }
+                var str: String? =
+                        when(currentChannelPlayed) {
+                            CommonConstants.LeftChannel -> activity?.getString(R.string.leftChannelString)
+                            CommonConstants.RightChannel -> activity?.getString(R.string.rightChannelString)
+                            CommonConstants.StereoChannel -> activity?.getString(R.string.stereoChannelString)
+                            else -> activity?.getString(R.string.unknown)
+                        }
+                ScreenUtil.showToast(activity, str, toastTextSize, ScreenUtil.FontSize_Pixel_Type,
+                        Toast.LENGTH_SHORT                )
+                mPresenter.setAudioTrackAndChannel(currentAudioTrackIndexPlayed, currentChannelPlayed)
+            }
+        })
+        audioTrackImageButton.setOnClickListener(View.OnClickListener {
+            mPresenter.playingParam.apply {
+                currentAudioTrackIndexPlayed++
+                if (currentAudioTrackIndexPlayed > mPresenter.numberOfAudioTracks) currentAudioTrackIndexPlayed = 1
+                var str: String? =
+                    when(currentAudioTrackIndexPlayed) {
+                        1 -> activity?.getString(R.string.audioTrack1String)
+                        2 -> activity?.getString(R.string.audioTrack2String)
+                        3 -> activity?.getString(R.string.audioTrack3String)
+                        4 -> activity?.getString(R.string.audioTrack4String)
+                        5 -> activity?.getString(R.string.audioTrack5String)
+                        6 -> activity?.getString(R.string.audioTrack6String)
+                        7 -> activity?.getString(R.string.audioTrack7String)
+                        8 -> activity?.getString(R.string.audioTrack8String)
+                        else -> activity?.getString(R.string.unknown)
+                    }
+                ScreenUtil.showToast(activity, str, toastTextSize, ScreenUtil.FontSize_Pixel_Type,
+                        Toast.LENGTH_SHORT                )
+                mPresenter.setAudioTrackAndChannel(currentAudioTrackIndexPlayed, currentChannelPlayed)
+            }
+        })
+
         actionMenuImageButton.setOnClickListener {
             Log.d(TAG, "actionMenuImageButton.setOnClickListener")
             actionMenuView.showOverflowMenu()
