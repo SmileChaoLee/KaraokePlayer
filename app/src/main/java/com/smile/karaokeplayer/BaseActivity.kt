@@ -19,7 +19,6 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -32,11 +31,10 @@ import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "BaseActivity"
-
+private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
         OpenFileFragment.PlayOpenFiles, MyFavoritesFragment.PlayMyFavorites {
 
-    private val PERMISSION_WRITE_CODE = 0x11
     private var permissionExternalStorage = false
     private var permissionManageExternalStorage = false
 
@@ -58,10 +56,10 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!permissionExternalStorage) {
                 val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_WRITE_CODE)
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_WRITE_EXTERNAL_CODE)
             }
             // MANAGE_EXTERNAL_STORAGE
-            requestManageExternalStoragePermission()
+            // requestManageExternalStoragePermission()
         } else {
             if (!permissionExternalStorage) {
                 ScreenUtil.showToast(this, "Permission Denied", 60f,
@@ -116,7 +114,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             if (!Environment.isExternalStorageManager()) {
                 permissionManageExternalStorage = false
                 val launcher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts
-                        .StartActivityForResult(), ActivityResultCallback { result: ActivityResult? ->
+                        .StartActivityForResult()) { result: ActivityResult? ->
                     result?.run {
                         if (resultCode == Activity.RESULT_OK) {
                             if (Environment.isExternalStorageManager()) {
@@ -125,17 +123,17 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                         }
                         // still can run this app if permissionManageExternalStorage = false
                     }
-                })
+                }
                 try {
                     val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
-                    val mIntent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+                    val mIntent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
                     launcher.launch(mIntent)
                 } catch (ex: Exception) {
                     Log.d(TAG, "Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION Exception")
                     ex.message?.let {
                         Log.d(TAG, it)
                     }
-                    val mIntent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    val mIntent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                     launcher.launch(mIntent)
                 }
             }
@@ -144,7 +142,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_WRITE_CODE) {
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_CODE) {
             val rLen = grantResults.size
             permissionExternalStorage = rLen > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
