@@ -1,11 +1,15 @@
 package com.smile.karaokeplayer
 
 import android.Manifest
+import android.app.Activity
+import android.provider.Settings
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
@@ -14,6 +18,10 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.smile.karaokeplayer.fragments.MyFavoritesFragment
@@ -28,8 +36,9 @@ private const val TAG : String = "BaseActivity"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
         OpenFileFragment.PlayOpenFiles, MyFavoritesFragment.PlayMyFavorites {
 
-    private val PERMISSION_REQUEST_CODE = 0x11
-    private var hasPermissionForExternalStorage = false
+    private val PERMISSION_WRITE_CODE = 0x11
+    private var permissionExternalStorage = false
+    private var permissionManageExternalStorage = false
 
     private lateinit var playerFragment: PlayerBaseViewFragment
     private lateinit var basePlayViewLayout : LinearLayout
@@ -43,16 +52,18 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
-        hasPermissionForExternalStorage =
+        permissionExternalStorage =
                 (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!hasPermissionForExternalStorage) {
+            if (!permissionExternalStorage) {
                 val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE)
+                ActivityCompat.requestPermissions(this, permissions, PERMISSION_WRITE_CODE)
             }
+            // MANAGE_EXTERNAL_STORAGE
+            requestManageExternalStoragePermission()
         } else {
-            if (!hasPermissionForExternalStorage) {
+            if (!permissionExternalStorage) {
                 ScreenUtil.showToast(this, "Permission Denied", 60f,
                         ScreenUtil.FontSize_Pixel_Type,
                         Toast.LENGTH_LONG)
@@ -99,13 +110,45 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         }
     }
 
+    private fun requestManageExternalStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Log.d(TAG, "Environment.isExternalStorageManager() = ${Environment.isExternalStorageManager()}")
+            if (!Environment.isExternalStorageManager()) {
+                permissionManageExternalStorage = false
+                val launcher: ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts
+                        .StartActivityForResult(), ActivityResultCallback { result: ActivityResult? ->
+                    result?.run {
+                        if (resultCode == Activity.RESULT_OK) {
+                            if (Environment.isExternalStorageManager()) {
+                                permissionManageExternalStorage = true
+                            }
+                        }
+                        // still can run this app if permissionManageExternalStorage = false
+                    }
+                })
+                try {
+                    val uri = Uri.parse("package:${BuildConfig.APPLICATION_ID}")
+                    val mIntent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+                    launcher.launch(mIntent)
+                } catch (ex: Exception) {
+                    Log.d(TAG, "Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION Exception")
+                    ex.message?.let {
+                        Log.d(TAG, it)
+                    }
+                    val mIntent: Intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    launcher.launch(mIntent)
+                }
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
+        if (requestCode == PERMISSION_WRITE_CODE) {
             val rLen = grantResults.size
-            hasPermissionForExternalStorage = rLen > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            permissionExternalStorage = rLen > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
-        if (!hasPermissionForExternalStorage) {
+        if (!permissionExternalStorage) {
             ScreenUtil.showToast(this, "Permission Denied", 60f, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG)
             finish() // exit the activity immediately
         }
