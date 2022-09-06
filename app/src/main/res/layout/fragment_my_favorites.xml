@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/black"
     tools:context=".fragments.MyFavoritesFragment">
 
     <LinearLayout
@@ -59,32 +60,30 @@
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:src="@drawable/play_media_button_image"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            android:layout_marginEnd="30sp">
         </ImageButton>
-        <Button
+        <ImageButton
             android:id="@+id/favoriteEditButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/editString"
-            app:textAllCaps="false"
-            android:textStyle="normal"
             android:background="@drawable/main_menuitem_background_color"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center">
-        </Button>
-        <Button
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/edit_image"
+            android:layout_gravity="center"
+            android:layout_marginEnd="20sp">
+        </ImageButton>
+        <ImageButton
             android:id="@+id/favoriteAddButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/addString"
-            app:textAllCaps="false"
-            android:textStyle="normal"
             android:background="@drawable/main_menuitem_background_color"
-            android:textColor="@android:color/black"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/add_image"
             android:layout_gravity="center">
-        </Button>
+        </ImageButton>
 
     </LinearLayout>
 

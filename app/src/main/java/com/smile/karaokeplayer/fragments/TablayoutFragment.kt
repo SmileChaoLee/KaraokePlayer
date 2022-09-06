@@ -6,11 +6,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FragmentAdapter
+import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
 
 private const val TAG : String = "TablayoutFragment"
 
@@ -23,6 +27,7 @@ class TablayoutFragment : Fragment() {
 
     private lateinit var openFragment: OpenFileFragment
     private lateinit var favoriteFragment: MyFavoritesFragment
+    private var myBannerAdView: SetBannerAdView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +42,14 @@ class TablayoutFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tablayout, container, false)
 
-        val playTabLayout : TabLayout = view.findViewById(R.id.fragmentsTabLayout)
-        val playViewPager2 : ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
+        val bannerLayoutForTab: LinearLayout = view.findViewById(R.id.bannerLayoutForTab)
+        myBannerAdView = SetBannerAdView(
+                activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
+                BaseApplication.facebookBannerID)
+        myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+
+        val playTabLayout: TabLayout = view.findViewById(R.id.fragmentsTabLayout)
+        val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
 
         activity?.let {
             val fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
@@ -54,5 +65,22 @@ class TablayoutFragment : Fragment() {
             }.attach()
         }
         return view
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "onResume() is called.")
+        myBannerAdView?.resume()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "onPause() is called.")
+        myBannerAdView?.pause()
+        super.onPause()
+    }
+    override fun onDestroy() {
+        Log.d(TAG, "onDestroy() is called.")
+        myBannerAdView?.destroy()
+        super.onDestroy()
     }
 }

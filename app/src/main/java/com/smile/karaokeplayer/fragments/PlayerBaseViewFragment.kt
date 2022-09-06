@@ -499,6 +499,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onDestroy() is called.")
         myBannerAdView?.destroy()
         nativeTemplate?.release()
+        interstitialAd?.close()
         // clear the screen on, added on 2021-02-18
         activity?.window?.apply {
             clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

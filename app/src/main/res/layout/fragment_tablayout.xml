@@ -8,6 +8,15 @@
     android:background="@android:color/black"
     tools:context=".fragments.TablayoutFragment">
 
+    <LinearLayout
+        android:id="@+id/bannerLayoutForTab"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal|top">
+    </LinearLayout>
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/fragmentsTabLayout"
         android:layout_width="match_parent"

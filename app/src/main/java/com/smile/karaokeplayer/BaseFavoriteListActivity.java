@@ -29,6 +29,7 @@ import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.SongInfo;
 import com.smile.karaokeplayer.models.SongListSQLite;
 import com.smile.karaokeplayer.utilities.SelectFavoritesUtil;
+import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> selectOneSongActivityLauncher;
     private ActivityResultLauncher<Intent> selectMultipleSongActivityLauncher;
     private String currentAction = CommonConstants.AddActionString;
+    private ShowingInterstitialAdsUtil interstitialAd = null;
 
     public abstract Intent createIntentFromSongDataActivity();
     public abstract void setAudioLinearLayoutVisibility(LinearLayout linearLayout);
@@ -59,6 +61,10 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         // float fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
+
+        interstitialAd = new ShowingInterstitialAdsUtil(this,
+                ((BaseApplication)getApplication()).facebookAds,
+                ((BaseApplication)getApplication()).googleInterstitialAd);
 
         songListSQLite = new SongListSQLite(getApplicationContext());
 
@@ -158,9 +164,13 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
             songListSQLite.closeDatabase();
             songListSQLite = null;
         }
+        if (interstitialAd != null) {
+            interstitialAd.close();
+        }
     }
 
     private void returnToPrevious() {
+        interstitialAd.new ShowInterstitialAdThread(0, BaseApplication.AdProvider).startShowAd();
         Intent returnIntent = new Intent();
         setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
         // setResult(Activity.RESULT_OK);   // no bundle data
@@ -370,7 +380,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         extras.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
                         playerActivityIntent.putExtras(extras);
                         startActivity(playerActivityIntent);
-                        // selectOneSongActivityLauncher.launch(playerActivityIntent);
                     }
                 });
             }

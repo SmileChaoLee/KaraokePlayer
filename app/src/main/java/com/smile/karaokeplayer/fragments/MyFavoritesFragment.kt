@@ -151,7 +151,10 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     playMyFavorites.playSongList(songs)
                 }
             }
-            val editButton: Button = it.findViewById(R.id.favoriteEditButton)
+            val editButton: ImageButton = it.findViewById(R.id.favoriteEditButton)
+            layoutParams = editButton.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.width = buttonWidth
+            layoutParams.height = buttonWidth
             editButton.setOnClickListener {
                 val favoriteIntent = playMyFavorites.intentForFavoriteListActivity()
                 ArrayList<SongInfo>().apply {
@@ -168,7 +171,10 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     }
                 }
             }
-            val addButton: Button = it.findViewById(R.id.favoriteAddButton)
+            val addButton: ImageButton = it.findViewById(R.id.favoriteAddButton)
+            layoutParams = addButton.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.width = buttonWidth
+            layoutParams.height = buttonWidth
             addButton.setOnClickListener {
                 activity?.let { activityIt ->
                     Intent(activityIt, OpenFileActivity::class.java).apply {
