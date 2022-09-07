@@ -1,5 +1,6 @@
 package com.smile.karaokeplayer.fragments
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,7 +15,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FragmentAdapter
-import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
+import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
+import kotlin.coroutines.Continuation
 
 private const val TAG : String = "TablayoutFragment"
 
@@ -27,6 +29,7 @@ class TablayoutFragment : Fragment() {
 
     private lateinit var openFragment: OpenFileFragment
     private lateinit var favoriteFragment: MyFavoritesFragment
+    private lateinit var bannerLayoutForTab: LinearLayout
     private var myBannerAdView: SetBannerAdView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +45,16 @@ class TablayoutFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tablayout, container, false)
 
-        val bannerLayoutForTab: LinearLayout = view.findViewById(R.id.bannerLayoutForTab)
+        bannerLayoutForTab = view.findViewById(R.id.bannerLayoutForTab)
         myBannerAdView = SetBannerAdView(
                 activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
                 BaseApplication.facebookBannerID)
         myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+
+        resources.configuration.orientation.let {
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
+            else bannerLayoutForTab.visibility = View.VISIBLE
+        }
 
         val playTabLayout: TabLayout = view.findViewById(R.id.fragmentsTabLayout)
         val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
@@ -65,6 +73,14 @@ class TablayoutFragment : Fragment() {
             }.attach()
         }
         return view
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        newConfig.orientation.let {
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
+            else bannerLayoutForTab.visibility = View.VISIBLE
+        }
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun onResume() {

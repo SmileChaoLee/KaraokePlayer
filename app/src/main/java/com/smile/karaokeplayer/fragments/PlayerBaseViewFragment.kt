@@ -44,8 +44,8 @@ import com.smile.karaokeplayer.presenters.BasePlayerPresenter.BasePresentView
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.models.ExitAppTimer
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
-import com.smile.smilelibraries.showing_banner_ads_utility.SetBannerAdView
-import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil
+import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
+import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG: String = "PlayerBaseViewFragment"
@@ -141,7 +141,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
     }
 
-    private var interstitialAd: ShowingInterstitialAdsUtil? = null
+    private var interstitialAd: ShowInterstitial? = null
 
     abstract fun getPlayerBasePresenter(): BasePlayerPresenter?
     abstract fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int)
@@ -163,9 +163,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setHasOptionsMenu(true) // must have because it has menu
 
         activity?.let {
-            interstitialAd = ShowingInterstitialAdsUtil(it,
-                    (it.application as BaseApplication).facebookAds,
-                    (it.application as BaseApplication).googleInterstitialAd)
+            interstitialAd = ShowInterstitial(it,
+                    (it.application as BaseApplication).facebookInterstitial,
+                    (it.application as BaseApplication).adMobInterstitial)
         }
 
         val presenter = getPlayerBasePresenter()
@@ -558,14 +558,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 (buttonMarginLeft.toFloat() * (screenSize.x.toFloat() / screenSize.y.toFloat())).toInt()
             Log.d(TAG, "buttonMarginLeft = $buttonMarginLeft")
         }
-        val buttonNum = 7 // 7 buttons
+        val buttonNum = 8 // 8 buttons
         val imageButtonHeight = (textFontSize * 1.2f).toInt()
         val maxWidth = buttonNum * imageButtonHeight + (buttonNum - 1) * buttonMarginLeft
         if (maxWidth > screenSize.x) {
             // greater than the width of screen
             buttonMarginLeft = (screenSize.x - 10 - buttonNum * imageButtonHeight) / (buttonNum - 1)
         }
-        val buttonNum2 = 9
+        val buttonNum2 = 8
         val maxWidth2 = buttonNum2 * imageButtonHeight + (buttonNum2 - 1) * buttonMarginLeft2
         if (maxWidth2 > screenSize.x) {
             // greater than the width of screen
@@ -604,6 +604,15 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        layoutParams = actionMenuView.layoutParams as MarginLayoutParams
+        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+        val tempBitmap = BitmapFactory.decodeResource(resources, R.drawable.circle_and_three_dots)
+        val iconDrawable: Drawable = BitmapDrawable(
+                resources,
+                Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true)
+        )
+        actionMenuView.overflowIcon = iconDrawable // set icon of three dots for ActionMenuView
+        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots for toolbar
 
         layoutParams = orientationImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
@@ -630,17 +639,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams.height = imageButtonHeight
         layoutParams.width = imageButtonHeight
         layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
-        layoutParams = actionMenuView.layoutParams as MarginLayoutParams
-        layoutParams.height = imageButtonHeight
-        layoutParams.width = imageButtonHeight
-        layoutParams.setMargins(buttonMarginLeft2, 0, 0, 0)
-        val tempBitmap = BitmapFactory.decodeResource(resources, R.drawable.circle_and_three_dots)
-        val iconDrawable: Drawable = BitmapDrawable(
-            resources,
-            Bitmap.createScaledBitmap(tempBitmap, imageButtonHeight, imageButtonHeight, true)
-        )
-        actionMenuView.overflowIcon = iconDrawable // set icon of three dots for ActionMenuView
-        // supportToolbar.setOverflowIcon(iconDrawable);   // set icon of three dots for toolbar
 
         layoutParams = audioChannelImageButton.layoutParams as MarginLayoutParams
         layoutParams.height = imageButtonHeight
@@ -663,20 +661,15 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         supportToolbar.layoutParams.height = volumeImageButton.layoutParams.height
         val bannerAdsLayout: LinearLayout = fragmentView.findViewById(R.id.bannerAdsLayout)
         val bannerAdsLayoutLP = bannerAdsLayout.layoutParams as ConstraintLayout.LayoutParams
-        val message_nativeAd_Layout: FrameLayout =
-            fragmentView.findViewById(R.id.message_nativeAd_Layout)
-        val messageNativeAdLayoutLP =
-            message_nativeAd_Layout.layoutParams as ConstraintLayout.LayoutParams
-        val bannerAdsLayoutHeightPercent = bannerAdsLayoutLP.matchConstraintPercentHeight
-        Log.d(TAG,"bannerToolbarHeightPercent = $bannerAdsLayoutHeightPercent")
-        val heightPercent =
-            1.0f - bannerAdsLayoutHeightPercent - imageButtonHeight * 3.0f / screenSize.y
+        val nativeAdLayout: FrameLayout = fragmentView.findViewById(R.id.nativeAdLayout)
+        val nativeAdLayoutLP = nativeAdLayout.layoutParams as ConstraintLayout.LayoutParams
+        val bannerHeightPercent = bannerAdsLayoutLP.matchConstraintPercentHeight
+        Log.d(TAG,"bannerHeightPercent = $bannerHeightPercent")
+        val heightPercent = 1.0f - bannerHeightPercent - imageButtonHeight * 3.30f / screenSize.y
         Log.d(TAG, "heightPercent = $heightPercent")
-        messageNativeAdLayoutLP.matchConstraintPercentHeight =
-            (heightPercent * 100.0f).toInt() / 100.0f
-        Log.d(TAG, "messageNativeAdLayoutLP.matchConstraintPercentHeight = " +
-                messageNativeAdLayoutLP.matchConstraintPercentHeight
-        )
+        nativeAdLayoutLP.matchConstraintPercentHeight = (heightPercent * 100.0f).toInt() / 100.0f
+        Log.d(TAG, "nativeAdLayoutLP.matchConstraintPercentHeight = " +
+                nativeAdLayoutLP.matchConstraintPercentHeight)
 
         // setting the width and the margins for nativeAdTemplateView
         layoutParams = nativeAdTemplateView.layoutParams as MarginLayoutParams
@@ -789,48 +782,52 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             if (playerViewLinearLayout.visibility==View.VISIBLE) hidePlayerView() else showPlayerView()
         }
 
-        audioChannelImageButton.setOnClickListener(View.OnClickListener {
+        audioChannelImageButton.setOnClickListener {
             mPresenter.playingParam.apply {
-                if (currentChannelPlayed == CommonConstants.LeftChannel) {
-                    currentChannelPlayed = CommonConstants.RightChannel
-                } else if (currentChannelPlayed == CommonConstants.RightChannel) {
-                    currentChannelPlayed = CommonConstants.StereoChannel
-                } else if (currentChannelPlayed == CommonConstants.StereoChannel) {
-                    currentChannelPlayed = CommonConstants.LeftChannel
+                when (currentChannelPlayed) {
+                    CommonConstants.LeftChannel -> {
+                        currentChannelPlayed = CommonConstants.RightChannel
+                    }
+                    CommonConstants.RightChannel -> {
+                        currentChannelPlayed = CommonConstants.StereoChannel
+                    }
+                    CommonConstants.StereoChannel -> {
+                        currentChannelPlayed = CommonConstants.LeftChannel
+                    }
                 }
-                var str: String? =
-                        when(currentChannelPlayed) {
+                val str: String? =
+                        when (currentChannelPlayed) {
                             CommonConstants.LeftChannel -> activity?.getString(R.string.leftChannelString)
                             CommonConstants.RightChannel -> activity?.getString(R.string.rightChannelString)
                             CommonConstants.StereoChannel -> activity?.getString(R.string.stereoChannelString)
                             else -> activity?.getString(R.string.unknown)
                         }
                 ScreenUtil.showToast(activity, str, toastTextSize, ScreenUtil.FontSize_Pixel_Type,
-                        Toast.LENGTH_SHORT                )
+                        Toast.LENGTH_SHORT)
                 mPresenter.setAudioTrackAndChannel(currentAudioTrackIndexPlayed, currentChannelPlayed)
             }
-        })
-        audioTrackImageButton.setOnClickListener(View.OnClickListener {
+        }
+        audioTrackImageButton.setOnClickListener {
             mPresenter.playingParam.apply {
                 currentAudioTrackIndexPlayed++
                 if (currentAudioTrackIndexPlayed > mPresenter.numberOfAudioTracks) currentAudioTrackIndexPlayed = 1
-                var str: String? =
-                    when(currentAudioTrackIndexPlayed) {
-                        1 -> activity?.getString(R.string.audioTrack1String)
-                        2 -> activity?.getString(R.string.audioTrack2String)
-                        3 -> activity?.getString(R.string.audioTrack3String)
-                        4 -> activity?.getString(R.string.audioTrack4String)
-                        5 -> activity?.getString(R.string.audioTrack5String)
-                        6 -> activity?.getString(R.string.audioTrack6String)
-                        7 -> activity?.getString(R.string.audioTrack7String)
-                        8 -> activity?.getString(R.string.audioTrack8String)
-                        else -> activity?.getString(R.string.unknown)
-                    }
+                val str: String? =
+                        when (currentAudioTrackIndexPlayed) {
+                            1 -> activity?.getString(R.string.audioTrack1String)
+                            2 -> activity?.getString(R.string.audioTrack2String)
+                            3 -> activity?.getString(R.string.audioTrack3String)
+                            4 -> activity?.getString(R.string.audioTrack4String)
+                            5 -> activity?.getString(R.string.audioTrack5String)
+                            6 -> activity?.getString(R.string.audioTrack6String)
+                            7 -> activity?.getString(R.string.audioTrack7String)
+                            8 -> activity?.getString(R.string.audioTrack8String)
+                            else -> activity?.getString(R.string.unknown)
+                        }
                 ScreenUtil.showToast(activity, str, toastTextSize, ScreenUtil.FontSize_Pixel_Type,
-                        Toast.LENGTH_SHORT                )
+                        Toast.LENGTH_SHORT)
                 mPresenter.setAudioTrackAndChannel(currentAudioTrackIndexPlayed, currentChannelPlayed)
             }
-        })
+        }
 
         actionMenuImageButton.setOnClickListener {
             Log.d(TAG, "actionMenuImageButton.setOnClickListener")
@@ -1008,7 +1005,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             if (mPresenter.playingParam.isPlaySingleSong) return
         }
         interstitialAd?.apply {
-            ShowInterstitialAdThread(0, BaseApplication.AdProvider).startShowAd()
+            ShowAdThread().startShowAd()
         }
     }
 

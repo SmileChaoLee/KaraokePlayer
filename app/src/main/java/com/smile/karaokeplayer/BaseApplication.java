@@ -12,9 +12,9 @@ import androidx.multidex.MultiDexApplication;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.common.util.VisibleForTesting;
 import com.smile.karaokeplayer.constants.CommonConstants;
-import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitialAds;
-import com.smile.smilelibraries.google_admob_ads_util.GoogleAdMobInterstitial;
-import com.smile.smilelibraries.showing_interstitial_ads_utility.ShowingInterstitialAdsUtil;
+import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitial;
+import com.smile.smilelibraries.google_ads_util.AdMobInterstitial;
+import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.LinkedHashMap;
@@ -40,10 +40,10 @@ public abstract class BaseApplication extends MultiDexApplication {
     public static String facebookBannerID = "";
     public static String googleAdMobBannerID = "";
     public static String googleAdMobNativeID = "";
-    public static int AdProvider = ShowingInterstitialAdsUtil.FacebookAdProvider;    // default is Facebook Ad
+    public static int AdProvider = ShowInterstitial.FacebookAdProvider;    // default is Facebook Ad
 
-    public FacebookInterstitialAds facebookAds;
-    public GoogleAdMobInterstitial googleInterstitialAd;
+    public FacebookInterstitial facebookInterstitial;
+    public AdMobInterstitial adMobInterstitial;
 
     public abstract void setGoogleAdMobAndFacebookAudioNetwork();
 
@@ -109,17 +109,17 @@ public abstract class BaseApplication extends MultiDexApplication {
 
         // google
         MobileAds.initialize(AppContext, initializationStatus -> Log.d(TAG, "Google AdMob was initialized successfully."));
-        googleInterstitialAd = new GoogleAdMobInterstitial(AppContext, googleAdMobInterstitialID);
+        adMobInterstitial = new AdMobInterstitial(AppContext, googleAdMobInterstitialID);
 
         final Handler adHandler = new Handler(Looper.getMainLooper());
         @VisibleForTesting
         final Runnable adRunnable = () -> {
             adHandler.removeCallbacksAndMessages(null);
-            if (googleInterstitialAd != null) {
-                googleInterstitialAd.loadAd(); // load first google ad
+            if (adMobInterstitial != null) {
+                adMobInterstitial.loadAd(); // load first google ad
             }
-            if (facebookAds != null) {
-                facebookAds.loadAd();   // load first facebook ad
+            if (facebookInterstitial != null) {
+                facebookInterstitial.loadAd();   // load first facebook ad
             }
         };
         adHandler.postDelayed(adRunnable, 1000);
