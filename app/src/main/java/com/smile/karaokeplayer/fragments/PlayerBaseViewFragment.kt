@@ -532,9 +532,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     override fun showPlayerView() {
         Log.d(TAG, "showPlayerView() is called")
         playerViewLinearLayout.visibility = View.VISIBLE
-        if (mPresenter.playingParam.currentPlaybackState != PlaybackStateCompat.STATE_PLAYING) {
-            // not playing video then show ads
-            showNativeAndBannerAd()
+        mPresenter.run {
+            if ( (playingParam.currentPlaybackState != PlaybackStateCompat.STATE_PLAYING) ||
+                    (numberOfVideoTracks == 0) ) {
+                // not playing then show ads or only music is being played, show native ads
+                showNativeAndBannerAd()
+            }
         }
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.VISIBLE
@@ -691,10 +694,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun returnToPrevious() {
-        val returnIntent = Intent()
-        activity?.setResult(Activity.RESULT_OK, returnIntent) // can bundle some data to previous activity
-        // setResult(Activity.RESULT_OK);   // no bundle data
-        activity?.finish()
+        val handlerClose = Handler(Looper.getMainLooper())
+        val timeDelay = 300
+        handlerClose.postDelayed({
+            // exit application
+            activity?.let {
+                it.setResult(Activity.RESULT_OK, Intent()) // can bundle some data to previous activity
+                // Or
+                // setResult(Activity.RESULT_OK);   // no bundle data
+                it.finish()
+            }
+        }, timeDelay.toLong())
     }
 
     private fun showSupportToolbarAndAudioController() {
