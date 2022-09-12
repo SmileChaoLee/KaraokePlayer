@@ -60,14 +60,10 @@ class FavoriteRecyclerViewAdapter(private val context: Context,
             visibility = if (text.isEmpty()) View.GONE else View.VISIBLE
         }
         holder.songPathTextView.apply {
-            text = ""
             favoriteList[position].let {
                 if (it.included == "1") setTextColor(ContextCompat.getColor(context, R.color.yellow))
                 else setTextColor(Color.WHITE)
-                it.filePath?.let {pathIt ->
-                    val lastIndex = pathIt.lastIndexOf('/')
-                    if (lastIndex >=0 ) text = pathIt.substring(lastIndex+1)
-                }
+                text = it.filePath?: ""
             }
         }
 

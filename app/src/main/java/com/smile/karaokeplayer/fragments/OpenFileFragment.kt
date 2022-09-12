@@ -1,6 +1,5 @@
 package com.smile.karaokeplayer.fragments
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +17,8 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.models.FileDescription
+import com.smile.karaokeplayer.models.SongInfo
+import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.smilelibraries.utilities.ScreenUtil
 import java.io.File
 
@@ -25,7 +26,7 @@ private const val TAG : String = "OpenFileFragment"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
     interface PlayOpenFiles {
-        fun playUriList(uris: ArrayList<Uri>)
+        fun playSelectedFileList(songs: ArrayList<SongInfo>)
     }
     private lateinit var fragmentView : View
     private var textFontSize = 0f
@@ -151,21 +152,42 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     if (isPlayButton) R.drawable.play_media_button_image else R.drawable.open_files)
             playSelectedButton.setOnClickListener {
                 // open the files to play
-                val uris = ArrayList<Uri>().also { uriIt ->
-                    for (i in 0 until fileList.size) {
-                        fileList[i].run {
-                            if (selected) {
-                                uriIt.add(file.toUri())
+                activity?.let {activityIt ->
+                    val songListSQLite = SongListSQLite(activityIt)
+                    val songs = ArrayList<SongInfo>().also {songIt ->
+                        for (i in 0 until fileList.size) {
+                            fileList[i].run {
+                                if (selected) {
+                                    Log.d(TAG, "playSelectedButton.activityIt.file.path = ${file.path}")
+                                    Log.d(TAG, "playSelectedButton.activityIt.file.toUri() = ${file.toUri()}")
+                                    var song = SongInfo().apply {
+                                        songName = file.name
+                                        // filePath = file.path
+                                        filePath = file.toUri().toString()
+                                        musicTrackNo = 1    // guess
+                                        musicChannel = CommonConstants.StereoChannel
+                                        vocalTrackNo = 2    // guess
+                                        vocalChannel = CommonConstants.StereoChannel
+                                        included = "0"
+                                    }
+                                    songListSQLite.findOneSongByUriString(song.filePath)?.apply {
+                                        Log.d(TAG, "playSelectedButton.activityIt.found")
+                                        included = "1"
+                                        song = this
+                                    }
+                                    songIt.add(song)
+                                }
                             }
                         }
                     }
-                }
-                if (uris.size == 0) {
-                    ScreenUtil.showToast(
-                            activity, getString(R.string.noFilesSelectedString), textFontSize,
-                            BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                } else {
-                    playOpenFiles.playUriList(uris)
+                    songListSQLite.closeDatabase()
+                    if (songs.size == 0) {
+                        ScreenUtil.showToast(
+                                activity, getString(R.string.noFilesSelectedString), textFontSize,
+                                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                    } else {
+                        playOpenFiles.playSelectedFileList(songs)
+                    }
                 }
             }
         }

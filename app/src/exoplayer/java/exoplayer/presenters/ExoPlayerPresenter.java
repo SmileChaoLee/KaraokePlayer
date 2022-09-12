@@ -372,7 +372,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
-            int audioChannelPlayed;  // default channel
+            int audioChannelPlayed = CommonConstants.StereoChannel;
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();
@@ -389,7 +389,6 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                 Log.d(TAG, "getPlayingMediaInfoAndSetAudioActionSubMenu.numberOfAudioTracks = " + numberOfAudioTracks);
                 if (numberOfAudioTracks >= 2) {
                     // more than 2 audio tracks
-                    audioChannelPlayed = CommonConstants.StereoChannel;
                     playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
                     playingParam.setVocalAudioChannel(audioChannelPlayed);
                     playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed==1? 2:1);
@@ -399,12 +398,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
                     audioTrackIdPlayed = 1;
                     playingParam.setVocalAudioTrackIndex(audioTrackIdPlayed);
                     playingParam.setMusicAudioTrackIndex(audioTrackIdPlayed);
-                    if (playingParam.getVocalAudioChannel() == playingParam.getMusicAudioChannel()) {
-                        // the originals are the same then it CommonConstants.StereoChannel
-                        audioChannelPlayed = CommonConstants.LeftChannel;
-                        playingParam.setVocalAudioChannel(audioChannelPlayed);
-                        playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
-                    }
+                    playingParam.setVocalAudioChannel(CommonConstants.LeftChannel);
+                    playingParam.setMusicAudioChannel(CommonConstants.RightChannel);
                 }
             }
 

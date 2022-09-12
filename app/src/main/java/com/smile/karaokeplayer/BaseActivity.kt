@@ -185,15 +185,16 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
 
     // implementing interface OpenFileFragment.PlayOpenFiles
-    override fun playUriList(uris: ArrayList<Uri>) {
-        Log.d(TAG, "playUriList.uris.size = ${uris.size}")
-        playerFragment.mPresenter.playSelectedUrisFromStorage(uris)
+    override fun playSelectedFileList(songs: ArrayList<SongInfo>) {
+        Log.d(TAG, "playSelectedFileList.songs.size = ${songs.size}")
+        playerFragment.mPresenter.playSongList(songs)
+        playerFragment.showPlayerView()
     }
     // Finishes implementing interface OpenFileFragment.PlayOpenFiles
 
     // implementing interface MyListFragment.PlayMyList
-    override fun playSongList(songs: ArrayList<SongInfo>) {
-        Log.d(TAG, "playSongList.uris.size = ${songs.size}")
+    override fun playSelectedFavoriteList(songs: ArrayList<SongInfo>) {
+        Log.d(TAG, "playSongList.songs.size = ${songs.size}")
         playerFragment.mPresenter.playSongList(songs)
         playerFragment.showPlayerView()
     }

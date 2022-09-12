@@ -68,15 +68,15 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
                 case CommonConstants.EditActionString:
                     // = "EDIT". Edit one record
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState, SongInfo.class);
-                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
+                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SingleSongInfoState, SongInfo.class);
+                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SingleSongInfoState);
                     actionButtonString = getString(R.string.saveString);
                     break;
                 case CommonConstants.DeleteActionString:
                     // = "DELETE". Delete one record
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState, SongInfo.class);
-                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SongInfoState);
+                        mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SingleSongInfoState, SongInfo.class);
+                    } else mSongInfo = callingIntent.getParcelableExtra(PlayerConstants.SingleSongInfoState);
                     actionButtonString = getString(R.string.deleteString);
                     break;
                 default:
@@ -89,8 +89,8 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
             actionButtonString = savedInstanceState.getString("ActionButtonString");
             crudAction = savedInstanceState.getString(CommonConstants.CrudActionString);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
-            } else mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
+                mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState, SongInfo.class);
+            } else mSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState);
             Log.d(TAG, "savedInstanceState is not null.");
         }
 
@@ -265,7 +265,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
 
         setSongInfoFromInput(false);
 
-        outState.putParcelable(PlayerConstants.SongInfoState, mSongInfo);
+        outState.putParcelable(PlayerConstants.SingleSongInfoState, mSongInfo);
         outState.putString(CommonConstants.CrudActionString, crudAction);
         outState.putString("ActionButtonString", actionButtonString);
 
@@ -281,7 +281,7 @@ public abstract class BaseSongDataActivity extends AppCompatActivity {
     private void returnToPrevious(int isOK) {
         Intent returnIntent = new Intent();
         Bundle extras = new Bundle();
-        extras.putParcelable(PlayerConstants.SongInfoState, mSongInfo);
+        extras.putParcelable(PlayerConstants.SingleSongInfoState, mSongInfo);
         returnIntent.putExtras(extras);
 
         setResult(isOK, returnIntent);    // can bundle some data to previous activity

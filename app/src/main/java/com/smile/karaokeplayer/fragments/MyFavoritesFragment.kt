@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -31,7 +30,7 @@ private const val TAG : String = "MyFavoritesFragment"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
     interface PlayMyFavorites {
-        fun playSongList(songs: ArrayList<SongInfo>)
+        fun playSelectedFavoriteList(songs: ArrayList<SongInfo>)
         fun intentForFavoriteListActivity():Intent
     }
     private lateinit var fragmentView: View
@@ -57,7 +56,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         fontScale = ScreenUtil.suitableFontScale(activity, ScreenUtil.FontSize_Pixel_Type, 0.0f)
 
         playMyFavorites = (activity as PlayMyFavorites)
-        Log.d(TAG, "onCreate.playMyList = $playMyFavorites")
+        Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
 
         favoriteList = ArrayList()
 
@@ -148,7 +147,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
-                    playMyFavorites.playSongList(songs)
+                    playMyFavorites.playSelectedFavoriteList(songs)
                 }
             }
             val editButton: ImageButton = it.findViewById(R.id.favoriteEditButton)

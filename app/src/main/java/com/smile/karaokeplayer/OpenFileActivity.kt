@@ -1,7 +1,6 @@
 package com.smile.karaokeplayer
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
@@ -9,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.fragments.OpenFileFragment
+import com.smile.karaokeplayer.models.SongInfo
 
 private const val TAG: String = "OpenFileActivity"
 
@@ -40,9 +40,9 @@ class OpenFileActivity : AppCompatActivity(), OpenFileFragment.PlayOpenFiles {
     }
 
     // implementing interface OpenFileFragment.PlayOpenFiles
-    override fun playUriList(uris: ArrayList<Uri>) {
-        Log.d(TAG, "playUriList.uris.size = ${uris.size}")
-        setResult(RESULT_OK, Intent().putExtra(PlayerConstants.Uri_List, uris))
+    override fun playSelectedFileList(songs: ArrayList<SongInfo>) {
+        Log.d(TAG, "playUriList.songs.size = ${songs.size}")
+        setResult(RESULT_OK, Intent().putExtra(PlayerConstants.SongListState, songs))
         finish()
     }
     // Finishes implementing interface OpenFileFragment.PlayOpenFiles

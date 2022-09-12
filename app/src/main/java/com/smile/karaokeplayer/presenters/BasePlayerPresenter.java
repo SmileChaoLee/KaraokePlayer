@@ -22,7 +22,6 @@ import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.PlayingParameters;
 import com.smile.karaokeplayer.models.SongInfo;
-import com.smile.karaokeplayer.models.SongListSQLite;
 import com.smile.karaokeplayer.R;
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil;
 import com.smile.smilelibraries.utilities.ScreenUtil;
@@ -137,9 +136,6 @@ public abstract class BasePlayerPresenter {
         playingParam.setMusicAudioChannel(songInfo.getMusicChannel());
         playingParam.setVocalAudioTrackIndex(songInfo.getVocalTrackNo());
         playingParam.setVocalAudioChannel(songInfo.getVocalChannel());
-        // Log.d(TAG, "startAutoPlay.songInfo = " + songInfo);
-        // Log.d(TAG, "startAutoPlay.singleSongInfo = " + singleSongInfo);
-        // songInfo.equals(singleSongInfo) = true, then use original audio track and channel
         Log.d(TAG, "startAutoPlay.songInfo == singleSongInfo) = " + (songInfo == singleSongInfo));
         if (songInfo != singleSongInfo) {
             playingParam.setCurrentAudioTrackIndexPlayed(songInfo.getVocalTrackNo());
@@ -160,41 +156,6 @@ public abstract class BasePlayerPresenter {
             if (orderedSongList == null) Log.d(TAG, "autoPlaySongList.orderedSongList is null");
             else Log.d(TAG, "autoPlaySongList.orderedSongList.size() = " + orderedSongList.size());
         }
-    }
-
-    public void playSelectedUrisFromStorage(ArrayList<Uri> tempUriList) {
-        if (tempUriList==null || tempUriList.size()==0) {
-            return;
-        }
-        SongListSQLite songListSQLite = new SongListSQLite(mActivity);
-        ArrayList<SongInfo> songList = new ArrayList<>();
-        SongInfo songInfo;
-        for (Uri tempUri : tempUriList) {
-            // searching song list for the information of tempUri
-            songInfo = songListSQLite.findOneSongByUriString(tempUri.toString()); // use the original Uri
-            if (songInfo != null) {
-                Log.d(TAG, "playSelectedUrisFromStorage.Found");
-                songInfo.setIncluded("1");  // set to in the list
-            } else {
-                Log.d(TAG, "playSelectedUrisFromStorage.Not find");
-                songInfo = new SongInfo();
-                songInfo.setSongName("");
-                // has to be tempUri not mediaUri
-                songInfo.setFilePath(tempUri.toString());
-                int currentAudioTrack = 1;
-                songInfo.setMusicTrackNo(currentAudioTrack);
-                songInfo.setMusicChannel(CommonConstants.StereoChannel);
-                songInfo.setVocalTrackNo(currentAudioTrack);
-                songInfo.setVocalChannel(CommonConstants.StereoChannel);
-                // not in the list and unknown music and vocal setting
-                songInfo.setIncluded("0");  // set to not in the list
-            }
-            songList.add(songInfo);
-        }
-        songListSQLite.closeDatabase();
-        playSongList(songList);
-        playingParam.setAutoPlay(false);
-        mPresentView.showPlayerView();
     }
 
     protected void playMediaFromUri(Uri uri) {
@@ -232,8 +193,8 @@ public abstract class BasePlayerPresenter {
                 if (arguments != null) {
                     playingParam.setPlaySingleSong(arguments.getBoolean(PlayerConstants.IsPlaySingleSongState));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {    // API 33
-                        singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
-                    } else singleSongInfo = arguments.getParcelable(PlayerConstants.SongInfoState);
+                        singleSongInfo = arguments.getParcelable(PlayerConstants.SingleSongInfoState, SongInfo.class);
+                    } else singleSongInfo = arguments.getParcelable(PlayerConstants.SingleSongInfoState);
                     Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
                 }
             }
@@ -258,8 +219,8 @@ public abstract class BasePlayerPresenter {
                 initializePlayingParam();
             }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState, SongInfo.class);
-            } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SongInfoState);
+                singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState, SongInfo.class);
+            } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState);
             Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
         }
         setOrientationStatus(playingParam.getOrientationStatus());
@@ -293,7 +254,7 @@ public abstract class BasePlayerPresenter {
     }
 
     public void playStereoChannel() {
-        Log.d(TAG, "playStereoChannel() --> CommonConstants.StereoChannel = " + CommonConstants.StereoChannel);
+        Log.d(TAG, "playStereoChannel.CommonConstants.StereoChannel = " + CommonConstants.StereoChannel);
         playingParam.setCurrentChannelPlayed(CommonConstants.StereoChannel);
         setAudioVolume(playingParam.getCurrentVolume());
     }
@@ -433,23 +394,21 @@ public abstract class BasePlayerPresenter {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void selectFileToOpenPresenter(ActivityResult result) {
+        Log.d(TAG, "selectFileToOpenPresenter() is called");
         Intent data = result.getData();
         if (data == null) {
             return;
         }
-        ArrayList<Uri> uris;
+        ArrayList<SongInfo> songs;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List, Uri.class);
-        } else uris = data.getParcelableArrayListExtra(PlayerConstants.Uri_List);
+            songs = (ArrayList<SongInfo>)data.getSerializableExtra(PlayerConstants.SongListState, ArrayList.class);
+        } else songs = (ArrayList<SongInfo>)data.getSerializableExtra(PlayerConstants.SongListState);
 
-        if (uris != null && uris.size() > 0) {
-            Log.d(TAG, "selectFileToOpenPresenter.uris.size() = " + uris.size());
-            // There are files selected
-            playSelectedUrisFromStorage(uris);
-        } else {
-            Log.d(TAG, "selectFileToOpenPresenter.uris is null or empty");
-        }
+        playSongList(songs);
+        playingParam.setAutoPlay(false);
+        mPresentView.showPlayerView();
     }
 
     public void playPreviousSong() {
@@ -760,9 +719,11 @@ public abstract class BasePlayerPresenter {
         mediaTransportControls = null;
     }
 
+    /*
     public MediaControllerCompat.TransportControls getMediaTransportControls() {
         return mediaTransportControls;
     }
+    */
 
     public void saveInstanceState(@NonNull Bundle outState) {
         outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);
@@ -773,6 +734,6 @@ public abstract class BasePlayerPresenter {
         outState.putParcelable(PlayerConstants.PlayingParamState, playingParam);
         outState.putBoolean(PlayerConstants.CanShowNotSupportedFormatState, canShowNotSupportedFormat);
         Log.d(TAG, "saveInstanceState.singleSongInfo = " + singleSongInfo);
-        outState.putParcelable(PlayerConstants.SongInfoState, singleSongInfo);
+        outState.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
     }
 }

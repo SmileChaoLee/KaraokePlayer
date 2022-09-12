@@ -59,7 +59,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     lateinit var mPresenter: BasePlayerPresenter
     private lateinit var playBaseFragmentFunc: PlayBaseFragmentFunc
-    private lateinit var selectSongsToPlayActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var selectFilesToPlayLauncher: ActivityResultLauncher<Intent>
     protected lateinit var fragmentView: View
 
     protected var textFontSize = 0f
@@ -186,14 +186,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
 
-        selectSongsToPlayActivityLauncher = registerForActivityResult(
+        selectFilesToPlayLauncher = registerForActivityResult(
                 StartActivityForResult()) { result: ActivityResult? ->
-            Log.d(TAG, "selectSongsToPlayActivityLauncher.onActivityResult() is called.")
+            Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
             result?.let {
-                Log.d(TAG, "selectSongsToPlayActivityLauncher.result = $it")
+                Log.d(TAG, "selectFilesToPlayLauncher.result = $it")
                 val resultCode = it.resultCode
                 if (resultCode == Activity.RESULT_OK) {
-                    Log.d(TAG, "selectSongsToPlayActivityLauncher.resultCode = Activity.RESULT_OK")
+                    Log.d(TAG, "selectFilesToPlayLauncher.resultCode = Activity.RESULT_OK")
                     mPresenter.selectFileToOpenPresenter(it)
                 }
             }
@@ -548,7 +548,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private fun selectFilesToOpen() {
         val selectFileIntent = Intent(activity, OpenFileActivity::class.java)
-        selectSongsToPlayActivityLauncher.launch(selectFileIntent)
+        selectFilesToPlayLauncher.launch(selectFileIntent)
     }
 
     private fun setButtonsPositionAndSize(config: Configuration) {
