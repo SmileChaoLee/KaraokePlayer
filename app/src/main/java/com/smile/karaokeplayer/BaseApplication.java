@@ -14,7 +14,6 @@ import com.google.android.gms.common.util.VisibleForTesting;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitial;
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial;
-import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
 import java.util.LinkedHashMap;
@@ -40,8 +39,6 @@ public abstract class BaseApplication extends MultiDexApplication {
     public static String facebookBannerID = "";
     public static String googleAdMobBannerID = "";
     public static String googleAdMobNativeID = "";
-    public static int AdProvider = ShowInterstitial.FacebookAdProvider;    // default is Facebook Ad
-
     public FacebookInterstitial facebookInterstitial;
     public AdMobInterstitial adMobInterstitial;
 

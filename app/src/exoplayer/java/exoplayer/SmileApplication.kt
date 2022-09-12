@@ -3,9 +3,6 @@ package exoplayer
 import com.smile.karaokeplayer.BaseApplication
 import com.facebook.ads.AudienceNetworkAds
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitial
-import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial
-
-private const val TAG: String = "SmileApplication"
 
 class SmileApplication : BaseApplication() {
     override fun setGoogleAdMobAndFacebookAudioNetwork() {
@@ -18,6 +15,5 @@ class SmileApplication : BaseApplication() {
         googleAdMobInterstitialID = "ca-app-pub-8354869049759576/1418354889"
         googleAdMobBannerID = "ca-app-pub-8354869049759576/8267060571"
         googleAdMobNativeID = "ca-app-pub-8354869049759576/7985456524"
-        AdProvider = ShowInterstitial.FacebookAdProvider
     }
 }

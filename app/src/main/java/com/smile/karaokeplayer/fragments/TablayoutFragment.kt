@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
@@ -16,7 +15,6 @@ import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FragmentAdapter
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
-import kotlin.coroutines.Continuation
 
 private const val TAG : String = "TablayoutFragment"
 
@@ -49,7 +47,7 @@ class TablayoutFragment : Fragment() {
         myBannerAdView = SetBannerAdView(
                 activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
                 BaseApplication.facebookBannerID)
-        myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+        myBannerAdView?.showBannerAdView()
 
         resources.configuration.orientation.let {
             if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE

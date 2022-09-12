@@ -1,7 +1,6 @@
 package videoplayer
 
 import com.smile.karaokeplayer.BaseApplication
-import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial
 
 class SmileApplication : BaseApplication() {
     override fun setGoogleAdMobAndFacebookAudioNetwork() {
@@ -13,6 +12,5 @@ class SmileApplication : BaseApplication() {
         googleAdMobInterstitialID = "ca-app-pub-8354869049759576/7715939032"
         googleAdMobBannerID = "ca-app-pub-8354869049759576/2158051096"
         googleAdMobNativeID = "ca-app-pub-8354869049759576/6498242044"
-        AdProvider = ShowInterstitial.GoogleAdMobAdProvider
     }
 }

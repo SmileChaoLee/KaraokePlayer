@@ -273,7 +273,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             myBannerAdView = SetBannerAdView(
                     activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
                     BaseApplication.facebookBannerID)
-            myBannerAdView?.showBannerAdView(BaseApplication.AdProvider)
+            myBannerAdView?.showBannerAdView()
 
             // message area
             message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout)
