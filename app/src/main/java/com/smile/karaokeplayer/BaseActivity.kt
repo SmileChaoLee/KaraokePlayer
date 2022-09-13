@@ -24,16 +24,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.smile.karaokeplayer.fragments.MyFavoritesFragment
-import com.smile.karaokeplayer.fragments.OpenFileFragment
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
+import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
-        OpenFileFragment.PlayOpenFiles, MyFavoritesFragment.PlayMyFavorites {
+        PlaySongs, MyFavoritesFragment.PlayMyFavorites {
 
     private var permissionExternalStorage = false
     private var permissionManageExternalStorage = false
@@ -177,27 +177,19 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         Log.d(TAG, "baseHidePlayerView() is called.")
         tablayoutViewLayout.visibility = View.VISIBLE
     }
-
     override fun baseShowPlayerView() {
         Log.d(TAG, "baseShowPlayerView() is called.")
         tablayoutViewLayout.visibility = View.GONE
     }
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
 
-    // implementing interface OpenFileFragment.PlayOpenFiles
-    override fun playSelectedFileList(songs: ArrayList<SongInfo>) {
-        Log.d(TAG, "playSelectedFileList.songs.size = ${songs.size}")
+    // implementing interface PlaySongs
+    override fun playSelectedSongList(songs: ArrayList<SongInfo>) {
+        Log.d(TAG, "playSelectedSongList.songs.size = ${songs.size}")
         playerFragment.mPresenter.playSongList(songs)
         playerFragment.showPlayerView()
     }
-    // Finishes implementing interface OpenFileFragment.PlayOpenFiles
-
-    // implementing interface MyListFragment.PlayMyList
-    override fun playSelectedFavoriteList(songs: ArrayList<SongInfo>) {
-        Log.d(TAG, "playSongList.songs.size = ${songs.size}")
-        playerFragment.mPresenter.playSongList(songs)
-        playerFragment.showPlayerView()
-    }
+    // Finish implementing interface PlaySongs
 
     private fun createViewDependingOnOrientation(orientation : Int) {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {

@@ -16,6 +16,7 @@ import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
+import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.FileDescription
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.models.SongListSQLite
@@ -25,12 +26,10 @@ import java.io.File
 private const val TAG : String = "OpenFileFragment"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
-    interface PlayOpenFiles {
-        fun playSelectedFileList(songs: ArrayList<SongInfo>)
-    }
+
     private lateinit var fragmentView : View
     private var textFontSize = 0f
-    private lateinit var playOpenFiles: PlayOpenFiles
+    private lateinit var playSongs: PlaySongs
     private lateinit var pathTextView: TextView
     private lateinit var filesRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
@@ -52,8 +51,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         textFontSize = ScreenUtil.suitableFontSize(activity, defaultTextFontSize,
                 BaseApplication.FontSize_Scale_Type,0.0f)
 
-        playOpenFiles = (activity as PlayOpenFiles)
-        Log.d(TAG, "onCreate.playOpenFiles = $playOpenFiles")
+        playSongs = (activity as PlaySongs)
+        Log.d(TAG, "onCreate.playSongs = $playSongs")
 
         // currentPath = Environment.getExternalStorageDirectory().toString()
         currentPath = "/"
@@ -186,7 +185,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                 activity, getString(R.string.noFilesSelectedString), textFontSize,
                                 BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                     } else {
-                        playOpenFiles.playSelectedFileList(songs)
+                        playSongs.playSelectedSongList(songs)
                     }
                 }
             }

@@ -20,6 +20,7 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FavoriteRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
+import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
@@ -30,12 +31,12 @@ private const val TAG : String = "MyFavoritesFragment"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
     interface PlayMyFavorites {
-        fun playSelectedFavoriteList(songs: ArrayList<SongInfo>)
         fun intentForFavoriteListActivity():Intent
     }
     private lateinit var fragmentView: View
     private var textFontSize = 0f
     private var fontScale = 0f
+    private lateinit var playSongs: PlaySongs
     private lateinit var playMyFavorites: PlayMyFavorites
     private lateinit var myListRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter
@@ -55,6 +56,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 BaseApplication.FontSize_Scale_Type,0.0f)
         fontScale = ScreenUtil.suitableFontScale(activity, ScreenUtil.FontSize_Pixel_Type, 0.0f)
 
+        playSongs = (activity as PlaySongs)
+        Log.d(TAG, "onCreate.playSongs = $playSongs")
         playMyFavorites = (activity as PlayMyFavorites)
         Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
 
@@ -133,11 +136,11 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.height = buttonWidth
             playSelectedButton.setOnClickListener {
                 // open the files to play
-                val songs = ArrayList<SongInfo>().also { uriIt ->
+                val songs = ArrayList<SongInfo>().also { songIt ->
                     for (i in 0 until favoriteList.size) {
                         favoriteList[i].run {
                             if (included == "1") {
-                                uriIt.add(this)
+                                songIt.add(this)
                             }
                         }
                     }
@@ -147,7 +150,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
-                    playMyFavorites.playSelectedFavoriteList(songs)
+                    playSongs.playSelectedSongList(songs)
                 }
             }
             val editButton: ImageButton = it.findViewById(R.id.favoriteEditButton)

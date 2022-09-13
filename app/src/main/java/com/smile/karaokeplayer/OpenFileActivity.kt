@@ -8,11 +8,12 @@ import androidx.appcompat.app.AppCompatActivity
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.fragments.OpenFileFragment
+import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
 
 private const val TAG: String = "OpenFileActivity"
 
-class OpenFileActivity : AppCompatActivity(), OpenFileFragment.PlayOpenFiles {
+class OpenFileActivity : AppCompatActivity(), PlaySongs {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_open_file)
@@ -39,11 +40,11 @@ class OpenFileActivity : AppCompatActivity(), OpenFileFragment.PlayOpenFiles {
         })
     }
 
-    // implementing interface OpenFileFragment.PlayOpenFiles
-    override fun playSelectedFileList(songs: ArrayList<SongInfo>) {
+    // implementing interface PlaySongs
+    override fun playSelectedSongList(songs: ArrayList<SongInfo>) {
         Log.d(TAG, "playUriList.songs.size = ${songs.size}")
         setResult(RESULT_OK, Intent().putExtra(PlayerConstants.SongListState, songs))
         finish()
     }
-    // Finishes implementing interface OpenFileFragment.PlayOpenFiles
+    // Finishes implementing interface PlaySongs
 }
