@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 462
-        versionName "4.62"
+        versionCode 472
+        versionName "4.72"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -92,6 +92,8 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'com.smile.karaokeplayer'
+    testNamespace '${applicationId}.androidTest'
 }
 
 allprojects {

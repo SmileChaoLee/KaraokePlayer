@@ -330,6 +330,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
             final Button playSongButton = view.findViewById(R.id.playSongButton);
             ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
+            if (!BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);    // for testing
 
             int favoriteListSize = 0;
             if (favoriteList != null) {

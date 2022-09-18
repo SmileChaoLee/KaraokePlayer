@@ -7,7 +7,7 @@ import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.models.SongListSQLite
 
 object SelectFavoritesUtil {
-
+    @Suppress("UNCHECKED_CAST")
     @JvmStatic
     fun addDataToFavoriteList(data: Intent, songListSQLite: SongListSQLite) {
         val songs: ArrayList<SongInfo>? = (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -21,7 +21,7 @@ object SelectFavoritesUtil {
 
     @JvmStatic
     fun addUrisToFavoriteList(songs: ArrayList<SongInfo>, songListSQLite: SongListSQLite) {
-        songs?.let {
+        songs.let {
             for (song in it) {
                 if (songListSQLite.findOneSongByUriString(song.filePath) == null) {
                     song.included = "1"

@@ -207,26 +207,19 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
 
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
-            ScreenUtil.showToast(
-                    activity, fileList[position].file.name, textFontSize,
-                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-        fileList[position].apply {
-            if (file.isDirectory) {
-                currentPath = file.path
-                searchCurrentFolder()
-            } else {
-                selected = !selected
-                myRecyclerViewAdapter.notifyItemChanged(position)
-            }
+        if (position < 0) return
+        if (fileList[position].file.isFile) {
+            fileList[position].selected = !fileList[position].selected
+            myRecyclerViewAdapter.notifyItemChanged(position)
+            return
         }
+        currentPath = fileList[position].file.path
+        searchCurrentFolder()
     }
 
     private fun searchCurrentFolder() {
         Log.d(TAG, "searchCurrentFolder() is called")
-        val listSize = fileList.size
         fileList.clear()
-        myRecyclerViewAdapter.notifyItemRangeRemoved(0, listSize)
-
         currentPath.let {
             if (it == "/") {
                 for (element in rootPathSet) {
@@ -251,10 +244,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                 }
             }
         }
-
         pathTextView.text = currentPath
-        // myRecyclerViewAdapter.notifyDataSetChanged()
-        myRecyclerViewAdapter.notifyItemRangeInserted(0, fileList.size)
+        myRecyclerViewAdapter.notifyDataSetChanged()
     }
 
     private fun initFilesRecyclerView() {

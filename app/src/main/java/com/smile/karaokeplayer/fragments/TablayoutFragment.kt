@@ -25,14 +25,24 @@ class TablayoutFragment : Fragment() {
         const val FavoriteFragmentTag : String = "MY_FAVORITES"
     }
 
+    private lateinit var fragmentAdapter: FragmentAdapter
     private lateinit var openFragment: OpenFileFragment
     private lateinit var favoriteFragment: MyFavoritesFragment
     private lateinit var bannerLayoutForTab: LinearLayout
     private var myBannerAdView: SetBannerAdView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "onCreate() is called.")
         super.onCreate(savedInstanceState)
         arguments?.let {
+        }
+
+        activity?.let {
+            fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
+            openFragment = OpenFileFragment()
+            fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
+            favoriteFragment = MyFavoritesFragment()
+            fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
         }
     }
 
@@ -40,6 +50,8 @@ class TablayoutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d(TAG, "onCreateView() is called.")
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tablayout, container, false)
 
@@ -56,20 +68,13 @@ class TablayoutFragment : Fragment() {
 
         val playTabLayout: TabLayout = view.findViewById(R.id.fragmentsTabLayout)
         val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
+        val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
+        playViewPager2.adapter = fragmentAdapter
+        Log.d(TAG, "TabLayoutMediator.attach()")
+        TabLayoutMediator(playTabLayout, playViewPager2) { tab, position ->
+            tab.text = tabText[position]
+        }.attach()
 
-        activity?.let {
-            val fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
-            openFragment = OpenFileFragment()
-            fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
-            favoriteFragment = MyFavoritesFragment()
-            fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
-            val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
-            playViewPager2.adapter = fragmentAdapter
-            Log.d(TAG, "TabLayoutMediator.attach()")
-            TabLayoutMediator(playTabLayout, playViewPager2) { tab, position ->
-                tab.text = tabText[position]
-            }.attach()
-        }
         return view
     }
 

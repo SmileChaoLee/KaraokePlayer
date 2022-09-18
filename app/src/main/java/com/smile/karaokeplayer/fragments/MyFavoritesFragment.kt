@@ -64,7 +64,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         favoriteList = ArrayList()
 
         editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()
-        ) { searchCurrentFolder() } // update the UI }
+        ) { searchFavorites() } // update the UI }
         selectSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
                 ActivityResultCallback { result: ActivityResult? ->
                     if (result == null) return@ActivityResultCallback
@@ -74,7 +74,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                                 val songListSQLite = SongListSQLite(contextIt)
                                 SelectFavoritesUtil.addDataToFavoriteList(it, songListSQLite)
                                 songListSQLite.closeDatabase()
-                                searchCurrentFolder() // update the UI
+                                searchFavorites() // update the UI
                             }
                         }
                     }
@@ -128,7 +128,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             refreshButton.setOnClickListener {
-                searchCurrentFolder()
+                searchFavorites()
             }
             val playSelectedButton: ImageButton = it.findViewById(R.id.favoritePlaySelectedButton)
             layoutParams = playSelectedButton.layoutParams as ViewGroup.MarginLayoutParams
@@ -187,8 +187,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             }
         }
 
-        initFilesRecyclerView()
-        searchCurrentFolder()
+        initFavoriteRecyclerView()
+        searchFavorites()
     }
 
     override fun onStart() {
@@ -203,21 +203,15 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
 
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
-        ScreenUtil.showToast(
-                activity, favoriteList[position].songName, textFontSize,
-                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
         favoriteList[position].apply {
             included = if (included == "1") "0" else "1"
             myRecyclerViewAdapter.notifyItemChanged(position)
         }
     }
 
-    private fun searchCurrentFolder() {
-        Log.d(TAG, "searchCurrentFolder() is called")
-        val listSize = favoriteList.size
+    private fun searchFavorites() {
+        Log.d(TAG, "searchFavorites() is called")
         favoriteList.clear()
-        myRecyclerViewAdapter.notifyItemRangeRemoved(0, listSize)
-        // get the all list
         activity?.let {
             DatabaseAccessUtil.readSavedSongList(it, false)?.let {sqlIt ->
                 for (element in sqlIt) {
@@ -228,11 +222,11 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 }
             }
         }
-        myRecyclerViewAdapter.notifyItemRangeInserted(0, favoriteList.size)
+        myRecyclerViewAdapter.notifyDataSetChanged()
     }
 
-    private fun initFilesRecyclerView() {
-        Log.d(TAG, "initFilesRecyclerView() is called")
+    private fun initFavoriteRecyclerView() {
+        Log.d(TAG, "initFavoriteRecyclerView() is called")
         activity?.let {
             myRecyclerViewAdapter = FavoriteRecyclerViewAdapter(
                     it, this, textFontSize, favoriteList)
