@@ -8,12 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
-import com.smile.karaokeplayer.adapters.FragmentAdapter
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
 
 private const val TAG : String = "TablayoutFragment"
@@ -25,7 +23,7 @@ class TablayoutFragment : Fragment() {
         const val FavoriteFragmentTag : String = "MY_FAVORITES"
     }
 
-    private lateinit var fragmentAdapter: FragmentAdapter
+    // private lateinit var fragmentAdapter: FragmentAdapter
     private lateinit var openFragment: OpenFileFragment
     private lateinit var favoriteFragment: MyFavoritesFragment
     private lateinit var bannerLayoutForTab: LinearLayout
@@ -38,11 +36,11 @@ class TablayoutFragment : Fragment() {
         }
 
         activity?.let {
-            fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
+            // fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
             openFragment = OpenFileFragment()
-            fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
+            // fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
             favoriteFragment = MyFavoritesFragment()
-            fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
+            // fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
         }
     }
 
@@ -67,13 +65,53 @@ class TablayoutFragment : Fragment() {
         }
 
         val playTabLayout: TabLayout = view.findViewById(R.id.fragmentsTabLayout)
-        val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
         val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
+        playTabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                tab?.let {
+                    when (it.position) {
+                        0-> {
+                            Log.d(TAG, "OnTabSelectedListener.onTabSelected.position = 0")
+                            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                                replace(R.id.tablayout_container, openFragment, OpenFragmentTag)
+                                commit()
+                            }
+                        }
+                        1-> {
+                            Log.d(TAG, "OnTabSelectedListener.onTabSelected.position = 1")
+                            activity?.supportFragmentManager?.beginTransaction()?.apply {
+                                replace(R.id.tablayout_container, favoriteFragment, FavoriteFragmentTag)
+                                commit()
+                            }
+                        }
+                        else->{
+                            Log.d(TAG, "OnTabSelectedListener.onTabSelected.others")
+                        }
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                Log.d(TAG, "OnTabSelectedListener.onTabUnselected")
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                Log.d(TAG, "OnTabSelectedListener.onTabReselected")
+            }
+
+        })
+
+        playTabLayout.addTab(playTabLayout.newTab().setText(tabText[0]), true)
+        playTabLayout.addTab(playTabLayout.newTab().setText(tabText[1]))
+        // playTabLayout.selectTab(playTabLayout.getTabAt(0))
+        /*
+        val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
         playViewPager2.adapter = fragmentAdapter
         Log.d(TAG, "TabLayoutMediator.attach()")
         TabLayoutMediator(playTabLayout, playViewPager2) { tab, position ->
             tab.text = tabText[position]
         }.attach()
+        */
 
         return view
     }

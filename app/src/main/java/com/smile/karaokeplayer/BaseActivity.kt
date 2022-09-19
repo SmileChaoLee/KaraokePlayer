@@ -35,12 +35,13 @@ private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
-        PlaySongs, MyFavoritesFragment.PlayMyFavorites {
+        PlaySongs, MyFavoritesFragment.PlayMyFavorites,
+        BaseFavoriteListActivity.PlayerButtonAction {
 
     private var permissionExternalStorage = false
     private var permissionManageExternalStorage = false
 
-    private lateinit var playerFragment: PlayerBaseViewFragment
+    private var playerFragment: PlayerBaseViewFragment? = null
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
     private lateinit var tablayoutViewLayout: LinearLayout
@@ -74,27 +75,45 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
 
-        playerFragment = getFragment()
-
-        if (intent.extras == null) {
-            Log.d(TAG, "intent.extras is null")
-            tablayoutFragment = TablayoutFragment()
-        } else {
-            Log.d(TAG, "intent.extras is not null")
-        }
-        supportFragmentManager.beginTransaction().apply {
-            add(R.id.basePlayViewLayout, playerFragment, PlayerFragmentTag)
-            tablayoutFragment?.let {
-                add(R.id.tablayoutViewLayout, it, TablayoutFragmentTag)
-                tablayoutViewLayout.visibility = View.GONE
+        if (savedInstanceState == null) {
+            playerFragment = getFragment()
+            if (intent.extras == null) {
+                Log.d(TAG, "intent.extras is null")
+                tablayoutFragment = TablayoutFragment()
+            } else {
+                Log.d(TAG, "intent.extras is not null")
             }
-            commit()
+        } else {
+            playerFragment = supportFragmentManager.findFragmentByTag(PlayerFragmentTag) as PlayerBaseViewFragment
+            Log.d(TAG, "savedInstanceState is not null.playerFragment = $playerFragment")
+            tablayoutFragment = supportFragmentManager.findFragmentByTag(TablayoutFragmentTag) as TablayoutFragment?
+            Log.d(TAG, "savedInstanceState is not null.tablayoutFragment = $tablayoutFragment")
+        }
+
+        supportFragmentManager.beginTransaction().apply {
+            var isReplaced = false
+            tablayoutFragment?.let {
+                if (!it.isInLayout) {
+                    Log.d(TAG, "tablayoutFragment.isInLayout() = false")
+                    replace(R.id.tablayoutViewLayout, it, TablayoutFragmentTag)
+                    tablayoutViewLayout.visibility = View.VISIBLE
+                    isReplaced = true
+                }
+            }
+            playerFragment?.let {
+                if (!it.isInLayout) {
+                    Log.d(TAG, "playerFragment.isInLayout() = false")
+                    replace(R.id.basePlayViewLayout, it, PlayerFragmentTag)
+                    isReplaced = true
+                }
+            }
+            if (isReplaced) commit()
         }
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "onBackPressedDispatcher.handleOnBackPressed")
-                playerFragment.onBackPressed()
+                playerFragment?.onBackPressed()
             }
         })
 
@@ -188,8 +207,8 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     // implementing interface PlaySongs
     override fun playSelectedSongList(songs: ArrayList<SongInfo>) {
         Log.d(TAG, "playSelectedSongList.songs.size = ${songs.size}")
-        playerFragment.mPresenter.playSongList(songs)
-        playerFragment.showPlayerView()
+        playerFragment?.mPresenter?.playSongList(songs)
+        playerFragment?.showPlayerView()
     }
     // Finish implementing interface PlaySongs
 
@@ -200,7 +219,11 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_PORTRAIT")
         }
         if (intent.extras == null) {
-            playerFragment.hidePlayerView()
+            playerFragment?.hidePlayerView()
         }
+    }
+
+    override fun stopCurrentPlaying() {
+        playerFragment?.mPresenter?.stopPlay()
     }
 }

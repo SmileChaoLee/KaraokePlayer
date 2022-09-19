@@ -28,6 +28,10 @@
         app:tabIndicatorColor="@color/red"
         app:tabSelectedTextColor="@color/red"
         app:tabTextAppearance="@style/TabLayoutTextStyle"/>
+    <FrameLayout
+        android:id="@+id/tablayout_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/fragmentsViewPager2"
         android:layout_width="match_parent"
