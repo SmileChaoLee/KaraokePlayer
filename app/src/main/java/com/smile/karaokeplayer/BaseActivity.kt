@@ -75,20 +75,18 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
 
         playerFragment = getFragment()
+
         if (intent.extras == null) {
             Log.d(TAG, "intent.extras is null")
             tablayoutFragment = TablayoutFragment()
         } else {
             Log.d(TAG, "intent.extras is not null")
-            tablayoutViewLayout.visibility = View.GONE
         }
         supportFragmentManager.beginTransaction().apply {
             add(R.id.basePlayViewLayout, playerFragment, PlayerFragmentTag)
-            addToBackStack(PlayerFragmentTag)
             tablayoutFragment?.let {
                 add(R.id.tablayoutViewLayout, it, TablayoutFragmentTag)
-                addToBackStack(TablayoutFragmentTag)
-                tablayoutViewLayout.visibility = View.VISIBLE
+                tablayoutViewLayout.visibility = View.GONE
             }
             commit()
         }

@@ -377,8 +377,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
         } else if (id == R.id.favoriteList) {
-            val favoritesFragment = intentForFavoriteListActivity()
-            startActivity(favoritesFragment)
+            startActivity(intentForFavoriteListActivity())
         } else if (id == R.id.open) {
             selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {

@@ -368,6 +368,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         currentAction = CommonConstants.PlayActionString;
                         Log.d(TAG, "playSongButton.createPlayerActivityIntent");
                         Intent playerActivityIntent = createPlayerActivityIntent();
+                        // Intent playerActivityIntent = new Intent();
+                        // playerActivityIntent.setComponent(getCallingActivity());
                         Bundle extras = new Bundle();
                         extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                         extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
