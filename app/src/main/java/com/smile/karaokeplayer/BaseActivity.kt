@@ -2,15 +2,12 @@ package com.smile.karaokeplayer
 
 import android.Manifest
 import android.app.Activity
-import android.provider.Settings
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.PersistableBundle
+import android.os.*
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -23,9 +20,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import com.smile.karaokeplayer.fragments.MyFavoritesFragment
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
+import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
@@ -35,8 +32,7 @@ private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
-        PlaySongs, MyFavoritesFragment.PlayMyFavorites,
-        BaseFavoriteListActivity.PlayerButtonAction {
+        PlaySongs, PlayMyFavorites {
 
     private var permissionExternalStorage = false
     private var permissionManageExternalStorage = false
@@ -221,9 +217,5 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         if (intent.extras == null) {
             playerFragment?.hidePlayerView()
         }
-    }
-
-    override fun stopCurrentPlaying() {
-        playerFragment?.mPresenter?.stopPlay()
     }
 }

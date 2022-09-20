@@ -1,6 +1,5 @@
 package exoplayer.fragments
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -21,7 +20,6 @@ import com.google.android.gms.cast.framework.CastState
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
-import exoplayer.FavoriteListActivity
 import exoplayer.presenters.ExoPlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter.ExoPlayerPresentView
 
@@ -148,10 +146,6 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
 
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {
         mediaRouteButton.visibility = if (isVisible) View.VISIBLE else View.GONE
-    }
-
-    override fun intentForFavoriteListActivity(): Intent {
-        return Intent(activity, FavoriteListActivity::class.java)
     }
 
     override fun setMenuItemsVisibility() {

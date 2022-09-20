@@ -20,6 +20,7 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FavoriteRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
+import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.models.SongListSQLite
@@ -30,9 +31,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 private const val TAG : String = "MyFavoritesFragment"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
-    interface PlayMyFavorites {
-        fun intentForFavoriteListActivity():Intent
-    }
+
     private lateinit var fragmentView: View
     private var textFontSize = 0f
     private var fontScale = 0f

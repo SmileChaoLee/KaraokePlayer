@@ -1,6 +1,5 @@
 package videoplayer.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -12,7 +11,6 @@ import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import org.videolan.libvlc.util.VLCVideoLayout
 import videoplayer.Presenters.VLCPlayerPresenter
-import videoplayer.FavoriteListActivity
 
 private const val TAG: String = "VLCPlayerFragment"
 
@@ -93,9 +91,6 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
 
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {}
 
-    override fun intentForFavoriteListActivity(): Intent {
-        return Intent(activity, FavoriteListActivity::class.java)
-    }
     override fun setMenuItemsVisibility() {
         val channelMenuItem = mainMenu.findItem(R.id.channel)
         channelMenuItem.isVisible = false

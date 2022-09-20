@@ -37,6 +37,7 @@ import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
+import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
@@ -58,7 +59,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     lateinit var mPresenter: BasePlayerPresenter
-    private lateinit var playBaseFragmentFunc: PlayBaseFragmentFunc
+    private var playMyFavorites: PlayMyFavorites? = null
+    private var playBaseFragmentFunc: PlayBaseFragmentFunc? = null
+    private lateinit var favoriteListLauncher: ActivityResultLauncher<Intent>
     private lateinit var selectFilesToPlayLauncher: ActivityResultLauncher<Intent>
     protected lateinit var fragmentView: View
 
@@ -146,7 +149,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     abstract fun getPlayerBasePresenter(): BasePlayerPresenter?
     abstract fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int)
     abstract fun setMediaRouteButtonVisible(isVisible: Boolean)
-    abstract fun intentForFavoriteListActivity(): Intent?
     abstract fun setMenuItemsVisibility()
     abstract fun setSwitchToVocalImageButtonVisibility()
 
@@ -175,8 +177,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             return
         }
 
-        playBaseFragmentFunc = (activity as PlayBaseFragmentFunc)
-        Log.d(TAG, "onCreate.playBaseFragmentFunc = $playBaseFragmentFunc")
+        activity?.let {
+            if (it is PlayMyFavorites) playMyFavorites = it
+            Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
+            if (it is PlayBaseFragmentFunc) playBaseFragmentFunc = it
+            Log.d(TAG, "onCreate.playBaseFragmentFunc = $playBaseFragmentFunc")
+        }
 
         mPresenter = presenter
         textFontSize = mPresenter.textFontSize
@@ -186,8 +192,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
 
-        selectFilesToPlayLauncher = registerForActivityResult(
-                StartActivityForResult()) { result: ActivityResult? ->
+        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {}
+        selectFilesToPlayLauncher = registerForActivityResult(StartActivityForResult()) {
+            result: ActivityResult? ->
             Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
             result?.let {
                 Log.d(TAG, "selectFilesToPlayLauncher.result = $it")
@@ -377,7 +384,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
         } else if (id == R.id.favoriteList) {
-            startActivity(intentForFavoriteListActivity())
+            // startActivity(playMyFavorites?.intentForFavoriteListActivity())
+            // has to be startActivityForResult
+            favoriteListLauncher.launch(playMyFavorites?.intentForFavoriteListActivity())
         } else if (id == R.id.open) {
             selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {
@@ -525,7 +534,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.INVISIBLE
         controllerTimerHandler.removeCallbacksAndMessages(null) // cancel the timer
-        playBaseFragmentFunc.baseHidePlayerView()
+        playBaseFragmentFunc?.baseHidePlayerView()
         mPresenter.playingParam.isPlayerViewVisible = false
     }
     override fun showPlayerView() {
@@ -541,7 +550,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setImageButtonStatus()
         // must be after statement of playerViewLinearLayout.visibility = View.VISIBLE
         setTimerToHideSupportAndAudioController()   // reset the timer
-        playBaseFragmentFunc.baseShowPlayerView()
+        playBaseFragmentFunc?.baseShowPlayerView()
         mPresenter.playingParam.isPlayerViewVisible = true
     }
 

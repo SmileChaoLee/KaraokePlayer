@@ -83,6 +83,11 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         exitFavoriteListButton.setOnClickListener(v -> returnToPrevious());
 
+        Intent callingIntent = getIntent();
+        Bundle arguments = null;
+        if (callingIntent != null) {
+            arguments = callingIntent.getExtras();
+        }
         if (savedInstanceState != null) {
             Log.d(TAG, "onCreate.savedInstanceState is not null");
             currentAction = savedInstanceState.getString(CrudActionState);
@@ -93,7 +98,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                 mFavoriteList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState);
         } else {
-            Bundle arguments = getIntent().getExtras();
             if (arguments == null) {
                 Log.d(TAG, "onCreate.savedInstanceState is null, arguments is null");
                 currentAction = CommonConstants.AddActionString;
@@ -107,6 +111,11 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                 else
                     mFavoriteList = (ArrayList<SongInfo>) arguments
                             .getSerializable(PlayerConstants.MyFavoriteListState);
+                if (mFavoriteList == null) {
+                    // for all favorites
+                    currentAction = CommonConstants.AddActionString;
+                    mFavoriteList = songListSQLite.readPlayList();
+                }
             }
         }
 
@@ -364,18 +373,16 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                     // play this item (media file)
                     Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
                     Log.d(TAG, "playSongButton.callingIntent = " + callingIntent);
-                    if (callingIntent != null) {
-                        currentAction = CommonConstants.PlayActionString;
-                        Log.d(TAG, "playSongButton.createPlayerActivityIntent");
-                        Intent playerActivityIntent = createPlayerActivityIntent();
-                        // Intent playerActivityIntent = new Intent();
-                        // playerActivityIntent.setComponent(getCallingActivity());
-                        Bundle extras = new Bundle();
-                        extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                        extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
-                        playerActivityIntent.putExtras(extras);
-                        startActivity(playerActivityIntent);
-                    }
+                    currentAction = CommonConstants.PlayActionString;
+                    Intent playerActivityIntent = createPlayerActivityIntent();
+                    // getCallingActivity() only works from startActivityForResult
+                    // Intent playerActivityIntent = new Intent();
+                    // playerActivityIntent.setComponent(getCallingActivity());
+                    Bundle extras = new Bundle();
+                    extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+                    extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
+                    playerActivityIntent.putExtras(extras);
+                    startActivity(playerActivityIntent);
                 });
             }
 

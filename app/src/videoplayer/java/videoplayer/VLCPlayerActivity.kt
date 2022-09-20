@@ -16,9 +16,9 @@ class VLCPlayerActivity : BaseActivity() {
 
     override fun getFragment() = VLCPlayerFragment()
 
-    // implementing interface MyFavoritesFragment.PlayMyFavorites
+    // implementing interface PlayMyFavorites
     override fun intentForFavoriteListActivity(): Intent {
         return Intent(this, FavoriteListActivity::class.java)
     }
-    // Finishes implementing interface MyFavoritesFragment.PlayMyFavorites
+    // Finishes implementing interface PlayMyFavorites
 }

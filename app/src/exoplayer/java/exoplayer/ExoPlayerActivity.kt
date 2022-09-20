@@ -16,9 +16,9 @@ class ExoPlayerActivity : BaseActivity() {
 
     override fun getFragment() = ExoPlayerFragment()
 
-    // implementing interface MyFavoritesFragment.PlayMyFavorites
+    // implementing interface PlayMyFavorites
     override fun intentForFavoriteListActivity(): Intent {
         return Intent(this, FavoriteListActivity::class.java)
     }
-    // Finishes implementing interface MyFavoritesFragment.PlayMyFavorites
+    // Finishes implementing interface PlayMyFavorites
 }
