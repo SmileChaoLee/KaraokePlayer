@@ -217,17 +217,19 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
 
     private fun searchFavorites() {
         Log.d(TAG, "searchFavorites() is called")
-        favoriteList.clear()
+        val tempList: ArrayList<SongInfo> = ArrayList()
         activity?.let {
             DatabaseAccessUtil.readSavedSongList(it, false)?.let {sqlIt ->
                 for (element in sqlIt) {
                     element.apply {
                         included = "0"
-                        favoriteList.add(this)
+                        tempList.add(this)
                     }
                 }
             }
         }
+        favoriteList.clear()
+        favoriteList.addAll(tempList)
         myRecyclerViewAdapter.notifyDataSetChanged()
     }
 

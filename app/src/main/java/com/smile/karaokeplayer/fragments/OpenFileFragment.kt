@@ -219,14 +219,14 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
 
     private fun searchCurrentFolder() {
         Log.d(TAG, "searchCurrentFolder() is called")
-        fileList.clear()
+        val tempList: ArrayList<FileDescription> = ArrayList()
         currentPath.let {
             if (it == "/") {
                 for (element in rootPathSet) {
                     Log.d(TAG, "searchCurrentFolder.element = $element")
                     FileDescription(File(element), false).apply {
                         Log.d(TAG, "searchCurrentFolder. = ${file.path}, ${file.absolutePath}")
-                        fileList.add(this)
+                        tempList.add(this)
                     }
                 }
             } else {
@@ -238,13 +238,15 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                         if (f.canRead()) {
                             Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
                                     "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
-                            fileList.add(FileDescription(f, false))
+                            tempList.add(FileDescription(f, false))
                         }
                     }
                 }
             }
         }
         pathTextView.text = currentPath
+        fileList.clear()
+        fileList.addAll(tempList)
         myRecyclerViewAdapter.notifyDataSetChanged()
     }
 
