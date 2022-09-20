@@ -339,7 +339,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
             final Button playSongButton = view.findViewById(R.id.playSongButton);
             ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
-            if (!BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);    // for testing
+            // the following is still needed to be test (have to reduce the usage of memory)
+            if (!com.smile.karaokeplayer.BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);
 
             int favoriteListSize = 0;
             if (favoriteList != null) {

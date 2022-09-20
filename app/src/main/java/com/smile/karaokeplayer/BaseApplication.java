@@ -66,7 +66,7 @@ public abstract class BaseApplication extends MultiDexApplication {
         audioChannelReverseMap.put(stereoChannelString, CommonConstants.StereoChannel);
 
         // for debug mode and for facebook
-        if (BuildConfig.DEBUG) {
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
             testString = "IMG_16_9_APP_INSTALL#";
         }
 

@@ -31,6 +31,7 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.ads.nativetemplates.BuildConfig
 import com.google.android.ads.nativetemplates.TemplateView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.OpenFileActivity
@@ -192,7 +193,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
 
-        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {}
+        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {
+            playMyFavorites?.playWhenAfterEditFavorites()
+        }
         selectFilesToPlayLauncher = registerForActivityResult(StartActivityForResult()) {
             result: ActivityResult? ->
             Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
@@ -384,8 +387,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
         } else if (id == R.id.favoriteList) {
-            // startActivity(playMyFavorites?.intentForFavoriteListActivity())
-            // has to be startActivityForResult
+            playMyFavorites?.pauseWhenEditFavorites()
             favoriteListLauncher.launch(playMyFavorites?.intentForFavoriteListActivity())
         } else if (id == R.id.open) {
             selectFilesToOpen()

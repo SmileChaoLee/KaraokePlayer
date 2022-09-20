@@ -35,8 +35,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     private lateinit var fragmentView: View
     private var textFontSize = 0f
     private var fontScale = 0f
-    private lateinit var playSongs: PlaySongs
-    private lateinit var playMyFavorites: PlayMyFavorites
+    private var playSongs: PlaySongs? = null
+    private var playMyFavorites: PlayMyFavorites? = null
     private lateinit var myListRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter
     private lateinit var favoriteList : ArrayList<SongInfo>
@@ -55,17 +55,22 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 BaseApplication.FontSize_Scale_Type,0.0f)
         fontScale = ScreenUtil.suitableFontScale(activity, ScreenUtil.FontSize_Pixel_Type, 0.0f)
 
-        playSongs = (activity as PlaySongs)
-        Log.d(TAG, "onCreate.playSongs = $playSongs")
-        playMyFavorites = (activity as PlayMyFavorites)
-        Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
+        activity?.let {
+            if (it is PlaySongs) playSongs = it
+            Log.d(TAG, "onCreate.playSongs = $playSongs")
+            if (it is PlayMyFavorites) playMyFavorites = it
+            Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
+        }
 
         favoriteList = ArrayList()
 
-        editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()
-        ) { searchFavorites() } // update the UI }
+        editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            playMyFavorites?.playWhenAfterEditFavorites()
+            searchFavorites()
+        } // update the UI }
         selectSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
                 ActivityResultCallback { result: ActivityResult? ->
+                    playMyFavorites?.playWhenAfterEditFavorites()
                     if (result == null) return@ActivityResultCallback
                     if (result.resultCode == Activity.RESULT_OK) {
                         result.data?.let {
@@ -149,7 +154,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                             activity, getString(R.string.noFilesSelectedString), textFontSize,
                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                 } else {
-                    playSongs.playSelectedSongList(songs)
+                    playSongs?.playSelectedSongList(songs)
                 }
             }
             val editButton: ImageButton = it.findViewById(R.id.favoriteEditButton)
@@ -157,13 +162,14 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             editButton.setOnClickListener {
-                val favoriteIntent = playMyFavorites.intentForFavoriteListActivity()
+                val favoriteIntent = playMyFavorites?.intentForFavoriteListActivity()
                 ArrayList<SongInfo>().apply {
                     for (element in favoriteList) {
                         if (element.included == "1") add(element)
                     }
                     if (size > 0) {
-                        favoriteIntent.putExtra(PlayerConstants.MyFavoriteListState, this)
+                        playMyFavorites?.pauseWhenEditFavorites()
+                        favoriteIntent?.putExtra(PlayerConstants.MyFavoriteListState, this)
                         editSongsActivityLauncher.launch(favoriteIntent)
                     } else {
                         ScreenUtil.showToast(
@@ -179,6 +185,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             addButton.setOnClickListener {
                 activity?.let { activityIt ->
                     Intent(activityIt, OpenFileActivity::class.java).apply {
+                        playMyFavorites?.pauseWhenEditFavorites()
                         putExtra(CommonConstants.IsButtonForPlay, false)
                         selectSongsActivityLauncher.launch(this)
                     }

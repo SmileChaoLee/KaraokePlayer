@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -41,6 +42,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
     private lateinit var tablayoutViewLayout: LinearLayout
+    private var isPlayingToPause: Boolean = false
 
     abstract fun getFragment() : PlayerBaseViewFragment
 
@@ -207,6 +209,24 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         playerFragment?.showPlayerView()
     }
     // Finish implementing interface PlaySongs
+
+    // implementing interface PlayMyFavorites
+    override fun pauseWhenEditFavorites() {
+        isPlayingToPause = false
+        playerFragment?.mPresenter?.let {
+            if (it.playingParam?.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
+                it.pausePlay()
+                isPlayingToPause = true
+            }
+        }
+    }
+    override fun playWhenAfterEditFavorites() {
+        if (isPlayingToPause) {
+            playerFragment?.mPresenter?.startPlay()
+            isPlayingToPause = false
+        }
+    }
+    // Finishes implementing interface PlayMyFavorites
 
     private fun createViewDependingOnOrientation(orientation : Int) {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
