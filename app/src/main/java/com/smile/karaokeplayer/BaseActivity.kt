@@ -32,6 +32,7 @@ private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
+private const val IsPlayingToPause = "IsPlayingToPause"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
         PlaySongs, PlayMyFavorites {
 
@@ -82,6 +83,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 Log.d(TAG, "intent.extras is not null")
             }
         } else {
+            isPlayingToPause = savedInstanceState.getBoolean(IsPlayingToPause, false)
             playerFragment = supportFragmentManager.findFragmentByTag(PlayerFragmentTag) as PlayerBaseViewFragment
             Log.d(TAG, "savedInstanceState is not null.playerFragment = $playerFragment")
             tablayoutFragment = supportFragmentManager.findFragmentByTag(TablayoutFragmentTag) as TablayoutFragment?
@@ -178,6 +180,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         Log.d(TAG, "onSaveInstanceState() is called")
+        outState.putBoolean(IsPlayingToPause, isPlayingToPause)
         super.onSaveInstanceState(outState, outPersistentState)
     }
 
@@ -237,5 +240,6 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         if (intent.extras == null) {
             playerFragment?.hidePlayerView()
         }
+        playWhenAfterEditFavorites()
     }
 }
