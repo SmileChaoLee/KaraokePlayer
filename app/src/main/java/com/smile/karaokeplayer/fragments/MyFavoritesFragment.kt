@@ -162,15 +162,18 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             editButton.setOnClickListener {
-                val favoriteIntent = playMyFavorites?.intentForFavoriteListActivity()
-                ArrayList<SongInfo>().apply {
+                ArrayList<SongInfo>().also {listIt ->
                     for (element in favoriteList) {
-                        if (element.included == "1") add(element)
+                        if (element.included == "1") listIt.add(element)
                     }
-                    if (size > 0) {
-                        playMyFavorites?.pauseWhenEditFavorites()
-                        favoriteIntent?.putExtra(PlayerConstants.MyFavoriteListState, this)
-                        editSongsActivityLauncher.launch(favoriteIntent)
+                    if (listIt.size > 0) {
+                        playMyFavorites?.let {playIt ->
+                            playIt.pauseWhenEditFavorites()
+                            playIt.intentForFavoriteListActivity().apply {
+                                putExtra(PlayerConstants.MyFavoriteListState, listIt)
+                                editSongsActivityLauncher.launch(this)
+                            }
+                        }
                     } else {
                         ScreenUtil.showToast(
                                 activity, getString(R.string.noFilesSelectedString), textFontSize,
@@ -184,8 +187,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.height = buttonWidth
             addButton.setOnClickListener {
                 activity?.let { activityIt ->
+                    playMyFavorites?.pauseWhenEditFavorites()
                     Intent(activityIt, OpenFileActivity::class.java).apply {
-                        playMyFavorites?.pauseWhenEditFavorites()
                         putExtra(CommonConstants.IsButtonForPlay, false)
                         selectSongsActivityLauncher.launch(this)
                     }

@@ -31,7 +31,6 @@ import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.ads.nativetemplates.BuildConfig
 import com.google.android.ads.nativetemplates.TemplateView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.OpenFileActivity

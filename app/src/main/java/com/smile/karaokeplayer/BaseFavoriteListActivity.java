@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.activity.OnBackPressedCallback;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
@@ -372,18 +373,22 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
                 playSongButton.setOnClickListener(v -> {
                     // play this item (media file)
-                    Intent callingIntent = getIntent(); // from ExoPlayActivity or some Activity (like VLC)
-                    Log.d(TAG, "playSongButton.callingIntent = " + callingIntent);
                     currentAction = CommonConstants.PlayActionString;
-                    Intent playerActivityIntent = createPlayerActivityIntent();
+                    /*
                     // getCallingActivity() only works from startActivityForResult
-                    // Intent playerActivityIntent = new Intent();
-                    // playerActivityIntent.setComponent(getCallingActivity());
+                    Intent playerActivityIntent = new Intent();
+                    playerActivityIntent.setComponent(getCallingActivity());
+                    */
+                    Intent playerActivityIntent = createPlayerActivityIntent();
                     Bundle extras = new Bundle();
                     extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                     extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
                     playerActivityIntent.putExtras(extras);
                     startActivity(playerActivityIntent);
+                    // close Player Activity (ExoPlayerActivity or VLCPlayerActivity) using Broadcast
+                    LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+                    Intent bIntent = new Intent(PlayerConstants.ClosePlayerActivity);
+                    broadcastManager.sendBroadcast(bIntent);
                 });
             }
 

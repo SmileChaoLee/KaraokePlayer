@@ -2,7 +2,10 @@ package com.smile.karaokeplayer
 
 import android.Manifest
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -21,6 +24,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
@@ -44,6 +49,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     private var tablayoutFragment : TablayoutFragment? = null
     private lateinit var tablayoutViewLayout: LinearLayout
     private var isPlayingToPause: Boolean = false
+    // the declaration of baseReceiver must be lateinit var.
+    // Not var and BroadcastReceiver? = null
+    private lateinit var baseReceiver: BroadcastReceiver
 
     abstract fun getFragment() : PlayerBaseViewFragment
 
@@ -108,6 +116,24 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 }
             }
             if (isReplaced) commit()
+        }
+
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.d(TAG, "BroadcastReceiver.onReceive")
+                intent?.action?.let {
+                    if (it == PlayerConstants.ClosePlayerActivity) {
+                        // finishAffinity()
+                    }
+                }
+            }
+        }.also { baseReceiver = it }
+
+        LocalBroadcastManager.getInstance(this).apply {
+            Log.d(TAG, "LocalBroadcastManager.registerReceiver")
+            registerReceiver(baseReceiver, IntentFilter().apply {
+                addAction(PlayerConstants.ClosePlayerActivity)
+            })
         }
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
@@ -191,6 +217,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onDestroy() {
         Log.d(TAG, "onDestroy() is called.")
+        LocalBroadcastManager.getInstance(this).apply {
+            unregisterReceiver(baseReceiver)
+        }
         super.onDestroy()
     }
 
