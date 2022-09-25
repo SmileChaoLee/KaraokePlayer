@@ -41,11 +41,12 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
         }
 
         // must be after super.onCreate(savedInstanceState)
+        /* moved to onViewCreated() on 2022-09-25
         presenter.initExoPlayerAndCastPlayer() // must be before volumeSeekBar settings
         presenter.initMediaSessionCompat()
         exoPlayer = presenter.exoPlayer
         castPlayer = presenter.castPlayer
-
+        */
         Log.d(TAG, "onCreate() is finished")
     }
 
@@ -66,16 +67,17 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
             playerViewLinearLayout.addView(playerView)
 
             playerView.visibility = View.VISIBLE
-            playerView.player = exoPlayer
             playerView.useArtwork = true
             playerView.useController = false
-            playerView.requestFocus()
+
+            // must be after super.onCreate(savedInstanceState)
+            setExoPlayerAndCastPlayer()
         }
         val currentProgress = presenter.currentProgressForVolumeSeekBar
         volumeSeekBar.setProgressAndThumb(currentProgress)
         presenter.playTheSongThatWasPlayedBeforeActivityCreated()
 
-        // mPresenter.addBaseCastStateListener();   // moved to onResume() on 2021-03-26
+        // presenter.addBaseCastStateListener();   // moved to onResume() on 2021-03-26
         castPlayer?.let {
             Log.d(TAG, "castPlayer != null && exoPlayer != null")
             presenter.currentPlayer =
@@ -101,7 +103,21 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d(TAG, "onDestroy() is called.")
+        Log.d(TAG, "onDestroy()")
+        releaseExoPlayerAndCastPlayer()
+    }
+
+    private fun setExoPlayerAndCastPlayer() {
+        presenter.initExoPlayerAndCastPlayer() // must be before volumeSeekBar settings
+        presenter.initMediaSessionCompat()
+        exoPlayer = presenter.exoPlayer
+        castPlayer = presenter.castPlayer
+        playerView.player = exoPlayer
+        playerView.requestFocus()
+    }
+
+    private fun releaseExoPlayerAndCastPlayer() {
+        Log.d(TAG, "releaseExoPlayerAndCastPlayer()")
         presenter.releaseMediaSessionCompat()
         presenter.releaseExoPlayerAndCastPlayer()
         playerView.player = null
@@ -119,7 +135,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
     // end of implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
 
     // implement abstract methods of super class
-    override fun getPlayerBasePresenter(): BasePlayerPresenter {
+    override fun getPlayerPresenter(): ExoPlayerPresenter {
         return presenter
     }
 

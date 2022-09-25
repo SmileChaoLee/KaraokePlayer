@@ -4,6 +4,4 @@ import android.content.Intent
 
 interface PlayMyFavorites {
     fun intentForFavoriteListActivity(): Intent
-    fun pauseWhenEditFavorites()
-    fun playWhenAfterEditFavorites()
 }

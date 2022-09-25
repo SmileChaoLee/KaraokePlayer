@@ -146,7 +146,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private var interstitialAd: ShowInterstitial? = null
 
-    abstract fun getPlayerBasePresenter(): BasePlayerPresenter?
+    abstract fun getPlayerPresenter(): BasePlayerPresenter?
     abstract fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int)
     abstract fun setMediaRouteButtonVisible(isVisible: Boolean)
     abstract fun setMenuItemsVisibility()
@@ -170,7 +170,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     (it.application as BaseApplication).adMobInterstitial)
         }
 
-        val presenter = getPlayerBasePresenter()
+        val presenter = getPlayerPresenter()
         if (presenter == null) {
             Log.d(TAG, "presenter is null so exit activity.")
             returnToPrevious()
@@ -192,9 +192,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
 
-        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {
-            playMyFavorites?.playWhenAfterEditFavorites()
-        }
+        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {}
         selectFilesToPlayLauncher = registerForActivityResult(StartActivityForResult()) {
             result: ActivityResult? ->
             Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
@@ -386,7 +384,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
         } else if (id == R.id.favoriteList) {
-            playMyFavorites?.pauseWhenEditFavorites()
             favoriteListLauncher.launch(playMyFavorites?.intentForFavoriteListActivity())
         } else if (id == R.id.open) {
             selectFilesToOpen()

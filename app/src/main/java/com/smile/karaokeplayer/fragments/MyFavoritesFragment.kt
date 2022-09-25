@@ -65,12 +65,10 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         favoriteList = ArrayList()
 
         editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            playMyFavorites?.playWhenAfterEditFavorites()
             searchFavorites()
         } // update the UI }
         selectSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
                 ActivityResultCallback { result: ActivityResult? ->
-                    playMyFavorites?.playWhenAfterEditFavorites()
                     if (result == null) return@ActivityResultCallback
                     if (result.resultCode == Activity.RESULT_OK) {
                         result.data?.let {
@@ -168,7 +166,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     }
                     if (listIt.size > 0) {
                         playMyFavorites?.let {playIt ->
-                            playIt.pauseWhenEditFavorites()
                             playIt.intentForFavoriteListActivity().apply {
                                 putExtra(PlayerConstants.MyFavoriteListState, listIt)
                                 editSongsActivityLauncher.launch(this)
@@ -187,7 +184,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.height = buttonWidth
             addButton.setOnClickListener {
                 activity?.let { activityIt ->
-                    playMyFavorites?.pauseWhenEditFavorites()
                     Intent(activityIt, OpenFileActivity::class.java).apply {
                         putExtra(CommonConstants.IsButtonForPlay, false)
                         selectSongsActivityLauncher.launch(this)

@@ -208,8 +208,8 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         if (castPlayer != null) {
             castPlayer.setSessionAvailabilityListener(null);
             castPlayer.release();
+            castPlayer = null;
         }
-
     }
 
     public ExoPlayer getExoPlayer() {
