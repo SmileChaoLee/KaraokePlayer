@@ -238,7 +238,11 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             myRecyclerViewAdapter = FavoriteRecyclerViewAdapter(
                     it, this, textFontSize, favoriteList)
             myListRecyclerView.adapter = myRecyclerViewAdapter
-            myListRecyclerView.layoutManager = LinearLayoutManager(context)
+            myListRecyclerView.layoutManager = object : LinearLayoutManager(context) {
+                override fun isAutoMeasureEnabled(): Boolean {
+                    return false
+                }
+            }
         }
     }
 }

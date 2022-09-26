@@ -256,7 +256,11 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             myRecyclerViewAdapter = OpenFilesRecyclerViewAdapter(
                 it, this, textFontSize, fileList)
             filesRecyclerView.adapter = myRecyclerViewAdapter
-            filesRecyclerView.layoutManager = LinearLayoutManager(context)
+            filesRecyclerView.layoutManager = object : LinearLayoutManager(context) {
+                override fun isAutoMeasureEnabled(): Boolean {
+                    return false
+                }
+            }
         }
     }
 }

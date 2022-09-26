@@ -26,5 +26,6 @@ object PlayerConstants {
 
     const val SongListState: String = "SongList"
     const val MyFavoriteListState = "MyFavoriteList"
-    const val ClosePlayerActivity = "ClosePlayerActivity"
+    const val RemoveTabFragment = "RemoveTabFragment"
+    const val ReplaceTabFragment = "ReplaceTabFragment"
 }
