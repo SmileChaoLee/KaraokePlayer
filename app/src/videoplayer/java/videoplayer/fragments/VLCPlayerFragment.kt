@@ -8,7 +8,6 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
-import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import org.videolan.libvlc.util.VLCVideoLayout
 import videoplayer.Presenters.VLCPlayerPresenter
 
@@ -57,7 +56,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
 
         val currentProgress = presenter.currentProgressForVolumeSeekBar
         volumeSeekBar.setProgressAndThumb(currentProgress)
-        presenter.playTheSongThatWasPlayedBeforeActivityCreated()
+        presenter.playSongPlayedBeforeActivityCreated()
 
         Log.d(TAG, "onViewCreated() is finished.")
     }
@@ -83,7 +82,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
     }
 
     // implement abstract methods of super class
-    override fun getPlayerBasePresenter(): BasePlayerPresenter {
+    override fun getPlayerPresenter() : VLCPlayerPresenter {
         return presenter
     }
 

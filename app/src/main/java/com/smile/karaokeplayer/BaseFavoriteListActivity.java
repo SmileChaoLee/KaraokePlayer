@@ -52,7 +52,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
     public abstract Intent createIntentFromSongDataActivity();
     public abstract void setAudioLinearLayoutVisibility(LinearLayout linearLayout);
-    public abstract Intent createPlayerActivityIntent();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -128,8 +127,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
         ListView favoriteListListView = findViewById(R.id.favoriteListListView);
         favoriteListListView.setAdapter(favoriteListAdapter);
-        favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {
-        });
+        favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {});
 
         selectOneSongLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -180,10 +178,9 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     }
 
     private void returnToPrevious() {
+        Log.d(TAG, "returnToPrevious()");
         interstitialAd.new ShowAdThread().startShowAd();
-        Intent returnIntent = new Intent();
-        setResult(Activity.RESULT_OK, returnIntent);    // can bundle some data to previous activity
-        // setResult(Activity.RESULT_OK);   // no bundle data
+        setResult(Activity.RESULT_OK);   // no bundle data
         finish();
     }
 
@@ -341,7 +338,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
             final Button playSongButton = view.findViewById(R.id.playSongButton);
             ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
             // the following is still needed to be test (have to reduce the usage of memory)
-            if (!com.smile.karaokeplayer.BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);
+            // if (!com.smile.karaokeplayer.BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);
 
             int favoriteListSize = 0;
             if (favoriteList != null) {
@@ -378,16 +375,19 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                     // getCallingActivity() only works from startActivityForResult
                     Intent playerActivityIntent = new Intent();
                     playerActivityIntent.setComponent(getCallingActivity());
-                    */
-                    Intent playerActivityIntent = createPlayerActivityIntent();
+                    playerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     Bundle extras = new Bundle();
                     extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
                     extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
                     playerActivityIntent.putExtras(extras);
-                    startActivity(playerActivityIntent);
-                    // close Player Activity (ExoPlayerActivity or VLCPlayerActivity) using Broadcast
+                    playSongLauncher.launch(playerActivityIntent);
+                    */
                     LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
-                    Intent bIntent = new Intent(PlayerConstants.ClosePlayerActivity);
+                    Intent bIntent = new Intent(PlayerConstants.PlaySingleSongAction);
+                    Bundle extras = new Bundle();
+                    extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+                    extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
+                    bIntent.putExtras(extras);
                     broadcastManager.sendBroadcast(bIntent);
                 });
             }

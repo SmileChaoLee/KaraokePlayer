@@ -19,7 +19,6 @@ import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastState
 import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.R
-import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter.ExoPlayerPresentView
 
@@ -75,7 +74,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
         }
         val currentProgress = presenter.currentProgressForVolumeSeekBar
         volumeSeekBar.setProgressAndThumb(currentProgress)
-        presenter.playTheSongThatWasPlayedBeforeActivityCreated()
+        presenter.playSongPlayedBeforeActivityCreated()
 
         // presenter.addBaseCastStateListener();   // moved to onResume() on 2021-03-26
         castPlayer?.let {
@@ -135,7 +134,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
     // end of implementing methods of ExoPlayerPresenter.ExoPlayerPresentView
 
     // implement abstract methods of super class
-    override fun getPlayerPresenter(): ExoPlayerPresenter {
+    override fun getPlayerPresenter() : ExoPlayerPresenter {
         return presenter
     }
 

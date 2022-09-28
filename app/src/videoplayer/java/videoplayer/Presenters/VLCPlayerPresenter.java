@@ -66,12 +66,14 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         mActivity.setVolumeControlStream(mStreamType);
     }
 
+    /*
     public ArrayList<Integer> getAudioTrackIndicesList() {
         return audioTrackIndicesList;
     }
     public void setAudioTrackIndicesList(ArrayList<Integer> audioTrackIndicesList) {
         this.audioTrackIndicesList = audioTrackIndicesList;
     }
+    */
 
     public BasePresentView getPresentView() {
         return presentView;
@@ -139,6 +141,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState, ArrayList.class);
             } else audioTrackIndicesList = (ArrayList<Integer>)savedInstanceState.getSerializable(PlayerConstants.AudioTrackIndicesListState);
+            if (audioTrackIndicesList == null) audioTrackIndicesList = new ArrayList<>();
         }
     }
 

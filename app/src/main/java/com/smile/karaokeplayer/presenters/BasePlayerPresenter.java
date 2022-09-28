@@ -11,7 +11,6 @@ import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
-import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -210,7 +209,8 @@ public abstract class BasePlayerPresenter {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState,Uri.class);
             } else mediaUri = savedInstanceState.getParcelable(PlayerConstants.MediaUriState);
-            if (Build.VERSION.SDK_INT >= 33) {
+            Log.d(TAG, "initializeVariables.mediaUri = " + mediaUri);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters.class);
             } else playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState);
             Log.d(TAG, "initializeVariables.playingParam = " + playingParam);
@@ -226,7 +226,7 @@ public abstract class BasePlayerPresenter {
         setOrientationStatus(playingParam.getOrientationStatus());
     }
 
-    public void onDurationSeekBarProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+    public void onDurationSeekBarProgressChanged(int progress, boolean fromUser) {
         if (!isSeekable()) {
             return;
         }
@@ -480,12 +480,12 @@ public abstract class BasePlayerPresenter {
         startAutoPlay(false);    // go to next round
     }
 
-    public void playTheSongThatWasPlayedBeforeActivityCreated() {
-        Log.d(TAG, "playTheSongThatWasPlayedBeforeActivityCreated");
+    public void playSongPlayedBeforeActivityCreated() {
+        Log.d(TAG, "playSongPlayedBeforeActivityCreated.isPlaySingleSong = " + playingParam.isPlaySingleSong());
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
                 // called by SongListActivity
-                Log.d(TAG, "singleSongInfo = " + singleSongInfo);
+                Log.d(TAG, "playSongPlayedBeforeActivityCreated.singleSongInfo = " + singleSongInfo);
                 if (singleSongInfo != null) {
                     playingParam.setAutoPlay(false);
                     // added on 2020-12-08
@@ -495,10 +495,13 @@ public abstract class BasePlayerPresenter {
                     singleSongInfo = new SongInfo();    // reset for cycle playing
                     autoPlaySongList();
                 }
+            } else {
+                onDurationSeekBarProgressChanged(0, true);
+                mPresentView.update_Player_duration_seekbar_progress(0);
             }
         } else {
             int playbackState = playingParam.getCurrentPlaybackState();
-            Log.d(TAG, "playTheSongThatWasPlayedBeforeActivityCreated.playingParam.getCurrentPlaybackState() = " + playbackState);
+            Log.d(TAG, "playSongPlayedBeforeActivityCreated.playingParam.getCurrentPlaybackState() = " + playbackState);
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
                 playMediaFromUri(mediaUri);
             }
@@ -598,8 +601,6 @@ public abstract class BasePlayerPresenter {
         } else {
             Log.d(TAG, "replayMedia().playMediaFromUri(mediaUri)");
             // song was stopped by user
-            // mediaTransportControls.prepare();   // prepare and play
-            // Log.d(TAG, "replayMedia()--> mediaTransportControls.prepare().");
             playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
             playMediaFromUri(mediaUri);
         }
@@ -718,12 +719,6 @@ public abstract class BasePlayerPresenter {
         }
         mediaTransportControls = null;
     }
-
-    /*
-    public MediaControllerCompat.TransportControls getMediaTransportControls() {
-        return mediaTransportControls;
-    }
-    */
 
     public void saveInstanceState(@NonNull Bundle outState) {
         outState.putInt(PlayerConstants.NumberOfVideoTracksState, numberOfVideoTracks);

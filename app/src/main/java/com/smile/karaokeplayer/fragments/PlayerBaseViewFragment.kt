@@ -56,6 +56,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     interface PlayBaseFragmentFunc {
         fun baseHidePlayerView()
         fun baseShowPlayerView()
+        fun returnToPrevious(isSingleSong : Boolean)
     }
 
     lateinit var mPresenter: BasePlayerPresenter
@@ -133,12 +134,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             if (it.isMediaPrepared) {
                 Log.d(TAG, "controllerTimerRunnable.playingParam.isMediaPrepared")
                 if (supportToolbar.visibility == View.VISIBLE) {
-                    Log.d(TAG, "controllerTimerRunnable.hideSupportToolbarAndAudioController")
                     // hide supportToolbar
                     hideSupportToolbarAndAudioController()
                 }
             } else {
-                Log.d(TAG, "controllerTimerRunnable.showSupportToolbarAndAudioController")
                 showSupportToolbarAndAudioController()
             }
         }
@@ -173,7 +172,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         val presenter = getPlayerPresenter()
         if (presenter == null) {
             Log.d(TAG, "presenter is null so exit activity.")
-            returnToPrevious()
+            playBaseFragmentFunc?.returnToPrevious(false)
             return
         }
 
@@ -192,7 +191,9 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
 
-        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {}
+        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {
+            playMyFavorites?.restorePlayingState()
+        }
         selectFilesToPlayLauncher = registerForActivityResult(StartActivityForResult()) {
             result: ActivityResult? ->
             Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
@@ -354,21 +355,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         rightChannelMenuItem = mainMenu.findItem(R.id.rightChannel)
         stereoChannelMenuItem = mainMenu.findItem(R.id.stereoChannel)
 
-        mPresenter.playingParam.let {
-            if (it.isPlaySingleSong) {
-                autoPlayMenuItem.isVisible = false
-                val favoriteListMenuItem = mainMenu.findItem(R.id.favoriteList)
-                favoriteListMenuItem.isVisible = false
-                openMenuItem.isVisible = false
-                audioMenuItem.isVisible = false
-                audioTrackMenuItem.isVisible = false
-                val channelMenuItem = mainMenu.findItem(R.id.channel)
-                channelMenuItem.isVisible = false
-                val privacyPolicyMenuItem = mainMenu.findItem(R.id.privacyPolicy)
-                privacyPolicyMenuItem.isVisible = false
-            }
-        }
-        setMenuItemsVisibility() // abstract method
+        setMainMenu()
 
         return super.onCreateOptionsMenu(menu, inflater)
     }
@@ -384,7 +371,13 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
         } else if (id == R.id.favoriteList) {
-            favoriteListLauncher.launch(playMyFavorites?.intentForFavoriteListActivity())
+            playMyFavorites?.apply {
+                intentForFavoriteListActivity().apply {
+                    Log.d(TAG, "intentForFavoriteListActivity().component = $component")
+                    onSavePlayingState(component)
+                    favoriteListLauncher.launch(this)
+                }
+            }
         } else if (id == R.id.open) {
             selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {
@@ -523,6 +516,23 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             ScreenUtil.showToast(activity, getString(R.string.backKeyToExitApp), toastTextSize,
                 ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT)
         }
+    }
+
+    fun setMainMenu() {
+        mPresenter.playingParam.let {
+            val isVisible = !it.isPlaySingleSong
+            autoPlayMenuItem.isVisible = isVisible
+            val favoriteListMenuItem = mainMenu.findItem(R.id.favoriteList)
+            favoriteListMenuItem.isVisible = isVisible
+            openMenuItem.isVisible = isVisible
+            audioMenuItem.isVisible = isVisible
+            audioTrackMenuItem.isVisible = isVisible
+            val channelMenuItem = mainMenu.findItem(R.id.channel)
+            channelMenuItem.isVisible = isVisible
+            val privacyPolicyMenuItem = mainMenu.findItem(R.id.privacyPolicy)
+            privacyPolicyMenuItem.isVisible = isVisible
+        }
+        setMenuItemsVisibility() // abstract method
     }
 
     override fun hidePlayerView() {
@@ -699,21 +709,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
     }
 
-    private fun returnToPrevious() {
-        val handlerClose = Handler(Looper.getMainLooper())
-        val timeDelay = 300
-        handlerClose.postDelayed({
-            // exit application
-            activity?.let {
-                it.setResult(Activity.RESULT_OK, Intent()) // can bundle some data to previous activity
-                // Or
-                // setResult(Activity.RESULT_OK);   // no bundle data
-                it.finish()
-            }
-        }, timeDelay.toLong())
-    }
-
-    private fun showSupportToolbarAndAudioController() {
+    fun showSupportToolbarAndAudioController() {
+        Log.d(TAG, "showSupportToolbarAndAudioController()")
         bannerLinearLayout.visibility = View.GONE
         supportToolbar.visibility = View.VISIBLE
         audioControllerView.visibility = View.VISIBLE
@@ -722,6 +719,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun hideSupportToolbarAndAudioController() {
+        Log.d(TAG, "hideSupportToolbarAndAudioController()")
         if (playerViewLinearLayout.visibility == View.VISIBLE) {
             supportToolbar.visibility = View.GONE
             audioControllerView.visibility = View.GONE
@@ -857,7 +855,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         player_duration_seekbar.setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // update the duration on controller UI
-                mPresenter.onDurationSeekBarProgressChanged(seekBar, progress, fromUser)
+                mPresenter.onDurationSeekBarProgressChanged(progress, fromUser)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
@@ -867,11 +865,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             if (v.visibility == View.VISIBLE) {
                 // use custom toolbar
                 hideSupportToolbarAndAudioController()
-                Log.d(TAG, "supportToolbar.onClick() is called --> View.VISIBLE.")
+                Log.d(TAG, "supportToolbar.onClick().View.VISIBLE.")
             } else {
                 // use custom toolbar
                 showSupportToolbarAndAudioController()
-                Log.d(TAG, "supportToolbar.onClick() is called --> View.INVISIBLE.")
+                Log.d(TAG, "supportToolbar.onClick().View.INVISIBLE.")
             }
             volumeSeekBar.visibility = View.INVISIBLE
             Log.d(TAG, "supportToolbar.onClick() is called.")
@@ -1017,7 +1015,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun showInterstitialAd(isExit: Boolean) {
         if (isExit) {
-            returnToPrevious()
+            playBaseFragmentFunc?.returnToPrevious(mPresenter.playingParam.isPlaySingleSong)
             if (mPresenter.playingParam.isPlaySingleSong) return
         }
         interstitialAd?.apply {

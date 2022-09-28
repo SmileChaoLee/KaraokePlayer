@@ -2,16 +2,12 @@ package com.smile.karaokeplayer
 
 import android.Manifest
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
@@ -30,6 +26,7 @@ import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
+import com.smile.karaokeplayer.models.PlayingParameters
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
@@ -37,7 +34,9 @@ private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
-private const val IsPlayingToPause = "IsPlayingToPause"
+private const val HasPlayedSingleState = "HasPlayedSingle"
+private const val PlayDataState = "PlayData"
+private const val CallingComponentState = "CallingComponentName"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
         PlaySongs, PlayMyFavorites {
 
@@ -47,11 +46,14 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     private var playerFragment: PlayerBaseViewFragment? = null
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
-    private lateinit var tablayoutViewLayout: LinearLayout
-    private var isPlayingToPause: Boolean = false
+    private lateinit var tablayoutViewLayout : LinearLayout
     // the declaration of baseReceiver must be lateinit var.
     // Not var and BroadcastReceiver? = null
     private lateinit var baseReceiver: BroadcastReceiver
+    private lateinit var callingIntent : Intent
+    private var hasPlayedSingle : Boolean = false
+    private var callingComponentName : ComponentName? = null
+    private var playData = Bundle()
 
     abstract fun getFragment() : PlayerBaseViewFragment
 
@@ -82,16 +84,28 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
 
+        callingIntent = intent
         if (savedInstanceState == null) {
             playerFragment = getFragment()
-            if (intent.extras == null) {
-                Log.d(TAG, "intent.extras is null")
+            if (callingIntent.extras == null) {
+                Log.d(TAG, "callingIntent.extras is null")
                 tablayoutFragment = TablayoutFragment()
             } else {
-                Log.d(TAG, "intent.extras is not null")
+                Log.d(TAG, "callingIntent.extras is not null")
             }
         } else {
-            isPlayingToPause = savedInstanceState.getBoolean(IsPlayingToPause, false)
+            hasPlayedSingle = savedInstanceState.getBoolean(HasPlayedSingleState, false)
+
+            callingComponentName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                savedInstanceState.getParcelable(CallingComponentState, ComponentName::class.java)
+            else savedInstanceState.getParcelable(CallingComponentState)
+
+            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                savedInstanceState.getParcelable(PlayDataState, Bundle::class.java)
+            else savedInstanceState.getParcelable(PlayDataState))?.also {
+                playData = it
+            }
+
             playerFragment = supportFragmentManager.findFragmentByTag(PlayerFragmentTag) as PlayerBaseViewFragment
             Log.d(TAG, "savedInstanceState is not null.playerFragment = $playerFragment")
             tablayoutFragment = supportFragmentManager.findFragmentByTag(TablayoutFragmentTag) as TablayoutFragment?
@@ -122,8 +136,10 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             override fun onReceive(context: Context?, intent: Intent?) {
                 Log.d(TAG, "BroadcastReceiver.onReceive")
                 intent?.action?.let {
-                    if (it == PlayerConstants.ClosePlayerActivity) {
-                        // finishAffinity()
+                    if (it == PlayerConstants.PlaySingleSongAction) {
+                        Log.d(TAG, "onReceive.PlaySingleSongAction")
+                        onReceiveFunc(it, intent, null)
+                        hasPlayedSingle = true
                     }
                 }
             }
@@ -132,7 +148,8 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         LocalBroadcastManager.getInstance(this).apply {
             Log.d(TAG, "LocalBroadcastManager.registerReceiver")
             registerReceiver(baseReceiver, IntentFilter().apply {
-                addAction(PlayerConstants.ClosePlayerActivity)
+                addAction(PlayerConstants.PlaySingleSongAction)
+                addAction(PlayerConstants.BackToBaseActivity)
             })
         }
 
@@ -149,7 +166,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                     // Layout has been finished
                     // hove to use removeGlobalOnLayoutListener() method after API 16 or is API 16
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    createViewDependingOnOrientation(resources.configuration.orientation)
+                    createViewDependingOnOrientation(resources.configuration.orientation, savedInstanceState)
                 }
             })
         }
@@ -206,7 +223,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         Log.d(TAG, "onSaveInstanceState() is called")
-        outState.putBoolean(IsPlayingToPause, isPlayingToPause)
+        outState.putBoolean(HasPlayedSingleState, hasPlayedSingle)
+        outState.putParcelable(CallingComponentState, callingComponentName)
+        outState.putParcelable(PlayDataState, playData)
         super.onSaveInstanceState(outState, outPersistentState)
     }
 
@@ -223,6 +242,31 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         super.onDestroy()
     }
 
+    private fun onReceiveFunc(action : String, intent : Intent?, pData : Bundle?) {
+        Log.d(TAG, "onReceiveFunc()")
+        playerFragment?.run {
+            mPresenter.let{
+                it.initializeVariables(pData, intent)
+                it.playSongPlayedBeforeActivityCreated()
+                setMainMenu()
+                if (action == PlayerConstants.PlaySingleSongAction) {
+                    showPlayerView()
+                } else {
+                    // PlayerConstants.BackToBaseActivity
+                    if (it.playingParam.isPlayerViewVisible) showPlayerView() else hidePlayerView()
+                    Log.d(TAG, "onReceiveFunc().currentPlaybackState = ${it.playingParam.currentPlaybackState}")
+                }
+            }
+            showSupportToolbarAndAudioController()
+        }
+        Intent().apply {
+            Log.d(TAG, "onReceiveFunc.componentName = $componentName")
+            component = componentName
+            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(this)
+        }
+    }
+
     // implementing interface PlayerBaseViewFragment.PlayBaseFragmentFunc
     override fun baseHidePlayerView() {
         Log.d(TAG, "baseHidePlayerView() is called.")
@@ -232,7 +276,54 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         Log.d(TAG, "baseShowPlayerView() is called.")
         tablayoutViewLayout.visibility = View.GONE
     }
+
+    // Implement interface PlayerBaseViewFragment.PlayBaseFragmentFunc
+    override fun returnToPrevious(isSingleSong : Boolean) {
+        if (isSingleSong) {
+            playerFragment?.mPresenter?.pausePlay()
+            callingComponentName?.let {
+                Intent().apply {
+                    component = it
+                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    startActivity(this)
+                }
+                return
+            }
+        }
+        val handlerClose = Handler(Looper.getMainLooper())
+        val timeDelay = 300
+        handlerClose.postDelayed({
+            // exit application
+            finish()
+        }, timeDelay.toLong())
+    }
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
+
+    // implementing interface PlayMyFavorites
+    override fun onSavePlayingState(compName : ComponentName?) {
+        Log.d(TAG, "onSavePlayingState.compName = $compName")
+        callingComponentName = compName
+        playerFragment?.let {
+            playData.clear()
+            it.onSaveInstanceState(playData)
+        }
+    }
+
+    override fun restorePlayingState() {
+        (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            playData.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters::class.java)
+        else playData.getParcelable(PlayerConstants.PlayingParamState))?.apply {
+            Log.d(TAG, "restorePlayingState.currentPlaybackState = $currentPlaybackState")
+            Log.d(TAG, "restorePlayingState.currentAudioPosition = $currentAudioPosition")
+        }
+
+        if (hasPlayedSingle) {
+            onReceiveFunc(PlayerConstants.BackToBaseActivity, null, playData)
+            callingComponentName = null
+        }
+        hasPlayedSingle = false
+    }
+    // Finishes implementing interface PlayMyFavorites
 
     // implementing interface PlaySongs
     override fun playSelectedSongList(songs: ArrayList<SongInfo>) {
@@ -242,33 +333,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     }
     // Finish implementing interface PlaySongs
 
-    // implementing interface PlayMyFavorites
-    override fun pauseWhenEditFavorites() {
-        isPlayingToPause = false
-        playerFragment?.mPresenter?.let {
-            if (it.playingParam?.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
-                it.pausePlay()
-                isPlayingToPause = true
-            }
-        }
-    }
-    override fun playWhenAfterEditFavorites() {
-        if (isPlayingToPause) {
-            playerFragment?.mPresenter?.startPlay()
-            isPlayingToPause = false
-        }
-    }
-    // Finishes implementing interface PlayMyFavorites
-
-    private fun createViewDependingOnOrientation(orientation : Int) {
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_LANDSCAPE")
-        } else {
-            Log.d(TAG, "createViewDependingOnOrientation.ORIENTATION_PORTRAIT")
-        }
-        if (intent.extras == null) {
+    private fun createViewDependingOnOrientation(orientation : Int, savedInstanceState : Bundle?) {
+        if (callingIntent.extras == null) {
             playerFragment?.hidePlayerView()
         }
-        playWhenAfterEditFavorites()
     }
 }

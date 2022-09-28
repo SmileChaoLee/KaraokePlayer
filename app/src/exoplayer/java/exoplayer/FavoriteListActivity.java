@@ -21,10 +21,4 @@ public class FavoriteListActivity extends BaseFavoriteListActivity {
         Log.d(TAG, "setAudioLinearLayoutVisibility() is called");
         linearLayout.setVisibility(View.VISIBLE);
     }
-
-    @Override
-    public Intent createPlayerActivityIntent() {
-        Log.d(TAG, "createPlayerActivityIntent() is called");
-        return new Intent(this, ExoSongPlayerActivity.class);
-    }
 }

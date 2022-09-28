@@ -65,6 +65,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         favoriteList = ArrayList()
 
         editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            playMyFavorites?.restorePlayingState()
             searchFavorites()
         } // update the UI }
         selectSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
@@ -167,6 +168,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     if (listIt.size > 0) {
                         playMyFavorites?.let {playIt ->
                             playIt.intentForFavoriteListActivity().apply {
+                                playMyFavorites?.onSavePlayingState(component)
                                 putExtra(PlayerConstants.MyFavoriteListState, listIt)
                                 editSongsActivityLauncher.launch(this)
                             }

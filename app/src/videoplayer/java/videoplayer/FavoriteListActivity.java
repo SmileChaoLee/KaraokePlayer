@@ -16,9 +16,4 @@ public class FavoriteListActivity extends BaseFavoriteListActivity {
     public void setAudioLinearLayoutVisibility(LinearLayout linearLayout) {
         linearLayout.setVisibility(View.GONE);
     }
-
-    @Override
-    public Intent createPlayerActivityIntent() {
-        return new Intent(this, VLCSongPlayerActivity.class);
-    }
 }
