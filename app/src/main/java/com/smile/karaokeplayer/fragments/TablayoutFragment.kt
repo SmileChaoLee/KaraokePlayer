@@ -24,8 +24,8 @@ class TablayoutFragment : Fragment() {
     }
 
     // private lateinit var fragmentAdapter: FragmentAdapter
-    private lateinit var openFragment: OpenFileFragment
-    private lateinit var favoriteFragment: MyFavoritesFragment
+    private val openFragment = OpenFileFragment()
+    private val favoriteFragment = MyFavoritesFragment()
     private lateinit var bannerLayoutForTab: LinearLayout
     private var myBannerAdView: SetBannerAdView? = null
 
@@ -33,14 +33,6 @@ class TablayoutFragment : Fragment() {
         Log.d(TAG, "onCreate() is called.")
         super.onCreate(savedInstanceState)
         arguments?.let {
-        }
-
-        activity?.let {
-            // fragmentAdapter = FragmentAdapter(it.supportFragmentManager, lifecycle)
-            openFragment = OpenFileFragment()
-            // fragmentAdapter.addFragment(openFragment, OpenFragmentTag)
-            favoriteFragment = MyFavoritesFragment()
-            // fragmentAdapter.addFragment(favoriteFragment, FavoriteFragmentTag)
         }
     }
 
