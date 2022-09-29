@@ -57,7 +57,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
 
         val currentProgress = presenter.currentProgressForVolumeSeekBar
         volumeSeekBar.setProgressAndThumb(currentProgress)
-        presenter.playSongPlayedBeforeActivityCreated()
+        // presenter.playSongPlayedBeforeActivityCreated()
 
         Log.d(TAG, "onViewCreated() is finished.")
     }
@@ -65,7 +65,8 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
     override fun onResume() {
         Log.d(TAG, "onResume() is called.")
         super.onResume()
-        presenter.setVideoWindowSize()
+        // presenter.setVideoWindowSize()
+        presenter.playSongPlayedBeforeActivityCreated()
     }
 
     override fun onPause() {
@@ -76,7 +77,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged() is called.")
         super.onConfigurationChanged(newConfig)
-        presenter.setVideoWindowSize();
+        presenter.setVideoWindowSize()
     }
 
     override fun onDestroy() {
