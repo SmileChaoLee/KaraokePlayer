@@ -144,10 +144,10 @@ dependencies {
     exoplayerImplementation project(':extension-av1')
 
     videoplayerImplementation 'org.videolan.android:libvlc-all:3.5.1'
-    // vlcplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
-    // vlcplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
-    // vlcplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
-    // videoplayerImplementation 'com.adityak:browsemyfiles:1.9'   // file chooser
+    // videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0'
+    // videoplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
+    // videoplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
+    // videoplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

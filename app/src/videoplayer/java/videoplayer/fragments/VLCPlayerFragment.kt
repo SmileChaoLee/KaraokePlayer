@@ -1,5 +1,6 @@
 package videoplayer.fragments
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -13,7 +14,7 @@ import videoplayer.Presenters.VLCPlayerPresenter
 
 private const val TAG: String = "VLCPlayerFragment"
 
-class VLCPlayerFragment : PlayerBaseViewFragment() {
+class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresentView {
     private val enableSubtitles = true
     private val useTextureView = false
     private lateinit var presenter: VLCPlayerPresenter
@@ -21,7 +22,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
-        presenter = VLCPlayerPresenter(this, this)
+        presenter = VLCPlayerPresenter(this, this, this)
 
         super.onCreate(savedInstanceState)  // must be after ExoPlayerPresenter(this, this)
         arguments?.let {
@@ -61,22 +62,27 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
         Log.d(TAG, "onViewCreated() is finished.")
     }
 
-    override fun onStart() {
-        Log.d(TAG, "onStart() is called.")
-        super.onStart()
-        videoVLCPlayerView.requestFocus()
-        presenter.attachPlayerViews(videoVLCPlayerView, null, enableSubtitles, useTextureView)
+    override fun onResume() {
+        Log.d(TAG, "onResume() is called.")
+        super.onResume()
+        presenter.setVideoWindowSize()
     }
 
-    override fun onStop() {
-        Log.d(TAG, "onStop() is called.")
-        super.onStop()
+    override fun onPause() {
+        Log.d(TAG, "onPause() is called.")
+        super.onPause()
         presenter.detachPlayerViews()
+    }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG, "onConfigurationChanged() is called.")
+        super.onConfigurationChanged(newConfig)
+        presenter.setVideoWindowSize();
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy() is called.")
+        presenter.detachPlayerViews()
         presenter.releaseMediaSessionCompat()
         presenter.releaseVLCPlayer()
     }
@@ -99,4 +105,10 @@ class VLCPlayerFragment : PlayerBaseViewFragment() {
         switchToVocalImageButton.visibility = View.GONE
     }
     // end of implementing methods of super class
+
+    // Implement VLCPlayerPresenter.VLCPresentView
+    override fun attachPlayerViews() {
+        videoVLCPlayerView.requestFocus()
+        presenter.attachPlayerViews(videoVLCPlayerView, null, enableSubtitles, useTextureView)
+    }
 }

@@ -59,7 +59,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
 
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         float currentVolume = playingParam.getCurrentVolume();
-        int playbackState = playbackState = playingParam.getCurrentPlaybackState();
+        int playbackState = playingParam.getCurrentPlaybackState();
         if (extras != null) {
             Log.d(TAG, "extras is not null.");
             PlayingParameters playingParamOrigin;
@@ -88,6 +88,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                 case PlaybackStateCompat.STATE_NONE:
                     Log.d(TAG, "onPrepareFromUri.PlaybackStateCompat.STATE_NONE");
                     // start playing when ready or just start new playing
+                    presenter.detachPlayerViews();  // detach vide view before play
                     final IMedia media = new Media(libVLC, uri);
                     vlcPlayer.setMedia(media);
                     vlcPlayer.play();
@@ -100,8 +101,8 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
             presenter.setAudioVolume(currentVolume);
             vlcPlayer.setTime(currentAudioPosition); // use time to set position
         } catch (Exception e) {
+            Log.d(TAG, "onPrepareFromUri.Invalid mediaId");
             e.printStackTrace();
-            throw new RuntimeException("Invalid mediaId");
         }
     }
 

@@ -629,7 +629,9 @@ public abstract class BasePlayerPresenter {
                 mPresentView.showNativeAndBannerAd();
                 stopNumByUser++;
                 if (stopNumByUser >= 3) {    // 3rd stop then show interstitial ad
-                    mPresentView.showInterstitialAd(false);
+                    if (!playingParam.isPlaySingleSong()) {
+                        mPresentView.showInterstitialAd(false);
+                    }
                     stopNumByUser = 0;
                 }
                 break;
