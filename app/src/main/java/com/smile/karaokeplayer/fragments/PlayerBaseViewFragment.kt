@@ -386,7 +386,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 PlayerConstants.PrivacyPolicyActivityRequestCode
             )
         } else if (id == R.id.exit) {
-            showInterstitialAd(true)
+            closeFragment()
         } else if (id == R.id.audioTrack) {
             // if there are audio tracks
             item.subMenu?.let {
@@ -510,7 +510,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onBackPressed() is called")
         val exitAppTimer = ExitAppTimer.getInstance(1000) // singleton class
         if (exitAppTimer.canExit()) {
-            showInterstitialAd(true)
+            closeFragment()
         } else {
             exitAppTimer.start()
             ScreenUtil.showToast(activity, getString(R.string.backKeyToExitApp), toastTextSize,
@@ -707,6 +707,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             }
             it.close()
         }
+    }
+
+    private fun closeFragment() {
+        playBaseFragmentFunc?.returnToPrevious(mPresenter.playingParam.isPlaySingleSong)
     }
 
     fun showSupportToolbarAndAudioController() {
@@ -1013,11 +1017,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
     }
 
-    override fun showInterstitialAd(isExit: Boolean) {
-        if (isExit) {
-            playBaseFragmentFunc?.returnToPrevious(mPresenter.playingParam.isPlaySingleSong)
-            if (mPresenter.playingParam.isPlaySingleSong) return
-        }
+    override fun showInterstitialAd() {
         interstitialAd?.apply {
             ShowAdThread().startShowAd()
         }

@@ -72,7 +72,7 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
     override fun onPause() {
         Log.d(TAG, "onPause() is called.")
         super.onPause()
-        presenter.detachPlayerViews()
+        //presenter.detachPlayerViews()
     }
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged() is called.")

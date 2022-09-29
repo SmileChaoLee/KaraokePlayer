@@ -62,7 +62,7 @@ public abstract class BasePlayerPresenter {
         void buildAudioTrackMenuItem(int audioTrackNumber);
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
-        void showInterstitialAd(boolean isExit);
+        void showInterstitialAd();
         void setScreenOrientation(int orientation);
         void hidePlayerView();
         void showPlayerView();
@@ -354,7 +354,7 @@ public abstract class BasePlayerPresenter {
             Log.d(TAG, "startAutoPlay.not stillPlayNext");
             mPresentView.showNativeAndBannerAd();
             if (orderedSongListSize > 0) {
-                mPresentView.showInterstitialAd(false);
+                mPresentView.showInterstitialAd();
             }
         }
 
@@ -630,7 +630,7 @@ public abstract class BasePlayerPresenter {
                 stopNumByUser++;
                 if (stopNumByUser >= 3) {    // 3rd stop then show interstitial ad
                     if (!playingParam.isPlaySingleSong()) {
-                        mPresentView.showInterstitialAd(false);
+                        mPresentView.showInterstitialAd();
                     }
                     stopNumByUser = 0;
                 }
