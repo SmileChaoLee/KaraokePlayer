@@ -33,7 +33,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.ads.nativetemplates.TemplateView
 import com.smile.karaokeplayer.BaseApplication
-import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
@@ -115,7 +114,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     // submenu of file
     private lateinit var autoPlayMenuItem: MenuItem
-    private lateinit var openMenuItem: MenuItem
     private lateinit var audioMenuItem: MenuItem
 
     // submenu of audio
@@ -346,7 +344,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         // submenu of file
         autoPlayMenuItem = mainMenu.findItem(R.id.autoPlay)
-        openMenuItem = mainMenu.findItem(R.id.open)
         audioMenuItem = mainMenu.findItem(R.id.audio)
         // submenu of audio
         audioTrackMenuItem = mainMenu.findItem(R.id.audioTrack)
@@ -378,8 +375,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     favoriteListLauncher.launch(this)
                 }
             }
-        } else if (id == R.id.open) {
-            selectFilesToOpen()
         } else if (id == R.id.privacyPolicy) {
             PrivacyPolicyUtil.startPrivacyPolicyActivity(
                 activity,
@@ -524,7 +519,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             autoPlayMenuItem.isVisible = isVisible
             val favoriteListMenuItem = mainMenu.findItem(R.id.favoriteList)
             favoriteListMenuItem.isVisible = isVisible
-            openMenuItem.isVisible = isVisible
             audioMenuItem.isVisible = isVisible
             audioTrackMenuItem.isVisible = isVisible
             val channelMenuItem = mainMenu.findItem(R.id.channel)
@@ -560,11 +554,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         setTimerToHideSupportAndAudioController()   // reset the timer
         playBaseFragmentFunc?.baseShowPlayerView()
         mPresenter.playingParam.isPlayerViewVisible = true
-    }
-
-    private fun selectFilesToOpen() {
-        val selectFileIntent = Intent(activity, OpenFileActivity::class.java)
-        selectFilesToPlayLauncher.launch(selectFileIntent)
     }
 
     private fun setButtonsPositionAndSize(config: Configuration) {

@@ -18,12 +18,6 @@
         android:visible="true"
         app:showAsAction="never">
     </item>
-    <item android:id="@+id/open"
-        android:title="@string/openString"
-        android:visible="true"
-        android:orderInCategory="3"
-        app:showAsAction="never">
-    </item>
     <item android:id="@+id/audio"
         android:title="@string/audioString"
         android:orderInCategory="4"
