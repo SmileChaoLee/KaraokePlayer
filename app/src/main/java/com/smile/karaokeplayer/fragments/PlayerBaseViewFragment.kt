@@ -1,6 +1,5 @@
 package com.smile.karaokeplayer.fragments
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
@@ -21,7 +20,6 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
@@ -62,7 +60,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private var playMyFavorites: PlayMyFavorites? = null
     private var playBaseFragmentFunc: PlayBaseFragmentFunc? = null
     private lateinit var favoriteListLauncher: ActivityResultLauncher<Intent>
-    private lateinit var selectFilesToPlayLauncher: ActivityResultLauncher<Intent>
     protected lateinit var fragmentView: View
 
     protected var textFontSize = 0f
@@ -191,18 +188,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
         favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {
             playMyFavorites?.restorePlayingState()
-        }
-        selectFilesToPlayLauncher = registerForActivityResult(StartActivityForResult()) {
-            result: ActivityResult? ->
-            Log.d(TAG, "selectFilesToPlayLauncher.onActivityResult() is called.")
-            result?.let {
-                Log.d(TAG, "selectFilesToPlayLauncher.result = $it")
-                val resultCode = it.resultCode
-                if (resultCode == Activity.RESULT_OK) {
-                    Log.d(TAG, "selectFilesToPlayLauncher.resultCode = Activity.RESULT_OK")
-                    mPresenter.selectFileToOpenPresenter(it)
-                }
-            }
         }
 
         Log.d(TAG, "onCreate() is finished")
