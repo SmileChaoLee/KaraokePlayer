@@ -55,6 +55,7 @@ public abstract class BasePlayerPresenter {
         void setPlayingTimeTextView(String durationString);
         void update_Player_duration_seekbar(float duration);
         void update_Player_duration_seekbar_progress(int progress);
+        void updateVolumeSeekBarProgress();
         void showNativeAndBannerAd();
         void hideNativeAndBannerAd();
         void showBufferingMessage();
@@ -172,7 +173,7 @@ public abstract class BasePlayerPresenter {
         }
     }
 
-    public void initializePlayingParam() {
+    private void initializePlayingParam() {
         playingParam = new PlayingParameters();
     }
 
@@ -190,10 +191,13 @@ public abstract class BasePlayerPresenter {
             if (callingIntent != null) {
                 Bundle arguments = callingIntent.getExtras();
                 if (arguments != null) {
-                    playingParam.setPlaySingleSong(arguments.getBoolean(PlayerConstants.IsPlaySingleSongState));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {    // API 33
+                    playingParam.setPlaySingleSong(arguments
+                            .getBoolean(PlayerConstants.IsPlaySingleSongState, true));
+                    playingParam.setCurrentVolume(arguments
+                            .getFloat(PlayerConstants.SingleSongVolume, playingParam.getCurrentVolume()));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                         singleSongInfo = arguments.getParcelable(PlayerConstants.SingleSongInfoState, SongInfo.class);
-                    } else singleSongInfo = arguments.getParcelable(PlayerConstants.SingleSongInfoState);
+                    else singleSongInfo = arguments.getParcelable(PlayerConstants.SingleSongInfoState);
                     Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
                 }
             }
@@ -353,7 +357,8 @@ public abstract class BasePlayerPresenter {
         } else {
             Log.d(TAG, "startAutoPlay.not stillPlayNext");
             mPresentView.showNativeAndBannerAd();
-            if (orderedSongListSize > 0) {
+            if ( (orderedSongListSize > 0) && (!playingParam.isPlaySingleSong()) ) {
+                // finish playing and not playing single song
                 mPresentView.showInterstitialAd();
             }
         }
@@ -482,6 +487,7 @@ public abstract class BasePlayerPresenter {
 
     public void playSongPlayedBeforeActivityCreated() {
         Log.d(TAG, "playSongPlayedBeforeActivityCreated.isPlaySingleSong = " + playingParam.isPlaySingleSong());
+        mPresentView.updateVolumeSeekBarProgress();
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
                 // called by SongListActivity
@@ -628,6 +634,8 @@ public abstract class BasePlayerPresenter {
                 playingParam.setMediaPrepared(false);
                 mPresentView.showNativeAndBannerAd();
                 stopNumByUser++;
+                Log.d(TAG, "updateStatusAndUi.stopNumByUser = " + stopNumByUser +
+                        ", isPlaySingleSong = " + playingParam.isPlaySingleSong());
                 if (stopNumByUser >= 3) {    // 3rd stop then show interstitial ad
                     if (!playingParam.isPlaySingleSong()) {
                         mPresentView.showInterstitialAd();

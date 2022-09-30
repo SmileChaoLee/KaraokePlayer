@@ -138,6 +138,8 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 intent?.action?.let {
                     if (it == PlayerConstants.PlaySingleSongAction) {
                         Log.d(TAG, "onReceive.PlaySingleSongAction")
+                        intent.putExtra(PlayerConstants.SingleSongVolume,
+                                playerFragment?.mPresenter?.playingParam?.currentVolume)
                         onReceiveFunc(it, intent, null)
                         hasPlayedSingle = true
                     }
@@ -287,15 +289,11 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                     addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     startActivity(this)
                 }
-                return
             }
+            return
         }
-        val handlerClose = Handler(Looper.getMainLooper())
-        val timeDelay = 300
-        handlerClose.postDelayed({
-            // exit application
-            finish()
-        }, timeDelay.toLong())
+        // exit application
+        finish()
     }
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
 

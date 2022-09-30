@@ -27,5 +27,6 @@ object PlayerConstants {
     const val SongListState: String = "SongList"
     const val MyFavoriteListState = "MyFavoriteList"
     const val PlaySingleSongAction = "PlaySingleSongAction"
+    const val SingleSongVolume = "SingleSongVolume"
     const val BackToBaseActivity = "BackToBaseActivity"
 }

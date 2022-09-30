@@ -72,8 +72,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
             // must be after super.onCreate(savedInstanceState)
             setExoPlayerAndCastPlayer()
         }
-        val currentProgress = presenter.currentProgressForVolumeSeekBar
-        volumeSeekBar.setProgressAndThumb(currentProgress)
+
         presenter.playSongPlayedBeforeActivityCreated()
 
         // presenter.addBaseCastStateListener();   // moved to onResume() on 2021-03-26

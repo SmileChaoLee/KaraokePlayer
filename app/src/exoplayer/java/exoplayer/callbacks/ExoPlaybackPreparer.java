@@ -55,7 +55,7 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
 
     @Override
     public synchronized void onPrepareFromUri(Uri uri, boolean playWhenReady, Bundle extras) {
-        Log.d(TAG, "onPrepareFromUri() --> Uri = " + uri);
+        Log.d(TAG, "onPrepareFromUri.Uri = " + uri);
         if (uri == null) {
             return;
         }
@@ -90,44 +90,51 @@ public class ExoPlaybackPreparer implements MediaSessionConnector.PlaybackPrepar
         exoPlayer.setMediaSource(mediaSource);
         */
 
-        Log.d(TAG, "exoPlayer.getMediaItemCount() = " + exoPlayer.getMediaItemCount());
+        Log.d(TAG, "onPrepareFromUri.exoPlayer.getMediaItemCount() = " + exoPlayer.getMediaItemCount());
         TrackSelectionParameters trackParameters = new TrackSelectionParameters.Builder(callingContext).build();
         exoPlayer.setTrackSelectionParameters(trackParameters);
         exoPlayer.setMediaItem(mediaItem);      // added on 2021-05-23
         exoPlayer.prepare();
 
+        float currentVolume = playingParam.getCurrentVolume();
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         int currentPlaybackState = playingParam.getCurrentPlaybackState();
+        Log.d(TAG, "onPrepareFromUri.currentVolume = " + currentVolume +
+                ", currentAudioPosition= " + currentAudioPosition + ", currentPlaybackState = " +
+                currentPlaybackState);
         if (extras != null) {
-            Log.d(TAG, "onPrepareFromUri() --> extras is not null.");
+            Log.d(TAG, "onPrepareFromUri.extras is not null.");
             PlayingParameters playingParamOrigin;
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin, PlayingParameters.class);
             } else playingParamOrigin = extras.getParcelable(PlayerConstants.PlayingParamOrigin);
             if (playingParamOrigin != null) {
-                Log.d(TAG, "onPrepareFromUri() --> playingParamOrigin is not null.");
                 currentPlaybackState = playingParamOrigin.getCurrentPlaybackState();
                 currentAudioPosition = playingParamOrigin.getCurrentAudioPosition();
+                Log.d(TAG, "onPrepareFromUri.not null.currentVolume = " + currentVolume +
+                        ", currentAudioPosition= " + currentAudioPosition + ", currentPlaybackState = " +
+                        currentPlaybackState);
             }
         }
         exoPlayer.seekTo(currentAudioPosition);
+        // exoPlayer.setVolume(currentVolume);
         switch (currentPlaybackState) {
             case PlaybackStateCompat.STATE_PAUSED:
                 exoPlayer.setPlayWhenReady(false);
-                Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PAUSED");
+                Log.d(TAG, "onPrepareFromUri.PlaybackStateCompat.STATE_PAUSED");
                 break;
             case PlaybackStateCompat.STATE_STOPPED:
                 exoPlayer.setPlayWhenReady(false);
-                Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_STOPPED");
+                Log.d(TAG, "onPrepareFromUri.PlaybackStateCompat.STATE_STOPPED");
                 break;
             case PlaybackStateCompat.STATE_PLAYING:
                 exoPlayer.setPlayWhenReady(true);  // start playing when ready
-                Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_PLAYING");
+                Log.d(TAG, "onPrepareFromUri.PlaybackStateCompat.STATE_PLAYING");
                 break;
             default:
                 // PlaybackStateCompat.STATE_NONE:
                 exoPlayer.setPlayWhenReady(true);  // start playing when ready
-                Log.d(TAG, "onPrepareFromUri() --> PlaybackStateCompat.STATE_NONE or default");
+                Log.d(TAG, "onPrepareFromUr.iPlaybackStateCompat.STATE_NONE or default");
                 break;
         }
     }

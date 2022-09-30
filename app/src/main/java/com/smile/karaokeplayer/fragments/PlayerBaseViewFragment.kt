@@ -710,6 +710,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     private fun closeFragment() {
+        Log.d(TAG, "closeFragment.isPlaySingleSong = " + mPresenter.playingParam.isPlaySingleSong)
         playBaseFragmentFunc?.returnToPrevious(mPresenter.playingParam.isPlaySingleSong)
     }
 
@@ -959,6 +960,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun update_Player_duration_seekbar_progress(progress: Int) {
         player_duration_seekbar.progress = progress
+    }
+
+    override fun updateVolumeSeekBarProgress() {
+        volumeSeekBar.setProgressAndThumb(mPresenter.currentProgressForVolumeSeekBar)
     }
 
     override fun showNativeAndBannerAd() {
