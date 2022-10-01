@@ -13,7 +13,6 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -397,23 +396,6 @@ public abstract class BasePlayerPresenter {
                     , toastTextSize, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_SHORT);
             return false;
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void selectFileToOpenPresenter(ActivityResult result) {
-        Log.d(TAG, "selectFileToOpenPresenter() is called");
-        Intent data = result.getData();
-        if (data == null) {
-            return;
-        }
-        ArrayList<SongInfo> songs;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            songs = (ArrayList<SongInfo>)data.getSerializableExtra(PlayerConstants.SongListState, ArrayList.class);
-        } else songs = (ArrayList<SongInfo>)data.getSerializableExtra(PlayerConstants.SongListState);
-
-        playSongList(songs);
-        playingParam.setAutoPlay(false);
-        mPresentView.showPlayerView();
     }
 
     public void playPreviousSong() {

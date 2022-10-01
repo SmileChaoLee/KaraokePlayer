@@ -321,6 +321,10 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         }
         hasPlayedSingle = false
     }
+
+    override fun switchToOpenFileFragment() {
+        tablayoutFragment?.switchToOpenFileFragment()
+    }
     // Finishes implementing interface PlayMyFavorites
 
     // implementing interface PlaySongs

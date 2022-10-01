@@ -20,8 +20,6 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.widget.*
 import android.widget.SeekBar.OnSeekBarChangeListener
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.ActionMenuView
@@ -34,7 +32,6 @@ import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
-import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
@@ -57,9 +54,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     lateinit var mPresenter: BasePlayerPresenter
-    private var playMyFavorites: PlayMyFavorites? = null
     private var playBaseFragmentFunc: PlayBaseFragmentFunc? = null
-    private lateinit var favoriteListLauncher: ActivityResultLauncher<Intent>
     protected lateinit var fragmentView: View
 
     protected var textFontSize = 0f
@@ -172,8 +167,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         }
 
         activity?.let {
-            if (it is PlayMyFavorites) playMyFavorites = it
-            Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
             if (it is PlayBaseFragmentFunc) playBaseFragmentFunc = it
             Log.d(TAG, "onCreate.playBaseFragmentFunc = $playBaseFragmentFunc")
         }
@@ -185,10 +178,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         val callingIntent: Intent? = activity?.intent
         Log.d(TAG, "callingIntent = $callingIntent")
         mPresenter.initializeVariables(savedInstanceState, callingIntent)
-
-        favoriteListLauncher = registerForActivityResult(StartActivityForResult()) {
-            playMyFavorites?.restorePlayingState()
-        }
 
         Log.d(TAG, "onCreate() is finished")
     }
@@ -352,14 +341,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         if (id == R.id.autoPlay) {
             // item.isChecked() return the previous value
             mPresenter.setAutoPlayStatusAndAction()
-        } else if (id == R.id.favoriteList) {
-            playMyFavorites?.apply {
-                intentForFavoriteListActivity().apply {
-                    Log.d(TAG, "intentForFavoriteListActivity().component = $component")
-                    onSavePlayingState(component)
-                    favoriteListLauncher.launch(this)
-                }
-            }
         } else if (id == R.id.privacyPolicy) {
             PrivacyPolicyUtil.startPrivacyPolicyActivity(
                 activity,
@@ -502,8 +483,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         mPresenter.playingParam.let {
             val isVisible = !it.isPlaySingleSong
             autoPlayMenuItem.isVisible = isVisible
-            val favoriteListMenuItem = mainMenu.findItem(R.id.favoriteList)
-            favoriteListMenuItem.isVisible = isVisible
             audioMenuItem.isVisible = isVisible
             audioTrackMenuItem.isVisible = isVisible
             val channelMenuItem = mainMenu.findItem(R.id.channel)

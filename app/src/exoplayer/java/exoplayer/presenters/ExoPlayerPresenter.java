@@ -372,7 +372,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
             playingParam.setCurrentAudioTrackIndexPlayed(PlayerConstants.NoAudioTrack);
             playingParam.setCurrentChannelPlayed(PlayerConstants.NoAudioChannel);
         } else {
-            int audioChannelPlayed = CommonConstants.StereoChannel;
+            int audioChannelPlayed;
             Log.d(TAG, "audioTrackIdPlayed = " + audioTrackIdPlayed);
             if (playingParam.isAutoPlay() || playingParam.isPlaySingleSong() || playingParam.isInSongList()) {
                 audioTrackIdPlayed = playingParam.getCurrentAudioTrackIndexPlayed();

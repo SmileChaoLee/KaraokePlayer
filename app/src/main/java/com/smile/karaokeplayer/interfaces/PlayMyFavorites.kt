@@ -7,4 +7,5 @@ interface PlayMyFavorites {
     fun intentForFavoriteListActivity(): Intent
     fun onSavePlayingState(compName : ComponentName?)
     fun restorePlayingState()
+    fun switchToOpenFileFragment()
 }

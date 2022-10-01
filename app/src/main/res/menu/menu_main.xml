@@ -11,13 +11,6 @@
         android:visible="true"
         app:showAsAction="never">
     </item>
-    <item android:id="@+id/favoriteList"
-        android:title="@string/my_favorites"
-        android:orderInCategory="2"
-        android:checkable="false"
-        android:visible="true"
-        app:showAsAction="never">
-    </item>
     <item android:id="@+id/audio"
         android:title="@string/audioString"
         android:orderInCategory="4"

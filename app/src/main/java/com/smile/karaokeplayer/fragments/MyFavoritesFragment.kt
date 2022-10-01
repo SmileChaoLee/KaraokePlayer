@@ -1,31 +1,24 @@
 package com.smile.karaokeplayer.fragments
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
-import com.smile.karaokeplayer.OpenFileActivity
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FavoriteRecyclerViewAdapter
-import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.SongInfo
-import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
-import com.smile.karaokeplayer.utilities.SelectFavoritesUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "MyFavoritesFragment"
@@ -41,7 +34,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     private lateinit var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter
     private lateinit var favoriteList : ArrayList<SongInfo>
     private lateinit var editSongsActivityLauncher: ActivityResultLauncher<Intent>
-    private lateinit var selectSongsActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
@@ -68,20 +60,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             playMyFavorites?.restorePlayingState()
             searchFavorites()
         } // update the UI }
-        selectSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
-                ActivityResultCallback { result: ActivityResult? ->
-                    if (result == null) return@ActivityResultCallback
-                    if (result.resultCode == Activity.RESULT_OK) {
-                        result.data?.let {
-                            context?.let {contextIt ->
-                                val songListSQLite = SongListSQLite(contextIt)
-                                SelectFavoritesUtil.addDataToFavoriteList(it, songListSQLite)
-                                songListSQLite.closeDatabase()
-                                searchFavorites() // update the UI
-                            }
-                        }
-                    }
-                })
     }
 
     override fun onCreateView(
@@ -168,7 +146,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     if (listIt.size > 0) {
                         playMyFavorites?.let {playIt ->
                             playIt.intentForFavoriteListActivity().apply {
-                                playMyFavorites?.onSavePlayingState(component)
+                                playIt.onSavePlayingState(component)
                                 putExtra(PlayerConstants.MyFavoriteListState, listIt)
                                 editSongsActivityLauncher.launch(this)
                             }
@@ -185,12 +163,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             addButton.setOnClickListener {
-                activity?.let { activityIt ->
-                    Intent(activityIt, OpenFileActivity::class.java).apply {
-                        putExtra(CommonConstants.IsButtonForPlay, false)
-                        selectSongsActivityLauncher.launch(this)
-                    }
-                }
+                // Switching to OpenFileFragment
+                playMyFavorites?.switchToOpenFileFragment()
             }
         }
 

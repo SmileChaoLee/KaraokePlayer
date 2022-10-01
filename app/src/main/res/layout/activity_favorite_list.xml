@@ -40,19 +40,6 @@
         android:baselineAligned="false"
         android:gravity="center">
         <Button
-            android:id="@+id/addFavoriteListButton"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/addString"
-            app:textAllCaps="false"
-            android:textStyle="normal"
-            android:textColor="@color/blue"
-            android:background="@android:drawable/btn_default"
-            android:layout_marginEnd="30sp">
-        </Button>
-        <Button
             android:id="@+id/exitFavoriteListButton"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"

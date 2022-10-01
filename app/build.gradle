@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 485
-        versionName "4.85"
+        versionCode 490
+        versionName "4.90"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -110,7 +110,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.annotation:annotation:1.4.0'
+    implementation 'androidx.annotation:annotation:1.5.0'
 
     implementation 'com.facebook.android:audience-network-sdk:6.11.0'
     implementation 'com.google.firebase:firebase-core:21.1.1'
@@ -119,7 +119,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-measurement:21.1.1'
     implementation 'com.google.android.gms:play-services-measurement-sdk:21.1.1'
     implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.recyclerview:recyclerview:1.3.0-beta02'
+    implementation 'androidx.recyclerview:recyclerview:1.3.0-rc01'
 
     implementation 'com.google.android.material:material:1.8.0-alpha01'
     implementation 'androidx.core:core-ktx:1.9.0'

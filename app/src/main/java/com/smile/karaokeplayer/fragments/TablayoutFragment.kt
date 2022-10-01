@@ -28,6 +28,7 @@ class TablayoutFragment : Fragment() {
     private val favoriteFragment = MyFavoritesFragment()
     private lateinit var bannerLayoutForTab: LinearLayout
     private var myBannerAdView: SetBannerAdView? = null
+    private lateinit var playTabLayout: TabLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called.")
@@ -56,7 +57,7 @@ class TablayoutFragment : Fragment() {
             else bannerLayoutForTab.visibility = View.VISIBLE
         }
 
-        val playTabLayout: TabLayout = view.findViewById(R.id.fragmentsTabLayout)
+        playTabLayout = view.findViewById(R.id.fragmentsTabLayout)
         val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
         playTabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -95,7 +96,6 @@ class TablayoutFragment : Fragment() {
 
         playTabLayout.addTab(playTabLayout.newTab().setText(tabText[0]), true)
         playTabLayout.addTab(playTabLayout.newTab().setText(tabText[1]))
-        // playTabLayout.selectTab(playTabLayout.getTabAt(0))
         /*
         val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
         playViewPager2.adapter = fragmentAdapter
@@ -109,6 +109,7 @@ class TablayoutFragment : Fragment() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
+        Log.d(TAG, "onConfigurationChanged()")
         newConfig.orientation.let {
             if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
             else bannerLayoutForTab.visibility = View.VISIBLE
@@ -117,19 +118,24 @@ class TablayoutFragment : Fragment() {
     }
 
     override fun onResume() {
-        Log.d(TAG, "onResume() is called.")
+        Log.d(TAG, "onResume()")
         myBannerAdView?.resume()
         super.onResume()
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause() is called.")
+        Log.d(TAG, "onPause()")
         myBannerAdView?.pause()
         super.onPause()
     }
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy() is called.")
+        Log.d(TAG, "onDestroy()")
         myBannerAdView?.destroy()
         super.onDestroy()
+    }
+
+    fun switchToOpenFileFragment() {
+        Log.d(TAG, "switchToOpenFileFragment()")
+        playTabLayout.selectTab(playTabLayout.getTabAt(0))
     }
 }

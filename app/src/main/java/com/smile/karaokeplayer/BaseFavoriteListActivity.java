@@ -29,7 +29,6 @@ import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
 import com.smile.karaokeplayer.models.SongInfo;
 import com.smile.karaokeplayer.models.SongListSQLite;
-import com.smile.karaokeplayer.utilities.SelectFavoritesUtil;
 import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial;
 import com.smile.smilelibraries.utilities.ScreenUtil;
 
@@ -45,8 +44,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     private float toastTextSize;
     private ArrayList<SongInfo> mFavoriteList = new ArrayList<>();
     private FavoriteListAdapter favoriteListAdapter;
-    private ActivityResultLauncher<Intent> selectOneSongLauncher;
-    private ActivityResultLauncher<Intent> selectSongsLauncher;
+    private ActivityResultLauncher<Intent> editFavoritesLauncher;
     private String currentAction = CommonConstants.AddActionString;
     private ShowInterstitial interstitialAd = null;
 
@@ -74,10 +72,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
 
         TextView myFavoritesTextView = findViewById(R.id.myFavoritesTextView);
         ScreenUtil.resizeTextSize(myFavoritesTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-
-        Button addFavoriteListButton = findViewById(R.id.addFavoriteListButton);
-        ScreenUtil.resizeTextSize(addFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-        addFavoriteListButton.setOnClickListener(v -> selectMultipleSong());
 
         Button exitFavoriteListButton = findViewById(R.id.exitFavoriteListButton);
         ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
@@ -119,9 +113,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
             }
         }
 
-        addFavoriteListButton.setVisibility(currentAction.equals(CommonConstants.AddActionString)?
-                View.VISIBLE : View.GONE) ;
-
         favoriteListAdapter = new FavoriteListAdapter(this, R.layout.activity_favorite_list_item, mFavoriteList);
         favoriteListAdapter.setNotifyOnChange(false);
 
@@ -129,23 +120,13 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         favoriteListListView.setAdapter(favoriteListAdapter);
         favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {});
 
-        selectOneSongLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+        editFavoritesLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result == null) {
                         return;
                     }
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         updateFavoriteList(result.getData());
-                    }
-                });
-
-        selectSongsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result == null) {
-                        return;
-                    }
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        addSongsToFavoriteList(result.getData());
                     }
                 });
 
@@ -184,18 +165,12 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         finish();
     }
 
-    private void selectMultipleSong() {
-        Intent selectFileIntent = new Intent(this, OpenFileActivity.class);
-        selectFileIntent.putExtra(CommonConstants.IsButtonForPlay, false);
-        selectSongsLauncher.launch(selectFileIntent);
-    }
-
     private void deleteOneSongFromFavoriteList(SongInfo singleSongInfo) {
         currentAction = CommonConstants.DeleteActionString;
         Intent deleteIntent = createIntentFromSongDataActivity();
         deleteIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.DeleteActionString);
         deleteIntent.putExtra(PlayerConstants.SingleSongInfoState, singleSongInfo);
-        selectOneSongLauncher.launch(deleteIntent);
+        editFavoritesLauncher.launch(deleteIntent);
     }
 
     private void editOneSongFromFavoriteList(SongInfo singleSongInfo) {
@@ -203,16 +178,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         Intent editIntent = createIntentFromSongDataActivity();
         editIntent.putExtra(CommonConstants.CrudActionString, CommonConstants.EditActionString);
         editIntent.putExtra(PlayerConstants.SingleSongInfoState, singleSongInfo);
-        selectOneSongLauncher.launch(editIntent);
-    }
-
-    protected void addSongsToFavoriteList(Intent data) {
-        currentAction = CommonConstants.AddActionString;
-        SelectFavoritesUtil.addDataToFavoriteList(data, songListSQLite);
-
-        // update the UI (currentAction = CommonConstants.AddActionString)
-        mFavoriteList = songListSQLite.readPlayList();
-        favoriteListAdapter.updateData(mFavoriteList);    // update the UI
+        editFavoritesLauncher.launch(editIntent);
     }
 
     private void updateFavoriteList(Intent data) {

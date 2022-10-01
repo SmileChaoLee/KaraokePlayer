@@ -9,6 +9,7 @@ public class FavoriteListActivity extends BaseFavoriteListActivity {
 
     @Override
     public Intent createIntentFromSongDataActivity() {
+        Log.d(TAG, "createIntentFromSongDataActivity() is called");
         return new Intent(this, SongDataActivity.class);
     }
 
