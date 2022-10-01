@@ -47,6 +47,8 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     private lateinit var basePlayViewLayout : LinearLayout
     private var tablayoutFragment : TablayoutFragment? = null
     private lateinit var tablayoutViewLayout : LinearLayout
+    private lateinit var baseTabLayout : LinearLayout
+    private var weightSum : Float = 0f
     // the declaration of baseReceiver must be lateinit var.
     // Not var and BroadcastReceiver? = null
     private lateinit var baseReceiver: BroadcastReceiver
@@ -58,7 +60,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     abstract fun getFragment() : PlayerBaseViewFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG,"onCreate() is called")
+        Log.d(TAG,"onCreate()")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
@@ -82,7 +84,10 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         }
 
         basePlayViewLayout = findViewById(R.id.basePlayViewLayout)
+        baseTabLayout = findViewById(R.id.baseTabLayout)
+        weightSum = baseTabLayout.weightSum
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
+        onConfigurationChanged(resources.configuration)
 
         callingIntent = intent
         if (savedInstanceState == null) {
@@ -219,12 +224,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     }
 
     override fun onResume() {
-        Log.d(TAG, "onResume() is called")
+        Log.d(TAG, "onResume()")
         super.onResume()
     }
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        Log.d(TAG, "onSaveInstanceState() is called")
+        Log.d(TAG, "onSaveInstanceState()")
         outState.putBoolean(HasPlayedSingleState, hasPlayedSingle)
         outState.putParcelable(CallingComponentState, callingComponentName)
         outState.putParcelable(PlayDataState, playData)
@@ -232,12 +237,16 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d(TAG, "onConfigurationChanged() is called")
+        Log.d(TAG, "onConfigurationChanged()")
         super.onConfigurationChanged(newConfig)
+        Log.d(TAG, "weightSum = $weightSum")
+        val layoutP = tablayoutViewLayout.layoutParams as LinearLayout.LayoutParams
+        layoutP.weight = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) weightSum * 0.7f
+        else weightSum * 0.8f
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy() is called.")
+        Log.d(TAG, "onDestroy()")
         LocalBroadcastManager.getInstance(this).apply {
             unregisterReceiver(baseReceiver)
         }
@@ -271,11 +280,11 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     // implementing interface PlayerBaseViewFragment.PlayBaseFragmentFunc
     override fun baseHidePlayerView() {
-        Log.d(TAG, "baseHidePlayerView() is called.")
+        Log.d(TAG, "baseHidePlayerView()")
         tablayoutViewLayout.visibility = View.VISIBLE
     }
     override fun baseShowPlayerView() {
-        Log.d(TAG, "baseShowPlayerView() is called.")
+        Log.d(TAG, "baseShowPlayerView()")
         tablayoutViewLayout.visibility = View.GONE
     }
 

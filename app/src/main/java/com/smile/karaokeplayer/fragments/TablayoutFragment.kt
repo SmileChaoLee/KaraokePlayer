@@ -1,18 +1,21 @@
 package com.smile.karaokeplayer.fragments
 
+import android.app.Activity
 import android.content.res.Configuration
+import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
+import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "TablayoutFragment"
 
@@ -41,16 +44,13 @@ class TablayoutFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        Log.d(TAG, "onCreateView() is called.")
+        Log.d(TAG, "onCreateView()")
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_tablayout, container, false)
 
         bannerLayoutForTab = view.findViewById(R.id.bannerLayoutForTab)
-        myBannerAdView = SetBannerAdView(
-                activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
-                BaseApplication.facebookBannerID)
-        myBannerAdView?.showBannerAdView()
+        setMyBannerAdView(activity as Activity)
 
         resources.configuration.orientation.let {
             if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
@@ -110,28 +110,45 @@ class TablayoutFragment : Fragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged()")
+        super.onConfigurationChanged(newConfig)
+        setMyBannerAdView(activity as Activity)
         newConfig.orientation.let {
             if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
             else bannerLayoutForTab.visibility = View.VISIBLE
         }
-        super.onConfigurationChanged(newConfig)
     }
 
     override fun onResume() {
         Log.d(TAG, "onResume()")
-        myBannerAdView?.resume()
         super.onResume()
+        myBannerAdView?.resume()
+        resources.configuration.orientation.let {
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
+            else bannerLayoutForTab.visibility = View.VISIBLE
+        }
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause()")
-        myBannerAdView?.pause()
         super.onPause()
+        myBannerAdView?.pause()
+        bannerLayoutForTab.visibility = View.GONE
     }
     override fun onDestroy() {
         Log.d(TAG, "onDestroy()")
         myBannerAdView?.destroy()
         super.onDestroy()
+    }
+
+    private fun setMyBannerAdView(activity: Activity) {
+        val screen : Point = ScreenUtil.getScreenSize(activity)
+        val adaptiveBannerDpWidth = ScreenUtil.pixelToDp(activity, screen.x)
+        Log.d(TAG, "setMyBannerAdView().adaptiveBannerDpWidth = $adaptiveBannerDpWidth")
+        myBannerAdView?.destroy()
+        myBannerAdView = SetBannerAdView(
+                activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
+                BaseApplication.facebookBannerID, adaptiveBannerDpWidth)
+        myBannerAdView?.showBannerAdView()
     }
 
     fun switchToOpenFileFragment() {

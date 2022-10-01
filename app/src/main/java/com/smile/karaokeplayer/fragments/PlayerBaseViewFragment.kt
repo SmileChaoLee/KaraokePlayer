@@ -1,11 +1,13 @@
 package com.smile.karaokeplayer.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -94,7 +96,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     private var myBannerAdView: SetBannerAdView? = null
     private var nativeTemplate: GoogleAdMobNativeTemplate? = null
 
-    // private AdView bannerAdView;
     private lateinit var message_area_LinearLayout: LinearLayout
     private lateinit var bufferingStringTextView: TextView
     private lateinit var animationText: Animation
@@ -192,7 +193,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Log.d(TAG, "onViewCreated() is called.")
+        Log.d(TAG, "onViewCreated()")
         super.onViewCreated(view, savedInstanceState)
 
         fragmentView = view
@@ -250,10 +251,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
             bannerLinearLayout = findViewById(R.id.bannerLinearLayout)
             bannerLinearLayout.visibility = View.VISIBLE // Show Banner Ad
-            myBannerAdView = SetBannerAdView(
-                    activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
-                    BaseApplication.facebookBannerID)
-            myBannerAdView?.showBannerAdView()
+            setMyBannerAdView(activity as Activity)
 
             // message area
             message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout)
@@ -434,19 +432,22 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onResume() is called.")
         super.onResume()
         myBannerAdView?.resume()
+        bannerLinearLayout.visibility = View.VISIBLE
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause() is called.")
         super.onPause()
         myBannerAdView?.pause()
+        bannerLinearLayout.visibility = View.GONE
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        Log.d(TAG, "onConfigurationChanged() is called.")
+        Log.d(TAG, "onConfigurationChanged()")
         super.onConfigurationChanged(newConfig)
         closeMenu(mainMenu)
         setButtonsPositionAndSize(newConfig)
+        setMyBannerAdView(activity as Activity)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -649,6 +650,17 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         layoutParams.width = imageButtonHeight * 6 + buttonMarginLeft * 5
         layoutParams.setMargins(0, 0, 0, 0)
         //
+    }
+
+    private fun setMyBannerAdView(activity: Activity) {
+        val screen : Point = ScreenUtil.getScreenSize(activity)
+        val adaptiveBannerDpWidth = ScreenUtil.pixelToDp(activity, screen.x)
+        Log.d(TAG, "setMyBannerAdView().adaptiveBannerDpWidth = $adaptiveBannerDpWidth")
+        myBannerAdView?.destroy()
+        myBannerAdView = SetBannerAdView(
+                activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
+                BaseApplication.facebookBannerID, adaptiveBannerDpWidth)
+        myBannerAdView?.showBannerAdView()
     }
 
     private fun closeMenu(menu: Menu?) {
