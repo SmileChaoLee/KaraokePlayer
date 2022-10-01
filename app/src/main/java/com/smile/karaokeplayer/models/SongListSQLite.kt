@@ -155,8 +155,9 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         if (songInfo == null) {
             return result
         }
-        val contentValues = getContentValues(songInfo, createAction)
         openScoreDatabase()
+        if (findOneSongByUriString(songInfo.filePath) != null ) return result   // already in database
+        val contentValues = getContentValues(songInfo, createAction)
         songDatabase?.let {
             try {
                 result = it.insert(tableName, null, contentValues)

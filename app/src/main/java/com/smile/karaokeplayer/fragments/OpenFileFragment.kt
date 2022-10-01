@@ -154,40 +154,38 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                 // open the files to play
                 activity?.let {activityIt ->
                     val songListSQLite = SongListSQLite(activityIt)
-                    val songs = ArrayList<SongInfo>().also {songIt ->
-                        for (i in 0 until FileDesList.fileList.size) {
-                            FileDesList.fileList[i].run {
-                                if (selected) {
-                                    Log.d(TAG, "playSelectedButton.activityIt.file.path = ${file.path}")
-                                    Log.d(TAG, "playSelectedButton.activityIt.file.toUri() = ${file.toUri()}")
-                                    var song = SongInfo().apply {
-                                        songName = file.name
-                                        // filePath = file.path
-                                        filePath = file.toUri().toString()
-                                        musicTrackNo = 1    // guess
-                                        musicChannel = CommonConstants.StereoChannel
-                                        vocalTrackNo = 2    // guess
-                                        vocalChannel = CommonConstants.StereoChannel
-                                        included = "0"
-                                    }
-                                    songListSQLite.findOneSongByUriString(song.filePath)?.apply {
-                                        Log.d(TAG, "playSelectedButton.activityIt.found")
-                                        included = "1"
-                                        song = this
-                                    }
-                                    songIt.add(song)
-                                }
-                            }
+                    getSongs(songListSQLite, "playSelectedButton").let { songsIt ->
+                        if (songsIt.size == 0) {
+                            ScreenUtil.showToast(
+                                    activity, getString(R.string.noFilesSelectedString), textFontSize,
+                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                        } else {
+                            playSongs.playSelectedSongList(songsIt)
                         }
                     }
                     songListSQLite.closeDatabase()
-                    if (songs.size == 0) {
-                        ScreenUtil.showToast(
-                                activity, getString(R.string.noFilesSelectedString), textFontSize,
+                }
+            }
+            val addToFavoriteButton: ImageButton = it.findViewById(R.id.addToFavoriteButton)
+            layoutParams = addToFavoriteButton.layoutParams as ViewGroup.MarginLayoutParams
+            layoutParams.width = buttonWidth
+            layoutParams.height = buttonWidth
+            addToFavoriteButton.setOnClickListener {
+                activity?.let {activityIt ->
+                    val songListSQLite = SongListSQLite(activityIt)
+                    getSongs(songListSQLite, "addToFavoriteButton").let { songsIt ->
+                        var toastMsg = getString(R.string.noFilesSelectedString)
+                        if (songsIt.size > 0) {
+                            for (song in songsIt) {
+                                song.included = "1"
+                                songListSQLite.addSongToSongList(song)
+                            }
+                            toastMsg = getString(R.string.add_to_favorites)
+                        }
+                        ScreenUtil.showToast(activity, toastMsg, textFontSize,
                                 BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                    } else {
-                        playSongs.playSelectedSongList(songs)
                     }
+                    songListSQLite.closeDatabase()
                 }
             }
         }
@@ -216,6 +214,37 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         }
         FileDesList.currentPath = FileDesList.fileList[position].file.path
         searchCurrentFolder()
+    }
+
+    private fun getSongs(songListSQLite : SongListSQLite, msg : String) : ArrayList<SongInfo> {
+        val songs = ArrayList<SongInfo>().also {songIt ->
+            for (i in 0 until FileDesList.fileList.size) {
+                FileDesList.fileList[i].run {
+                    if (selected) {
+                        Log.d(TAG, "$msg.file.path = ${file.path}")
+                        Log.d(TAG, "$msg.file.toUri() = ${file.toUri()}")
+                        var song = SongInfo().apply {
+                            songName = file.name
+                            // filePath = file.path
+                            filePath = file.toUri().toString()
+                            musicTrackNo = 1    // guess
+                            musicChannel = CommonConstants.StereoChannel
+                            vocalTrackNo = 2    // guess
+                            vocalChannel = CommonConstants.StereoChannel
+                            included = "0"
+                        }
+                        songListSQLite.findOneSongByUriString(song.filePath)?.apply {
+                            Log.d(TAG, "$msg.found")
+                            included = "1"
+                            song = this
+                        }
+                        songIt.add(song)
+                    }
+                }
+            }
+        }
+
+        return songs
     }
 
     private fun searchCurrentFolder() {

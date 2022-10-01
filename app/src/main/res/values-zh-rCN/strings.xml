@@ -67,4 +67,5 @@
     <string name="play_video">视频</string>
     <string name="open_files">开启档案</string>
     <string name="unknown">不知道</string>
+    <string name="add_to_favorites">加入我的最爱</string>
 </resources>

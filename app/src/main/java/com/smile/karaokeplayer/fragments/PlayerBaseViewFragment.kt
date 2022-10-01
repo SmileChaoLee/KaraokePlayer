@@ -755,6 +755,8 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                             }
                             sqlIt.closeDatabase()
                         }
+                        ScreenUtil.showToast(it, getString(R.string.add_to_favorites), textFontSize,
+                                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                     }
                 }
             }

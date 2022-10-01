@@ -71,6 +71,17 @@
             android:scaleType="centerInside"
             android:adjustViewBounds="true"
             android:src="@drawable/play_media_button_image"
+            android:layout_gravity="center"
+            android:layout_marginEnd="30sp">
+        </ImageButton>
+        <ImageButton
+            android:id="@+id/addToFavoriteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/main_menuitem_background_color"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:src="@drawable/add_image"
             android:layout_gravity="center">
         </ImageButton>
 
