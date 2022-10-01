@@ -1,5 +1,6 @@
 package exoplayer;
 
+import android.util.Log;
 import android.view.View;
 import com.smile.karaokeplayer.BaseSongDataActivity;
 
@@ -9,6 +10,7 @@ public class SongDataActivity extends BaseSongDataActivity {
 
     @Override
     public void setKaraokeSettingLayoutVisibility() {
+        Log.d(TAG, "setKaraokeSettingLayoutVisibility()");
         karaokeSettingLayout.setVisibility(View.VISIBLE);
     }
 }
