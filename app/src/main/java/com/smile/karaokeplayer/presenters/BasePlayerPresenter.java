@@ -200,7 +200,6 @@ public abstract class BasePlayerPresenter {
                     Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
                 }
             }
-            playingParam.setOrientationStatus(mActivity.getResources().getConfiguration().orientation);
         } else {
             // needed to be set
             numberOfVideoTracks = savedInstanceState.getInt(PlayerConstants.NumberOfVideoTracksState,0);
@@ -226,7 +225,10 @@ public abstract class BasePlayerPresenter {
             } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState);
             Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
         }
-        setOrientationStatus(playingParam.getOrientationStatus());
+        // the orientation is always the current one right now before creating or recreating after destroying
+        playingParam.setOrientationStatus(mActivity.getResources().getConfiguration().orientation);
+        // removed the following to keep the current orientation when recreating after destroying
+        // setOrientationStatus(playingParam.getOrientationStatus());   // original orientation, no more
     }
 
     public void onDurationSeekBarProgressChanged(int progress, boolean fromUser) {

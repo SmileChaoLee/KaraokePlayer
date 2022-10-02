@@ -3,6 +3,7 @@ package com.smile.karaokeplayer
 import android.Manifest
 import android.app.Activity
 import android.content.*
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
@@ -68,6 +69,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         window?.apply {
             addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+        // the orientation is always the current one right now before creating or recreating after destroying
+        requestedOrientation = when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            Configuration.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
@@ -95,7 +102,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         baseTabLayout = findViewById(R.id.baseTabLayout)
         weightSum = baseTabLayout.weightSum
         tablayoutViewLayout = findViewById(R.id.tablayoutViewLayout)
-        onConfigurationChanged(resources.configuration)
+        setTabLayoutViewWeight(resources.configuration.orientation)
 
         callingIntent = intent
         if (savedInstanceState == null) {
@@ -249,10 +256,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged()")
         super.onConfigurationChanged(newConfig)
-        Log.d(TAG, "weightSum = $weightSum")
-        val layoutP = tablayoutViewLayout.layoutParams as LinearLayout.LayoutParams
-        layoutP.weight = if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) weightSum * 0.7f
-        else weightSum * 0.8f
+        setTabLayoutViewWeight(newConfig.orientation)
     }
 
     override fun onDestroy() {
@@ -366,5 +370,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         if (callingIntent.extras == null) {
             playerFragment?.hidePlayerView()
         }
+    }
+
+    private fun setTabLayoutViewWeight(orientation : Int) {
+        Log.d(TAG, "weightSum = $weightSum")
+        val layoutP = tablayoutViewLayout.layoutParams as LinearLayout.LayoutParams
+        layoutP.weight = if (orientation == Configuration.ORIENTATION_LANDSCAPE) weightSum * 0.7f
+        else weightSum * 0.8f
     }
 }

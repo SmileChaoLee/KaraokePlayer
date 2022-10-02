@@ -997,9 +997,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
     }
 
     override fun setScreenOrientation(orientation: Int) {
-        activity?.requestedOrientation =
-            if (orientation==Configuration.ORIENTATION_LANDSCAPE) ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            else ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        activity?.requestedOrientation = when (orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            Configuration.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        }
     }
     // end of implementing PlayerBasePresenter.BasePresentView
 }
