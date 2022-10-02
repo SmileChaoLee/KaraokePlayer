@@ -452,6 +452,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onConfigurationChanged()")
         super.onConfigurationChanged(newConfig)
         closeMenu(mainMenu)
+        setOrientationImageButton(newConfig.orientation)
         setButtonsPositionAndSize(newConfig)
         activity?.let {actIt ->
             myBannerAdView?.destroy()
@@ -761,8 +762,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             val orientation =
                 if (config.orientation == Configuration.ORIENTATION_PORTRAIT) Configuration.ORIENTATION_LANDSCAPE else Configuration.ORIENTATION_PORTRAIT
             Log.d(TAG,"orientationImageButton.onClick.orientation = $orientation")
-            mPresenter.setOrientationStatus(orientation)
-            setImageButtonStatus()
+            setScreenOrientation(orientation)
         }
         repeatImageButton.setOnClickListener { mPresenter.setRepeatSongStatus() }
         switchToMusicImageButton.setOnClickListener { mPresenter.switchAudioToMusic() }
@@ -859,14 +859,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     // implementing PlayerBasePresenter.BasePresentView
     override fun setImageButtonStatus() {
+        Log.d(TAG, "setImageButtonStatus()")
         val playingParam = mPresenter.playingParam
         switchToMusicImageButton.isEnabled = true
         switchToMusicImageButton.visibility = View.VISIBLE
         setSwitchToVocalImageButtonVisibility() // abstract method
-        val orientation = playingParam.orientationStatus
-        Log.d(TAG, "setImageButtonStatus.orientation = $orientation")
-        orientationImageButton.rotation = if (orientation==Configuration.ORIENTATION_LANDSCAPE) 0.0f else 90.0f
-        orientationImageButton.setImageResource(R.drawable.phone_portrait)
+        setOrientationImageButton(resources.configuration.orientation)
         // repeatImageButton
         var backgroundColor = R.color.red
         when (playingParam.repeatStatus) {
@@ -995,13 +993,19 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             ShowAdThread().startShowAd()
         }
     }
+    // end of implementing PlayerBasePresenter.BasePresentView
 
-    override fun setScreenOrientation(orientation: Int) {
+    private fun setScreenOrientation(orientation: Int) {
         activity?.requestedOrientation = when (orientation) {
             Configuration.ORIENTATION_PORTRAIT -> ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
             Configuration.ORIENTATION_LANDSCAPE -> ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             else -> ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         }
     }
-    // end of implementing PlayerBasePresenter.BasePresentView
+
+    private fun setOrientationImageButton(orientation : Int) {
+        orientationImageButton.rotation = if (orientation == Configuration.ORIENTATION_LANDSCAPE) 0.0f else 90.0f
+        Log.d(TAG, "setOrientationImageButton.rotation == ${orientationImageButton.rotation}")
+        orientationImageButton.setImageResource(R.drawable.phone_portrait)
+    }
 }

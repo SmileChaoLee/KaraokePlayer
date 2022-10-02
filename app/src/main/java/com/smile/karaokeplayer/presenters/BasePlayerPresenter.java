@@ -63,7 +63,6 @@ public abstract class BasePlayerPresenter {
         void setTimerToHideSupportAndAudioController();
         void showMusicAndVocalIsNotSet();
         void showInterstitialAd();
-        void setScreenOrientation(int orientation);
         void hidePlayerView();
         void showPlayerView();
     }
@@ -225,10 +224,6 @@ public abstract class BasePlayerPresenter {
             } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState);
             Log.d(TAG, "initializeVariables.singleSongInfo = " + singleSongInfo);
         }
-        // the orientation is always the current one right now before creating or recreating after destroying
-        playingParam.setOrientationStatus(mActivity.getResources().getConfiguration().orientation);
-        // removed the following to keep the current orientation when recreating after destroying
-        // setOrientationStatus(playingParam.getOrientationStatus());   // original orientation, no more
     }
 
     public void onDurationSeekBarProgressChanged(int progress, boolean fromUser) {
@@ -499,11 +494,6 @@ public abstract class BasePlayerPresenter {
         if (mPresentView != null) {
             mPresentView.update_Player_duration_seekbar_progress((int)playingParam.getCurrentAudioPosition());
         }
-    }
-
-    public void setOrientationStatus(int orientation) {
-        playingParam.setOrientationStatus(orientation);
-        mPresentView.setScreenOrientation(orientation);
     }
 
     public void setRepeatSongStatus() {
