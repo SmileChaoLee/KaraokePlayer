@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -38,6 +37,7 @@ import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter.BasePresentView
+import com.smile.karaokeplayer.utilities.BannerAdUtil
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.models.ExitAppTimer
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
@@ -92,7 +92,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     private var volumeSeekBarHeightForLandscape = 0
 
-    private lateinit var bannerLinearLayout: LinearLayout
+    private var bannerLinearLayout: LinearLayout? = null
     private var myBannerAdView: SetBannerAdView? = null
     private var nativeTemplate: GoogleAdMobNativeTemplate? = null
 
@@ -250,8 +250,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             audioTrackImageButton = findViewById(R.id.audioTrackImageButton)
 
             bannerLinearLayout = findViewById(R.id.bannerLinearLayout)
-            bannerLinearLayout.visibility = View.VISIBLE // Show Banner Ad
-            setMyBannerAdView(activity as Activity)
+            activity?.let {actIt ->
+                bannerLinearLayout?.also {layoutIt ->
+                    layoutIt.visibility = View.VISIBLE // Show Banner Ad
+                    myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
+                            layoutIt, actIt.resources.configuration.orientation)
+                    myBannerAdView?.showBannerAdView()
+                }
+            }
 
             // message area
             message_area_LinearLayout = findViewById(R.id.message_area_LinearLayout)
@@ -432,14 +438,14 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onResume() is called.")
         super.onResume()
         myBannerAdView?.resume()
-        bannerLinearLayout.visibility = View.VISIBLE
+        bannerLinearLayout?.visibility = View.VISIBLE
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause() is called.")
         super.onPause()
         myBannerAdView?.pause()
-        bannerLinearLayout.visibility = View.GONE
+        bannerLinearLayout?.visibility = View.GONE
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -447,7 +453,15 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         super.onConfigurationChanged(newConfig)
         closeMenu(mainMenu)
         setButtonsPositionAndSize(newConfig)
-        setMyBannerAdView(activity as Activity)
+        activity?.let {actIt ->
+            myBannerAdView?.destroy()
+            bannerLinearLayout?.also {layoutIt ->
+                layoutIt.visibility = View.VISIBLE // Show Banner Ad
+                myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
+                        layoutIt, actIt.resources.configuration.orientation)
+                myBannerAdView?.showBannerAdView()
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -652,17 +666,6 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         //
     }
 
-    private fun setMyBannerAdView(activity: Activity) {
-        val screen : Point = ScreenUtil.getScreenSize(activity)
-        val adaptiveBannerDpWidth = ScreenUtil.pixelToDp(activity, screen.x)
-        Log.d(TAG, "setMyBannerAdView().adaptiveBannerDpWidth = $adaptiveBannerDpWidth")
-        myBannerAdView?.destroy()
-        myBannerAdView = SetBannerAdView(
-                activity,null, bannerLinearLayout, BaseApplication.googleAdMobBannerID,
-                BaseApplication.facebookBannerID, adaptiveBannerDpWidth)
-        myBannerAdView?.showBannerAdView()
-    }
-
     private fun closeMenu(menu: Menu?) {
         menu?.let {
             for (i in 0 until menu.size()) {
@@ -681,7 +684,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     fun showSupportToolbarAndAudioController() {
         Log.d(TAG, "showSupportToolbarAndAudioController()")
-        bannerLinearLayout.visibility = View.GONE
+        bannerLinearLayout?.visibility = View.GONE
         supportToolbar.visibility = View.VISIBLE
         audioControllerView.visibility = View.VISIBLE
         nativeAdsFrameLayout.visibility = nativeAdViewVisibility
@@ -695,7 +698,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             audioControllerView.visibility = View.GONE
             nativeAdsFrameLayout.visibility = nativeAdViewVisibility
             closeMenu(mainMenu)
-            bannerLinearLayout.visibility = View.VISIBLE
+            bannerLinearLayout?.visibility = View.VISIBLE
         }
     }
 
@@ -878,12 +881,10 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 repeatImageButton.setImageResource(R.drawable.repeat_all_white)
         }
         activity?.let {
-            repeatImageButton.setBackgroundColor(
-                ContextCompat.getColor(
-                    it.applicationContext,
-                    backgroundColor
-                )
+            repeatImageButton.setBackgroundColor(ContextCompat.getColor(
+                    it.applicationContext, backgroundColor)
             )
+            repeatImageButton.visibility = if (playingParam.isPlaySingleSong) View.GONE else View.VISIBLE
         }
 
         hideVideoImageButton.apply {

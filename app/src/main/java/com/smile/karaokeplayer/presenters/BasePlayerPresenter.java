@@ -217,10 +217,10 @@ public abstract class BasePlayerPresenter {
                 playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters.class);
             } else playingParam = savedInstanceState.getParcelable(PlayerConstants.PlayingParamState);
             Log.d(TAG, "initializeVariables.playingParam = " + playingParam);
-            canShowNotSupportedFormat = savedInstanceState.getBoolean(PlayerConstants.CanShowNotSupportedFormatState);
             if (playingParam == null) {
                 initializePlayingParam();
             }
+            canShowNotSupportedFormat = savedInstanceState.getBoolean(PlayerConstants.CanShowNotSupportedFormatState);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState, SongInfo.class);
             } else singleSongInfo = savedInstanceState.getParcelable(PlayerConstants.SingleSongInfoState);
@@ -469,7 +469,7 @@ public abstract class BasePlayerPresenter {
 
     public void playSongPlayedBeforeActivityCreated() {
         Log.d(TAG, "playSongPlayedBeforeActivityCreated.isPlaySingleSong = " + playingParam.isPlaySingleSong());
-        mPresentView.updateVolumeSeekBarProgress();
+        if (mPresentView != null) mPresentView.updateVolumeSeekBarProgress();
         if (mediaUri==null || Uri.EMPTY.equals(mediaUri)) {
             if (playingParam.isPlaySingleSong()) {
                 // called by SongListActivity
@@ -484,8 +484,7 @@ public abstract class BasePlayerPresenter {
                     autoPlaySongList();
                 }
             } else {
-                onDurationSeekBarProgressChanged(0, true);
-                mPresentView.update_Player_duration_seekbar_progress(0);
+                playingParam.setCurrentAudioPosition(0);
             }
         } else {
             int playbackState = playingParam.getCurrentPlaybackState();
@@ -493,6 +492,10 @@ public abstract class BasePlayerPresenter {
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
                 playMediaFromUri(mediaUri);
             }
+        }
+        onDurationSeekBarProgressChanged((int)playingParam.getCurrentAudioPosition(), true);
+        if (mPresentView != null) {
+            mPresentView.update_Player_duration_seekbar_progress((int)playingParam.getCurrentAudioPosition());
         }
     }
 

@@ -2,7 +2,6 @@ package com.smile.karaokeplayer.fragments
 
 import android.app.Activity
 import android.content.res.Configuration
-import android.graphics.Point
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,10 +11,9 @@ import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
+import com.smile.karaokeplayer.utilities.BannerAdUtil
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
-import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "TablayoutFragment"
 
@@ -29,9 +27,9 @@ class TablayoutFragment : Fragment() {
     // private lateinit var fragmentAdapter: FragmentAdapter
     private val openFragment = OpenFileFragment()
     private val favoriteFragment = MyFavoritesFragment()
-    private lateinit var bannerLayoutForTab: LinearLayout
+    private var bannerLayoutForTab: LinearLayout? = null
     private var myBannerAdView: SetBannerAdView? = null
-    private lateinit var playTabLayout: TabLayout
+    private var playTabLayout: TabLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called.")
@@ -50,16 +48,22 @@ class TablayoutFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_tablayout, container, false)
 
         bannerLayoutForTab = view.findViewById(R.id.bannerLayoutForTab)
-        setMyBannerAdView(activity as Activity)
+        activity?.let {actIt ->
+            bannerLayoutForTab?.also { layoutIt ->
+                myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
+                        layoutIt, actIt.resources.configuration.orientation)
+                myBannerAdView?.showBannerAdView()
+            }
+        }
 
         resources.configuration.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
-            else bannerLayoutForTab.visibility = View.VISIBLE
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
+            else bannerLayoutForTab?.visibility = View.VISIBLE
         }
 
         playTabLayout = view.findViewById(R.id.fragmentsTabLayout)
         val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
-        playTabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+        playTabLayout?.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 tab?.let {
                     when (it.position) {
@@ -94,8 +98,10 @@ class TablayoutFragment : Fragment() {
 
         })
 
-        playTabLayout.addTab(playTabLayout.newTab().setText(tabText[0]), true)
-        playTabLayout.addTab(playTabLayout.newTab().setText(tabText[1]))
+        playTabLayout?.let {
+            it.addTab(it.newTab().setText(tabText[0]), true)
+            it.addTab(it.newTab().setText(tabText[1]))
+        }
         /*
         val playViewPager2: ViewPager2 = view.findViewById(R.id.fragmentsViewPager2)
         playViewPager2.adapter = fragmentAdapter
@@ -111,10 +117,17 @@ class TablayoutFragment : Fragment() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged()")
         super.onConfigurationChanged(newConfig)
-        setMyBannerAdView(activity as Activity)
+        activity?.let {actIt ->
+            myBannerAdView?.destroy()
+            bannerLayoutForTab?.also {layoutIt ->
+                myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
+                        layoutIt, newConfig.orientation)
+                myBannerAdView?.showBannerAdView()
+            }
+        }
         newConfig.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
-            else bannerLayoutForTab.visibility = View.VISIBLE
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
+            else bannerLayoutForTab?.visibility = View.VISIBLE
         }
     }
 
@@ -123,8 +136,8 @@ class TablayoutFragment : Fragment() {
         super.onResume()
         myBannerAdView?.resume()
         resources.configuration.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab.visibility = View.GONE
-            else bannerLayoutForTab.visibility = View.VISIBLE
+            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
+            else bannerLayoutForTab?.visibility = View.VISIBLE
         }
     }
 
@@ -132,7 +145,7 @@ class TablayoutFragment : Fragment() {
         Log.d(TAG, "onPause()")
         super.onPause()
         myBannerAdView?.pause()
-        bannerLayoutForTab.visibility = View.GONE
+        bannerLayoutForTab?.visibility = View.GONE
     }
     override fun onDestroy() {
         Log.d(TAG, "onDestroy()")
@@ -140,19 +153,10 @@ class TablayoutFragment : Fragment() {
         super.onDestroy()
     }
 
-    private fun setMyBannerAdView(activity: Activity) {
-        val screen : Point = ScreenUtil.getScreenSize(activity)
-        val adaptiveBannerDpWidth = ScreenUtil.pixelToDp(activity, screen.x)
-        Log.d(TAG, "setMyBannerAdView().adaptiveBannerDpWidth = $adaptiveBannerDpWidth")
-        myBannerAdView?.destroy()
-        myBannerAdView = SetBannerAdView(
-                activity,null, bannerLayoutForTab, BaseApplication.googleAdMobBannerID,
-                BaseApplication.facebookBannerID, adaptiveBannerDpWidth)
-        myBannerAdView?.showBannerAdView()
-    }
-
     fun switchToOpenFileFragment() {
         Log.d(TAG, "switchToOpenFileFragment()")
-        playTabLayout.selectTab(playTabLayout.getTabAt(0))
+        playTabLayout?.let {
+            it.selectTab(it.getTabAt(0))
+        }
     }
 }

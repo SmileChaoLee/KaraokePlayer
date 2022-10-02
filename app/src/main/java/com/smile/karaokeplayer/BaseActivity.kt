@@ -8,9 +8,11 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.*
 import android.provider.Settings
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -34,6 +36,7 @@ private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
+private const val IsPlayToPauseState = "IsPlayToPause"
 private const val HasPlayedSingleState = "HasPlayedSingle"
 private const val PlayDataState = "PlayData"
 private const val CallingComponentState = "CallingComponentName"
@@ -53,6 +56,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     // Not var and BroadcastReceiver? = null
     private lateinit var baseReceiver: BroadcastReceiver
     private lateinit var callingIntent : Intent
+    private var isPlayToPause : Boolean = false
     private var hasPlayedSingle : Boolean = false
     private var callingComponentName : ComponentName? = null
     private var playData = Bundle()
@@ -61,6 +65,10 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG,"onCreate()")
+        window?.apply {
+            addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
@@ -100,6 +108,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             }
         } else {
             hasPlayedSingle = savedInstanceState.getBoolean(HasPlayedSingleState, false)
+            isPlayToPause = savedInstanceState.getBoolean(IsPlayToPauseState, false)
 
             callingComponentName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 savedInstanceState.getParcelable(CallingComponentState, ComponentName::class.java)
@@ -230,6 +239,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         Log.d(TAG, "onSaveInstanceState()")
+        outState.putBoolean(IsPlayToPauseState, isPlayToPause)
         outState.putBoolean(HasPlayedSingleState, hasPlayedSingle)
         outState.putParcelable(CallingComponentState, callingComponentName)
         outState.putParcelable(PlayDataState, playData)
@@ -312,6 +322,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         callingComponentName = compName
         playerFragment?.let {
             playData.clear()
+            isPlayToPause = false
+            if (it.mPresenter.playingParam?.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
+                // playing then pause before going to my favorite activity
+                it.mPresenter.pausePlay()
+                isPlayToPause = true
+            }
             it.onSaveInstanceState(playData)
         }
     }
@@ -328,7 +344,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             onReceiveFunc(PlayerConstants.BackToBaseActivity, null, playData)
             callingComponentName = null
         }
+        if (isPlayToPause) playerFragment?.mPresenter?.startPlay()
         hasPlayedSingle = false
+        isPlayToPause = false
     }
 
     override fun switchToOpenFileFragment() {
