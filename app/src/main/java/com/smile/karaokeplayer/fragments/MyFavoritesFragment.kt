@@ -8,6 +8,7 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,6 +18,7 @@ import com.smile.karaokeplayer.adapters.FavoriteRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
+import com.smile.karaokeplayer.models.FavoriteSingleTon
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
@@ -32,7 +34,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     private var playMyFavorites: PlayMyFavorites? = null
     private lateinit var myListRecyclerView : RecyclerView
     private lateinit var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter
-    private lateinit var favoriteList : ArrayList<SongInfo>
     private lateinit var editSongsActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,12 +55,12 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             Log.d(TAG, "onCreate.playMyFavorites = $playMyFavorites")
         }
 
-        favoriteList = ArrayList()
-
         editSongsActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             playMyFavorites?.restorePlayingState()
             searchFavorites()
         } // update the UI }
+
+        Log.d(TAG, "onCreate.FavoriteSingleTon.favoriteList.size = ${FavoriteSingleTon.favoriteList.size}")
     }
 
     override fun onCreateView(
@@ -85,8 +86,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             selectAllButton.setOnClickListener {
-                for (i in 0 until favoriteList.size) {
-                    favoriteList[i].run {
+                for (i in 0 until FavoriteSingleTon.favoriteList.size) {
+                    FavoriteSingleTon.favoriteList[i].run {
                         included = "1"
                         myRecyclerViewAdapter.notifyItemChanged(i)
                     }
@@ -97,8 +98,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             unselectButton.setOnClickListener {
-                for (i in 0 until favoriteList.size) {
-                    favoriteList[i].run {
+                for (i in 0 until FavoriteSingleTon.favoriteList.size) {
+                    FavoriteSingleTon.favoriteList[i].run {
                         included = "0"
                         myRecyclerViewAdapter.notifyItemChanged(i)
                     }
@@ -118,8 +119,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             playSelectedButton.setOnClickListener {
                 // open the files to play
                 val songs = ArrayList<SongInfo>().also { songIt ->
-                    for (i in 0 until favoriteList.size) {
-                        favoriteList[i].run {
+                    for (i in 0 until FavoriteSingleTon.favoriteList.size) {
+                        FavoriteSingleTon.favoriteList[i].run {
                             if (included == "1") {
                                 songIt.add(this)
                             }
@@ -140,7 +141,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.height = buttonWidth
             editButton.setOnClickListener {
                 ArrayList<SongInfo>().also {listIt ->
-                    for (element in favoriteList) {
+                    for (element in FavoriteSingleTon.favoriteList) {
                         if (element.included == "1") listIt.add(element)
                     }
                     if (listIt.size > 0) {
@@ -169,7 +170,6 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         }
 
         initFavoriteRecyclerView()
-        searchFavorites()
     }
 
     override fun onStart() {
@@ -180,11 +180,12 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     override fun onResume() {
         Log.d(TAG, "onResume() is called")
         super.onResume()
+        searchFavorites()   // has to be in onResume()
     }
 
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
-        favoriteList[position].apply {
+        FavoriteSingleTon.favoriteList[position].apply {
             included = if (included == "1") "0" else "1"
             myRecyclerViewAdapter.notifyItemChanged(position)
         }
@@ -203,16 +204,21 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 }
             }
         }
-        favoriteList.clear()
-        favoriteList.addAll(tempList)
+        FavoriteSingleTon.favoriteList.clear()
+        FavoriteSingleTon.favoriteList.addAll(tempList)
         myRecyclerViewAdapter.notifyDataSetChanged()
     }
 
     private fun initFavoriteRecyclerView() {
         Log.d(TAG, "initFavoriteRecyclerView() is called")
         activity?.let {
-            myRecyclerViewAdapter = FavoriteRecyclerViewAdapter(
-                    it, this, textFontSize, favoriteList)
+            val yellow = ContextCompat.getColor(it, R.color.yellow)
+            val transparentLightGray = ContextCompat.getColor(it, R.color.transparentLightGray)
+
+            myRecyclerViewAdapter = FavoriteRecyclerViewAdapter.getInstance(
+                    this, textFontSize, FavoriteSingleTon.favoriteList,
+                    yellow, transparentLightGray)
+
             myListRecyclerView.adapter = myRecyclerViewAdapter
             myListRecyclerView.layoutManager = object : LinearLayoutManager(context) {
                 override fun isAutoMeasureEnabled(): Boolean {

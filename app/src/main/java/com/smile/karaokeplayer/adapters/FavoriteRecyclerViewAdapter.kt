@@ -1,13 +1,11 @@
 package com.smile.karaokeplayer.adapters
 
-import android.content.Context
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
@@ -16,14 +14,42 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG = "FaRecyclerVAdapter"
 
-class FavoriteRecyclerViewAdapter(private val context: Context,
-                                  private val recyclerItemClickListener: OnRecyclerItemClickListener,
-                                  private val textFontSize: Float,
-                                  private val favoriteList: java.util.ArrayList<SongInfo>)
+class FavoriteRecyclerViewAdapter private constructor(
+        private var recyclerItemClickListener: OnRecyclerItemClickListener,
+        private var textFontSize: Float,
+        private var favoriteList: java.util.ArrayList<SongInfo>,
+        private var yellow: Int, private var transparentLightGray: Int)
+
     : RecyclerView.Adapter<FavoriteRecyclerViewAdapter.MyViewHolder>() {
 
     interface OnRecyclerItemClickListener {
         fun onRecyclerItemClick(v: View?, position: Int)
+    }
+
+    companion object {
+        private var viewAdapter : FavoriteRecyclerViewAdapter? = null
+        @JvmStatic
+        fun getInstance(recyclerItemClickListener: OnRecyclerItemClickListener,
+                        textFontSize: Float,
+                        favoriteList: java.util.ArrayList<SongInfo>,
+                        yellow: Int, transparentLightGray: Int) : FavoriteRecyclerViewAdapter {
+
+            Log.d(TAG, "getInstance.viewAdapter = $viewAdapter")
+            if (viewAdapter == null) {
+                viewAdapter = FavoriteRecyclerViewAdapter(recyclerItemClickListener,
+                        textFontSize, favoriteList, yellow, transparentLightGray)
+            } else {
+                viewAdapter?.let {
+                    it.recyclerItemClickListener = recyclerItemClickListener
+                    it.textFontSize = textFontSize
+                    it.favoriteList = favoriteList
+                    it.yellow = yellow
+                    it.transparentLightGray = transparentLightGray
+                }
+            }
+
+            return viewAdapter!!
+        }
     }
 
     class MyViewHolder(itemView: View,
@@ -61,14 +87,14 @@ class FavoriteRecyclerViewAdapter(private val context: Context,
         }
         holder.songPathTextView.apply {
             favoriteList[position].let {
-                if (it.included == "1") setTextColor(ContextCompat.getColor(context, R.color.yellow))
+                if (it.included == "1") setTextColor(yellow)
                 else setTextColor(Color.WHITE)
                 text = it.filePath?: ""
             }
         }
 
         holder.itemView.setBackgroundColor(if (position % 2 == 0) Color.BLACK
-        else ContextCompat.getColor(context, R.color.transparentLightGray))
+        else transparentLightGray)
     }
 
     override fun getItemCount(): Int {
