@@ -204,6 +204,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         interstitialAd.new ShowAdThread().startShowAd();
         setResult(Activity.RESULT_OK);   // no bundle data
         finish();
+        Runtime.getRuntime().gc();
     }
 
     private void deleteOneSongFromFavoriteList(SongInfo singleSongInfo) {

@@ -255,7 +255,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     layoutIt.visibility = View.VISIBLE // Show Banner Ad
                     myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                             layoutIt, actIt.resources.configuration.orientation)
-                    myBannerAdView?.showBannerAdView()
+                    myBannerAdView?.showBannerAdView(0) // AdMob first
                 }
             }
 
@@ -460,7 +460,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 layoutIt.visibility = View.VISIBLE // Show Banner Ad
                 myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                         layoutIt, actIt.resources.configuration.orientation)
-                myBannerAdView?.showBannerAdView()
+                myBannerAdView?.showBannerAdView(0) // AdMob first
             }
         }
     }
