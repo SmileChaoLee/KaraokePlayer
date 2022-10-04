@@ -36,6 +36,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
 
     private static final String TAG = "BFavoriteListActivity";
     private final String CrudActionState = "CrudAction";
+    private final String PositionEditState = "PositionEdit";
     private SongListSQLite songListSQLite;
     private float textFontSize;
     private float toastTextSize;
@@ -90,6 +91,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
             // activity being recreated
             Log.d(TAG, "onCreate.savedInstanceState is not null");
             currentAction = savedInstanceState.getString(CrudActionState);
+            positionEdit = savedInstanceState.getInt(PositionEditState, -1);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
                 favoriteList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
@@ -159,6 +161,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(CrudActionState, currentAction);
+        outState.putInt(PositionEditState, positionEdit);
         outState.putSerializable(PlayerConstants.MyFavoriteListState,
                 FavoriteSingleTon.INSTANCE.getSelectedList());
         super.onSaveInstanceState(outState);
