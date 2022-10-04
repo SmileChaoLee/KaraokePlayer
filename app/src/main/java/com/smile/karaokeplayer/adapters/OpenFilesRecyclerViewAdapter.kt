@@ -16,10 +16,10 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 private const val TAG = "FilesRecyclerVAdapter"
 
 class OpenFilesRecyclerViewAdapter private constructor(
-        private var recyclerItemClickListener: OnRecyclerItemClickListener,
-        private var textFontSize: Float,
-        private var files: java.util.ArrayList<FileDescription>,
-        private var yellow: Int, private var transparentLightGray: Int)
+        private var recyclerItemClickListener : OnRecyclerItemClickListener,
+        private var textFontSize : Float,
+        private var mList : java.util.ArrayList<FileDescription>,
+        private var yellow : Int, private var transparentLightGray : Int)
 
     : RecyclerView.Adapter<OpenFilesRecyclerViewAdapter.MyViewHolder>() {
 
@@ -31,19 +31,19 @@ class OpenFilesRecyclerViewAdapter private constructor(
         private var viewAdapter : OpenFilesRecyclerViewAdapter? = null
         @JvmStatic
         fun getInstance(recyclerItemClickListener: OnRecyclerItemClickListener,
-                        textFontSize: Float,
-                        files: java.util.ArrayList<FileDescription>,
-                        yellow: Int, transparentLightGray: Int) : OpenFilesRecyclerViewAdapter {
+                        textFontSize : Float,
+                        mList : java.util.ArrayList<FileDescription>,
+                        yellow : Int, transparentLightGray : Int) : OpenFilesRecyclerViewAdapter {
 
             Log.d(TAG, "getInstance.viewAdapter = $viewAdapter")
             if (viewAdapter == null) {
                 viewAdapter = OpenFilesRecyclerViewAdapter(recyclerItemClickListener,
-                        textFontSize, files, yellow, transparentLightGray)
+                        textFontSize, mList, yellow, transparentLightGray)
             } else {
                 viewAdapter?.let {
                     it.recyclerItemClickListener = recyclerItemClickListener
                     it.textFontSize = textFontSize
-                    it.files = files
+                    it.mList = mList
                     it.yellow = yellow
                     it.transparentLightGray = transparentLightGray
                 }
@@ -79,6 +79,7 @@ class OpenFilesRecyclerViewAdapter private constructor(
 
     // Involves populating data into the item through holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        Log.d(TAG, "onCreateViewHolder().mList.size = ${mList.size}")
         val layoutInflater = LayoutInflater.from(parent.context)
         val fileView = layoutInflater.inflate(R.layout.fragment_open_file_item, parent, false)
         return MyViewHolder(fileView, recyclerItemClickListener, textFontSize)
@@ -86,12 +87,12 @@ class OpenFilesRecyclerViewAdapter private constructor(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.folderImageView.apply {
-            visibility = if (files[position].file.isDirectory) View.VISIBLE else View.INVISIBLE
+            visibility = if (mList[position].file.isDirectory) View.VISIBLE else View.INVISIBLE
         }
         holder.fileNameTextView.apply {
-            text = files[position].file.name
+            text = mList[position].file.name
             setTextColor(Color.WHITE)
-            if (files[position].selected) setTextColor(yellow)
+            if (mList[position].selected) setTextColor(yellow)
         }
 
         holder.itemView.setBackgroundColor(if (position % 2 == 0) Color.BLACK
@@ -99,6 +100,7 @@ class OpenFilesRecyclerViewAdapter private constructor(
     }
 
     override fun getItemCount(): Int {
-        return files.size
+        Log.d(TAG, "getItemCount().favoriteList.size = ${mList.size}")
+        return mList.size
     }
 }

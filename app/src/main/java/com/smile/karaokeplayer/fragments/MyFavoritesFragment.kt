@@ -147,8 +147,11 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     if (listIt.size > 0) {
                         playMyFavorites?.let {playIt ->
                             playIt.intentForFavoriteListActivity().apply {
+                                Log.d(TAG, "editButton.listIt.size = ${listIt.size}")
                                 playIt.onSavePlayingState(component)
-                                putExtra(PlayerConstants.MyFavoriteListState, listIt)
+                                // putExtra(PlayerConstants.MyFavoriteListState, listIt)
+                                FavoriteSingleTon.selectedList.clear()
+                                FavoriteSingleTon.selectedList.addAll(listIt)
                                 editSongsActivityLauncher.launch(this)
                             }
                         }

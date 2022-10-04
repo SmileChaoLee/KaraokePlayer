@@ -70,7 +70,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="7" >
+        android:weightSum="7"
+        android:baselineAligned="false">
         <RelativeLayout
             android:id="@+id/audioMusicTrackLayout"
             android:layout_width="0dp"
@@ -138,7 +139,8 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:weightSum="7">
+        android:weightSum="7"
+        android:baselineAligned="false">
         <RelativeLayout
             android:id="@+id/audioVocalTrackLayout"
             android:layout_width="0dp"

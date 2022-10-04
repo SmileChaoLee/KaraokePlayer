@@ -1,52 +1,50 @@
 package com.smile.karaokeplayer;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.activity.OnBackPressedCallback;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.smile.karaokeplayer.adapters.SelectedFavoriteAdapter;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
+import com.smile.karaokeplayer.models.FavoriteSingleTon;
 import com.smile.karaokeplayer.models.SongInfo;
 import com.smile.karaokeplayer.models.SongListSQLite;
 import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial;
 import com.smile.smilelibraries.utilities.ScreenUtil;
-
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
-import java.util.Collection;
 
-public abstract class BaseFavoriteListActivity extends AppCompatActivity {
+public abstract class BaseFavoriteListActivity extends AppCompatActivity
+        implements SelectedFavoriteAdapter.OnRecyclerItemClickListener {
 
     private static final String TAG = "BFavoriteListActivity";
     private final String CrudActionState = "CrudAction";
     private SongListSQLite songListSQLite;
     private float textFontSize;
     private float toastTextSize;
-    private ArrayList<SongInfo> mFavoriteList = new ArrayList<>();
-    private FavoriteListAdapter favoriteListAdapter;
     private ActivityResultLauncher<Intent> editFavoritesLauncher;
     private String currentAction = CommonConstants.AddActionString;
     private ShowInterstitial interstitialAd = null;
+    private RecyclerView myListRecyclerView;
+    private SelectedFavoriteAdapter myRecyclerViewAdapter;
+    private int positionEdit = -1;
 
     public abstract Intent createIntentFromSongDataActivity();
     public abstract void setAudioLinearLayoutVisibility(LinearLayout linearLayout);
@@ -77,48 +75,62 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         exitFavoriteListButton.setOnClickListener(v -> returnToPrevious());
 
+        myListRecyclerView = findViewById(R.id.selectedFavoriteRecyclerView);
+
+        /*
         Intent callingIntent = getIntent();
         Bundle arguments = null;
         if (callingIntent != null) {
             arguments = callingIntent.getExtras();
         }
+        */
+
         if (savedInstanceState != null) {
+            ArrayList<SongInfo> favoriteList;
+            // activity being recreated
             Log.d(TAG, "onCreate.savedInstanceState is not null");
             currentAction = savedInstanceState.getString(CrudActionState);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                mFavoriteList = (ArrayList<SongInfo>) savedInstanceState
+                favoriteList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
             else
-                mFavoriteList = (ArrayList<SongInfo>) savedInstanceState
+                favoriteList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState);
+            if (favoriteList == null) {
+                favoriteList = new ArrayList<>();
+            }
+            FavoriteSingleTon.INSTANCE.getSelectedList().clear();
+            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(favoriteList);
         } else {
+            Log.d(TAG, "onCreate.savedInstanceState is null");
+            /*
+            // first recreating then using the FavoriteSingleTon.INSTANCE.getSelectedList()
+            // It won't happen in this case (no R.id.MyFavorite any more, no CommonConstants.AddActionString)
             if (arguments == null) {
                 Log.d(TAG, "onCreate.savedInstanceState is null, arguments is null");
                 currentAction = CommonConstants.AddActionString;
-                mFavoriteList = songListSQLite.readPlayList();
+                favoriteList = songListSQLite.readPlayList();
             } else {
                 Log.d(TAG, "onCreate.savedInstanceState is null, arguments is not null");
                 currentAction = CommonConstants.EditActionString;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                    mFavoriteList = (ArrayList<SongInfo>) arguments
+                    favoriteList = (ArrayList<SongInfo>) arguments
                             .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
                 else
-                    mFavoriteList = (ArrayList<SongInfo>) arguments
+                    favoriteList = (ArrayList<SongInfo>) arguments
                             .getSerializable(PlayerConstants.MyFavoriteListState);
-                if (mFavoriteList == null) {
+                if (favoriteList == null) {
                     // for all favorites
                     currentAction = CommonConstants.AddActionString;
-                    mFavoriteList = songListSQLite.readPlayList();
+                    favoriteList = songListSQLite.readPlayList();
+                } else {
+                    Log.d(TAG, "onCreate.arguments is not null, favoriteList.size() = " + favoriteList.size());
                 }
             }
+            FavoriteSingleTon.INSTANCE.getSelectedList().clear();
+            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(favoriteList);
+            */
         }
-
-        favoriteListAdapter = new FavoriteListAdapter(this, R.layout.activity_favorite_list_item, mFavoriteList);
-        favoriteListAdapter.setNotifyOnChange(false);
-
-        ListView favoriteListListView = findViewById(R.id.favoriteListListView);
-        favoriteListListView.setAdapter(favoriteListAdapter);
-        favoriteListListView.setOnItemClickListener((adapterView, view, position, rowId) -> {});
 
         editFavoritesLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -129,6 +141,11 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
                         updateFavoriteList(result.getData());
                     }
                 });
+
+        Log.d(TAG, "onCreate.FavoriteSingleTon.INSTANCE.getSelectedList().size() = " +
+                FavoriteSingleTon.INSTANCE.getSelectedList().size());
+
+        initSelectedFavoriteRecyclerView();
 
         getOnBackPressedDispatcher().addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -142,8 +159,15 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(CrudActionState, currentAction);
-        outState.putSerializable(PlayerConstants.MyFavoriteListState, mFavoriteList);
+        outState.putSerializable(PlayerConstants.MyFavoriteListState,
+                FavoriteSingleTon.INSTANCE.getSelectedList());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume()");
+        super.onResume();
     }
 
     @Override
@@ -181,196 +205,116 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity {
         editFavoritesLauncher.launch(editIntent);
     }
 
+    private void initSelectedFavoriteRecyclerView() {
+        Log.d(TAG, "initSelectedFavoriteRecyclerView.getSelectedList() = " +
+                FavoriteSingleTon.INSTANCE.getSelectedList().size());
+
+        int yellow2Color = ContextCompat.getColor(this, R.color.yellow2);
+        int yellow3Color = ContextCompat.getColor(this, R.color.yellow3);
+
+        myRecyclerViewAdapter = SelectedFavoriteAdapter.getInstance(
+                this, songListSQLite,
+                FavoriteSingleTon.INSTANCE.getSelectedList(),
+                textFontSize, yellow2Color, yellow3Color);
+
+        myListRecyclerView.setAdapter(myRecyclerViewAdapter);
+        myListRecyclerView.setLayoutManager(new LinearLayoutManager(this) {
+            @Override
+            public boolean isAutoMeasureEnabled() {
+                return false;
+            }
+        });
+    }
+
+    // implement SelectedFavoriteAdapter.OnRecyclerItemClickListener
+    @Override
+    public void onRecyclerItemClick(View v, int position) {
+        Log.d(TAG, "onRecyclerItemClick.position = " + position);
+    }
+
+    @Override
+    public void setAudioLayoutVisibility(@NotNull LinearLayout audioLayout) {
+        setAudioLinearLayoutVisibility(audioLayout);
+    }
+    @Override
+    public void editSongButtonFunc(int position) {
+        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+            return;
+        }
+        Log.d(TAG, "editSongButtonFunc.positionEdit = " + positionEdit);
+        positionEdit = position;
+        editOneSongFromFavoriteList(FavoriteSingleTon.INSTANCE.getSelectedList().get(position));
+    }
+    @Override
+    public void deleteSongButtonFunc(int position) {
+        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+            return;
+        }
+        positionEdit = position;
+        Log.d(TAG, "deleteSongButtonFunc.positionEdit = " + positionEdit);
+        deleteOneSongFromFavoriteList(FavoriteSingleTon.INSTANCE.getSelectedList().get(position));
+    }
+    @Override
+    public void playSongButtonFunc(int position) {
+        // play this item (media file)
+        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+            return;
+        }
+        Log.d(TAG, "playSongButtonFunc.positionEdit = " + positionEdit);
+        currentAction = CommonConstants.PlayActionString;
+        // getCallingActivity() only works from startActivityForResult
+        // Intent playerActivityIntent = new Intent();
+        // playerActivityIntent.setComponent(getCallingActivity());
+        // playerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        // Bundle extras = new Bundle();
+        // extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+        // extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
+        // playerActivityIntent.putExtras(extras);
+        // playSongLauncher.launch(playerActivityIntent);
+        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
+        Intent bIntent = new Intent(PlayerConstants.PlaySingleSongAction);
+        Bundle extras = new Bundle();
+        extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
+        extras.putParcelable(PlayerConstants.SingleSongInfoState,
+                (FavoriteSingleTon.INSTANCE.getSelectedList().get(position)));
+        bIntent.putExtras(extras);
+        broadcastManager.sendBroadcast(bIntent);
+    }
+    // Finish implementing SelectedFavoriteAdapter.OnRecyclerItemClickListener
+
     private void updateFavoriteList(Intent data) {
+        if (data != null && positionEdit != -1) {
+            Log.d(TAG, "updateFavoriteList.positionEdit = " + positionEdit);
+            SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SingleSongInfoState);
+            if (currentAction.equals(CommonConstants.EditActionString)) {
+                FavoriteSingleTon.INSTANCE.getSelectedList().set(positionEdit, songInfo);
+                myRecyclerViewAdapter.notifyItemChanged(positionEdit);
+            } else {
+                // delete
+                FavoriteSingleTon.INSTANCE.getSelectedList().remove(positionEdit);
+                myRecyclerViewAdapter.notifyItemRemoved(positionEdit);
+            }
+        }
+    }
+    private void updateFavoriteList_Old(Intent data) {
         // for edit and delete
         if (data != null) {
             SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SingleSongInfoState);
             int id = songInfo.getId();
             Log.d(TAG, "updateFavoriteList.id = " + id);
-            for (int i = 0; i < mFavoriteList.size(); i++) {
-                if (mFavoriteList.get(i).getId() == id) {
+            for (int i = 0; i < FavoriteSingleTon.INSTANCE.getSelectedList().size(); i++) {
+                if (FavoriteSingleTon.INSTANCE.getSelectedList().get(i).getId() == id) {
                     if (currentAction.equals(CommonConstants.EditActionString)) {
-                        mFavoriteList.set(i, new SongInfo(songInfo));
+                        // FavoriteSingleTon.INSTANCE.getSelectedList().set(i, new SongInfo(songInfo));
+                        FavoriteSingleTon.INSTANCE.getSelectedList().set(i, songInfo);
+                        myRecyclerViewAdapter.notifyItemChanged(i);
                     } else {
-                        mFavoriteList.remove(i);
+                        FavoriteSingleTon.INSTANCE.getSelectedList().remove(i);
+                        myRecyclerViewAdapter.notifyItemRemoved(i);
                     }
                     break;
                 }
             }
-            favoriteListAdapter.updateData(mFavoriteList);    // update the UI
-        }
-    }
-
-    private class FavoriteListAdapter extends ArrayAdapter {
-
-        private final float itemTextSize = textFontSize * 0.6f;
-        private final float buttonTextSize = textFontSize * 0.8f;
-        private final int yellow2Color;
-        private final int yellow3Color;
-        private final int layoutId;
-        private final ArrayList<SongInfo> favoriteList;
-
-        @SuppressWarnings("unchecked")
-        FavoriteListAdapter(Context context, int layoutId, ArrayList<SongInfo> favoriteList) {
-            super(context, layoutId, favoriteList);
-            this.layoutId = layoutId;
-            this.favoriteList = new ArrayList<>(favoriteList);
-            yellow2Color = ContextCompat.getColor(context, R.color.yellow2);
-            yellow3Color = ContextCompat.getColor(context, R.color.yellow3);
-        }
-
-        // getCount() must be overridden
-        @Override
-        public int getCount() {
-            return favoriteList.size();
-        }
-
-        @Nullable
-        @Override
-        public Object getItem(int position) {
-            return super.getItem(position);
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public int getPosition(@Nullable Object item) {
-            return super.getPosition(item);
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            @SuppressLint("ViewHolder") View view = getLayoutInflater().inflate(layoutId, parent,false);
-
-            if (getCount() == 0) {
-                return view;
-            }
-
-            if ( (position % 2) == 0) {
-                view.setBackgroundColor(yellow2Color);
-            } else {
-                view.setBackgroundColor(yellow3Color);
-            }
-
-            final TextView titleStringTextView = view.findViewById(R.id.titleStringTextView);
-            ScreenUtil.resizeTextSize(titleStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView titleNameTextView = view.findViewById(R.id.titleNameTextView);
-            ScreenUtil.resizeTextSize(titleNameTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final TextView filePathStringTextView = view.findViewById(R.id.filePathStringTextView);
-            ScreenUtil.resizeTextSize(filePathStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView filePathTextView = view.findViewById(R.id.filePathTextView);
-            ScreenUtil.resizeTextSize(filePathTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            //
-            final LinearLayout audioMusicLinearLayout = view.findViewById(R.id.audioMusicLinearLayout);
-            //
-            final TextView musicTrackStringTextView = view.findViewById(R.id.musicTrackStringTextView);
-            ScreenUtil.resizeTextSize(musicTrackStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView musicTrackTextView = view.findViewById(R.id.musicTrackTextView);
-            ScreenUtil.resizeTextSize(musicTrackTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final TextView musicChannelStringTextView = view.findViewById(R.id.musicChannelStringTextView);
-            ScreenUtil.resizeTextSize(musicChannelStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView musicChannelTextView = view.findViewById(R.id.musicChannelTextView);
-            ScreenUtil.resizeTextSize(musicChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            //
-            final LinearLayout audioVocalLinearLayout = view.findViewById(R.id.audioVocalLinearLayout);
-            //
-            final TextView vocalTrackStringTextView = view.findViewById(R.id.vocalTrackStringTextView);
-            ScreenUtil.resizeTextSize(vocalTrackStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView vocalTrackTextView = view.findViewById(R.id.vocalTrackTextView);
-            ScreenUtil.resizeTextSize(vocalTrackTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final TextView vocalChannelStringTextView = view.findViewById(R.id.vocalChannelStringTextView);
-            ScreenUtil.resizeTextSize(vocalChannelStringTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final TextView vocalChannelTextView = view.findViewById(R.id.vocalChannelTextView);
-            ScreenUtil.resizeTextSize(vocalChannelTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            //
-            setAudioLinearLayoutVisibility(audioMusicLinearLayout); // abstract method
-            setAudioLinearLayoutVisibility(audioVocalLinearLayout);
-            //
-            final TextView includedPlaylistTextView = view.findViewById(R.id.includedPlaylistTextView);
-            ScreenUtil.resizeTextSize(includedPlaylistTextView, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-            final CheckBox includedPlaylistCheckBox = view.findViewById(R.id.includedPlaylistCheckBox);
-            ScreenUtil.resizeTextSize(includedPlaylistCheckBox, itemTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final Button editSongButton = view.findViewById(R.id.editSongButton);
-            ScreenUtil.resizeTextSize(editSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final Button deleteSongButton = view.findViewById(R.id.deleteSongButton);
-            ScreenUtil.resizeTextSize(deleteSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
-
-            final Button playSongButton = view.findViewById(R.id.playSongButton);
-            ScreenUtil.resizeTextSize(playSongButton, buttonTextSize, ScreenUtil.FontSize_Pixel_Type);
-            // the following is still needed to be test (have to reduce the usage of memory)
-            // if (!com.smile.karaokeplayer.BuildConfig.DEBUG) playSongButton.setVisibility(View.GONE);
-
-            int favoriteListSize = 0;
-            if (favoriteList != null) {
-                favoriteListSize = favoriteList.size();
-            }
-            if (favoriteListSize > 0) {
-                final SongInfo singleSongInfo = favoriteList.get(position);
-
-                titleNameTextView.setText(singleSongInfo.getSongName());
-                filePathTextView.setText(singleSongInfo.getFilePath());
-                musicTrackTextView.setText(String.valueOf(singleSongInfo.getMusicTrackNo()));
-                musicChannelTextView.setText(BaseApplication.audioChannelMap.get(singleSongInfo.getMusicChannel()));
-                vocalTrackTextView.setText(String.valueOf(singleSongInfo.getVocalTrackNo()));
-                vocalChannelTextView.setText(BaseApplication.audioChannelMap.get(singleSongInfo.getVocalChannel()));
-
-                boolean inPlaylist = (singleSongInfo.getIncluded().equals("1"));
-                includedPlaylistCheckBox.setChecked(inPlaylist);
-                includedPlaylistCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                    includedPlaylistCheckBox.setChecked(isChecked);
-                    includedPlaylistCheckBox.jumpDrawablesToCurrentState();
-                    String included = isChecked ? "1" : "0";
-                    singleSongInfo.setIncluded(included);
-                    songListSQLite.updateOneSongFromSongList(singleSongInfo);
-                });
-
-                editSongButton.setOnClickListener(view1 -> editOneSongFromFavoriteList(singleSongInfo));
-
-                deleteSongButton.setOnClickListener(view12 -> deleteOneSongFromFavoriteList(singleSongInfo));
-
-                playSongButton.setOnClickListener(v -> {
-                    // play this item (media file)
-                    currentAction = CommonConstants.PlayActionString;
-                    /*
-                    // getCallingActivity() only works from startActivityForResult
-                    Intent playerActivityIntent = new Intent();
-                    playerActivityIntent.setComponent(getCallingActivity());
-                    playerActivityIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    Bundle extras = new Bundle();
-                    extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                    extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
-                    playerActivityIntent.putExtras(extras);
-                    playSongLauncher.launch(playerActivityIntent);
-                    */
-                    LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(getApplicationContext());
-                    Intent bIntent = new Intent(PlayerConstants.PlaySingleSongAction);
-                    Bundle extras = new Bundle();
-                    extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
-                    extras.putParcelable(PlayerConstants.SingleSongInfoState, singleSongInfo);
-                    bIntent.putExtras(extras);
-                    broadcastManager.sendBroadcast(bIntent);
-                });
-            }
-
-            return view;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void addAll(@NonNull Collection collection) {
-            super.addAll(collection);
-        }
-
-        public void updateData(ArrayList<SongInfo> newData) {
-            favoriteList.clear();
-            favoriteList.addAll(newData);
-            notifyDataSetChanged();
         }
     }
 }
