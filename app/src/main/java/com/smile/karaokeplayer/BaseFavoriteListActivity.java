@@ -2,6 +2,8 @@ package com.smile.karaokeplayer;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +45,10 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
     private ActivityResultLauncher<Intent> editFavoritesLauncher;
     private String currentAction = CommonConstants.AddActionString;
     private ShowInterstitial interstitialAd = null;
+    private float weightSum = 0.f;
+    private LinearLayout favoriteListLinearLayout;
+    private LinearLayout favoritesTitleLayout;
+    private LinearLayout favoritesExitButtonLayout;
     private RecyclerView myListRecyclerView;
     private SelectedFavoriteAdapter myRecyclerViewAdapter;
     private int positionEdit = -1;
@@ -58,25 +64,26 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         textFontSize = ScreenUtil.suitableFontSize(this, defaultTextFontSize, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         // float fontScale = ScreenUtil.suitableFontScale(this, ScreenUtil.FontSize_Pixel_Type, 0.0f);
         toastTextSize = 0.8f * textFontSize;
-
         interstitialAd = new ShowInterstitial(this,
                 ((BaseApplication)getApplication()).facebookInterstitial,
                 ((BaseApplication)getApplication()).adMobInterstitial);
-
         songListSQLite = new SongListSQLite(getApplicationContext());
 
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_favorite_list);
 
         TextView myFavoritesTextView = findViewById(R.id.myFavoritesTextView);
         ScreenUtil.resizeTextSize(myFavoritesTextView, textFontSize, ScreenUtil.FontSize_Pixel_Type);
-
         Button exitFavoriteListButton = findViewById(R.id.exitFavoriteListButton);
         ScreenUtil.resizeTextSize(exitFavoriteListButton, textFontSize, ScreenUtil.FontSize_Pixel_Type);
         exitFavoriteListButton.setOnClickListener(v -> returnToPrevious());
 
+        favoriteListLinearLayout = findViewById(R.id.favoriteListLinearLayout);
+        weightSum = favoriteListLinearLayout.getWeightSum();
+        favoritesTitleLayout = findViewById(R.id.favoritesTitleLayout);
         myListRecyclerView = findViewById(R.id.selectedFavoriteRecyclerView);
+        favoritesExitButtonLayout = findViewById(R.id.favoritesExitButtonLayout);
+        setLayoutViewWeight();
 
         /*
         Intent callingIntent = getIntent();
@@ -87,22 +94,21 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         */
 
         if (savedInstanceState != null) {
-            ArrayList<SongInfo> favoriteList;
+            ArrayList<SongInfo> tempList;
             // activity being recreated
-            Log.d(TAG, "onCreate.savedInstanceState is not null");
             currentAction = savedInstanceState.getString(CrudActionState);
             positionEdit = savedInstanceState.getInt(PositionEditState, -1);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                favoriteList = (ArrayList<SongInfo>) savedInstanceState
+                tempList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
             else
-                favoriteList = (ArrayList<SongInfo>) savedInstanceState
+                tempList = (ArrayList<SongInfo>) savedInstanceState
                         .getSerializable(PlayerConstants.MyFavoriteListState);
-            if (favoriteList == null) {
-                favoriteList = new ArrayList<>();
-            }
+            if (tempList == null) tempList = new ArrayList<>();
+            Log.d(TAG, "onCreate.savedInstanceState is not null.tempList.size() = "
+                    + tempList.size());
             FavoriteSingleTon.INSTANCE.getSelectedList().clear();
-            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(favoriteList);
+            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(tempList);
         } else {
             Log.d(TAG, "onCreate.savedInstanceState is null");
             /*
@@ -159,11 +165,19 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
     }
 
     @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        setLayoutViewWeight();
+        super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putString(CrudActionState, currentAction);
         outState.putInt(PositionEditState, positionEdit);
-        outState.putSerializable(PlayerConstants.MyFavoriteListState,
-                FavoriteSingleTon.INSTANCE.getSelectedList());
+        // must create a new instance for FavoriteSingleTon.INSTANCE.getSelectedList()
+        // in this case
+        ArrayList<SongInfo> tempList = new ArrayList<>(FavoriteSingleTon.INSTANCE.getSelectedList());
+        outState.putSerializable(PlayerConstants.MyFavoriteListState, tempList);
         super.onSaveInstanceState(outState);
     }
 
@@ -319,5 +333,19 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
                 }
             }
         }
+    }
+
+    private void setLayoutViewWeight() {
+        Point screen = ScreenUtil.getScreenSize(this);
+        Log.d(TAG, "onCreate.textFontSize = " + textFontSize);
+        float factor = (textFontSize * 2.5f) / screen.y;
+        LinearLayout.LayoutParams layoutP = (LinearLayout.LayoutParams)favoritesTitleLayout.getLayoutParams();
+        float weight = weightSum * factor;
+        layoutP.weight = weight;
+        layoutP = (LinearLayout.LayoutParams)favoritesExitButtonLayout.getLayoutParams();
+        layoutP.weight = weight;
+        layoutP = (LinearLayout.LayoutParams)myListRecyclerView.getLayoutParams();
+        layoutP.weight = weightSum - weight * 2;
+
     }
 }
