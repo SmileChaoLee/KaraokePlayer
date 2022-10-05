@@ -55,10 +55,9 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
             videoVLCPlayerView.visibility = View.VISIBLE
         }
 
-        // moved to reSume() on 2022-09-30
-        /*
-        presenter.playSongPlayedBeforeActivityCreated()
-        */
+        val currentProgress = presenter.currentProgressForVolumeSeekBar
+        volumeSeekBar.setProgressAndThumb(currentProgress)
+        // presenter.playSongPlayedBeforeActivityCreated()  // moved to onResume()
 
         Log.d(TAG, "onViewCreated() is finished.")
     }
@@ -66,14 +65,13 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
     override fun onResume() {
         Log.d(TAG, "onResume() is called.")
         super.onResume()
-        // presenter.setVideoWindowSize()
         presenter.playSongPlayedBeforeActivityCreated()
     }
 
     override fun onPause() {
         Log.d(TAG, "onPause() is called.")
         super.onPause()
-        //presenter.detachPlayerViews()
+        presenter.detachPlayerViews()
     }
     override fun onConfigurationChanged(newConfig: Configuration) {
         Log.d(TAG, "onConfigurationChanged() is called.")

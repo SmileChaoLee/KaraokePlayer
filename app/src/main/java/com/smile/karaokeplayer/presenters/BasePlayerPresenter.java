@@ -156,8 +156,9 @@ public abstract class BasePlayerPresenter {
         }
     }
 
-    protected void playMediaFromUri(Uri uri) {
-        Log.d(TAG, "playMediaFromUri.uri = " + uri);
+    private void playMediaFromUri() {
+        Log.d(TAG, "playMediaFromUri.mediaUri = " + mediaUri);
+        if (mediaUri == null) return;
         // to avoid the bugs from MediaSessionConnector or MediaControllerCallback
         // pass the saved instance of playingParam to
         // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
@@ -165,7 +166,7 @@ public abstract class BasePlayerPresenter {
         playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
         if (mediaTransportControls != null) {
             Log.d(TAG, "playMediaFromUri.mediaTransportControls is not null");
-            mediaTransportControls.prepareFromUri(uri, playingParamOriginExtras);
+            mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
         } else {
             Log.w(TAG, "playMediaFromUri.mediaTransportControls is null");
         }
@@ -296,7 +297,7 @@ public abstract class BasePlayerPresenter {
         playingParam.setCurrentAudioPosition(0);
         playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
         playingParam.setMediaPrepared(false);
-        playMediaFromUri(mediaUri);
+        playMediaFromUri();
     }
 
     public void startAutoPlay(boolean isSelfFinished) {
@@ -485,14 +486,16 @@ public abstract class BasePlayerPresenter {
             }
         } else {
             int playbackState = playingParam.getCurrentPlaybackState();
-            Log.d(TAG, "playSongPlayedBeforeActivityCreated.playingParam.getCurrentPlaybackState() = " + playbackState);
+            Log.d(TAG, "playSongPlayedBeforeActivityCreated.getCurrentPlaybackState() = " + playbackState);
             if (playbackState != PlaybackStateCompat.STATE_NONE) {
-                playMediaFromUri(mediaUri);
+                playMediaFromUri();
             }
         }
-        onDurationSeekBarProgressChanged((int)playingParam.getCurrentAudioPosition(), true);
+        float currentPosition = playingParam.getCurrentAudioPosition();
+        Log.d(TAG, "playSongPlayedBeforeActivityCreated.getCurrentAudioPosition() = " + currentPosition);
+        onDurationSeekBarProgressChanged((int)currentPosition, true);
         if (mPresentView != null) {
-            mPresentView.update_Player_duration_seekbar_progress((int)playingParam.getCurrentAudioPosition());
+            mPresentView.update_Player_duration_seekbar_progress((int)currentPosition);
         }
     }
 
@@ -530,11 +533,12 @@ public abstract class BasePlayerPresenter {
             // no media file opened or playing has been stopped
             if ( (playbackState == PlaybackStateCompat.STATE_PAUSED)
                     || (playbackState == PlaybackStateCompat.STATE_REWINDING)
-                    || (playbackState == PlaybackStateCompat.STATE_FAST_FORWARDING) ) {
+                    || (playbackState == PlaybackStateCompat.STATE_FAST_FORWARDING)
+                    || (playbackState == PlaybackStateCompat.STATE_BUFFERING)) {
                 if (mediaTransportControls != null) {
+                    Log.d(TAG, "startPlay.mediaTransportControls.play() is called.");
                     mediaTransportControls.play();
                 }
-                Log.d(TAG, "startPlay.mediaTransportControls.play() is called.");
             } else {
                 // (playbackState == PlaybackStateCompat.STATE_STOPPED) or
                 // (playbackState == PlaybackStateCompat.STATE_NONE)
@@ -582,10 +586,10 @@ public abstract class BasePlayerPresenter {
             // exoPlayer.setPlayWhenReady(false);
             specificPlayerReplayMedia(currentAudioPosition);
         } else {
-            Log.d(TAG, "replayMedia().playMediaFromUri(mediaUri)");
+            Log.d(TAG, "replayMedia().playMediaFromUri()");
             // song was stopped by user
             playingParam.setCurrentPlaybackState(PlaybackStateCompat.STATE_NONE);
-            playMediaFromUri(mediaUri);
+            playMediaFromUri();
         }
     }
 

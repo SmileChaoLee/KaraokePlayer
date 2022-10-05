@@ -63,6 +63,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     private var playData = Bundle()
 
     abstract fun getFragment() : PlayerBaseViewFragment
+    abstract fun comeBackFromFavorite(playData : Bundle?)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG,"onCreate()")
@@ -161,7 +162,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                         Log.d(TAG, "onReceive.PlaySingleSongAction")
                         intent.putExtra(PlayerConstants.SingleSongVolume,
                                 playerFragment?.mPresenter?.playingParam?.currentVolume)
-                        onReceiveFunc(it, intent, null)
+                        onReceiveFunc(true, true, intent, null)
                         hasPlayedSingle = true
                     }
                 }
@@ -267,14 +268,14 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         super.onDestroy()
     }
 
-    private fun onReceiveFunc(action : String, intent : Intent?, pData : Bundle?) {
+    public fun onReceiveFunc(isSingleSong: Boolean, needPlay: Boolean, intent : Intent?, pData : Bundle?) {
         Log.d(TAG, "onReceiveFunc()")
         playerFragment?.run {
             mPresenter.let{
                 it.initializeVariables(pData, intent)
-                it.playSongPlayedBeforeActivityCreated()
+                if (needPlay) it.playSongPlayedBeforeActivityCreated()
                 setMainMenu()
-                if (action == PlayerConstants.PlaySingleSongAction) {
+                if (isSingleSong) {
                     showPlayerView()
                 } else {
                     // PlayerConstants.BackToBaseActivity
@@ -326,13 +327,13 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         callingComponentName = compName
         playerFragment?.let {
             playData.clear()
+            it.onSaveInstanceState(playData)
             isPlayToPause = false
             if (it.mPresenter.playingParam?.currentPlaybackState == PlaybackStateCompat.STATE_PLAYING) {
                 // playing then pause before going to my favorite activity
                 it.mPresenter.pausePlay()
                 isPlayToPause = true
             }
-            it.onSaveInstanceState(playData)
         }
     }
 
@@ -342,16 +343,33 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         else playData.getParcelable(PlayerConstants.PlayingParamState))?.apply {
             Log.d(TAG, "restorePlayingState.currentPlaybackState = $currentPlaybackState")
             Log.d(TAG, "restorePlayingState.currentAudioPosition = $currentAudioPosition")
+            if (isPlayToPause) currentPlaybackState = PlaybackStateCompat.STATE_PLAYING // restore to playing
         }
+        comeBackFromFavorite(playData)
 
+        callingComponentName = null
+        isPlayToPause = false
+    }
+
+    /*
+    override fun restorePlayingState(needPlay: Boolean) {
         if (hasPlayedSingle) {
+            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                playData.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters::class.java)
+            else playData.getParcelable(PlayerConstants.PlayingParamState))?.apply {
+                Log.d(TAG, "restorePlayingState.currentPlaybackState = $currentPlaybackState")
+                Log.d(TAG, "restorePlayingState.currentAudioPosition = $currentAudioPosition")
+                if (isPlayToPause) currentPlaybackState = PlaybackStateCompat.STATE_PLAYING // restore to playing
+            }
             onReceiveFunc(PlayerConstants.BackToBaseActivity, null, playData)
             callingComponentName = null
+        } else {
+            if (isPlayToPause) playerFragment?.mPresenter?.startPlay()
         }
-        if (isPlayToPause) playerFragment?.mPresenter?.startPlay()
         hasPlayedSingle = false
         isPlayToPause = false
     }
+    */
 
     override fun switchToOpenFileFragment() {
         tablayoutFragment?.switchToOpenFileFragment()

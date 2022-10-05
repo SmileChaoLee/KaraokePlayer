@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.FavoriteRecyclerViewAdapter
-import com.smile.karaokeplayer.constants.PlayerConstants
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.FavoriteSingleTon

@@ -57,6 +57,12 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
         PlayingParameters playingParam = presenter.getPlayingParam();
         playingParam.setMediaPrepared(false);
 
+        presenter.detachPlayerViews();
+        final IMedia media = new Media(libVLC, uri);
+        vlcPlayer.setMedia(media);
+        vlcPlayer.play();
+        media.release();
+
         long currentAudioPosition = playingParam.getCurrentAudioPosition();
         float currentVolume = playingParam.getCurrentVolume();
         int playbackState = playingParam.getCurrentPlaybackState();
@@ -73,6 +79,7 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                 currentVolume = playingParamOrigin.getCurrentVolume();
             }
         }
+
         try {
             switch (playbackState) {
                 case PlaybackStateCompat.STATE_PAUSED:
@@ -88,11 +95,12 @@ public class VLCMediaSessionCallback extends MediaSessionCompat.Callback {
                 case PlaybackStateCompat.STATE_NONE:
                     Log.d(TAG, "onPrepareFromUri.PlaybackStateCompat.STATE_NONE");
                     // start playing when ready or just start new playing
-                    presenter.detachPlayerViews();  // detach vide view before play
+                    /*
                     final IMedia media = new Media(libVLC, uri);
                     vlcPlayer.setMedia(media);
                     vlcPlayer.play();
                     media.release();
+                    */
                     break;
             }
             // the following must be after vlcPlayer.play()
