@@ -38,7 +38,6 @@ private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
 private const val PlayerFragmentTag = "PlayerFragment"
 private const val TablayoutFragmentTag = "TablayoutFragment"
 private const val IsPlayToPauseState = "IsPlayToPause"
-private const val HasPlayedSingleState = "HasPlayedSingle"
 private const val PlayDataState = "PlayData"
 private const val CallingComponentState = "CallingComponentName"
 abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBaseFragmentFunc,
@@ -115,7 +114,6 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 Log.d(TAG, "callingIntent.extras is not null")
             }
         } else {
-            hasPlayedSingle = savedInstanceState.getBoolean(HasPlayedSingleState, false)
             isPlayToPause = savedInstanceState.getBoolean(IsPlayToPauseState, false)
 
             callingComponentName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
@@ -248,7 +246,6 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         Log.d(TAG, "onSaveInstanceState()")
         outState.putBoolean(IsPlayToPauseState, isPlayToPause)
-        outState.putBoolean(HasPlayedSingleState, hasPlayedSingle)
         outState.putParcelable(CallingComponentState, callingComponentName)
         outState.putParcelable(PlayDataState, playData)
         super.onSaveInstanceState(outState, outPersistentState)
