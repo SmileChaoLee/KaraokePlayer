@@ -7,7 +7,7 @@ object PlayerConstants {
     const val TrackSelectorParametersState = "TrackSelectorParameters"
     const val NumberOfVideoTracksState = "NumberOfVideoTracks"
     const val NumberOfAudioTracksState = "NumberOfAudioTracks"
-    const val OrderedSongListState = "OrderedSongList"
+    const val OrderedSongsState = "OrderedSongList"
     const val MediaUriState = "MediaUri"
     const val CanShowNotSupportedFormatState = "CanShowNotSupportedFormat"
     const val AudioTrackIndicesListState = "AudioTrackIndicesList"

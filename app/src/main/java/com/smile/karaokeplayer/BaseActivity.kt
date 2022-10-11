@@ -37,8 +37,8 @@ import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
+import com.smile.karaokeplayer.models.MySingleTon
 import com.smile.karaokeplayer.models.PlayingParameters
-import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "BaseActivity"
@@ -168,7 +168,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                         Log.d(TAG, "onReceive.PlaySingleSongAction")
                         intent.putExtra(PlayerConstants.SingleSongVolume,
                                 playerFragment?.mPresenter?.playingParam?.currentVolume)
-                        onReceiveFunc(true, true, intent, null)
+                        onReceiveFunc(isSingleSong = true, needPlay = true, intent = intent, pData = null)
                         hasPlayedSingle = true
                     }
                 }
@@ -273,7 +273,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         super.onDestroy()
     }
 
-    public fun onReceiveFunc(isSingleSong: Boolean, needPlay: Boolean, intent : Intent?, pData : Bundle?) {
+    fun onReceiveFunc(isSingleSong: Boolean, needPlay: Boolean, intent : Intent?, pData : Bundle?) {
         Log.d(TAG, "onReceiveFunc()")
         playerFragment?.run {
             mPresenter.let{
@@ -367,10 +367,13 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     // Finishes implementing interface PlayMyFavorites
 
     // implementing interface PlaySongs
-    override fun playSelectedSongList(songs: ArrayList<SongInfo>) {
-        Log.d(TAG, "playSelectedSongList.songs.size = ${songs.size}")
-        playerFragment?.mPresenter?.playSongList(songs)
-        playerFragment?.showPlayerView()
+    override fun playSelectedSongList() {
+        Log.d(TAG, "playSelectedSongList.songs.size = ${MySingleTon.orderedSongs.size}")
+        playerFragment?.let {
+            it.mPresenter.playingParam.isAutoPlay = false
+            it.mPresenter.autoPlaySongList()
+            it.showPlayerView()
+        }
     }
     // Finish implementing interface PlaySongs
 

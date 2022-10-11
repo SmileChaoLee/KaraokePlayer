@@ -33,6 +33,7 @@ import com.smile.karaokeplayer.BaseApplication
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.constants.PlayerConstants
+import com.smile.karaokeplayer.models.MySingleTon
 import com.smile.karaokeplayer.models.SongListSQLite
 import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
@@ -740,7 +741,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     Log.d(TAG,"heartImageButton.onClick.currentSongIndex = ${pIt.playingParam.currentSongIndex}")
                     activity?.let {
                         SongListSQLite(it.applicationContext).also { sqlIt ->
-                            pIt.orderedSongList[pIt.playingParam.currentSongIndex]?.run {
+                            MySingleTon.orderedSongs[pIt.playingParam.currentSongIndex]?.run {
                                 // check if this file is already in database
                                 if (sqlIt.findOneSongByUriString(filePath) == null) {
                                     Log.d(TAG, "heartImageButton.onClick.findOneSongByUriString() is null")

@@ -16,7 +16,7 @@ class ExoPlayerActivity : BaseActivity() {
 
     override fun getFragment() = ExoPlayerFragment()
     override fun comeBackFromFavorite(playData : Bundle?) {
-        onReceiveFunc(false, true, null, playData)
+        onReceiveFunc(isSingleSong = false, needPlay = true, intent = null, pData = playData)
     }
 
     // implementing interface PlayMyFavorites

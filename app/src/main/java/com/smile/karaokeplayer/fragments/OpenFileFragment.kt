@@ -18,7 +18,7 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.interfaces.PlaySongs
-import com.smile.karaokeplayer.models.FavoriteSingleTon
+import com.smile.karaokeplayer.models.MySingleTon
 import com.smile.karaokeplayer.models.FileDesList
 import com.smile.karaokeplayer.models.FileDescription
 import com.smile.karaokeplayer.models.SongInfo
@@ -162,7 +162,9 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                     activity, getString(R.string.noFilesSelectedString), textFontSize,
                                     BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                         } else {
-                            playSongs.playSelectedSongList(songsIt)
+                            MySingleTon.orderedSongs.clear()
+                            MySingleTon.orderedSongs.addAll(songsIt)
+                            playSongs.playSelectedSongList()
                         }
                     }
                     songListSQLite.closeDatabase()
@@ -182,12 +184,12 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                 song.included = "1"
                                 val numRecords = songListSQLite.recordsOfPlayList()
                                 Log.d(TAG, "addToFavoriteButton.recordsOfPlayList() = $numRecords")
-                                if (numRecords < FavoriteSingleTon.maxFavorites) {
+                                if (numRecords < MySingleTon.maxSongs) {
                                     songListSQLite.addSongToSongList(song)
                                 } else {
                                     // excess max number of favorites
                                     ScreenUtil.showToast(activity,getString(R.string.excess_max) +
-                                            " ${FavoriteSingleTon.maxFavorites}", textFontSize,
+                                            " ${MySingleTon.maxSongs}", textFontSize,
                                             BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
                                     break
                                 }
@@ -258,7 +260,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             } else {
                 val fList = File(it).listFiles()
                 Log.d(TAG, "fList = $fList")
-                fList?.let { fIt ->
+                fList?.also { fIt ->
                     Log.d(TAG, "file.list().size() = ${fIt.size}")
                     for (f in fIt) {
                         if (f.canRead()) {
@@ -271,7 +273,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                         getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
                                         textFontSize, BaseApplication.FontSize_Scale_Type,
                                         Toast.LENGTH_SHORT)
-                                return@let
+                                return@also
                             }
                         }
                     }
@@ -287,7 +289,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     }
 
     private fun getSongs(songListSQLite : SongListSQLite, msg : String) : ArrayList<SongInfo> {
-        val songs = ArrayList<SongInfo>().also {songIt ->
+        ArrayList<SongInfo>().also {songIt ->
             for (i in 0 until FileDesList.fileList.size) {
                 FileDesList.fileList[i].run {
                     if (selected) {
@@ -312,9 +314,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     }
                 }
             }
+            return songIt
         }
-
-        return songs
     }
 
     private fun initFilesRecyclerView() {

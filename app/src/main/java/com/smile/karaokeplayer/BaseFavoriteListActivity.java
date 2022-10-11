@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.smile.karaokeplayer.adapters.SelectedFavoriteAdapter;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.karaokeplayer.constants.PlayerConstants;
-import com.smile.karaokeplayer.models.FavoriteSingleTon;
+import com.smile.karaokeplayer.models.MySingleTon;
 import com.smile.karaokeplayer.models.SongInfo;
 import com.smile.karaokeplayer.models.SongListSQLite;
 import com.smile.smilelibraries.show_interstitial_ads.ShowInterstitial;
@@ -108,8 +108,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
             if (tempList == null) tempList = new ArrayList<>();
             Log.d(TAG, "onCreate.savedInstanceState is not null.tempList.size() = "
                     + tempList.size());
-            FavoriteSingleTon.INSTANCE.getSelectedList().clear();
-            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(tempList);
+            MySingleTon.INSTANCE.getSelectedFavorites().clear();
+            MySingleTon.INSTANCE.getSelectedFavorites().addAll(tempList);
         } else {
             Log.d(TAG, "onCreate.savedInstanceState is null");
             /*
@@ -152,7 +152,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
                 });
 
         Log.d(TAG, "onCreate.FavoriteSingleTon.INSTANCE.getSelectedList().size() = " +
-                FavoriteSingleTon.INSTANCE.getSelectedList().size());
+                MySingleTon.INSTANCE.getSelectedFavorites().size());
 
         initSelectedFavoriteRecyclerView();
 
@@ -177,7 +177,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         outState.putInt(PositionEditState, positionEdit);
         // must create a new instance for FavoriteSingleTon.INSTANCE.getSelectedList()
         // in this case
-        ArrayList<SongInfo> tempList = new ArrayList<>(FavoriteSingleTon.INSTANCE.getSelectedList());
+        ArrayList<SongInfo> tempList = new ArrayList<>(MySingleTon.INSTANCE.getSelectedFavorites());
         outState.putSerializable(PlayerConstants.MyFavoriteListState, tempList);
         super.onSaveInstanceState(outState);
     }
@@ -196,7 +196,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        FavoriteSingleTon.INSTANCE.getSelectedList().clear();
+        MySingleTon.INSTANCE.getSelectedFavorites().clear();
         if (songListSQLite != null) {
             songListSQLite.closeDatabase();
             songListSQLite = null;
@@ -233,14 +233,14 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
 
     private void initSelectedFavoriteRecyclerView() {
         Log.d(TAG, "initSelectedFavoriteRecyclerView.getSelectedList() = " +
-                FavoriteSingleTon.INSTANCE.getSelectedList().size());
+                MySingleTon.INSTANCE.getSelectedFavorites().size());
 
         int yellow2Color = ContextCompat.getColor(this, R.color.yellow2);
         int yellow3Color = ContextCompat.getColor(this, R.color.yellow3);
 
         myRecyclerViewAdapter = SelectedFavoriteAdapter.getInstance(
                 this, songListSQLite,
-                FavoriteSingleTon.INSTANCE.getSelectedList(),
+                MySingleTon.INSTANCE.getSelectedFavorites(),
                 textFontSize, yellow2Color, yellow3Color);
 
         myListRecyclerView.setAdapter(myRecyclerViewAdapter);
@@ -264,26 +264,26 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
     }
     @Override
     public void editSongButtonFunc(int position) {
-        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+        if (position<0 || position>= MySingleTon.INSTANCE.getSelectedFavorites().size()) {
             return;
         }
         Log.d(TAG, "editSongButtonFunc.positionEdit = " + positionEdit);
         positionEdit = position;
-        editOneSongFromFavoriteList(FavoriteSingleTon.INSTANCE.getSelectedList().get(position));
+        editOneSongFromFavoriteList(MySingleTon.INSTANCE.getSelectedFavorites().get(position));
     }
     @Override
     public void deleteSongButtonFunc(int position) {
-        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+        if (position<0 || position>= MySingleTon.INSTANCE.getSelectedFavorites().size()) {
             return;
         }
         positionEdit = position;
         Log.d(TAG, "deleteSongButtonFunc.positionEdit = " + positionEdit);
-        deleteOneSongFromFavoriteList(FavoriteSingleTon.INSTANCE.getSelectedList().get(position));
+        deleteOneSongFromFavoriteList(MySingleTon.INSTANCE.getSelectedFavorites().get(position));
     }
     @Override
     public void playSongButtonFunc(int position) {
         // play this item (media file)
-        if (position<0 || position>=FavoriteSingleTon.INSTANCE.getSelectedList().size()) {
+        if (position<0 || position>= MySingleTon.INSTANCE.getSelectedFavorites().size()) {
             return;
         }
         Log.d(TAG, "playSongButtonFunc.positionEdit = " + positionEdit);
@@ -302,7 +302,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         Bundle extras = new Bundle();
         extras.putBoolean(PlayerConstants.IsPlaySingleSongState, true);   // play single song
         extras.putParcelable(PlayerConstants.SingleSongInfoState,
-                (FavoriteSingleTon.INSTANCE.getSelectedList().get(position)));
+                (MySingleTon.INSTANCE.getSelectedFavorites().get(position)));
         bIntent.putExtras(extras);
         broadcastManager.sendBroadcast(bIntent);
     }
@@ -313,11 +313,11 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
             Log.d(TAG, "updateFavoriteList.positionEdit = " + positionEdit);
             SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SingleSongInfoState);
             if (currentAction.equals(CommonConstants.EditActionString)) {
-                FavoriteSingleTon.INSTANCE.getSelectedList().set(positionEdit, songInfo);
+                MySingleTon.INSTANCE.getSelectedFavorites().set(positionEdit, songInfo);
                 myRecyclerViewAdapter.notifyItemChanged(positionEdit);
             } else {
                 // delete
-                FavoriteSingleTon.INSTANCE.getSelectedList().remove(positionEdit);
+                MySingleTon.INSTANCE.getSelectedFavorites().remove(positionEdit);
                 myRecyclerViewAdapter.notifyItemRemoved(positionEdit);
             }
         }
@@ -328,14 +328,14 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
             SongInfo songInfo = data.getParcelableExtra(PlayerConstants.SingleSongInfoState);
             int id = songInfo.getId();
             Log.d(TAG, "updateFavoriteList.id = " + id);
-            for (int i = 0; i < FavoriteSingleTon.INSTANCE.getSelectedList().size(); i++) {
-                if (FavoriteSingleTon.INSTANCE.getSelectedList().get(i).getId() == id) {
+            for (int i = 0; i < MySingleTon.INSTANCE.getSelectedFavorites().size(); i++) {
+                if (MySingleTon.INSTANCE.getSelectedFavorites().get(i).getId() == id) {
                     if (currentAction.equals(CommonConstants.EditActionString)) {
                         // FavoriteSingleTon.INSTANCE.getSelectedList().set(i, new SongInfo(songInfo));
-                        FavoriteSingleTon.INSTANCE.getSelectedList().set(i, songInfo);
+                        MySingleTon.INSTANCE.getSelectedFavorites().set(i, songInfo);
                         myRecyclerViewAdapter.notifyItemChanged(i);
                     } else {
-                        FavoriteSingleTon.INSTANCE.getSelectedList().remove(i);
+                        MySingleTon.INSTANCE.getSelectedFavorites().remove(i);
                         myRecyclerViewAdapter.notifyItemRemoved(i);
                     }
                     break;
