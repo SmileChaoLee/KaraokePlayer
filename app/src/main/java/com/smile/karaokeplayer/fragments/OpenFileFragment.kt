@@ -289,7 +289,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     }
 
     private fun getSongs(songListSQLite : SongListSQLite, msg : String) : ArrayList<SongInfo> {
-        ArrayList<SongInfo>().also {songIt ->
+        val songs = ArrayList<SongInfo>().also {songIt ->
+            var index = 0
             for (i in 0 until FileDesList.fileList.size) {
                 FileDesList.fileList[i].run {
                     if (selected) {
@@ -310,12 +311,21 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                             included = "1"
                             song = this
                         }
+                        index++
                         songIt.add(song)
+                        if (index >= MySingleTon.maxSongs) {
+                            // excess the max
+                            ScreenUtil.showToast(
+                                    activity, getString(R.string.excess_max) +
+                                    " ${MySingleTon.maxSongs}", textFontSize,
+                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                            return@also
+                        }
                     }
                 }
             }
-            return songIt
         }
+        return songs
     }
 
     private fun initFilesRecyclerView() {

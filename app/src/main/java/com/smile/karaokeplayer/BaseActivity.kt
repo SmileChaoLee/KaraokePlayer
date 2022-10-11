@@ -37,6 +37,7 @@ import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.fragments.TablayoutFragment
 import com.smile.karaokeplayer.interfaces.PlayMyFavorites
 import com.smile.karaokeplayer.interfaces.PlaySongs
+import com.smile.karaokeplayer.models.FileDesList
 import com.smile.karaokeplayer.models.MySingleTon
 import com.smile.karaokeplayer.models.PlayingParameters
 import com.smile.smilelibraries.utilities.ScreenUtil
@@ -312,6 +313,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     // Implement interface PlayerBaseViewFragment.PlayBaseFragmentFunc
     override fun returnToPrevious(isSingleSong : Boolean) {
+        Log.d(TAG, "returnToPrevious().isSingleSong = $isSingleSong")
         if (isSingleSong) {
             playerFragment?.mPresenter?.pausePlay()
             callingComponentName?.let {
@@ -325,8 +327,19 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         }
         // exit application
         // finish()
+        Log.d(TAG, "returnToPrevious().finish()")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) finishAndRemoveTask()
         else finishAffinity()
+
+        Log.d(TAG, "returnToPrevious().onDestroy()")
+        onDestroy()
+
+        MySingleTon.favorites.clear()
+        MySingleTon.selectedFavorites.clear()
+        MySingleTon.orderedSongs.clear()
+        FileDesList.fileList.clear()
+
+        Log.d(TAG, "returnToPrevious().Process.killProcess()")
         Process.killProcess(Process.myPid())
         // exitProcess(0);
     }

@@ -121,10 +121,20 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             playSelectedButton.setOnClickListener {
                 // open the files to play
                 val songs = ArrayList<SongInfo>().also { songIt ->
+                    var index = 0
                     for (i in 0 until MySingleTon.favorites.size) {
                         MySingleTon.favorites[i].run {
                             if (included == "1") {
                                 songIt.add(this)
+                                index++
+                                if (index >= MySingleTon.maxSongs) {
+                                    // excess the max
+                                    ScreenUtil.showToast(
+                                            activity, getString(R.string.excess_max) +
+                                            " ${MySingleTon.maxSongs}", textFontSize,
+                                            BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                                    return@also
+                                }
                             }
                         }
                     }
