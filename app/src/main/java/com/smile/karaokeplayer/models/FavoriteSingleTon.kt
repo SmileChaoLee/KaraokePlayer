@@ -1,6 +1,7 @@
 package com.smile.karaokeplayer.models
 
 object FavoriteSingleTon {
-    val favoriteList : ArrayList<SongInfo> = ArrayList()
-    val selectedList : ArrayList<SongInfo> = ArrayList()
+    const val maxFavorites : Int = 100;
+    val favoriteList : ArrayList<SongInfo> = ArrayList(maxFavorites)
+    val selectedList : ArrayList<SongInfo> = ArrayList(maxFavorites)
 }

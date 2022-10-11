@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.DatabaseUtils
 import android.database.SQLException
 import android.util.Log
 import java.lang.Exception
@@ -120,6 +121,13 @@ class SongListSQLite(myContext: Context) : SQLiteOpenHelper(
         return songList
     }
 
+    fun recordsOfPlayList() : Long {
+        openScoreDatabase()
+        songDatabase?.let {
+            return DatabaseUtils.queryNumEntries(it, tableName)
+        }
+        return 0
+    }
     fun readPlayList(): ArrayList<SongInfo> {
         Log.d(TAG, "readSongList() is called.")
         return readPlaylist(false)

@@ -18,6 +18,7 @@ import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.adapters.OpenFilesRecyclerViewAdapter
 import com.smile.karaokeplayer.constants.CommonConstants
 import com.smile.karaokeplayer.interfaces.PlaySongs
+import com.smile.karaokeplayer.models.FavoriteSingleTon
 import com.smile.karaokeplayer.models.FileDesList
 import com.smile.karaokeplayer.models.FileDescription
 import com.smile.karaokeplayer.models.SongInfo
@@ -33,8 +34,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     private var textFontSize = 0f
     private lateinit var playSongs: PlaySongs
     private lateinit var pathTextView: TextView
-    private lateinit var filesRecyclerView : RecyclerView
-    private lateinit var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter
+    private var filesRecyclerView : RecyclerView? = null
+    private var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter? = null
     private var isPlayButton: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +94,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         val buttonWidth = (textFontSize*1.5f).toInt()
         fragmentView.let {
             filesRecyclerView = it.findViewById(R.id.openFilesRecyclerView)
+            filesRecyclerView?.setHasFixedSize(true)
             pathTextView = it.findViewById(R.id.pathTextView)
             ScreenUtil.resizeTextSize(pathTextView, textFontSize, BaseApplication.FontSize_Scale_Type)
             val backKeyButton: ImageButton = it.findViewById(R.id.openFileBackKeyButton)
@@ -118,7 +120,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     FileDesList.fileList[i].run {
                         if (!file.isDirectory && !selected) {
                             selected = true
-                            myRecyclerViewAdapter.notifyItemChanged(i)
+                            myRecyclerViewAdapter?.notifyItemChanged(i)
                         }
                     }
                 }
@@ -132,7 +134,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     FileDesList.fileList[i].run {
                         if (!file.isDirectory && selected) {
                             selected = false
-                            myRecyclerViewAdapter.notifyItemChanged(i)
+                            myRecyclerViewAdapter?.notifyItemChanged(i)
                         }
                     }
                 }
@@ -173,12 +175,22 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             addToFavoriteButton.setOnClickListener {
                 activity?.let {activityIt ->
                     val songListSQLite = SongListSQLite(activityIt)
-                    getSongs(songListSQLite, "addToFavoriteButton").let { songsIt ->
+                    getSongs(songListSQLite, "addToFavoriteButton").also { songsIt ->
                         var toastMsg = getString(R.string.noFilesSelectedString)
                         if (songsIt.size > 0) {
                             for (song in songsIt) {
                                 song.included = "1"
-                                songListSQLite.addSongToSongList(song)
+                                val numRecords = songListSQLite.recordsOfPlayList()
+                                Log.d(TAG, "addToFavoriteButton.recordsOfPlayList() = $numRecords")
+                                if (numRecords < FavoriteSingleTon.maxFavorites) {
+                                    songListSQLite.addSongToSongList(song)
+                                } else {
+                                    // excess max number of favorites
+                                    ScreenUtil.showToast(activity,getString(R.string.excess_max) +
+                                            " ${FavoriteSingleTon.maxFavorites}", textFontSize,
+                                            BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                                    break
+                                }
                             }
                             toastMsg = getString(R.string.add_to_favorites)
                         }
@@ -194,13 +206,14 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     }
 
     override fun onResume() {
-        Log.d(TAG, "onResume() is called")
-        super.onResume()
+        Log.d(TAG, "onResume()")
         searchCurrentFolder()   // has to be in onResume()
+        super.onResume()
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause() is called")
+        Log.d(TAG, "onPause()")
+        clearFileList()
         super.onPause()
     }
 
@@ -209,11 +222,68 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         if (position < 0) return
         if (FileDesList.fileList[position].file.isFile) {
             FileDesList.fileList[position].selected = !FileDesList.fileList[position].selected
-            myRecyclerViewAdapter.notifyItemChanged(position)
+            myRecyclerViewAdapter?.notifyItemChanged(position)
             return
         }
         FileDesList.currentPath = FileDesList.fileList[position].file.path
         searchCurrentFolder()
+    }
+
+    fun clearFileList() {
+        FileDesList.fileList.clear()
+        myRecyclerViewAdapter?.notifyDataSetChanged()
+    }
+
+    fun searchCurrentFolder() {
+        Log.d(TAG, "searchCurrentFolder() is called")
+        val tempList: ArrayList<FileDescription> = ArrayList(FileDesList.maxFiles)
+        FileDesList.currentPath.let {
+            var index = 0
+            if (it == "/") {
+                for (element in FileDesList.rootPathSet) {
+                    Log.d(TAG, "searchCurrentFolder.element = $element")
+                    FileDescription(File(element), false).apply {
+                        Log.d(TAG, "searchCurrentFolder. = ${file.path}, ${file.absolutePath}")
+                        tempList.add(this)
+                        index++
+                        if (index >= FileDesList.maxFiles) {
+                            ScreenUtil.showToast(activity,
+                                    getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
+                                    textFontSize, BaseApplication.FontSize_Scale_Type,
+                                    Toast.LENGTH_SHORT)
+                            return@let
+                        }
+                    }
+                }
+            } else {
+                val fList = File(it).listFiles()
+                Log.d(TAG, "fList = $fList")
+                fList?.let { fIt ->
+                    Log.d(TAG, "file.list().size() = ${fIt.size}")
+                    for (f in fIt) {
+                        if (f.canRead()) {
+                            Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
+                                    "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
+                            tempList.add(FileDescription(f, false))
+                            index++
+                            if (index >= FileDesList.maxFiles) {
+                                ScreenUtil.showToast(activity,
+                                        getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
+                                        textFontSize, BaseApplication.FontSize_Scale_Type,
+                                        Toast.LENGTH_SHORT)
+                                return@let
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        pathTextView.text = FileDesList.currentPath
+        FileDesList.fileList.clear()
+        FileDesList.fileList.addAll(tempList)
+        Log.d(TAG, "searchCurrentFolder.FileDesList.fileList.size = ${FileDesList.fileList.size}" )
+
+        myRecyclerViewAdapter?.notifyDataSetChanged()
     }
 
     private fun getSongs(songListSQLite : SongListSQLite, msg : String) : ArrayList<SongInfo> {
@@ -247,41 +317,6 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         return songs
     }
 
-    private fun searchCurrentFolder() {
-        Log.d(TAG, "searchCurrentFolder() is called")
-        val tempList: ArrayList<FileDescription> = ArrayList()
-        FileDesList.currentPath.let {
-            if (it == "/") {
-                for (element in FileDesList.rootPathSet) {
-                    Log.d(TAG, "searchCurrentFolder.element = $element")
-                    FileDescription(File(element), false).apply {
-                        Log.d(TAG, "searchCurrentFolder. = ${file.path}, ${file.absolutePath}")
-                        tempList.add(this)
-                    }
-                }
-            } else {
-                val fList = File(it).listFiles()
-                Log.d(TAG, "fList = $fList")
-                fList?.let { fIt ->
-                    Log.d(TAG, "file.list().size() = ${fIt.size}")
-                    for (f in fIt) {
-                        if (f.canRead()) {
-                            Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
-                                    "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
-                            tempList.add(FileDescription(f, false))
-                        }
-                    }
-                }
-            }
-        }
-        pathTextView.text = FileDesList.currentPath
-        FileDesList.fileList.clear()
-        FileDesList.fileList.addAll(tempList)
-        Log.d(TAG, "searchCurrentFolder.FileDesList.fileList.size = ${FileDesList.fileList.size}" )
-
-        myRecyclerViewAdapter.notifyDataSetChanged()
-    }
-
     private fun initFilesRecyclerView() {
         Log.d(TAG, "initFilesRecyclerView() is called")
         activity?.let {
@@ -291,8 +326,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             myRecyclerViewAdapter = OpenFilesRecyclerViewAdapter.getInstance(
                 this, textFontSize, FileDesList.fileList, yellow, transparentLightGray)
 
-            filesRecyclerView.adapter = myRecyclerViewAdapter
-            filesRecyclerView.layoutManager = object : LinearLayoutManager(context) {
+            filesRecyclerView?.adapter = myRecyclerViewAdapter
+            filesRecyclerView?.layoutManager = object : LinearLayoutManager(context) {
                 override fun isAutoMeasureEnabled(): Boolean {
                     return false
                 }

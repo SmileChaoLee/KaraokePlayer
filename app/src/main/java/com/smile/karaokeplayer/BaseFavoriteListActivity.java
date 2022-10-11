@@ -82,6 +82,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         weightSum = favoriteListLinearLayout.getWeightSum();
         favoritesTitleLayout = findViewById(R.id.favoritesTitleLayout);
         myListRecyclerView = findViewById(R.id.selectedFavoriteRecyclerView);
+        myListRecyclerView.setHasFixedSize(true);
         favoritesExitButtonLayout = findViewById(R.id.favoritesExitButtonLayout);
         setLayoutViewWeight();
 
@@ -188,8 +189,14 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause()");
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
-        super.onDestroy();
+        FavoriteSingleTon.INSTANCE.getSelectedList().clear();
         if (songListSQLite != null) {
             songListSQLite.closeDatabase();
             songListSQLite = null;
@@ -197,6 +204,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         if (interstitialAd != null) {
             interstitialAd.close();
         }
+        Runtime.getRuntime().gc();
+        super.onDestroy();
     }
 
     private void returnToPrevious() {
@@ -204,7 +213,6 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         interstitialAd.new ShowAdThread().startShowAd();
         setResult(Activity.RESULT_OK);   // no bundle data
         finish();
-        Runtime.getRuntime().gc();
     }
 
     private void deleteOneSongFromFavoriteList(SongInfo singleSongInfo) {

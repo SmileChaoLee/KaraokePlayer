@@ -15,13 +15,8 @@ public final class DatabaseAccessUtil {
     public static ArrayList<SongInfo> readSavedSongList(Context callingContext, boolean isIncluded) {
         ArrayList<SongInfo> playlist;
         SongListSQLite songListSQLite = new SongListSQLite(callingContext);
-        if (songListSQLite != null) {
-            playlist = songListSQLite.readPlaylist(isIncluded);
-            songListSQLite.closeDatabase();
-        } else {
-            playlist = new ArrayList<>();
-        }
-
+        playlist = songListSQLite.readPlaylist(isIncluded);
+        songListSQLite.closeDatabase();
         return playlist;
     }
 }

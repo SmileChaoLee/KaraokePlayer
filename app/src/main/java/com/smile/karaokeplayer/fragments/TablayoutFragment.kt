@@ -159,4 +159,18 @@ class TablayoutFragment : Fragment() {
             it.selectTab(it.getTabAt(0))
         }
     }
+
+    fun becomeVisible() {
+        playTabLayout?.let {
+            Log.d(TAG, "becomeVisible.selectedTabPosition = ${it.selectedTabPosition}")
+            if (it.selectedTabPosition==0) openFragment.searchCurrentFolder()
+            else favoriteFragment.searchFavorites()
+        }
+    }
+
+    fun becomeInVisible() {
+        Log.d(TAG, "becomeInVisible()")
+        openFragment.clearFileList()
+        favoriteFragment.clearFavoriteList()
+    }
 }

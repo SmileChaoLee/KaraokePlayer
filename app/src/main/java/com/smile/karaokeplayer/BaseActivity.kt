@@ -2,12 +2,20 @@ package com.smile.karaokeplayer
 
 import android.Manifest
 import android.app.Activity
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.*
+import android.os.Build
+import android.os.Bundle
+import android.os.Environment
+import android.os.PersistableBundle
+import android.os.Process
 import android.provider.Settings
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
@@ -32,6 +40,7 @@ import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.PlayingParameters
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
+import kotlin.system.exitProcess
 
 private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
@@ -94,7 +103,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 ScreenUtil.showToast(this, "Permission Denied", 60f,
                         ScreenUtil.FontSize_Pixel_Type,
                         Toast.LENGTH_LONG)
-                finish()
+                returnToPrevious(false)
             }
         }
 
@@ -234,7 +243,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         }
         if (!permissionExternalStorage) {
             ScreenUtil.showToast(this, "Permission Denied", 60f, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG)
-            finish() // exit the activity immediately
+            returnToPrevious(false) // exit the activity immediately
         }
     }
 
@@ -294,10 +303,12 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     override fun baseHidePlayerView() {
         Log.d(TAG, "baseHidePlayerView()")
         tablayoutViewLayout.visibility = View.VISIBLE
+        tablayoutFragment?.becomeVisible()
     }
     override fun baseShowPlayerView() {
         Log.d(TAG, "baseShowPlayerView()")
         tablayoutViewLayout.visibility = View.GONE
+        tablayoutFragment?.becomeInVisible()
     }
 
     // Implement interface PlayerBaseViewFragment.PlayBaseFragmentFunc
@@ -314,7 +325,11 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             return
         }
         // exit application
-        finish()
+        // finish()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) finishAndRemoveTask()
+        else finishAffinity()
+        Process.killProcess(Process.myPid())
+        // exitProcess(0);
     }
     // Finishes interface PlayerBaseViewFragment.PlayBaseFragmentFunc
 
@@ -343,30 +358,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
             if (isPlayToPause) currentPlaybackState = PlaybackStateCompat.STATE_PLAYING // restore to playing
         }
         comeBackFromFavorite(playData)
-
         callingComponentName = null
         isPlayToPause = false
     }
-
-    /*
-    override fun restorePlayingState(needPlay: Boolean) {
-        if (hasPlayedSingle) {
-            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                playData.getParcelable(PlayerConstants.PlayingParamState, PlayingParameters::class.java)
-            else playData.getParcelable(PlayerConstants.PlayingParamState))?.apply {
-                Log.d(TAG, "restorePlayingState.currentPlaybackState = $currentPlaybackState")
-                Log.d(TAG, "restorePlayingState.currentAudioPosition = $currentAudioPosition")
-                if (isPlayToPause) currentPlaybackState = PlaybackStateCompat.STATE_PLAYING // restore to playing
-            }
-            onReceiveFunc(PlayerConstants.BackToBaseActivity, null, playData)
-            callingComponentName = null
-        } else {
-            if (isPlayToPause) playerFragment?.mPresenter?.startPlay()
-        }
-        hasPlayedSingle = false
-        isPlayToPause = false
-    }
-    */
 
     override fun switchToOpenFileFragment() {
         tablayoutFragment?.switchToOpenFileFragment()

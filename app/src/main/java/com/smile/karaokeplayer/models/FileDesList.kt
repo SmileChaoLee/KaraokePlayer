@@ -1,7 +1,8 @@
 package com.smile.karaokeplayer.models
 
 object FileDesList {
-    val fileList : ArrayList<FileDescription> = ArrayList()
+    const val maxFiles : Int = 500;
+    val fileList : ArrayList<FileDescription> = ArrayList(maxFiles)
     val rootPathSet : java.util.HashSet<String> = HashSet()
     var currentPath = "/"
 }

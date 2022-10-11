@@ -3,7 +3,9 @@ package com.smile.karaokeplayer.fragments
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -31,8 +33,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     private var fontScale = 0f
     private var playSongs: PlaySongs? = null
     private var playMyFavorites: PlayMyFavorites? = null
-    private lateinit var myListRecyclerView : RecyclerView
-    private lateinit var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter
+    private var myListRecyclerView : RecyclerView? = null
+    private var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter? = null
     private lateinit var editSongsActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +82,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         fragmentView.let {
             val buttonWidth = (textFontSize * 1.5f).toInt()
             myListRecyclerView = it.findViewById(R.id.myListRecyclerView)
+            myListRecyclerView?.setHasFixedSize(true)
             val selectAllButton: ImageButton = it.findViewById(R.id.favoriteSelectAllButton)
             var layoutParams: ViewGroup.MarginLayoutParams = selectAllButton.layoutParams as ViewGroup.MarginLayoutParams
             layoutParams.width = buttonWidth
@@ -88,7 +91,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 for (i in 0 until FavoriteSingleTon.favoriteList.size) {
                     FavoriteSingleTon.favoriteList[i].run {
                         included = "1"
-                        myRecyclerViewAdapter.notifyItemChanged(i)
+                        myRecyclerViewAdapter?.notifyItemChanged(i)
                     }
                 }
             }
@@ -100,7 +103,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 for (i in 0 until FavoriteSingleTon.favoriteList.size) {
                     FavoriteSingleTon.favoriteList[i].run {
                         included = "0"
-                        myRecyclerViewAdapter.notifyItemChanged(i)
+                        myRecyclerViewAdapter?.notifyItemChanged(i)
                     }
                 }
             }
@@ -151,6 +154,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                                 // putExtra(PlayerConstants.MyFavoriteListState, listIt)
                                 FavoriteSingleTon.selectedList.clear()
                                 FavoriteSingleTon.selectedList.addAll(listIt)
+                                Runtime.getRuntime().gc()
                                 editSongsActivityLauncher.launch(this)
                             }
                         }
@@ -180,35 +184,56 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     }
 
     override fun onResume() {
-        Log.d(TAG, "onResume() is called")
-        super.onResume()
+        Log.d(TAG, "onResume()")
         searchFavorites()   // has to be in onResume()
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "onPause()")
+        clearFavoriteList()
+        super.onPause()
     }
 
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
         FavoriteSingleTon.favoriteList[position].apply {
             included = if (included == "1") "0" else "1"
-            myRecyclerViewAdapter.notifyItemChanged(position)
+            myRecyclerViewAdapter?.notifyItemChanged(position)
         }
     }
 
-    private fun searchFavorites() {
+    fun clearFavoriteList() {
+        FavoriteSingleTon.favoriteList.clear()
+        myRecyclerViewAdapter?.notifyDataSetChanged()
+    }
+
+    fun searchFavorites() {
         Log.d(TAG, "searchFavorites() is called")
-        val tempList: ArrayList<SongInfo> = ArrayList()
+        val tempList: ArrayList<SongInfo> = ArrayList(FavoriteSingleTon.maxFavorites)
         activity?.let {
-            DatabaseAccessUtil.readSavedSongList(it, false)?.let {sqlIt ->
+            DatabaseAccessUtil.readSavedSongList(it, false)?.also {sqlIt ->
+                var index = 0;
                 for (element in sqlIt) {
                     element.apply {
                         included = "0"
                         tempList.add(this)
+                        index++
+                        if (index >= FavoriteSingleTon.maxFavorites) {
+                            // excess the max
+                            ScreenUtil.showToast(
+                                    activity, getString(R.string.excess_max) +
+                                    " ${FavoriteSingleTon.maxFavorites}", textFontSize,
+                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                            return@also
+                        }
                     }
                 }
             }
         }
         FavoriteSingleTon.favoriteList.clear()
         FavoriteSingleTon.favoriteList.addAll(tempList)
-        myRecyclerViewAdapter.notifyDataSetChanged()
+        myRecyclerViewAdapter?.notifyDataSetChanged()
     }
 
     private fun initFavoriteRecyclerView() {
@@ -221,8 +246,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                     this, textFontSize, FavoriteSingleTon.favoriteList,
                     yellow, transparentLightGray)
 
-            myListRecyclerView.adapter = myRecyclerViewAdapter
-            myListRecyclerView.layoutManager = object : LinearLayoutManager(context) {
+            myListRecyclerView?.adapter = myRecyclerViewAdapter
+            myListRecyclerView?.layoutManager = object : LinearLayoutManager(context) {
                 override fun isAutoMeasureEnabled(): Boolean {
                     return false
                 }
