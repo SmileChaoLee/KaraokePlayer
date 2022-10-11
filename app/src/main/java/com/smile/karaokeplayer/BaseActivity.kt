@@ -40,7 +40,6 @@ import com.smile.karaokeplayer.interfaces.PlaySongs
 import com.smile.karaokeplayer.models.PlayingParameters
 import com.smile.karaokeplayer.models.SongInfo
 import com.smile.smilelibraries.utilities.ScreenUtil
-import kotlin.system.exitProcess
 
 private const val TAG : String = "BaseActivity"
 private const val PERMISSION_WRITE_EXTERNAL_CODE = 0x11
