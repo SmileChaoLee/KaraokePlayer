@@ -244,17 +244,14 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             if (it == "/") {
                 for (element in FileDesList.rootPathSet) {
                     Log.d(TAG, "searchCurrentFolder.element = $element")
-                    FileDescription(File(element), false).apply {
-                        Log.d(TAG, "searchCurrentFolder. = ${file.path}, ${file.absolutePath}")
-                        tempList.add(this)
-                        index++
-                        if (index >= FileDesList.maxFiles) {
-                            ScreenUtil.showToast(activity,
-                                    getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
-                                    textFontSize, BaseApplication.FontSize_Scale_Type,
-                                    Toast.LENGTH_SHORT)
-                            return@let
-                        }
+                    tempList.add(FileDescription(File(element), false))
+                    index++
+                    if (index >= FileDesList.maxFiles) {
+                        ScreenUtil.showToast(activity,
+                                getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
+                                textFontSize, BaseApplication.FontSize_Scale_Type,
+                                Toast.LENGTH_SHORT)
+                        break
                     }
                 }
             } else {
@@ -273,7 +270,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                         getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
                                         textFontSize, BaseApplication.FontSize_Scale_Type,
                                         Toast.LENGTH_SHORT)
-                                return@also
+                                break
                             }
                         }
                     }
@@ -292,35 +289,32 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         val songs = ArrayList<SongInfo>().also {songIt ->
             var index = 0
             for (i in 0 until FileDesList.fileList.size) {
-                FileDesList.fileList[i].run {
-                    if (selected) {
-                        Log.d(TAG, "$msg.file.path = ${file.path}")
-                        Log.d(TAG, "$msg.file.toUri() = ${file.toUri()}")
-                        var song = SongInfo().apply {
-                            songName = file.name
-                            // filePath = file.path
-                            filePath = file.toUri().toString()
-                            musicTrackNo = 1    // guess
-                            musicChannel = CommonConstants.StereoChannel
-                            vocalTrackNo = 2    // guess
-                            vocalChannel = CommonConstants.StereoChannel
-                            included = "0"
-                        }
-                        songListSQLite.findOneSongByUriString(song.filePath)?.apply {
-                            Log.d(TAG, "$msg.found")
-                            included = "1"
-                            song = this
-                        }
-                        index++
-                        songIt.add(song)
-                        if (index >= MySingleTon.maxSongs) {
-                            // excess the max
-                            ScreenUtil.showToast(
-                                    activity, getString(R.string.excess_max) +
-                                    " ${MySingleTon.maxSongs}", textFontSize,
-                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                            return@also
-                        }
+                if (FileDesList.fileList[i].selected) {
+                    Log.d(TAG, "$msg.file.path = ${FileDesList.fileList[i].file.path}")
+                    Log.d(TAG, "$msg.file.toUri() = ${FileDesList.fileList[i].file.toUri()}")
+                    var song = SongInfo().apply {
+                        songName = FileDesList.fileList[i].file.name
+                        filePath = FileDesList.fileList[i].file.toUri().toString()
+                        musicTrackNo = 1    // guess
+                        musicChannel = CommonConstants.StereoChannel
+                        vocalTrackNo = 2    // guess
+                        vocalChannel = CommonConstants.StereoChannel
+                        included = "0"
+                    }
+                    songListSQLite.findOneSongByUriString(song.filePath)?.apply {
+                        Log.d(TAG, "$msg.found")
+                        included = "1"
+                        song = this
+                    }
+                    songIt.add(song)
+                    index++
+                    if (index >= MySingleTon.maxSongs) {
+                        // excess the max
+                        ScreenUtil.showToast(
+                                activity, getString(R.string.excess_max) +
+                                " ${MySingleTon.maxSongs}", textFontSize,
+                                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                        break
                     }
                 }
             }

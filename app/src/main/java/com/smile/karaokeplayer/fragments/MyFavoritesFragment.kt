@@ -123,18 +123,16 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
                 val songs = ArrayList<SongInfo>().also { songIt ->
                     var index = 0
                     for (i in 0 until MySingleTon.favorites.size) {
-                        MySingleTon.favorites[i].run {
-                            if (included == "1") {
-                                songIt.add(this)
-                                index++
-                                if (index >= MySingleTon.maxSongs) {
-                                    // excess the max
-                                    ScreenUtil.showToast(
-                                            activity, getString(R.string.excess_max) +
-                                            " ${MySingleTon.maxSongs}", textFontSize,
-                                            BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                                    return@also
-                                }
+                        if (MySingleTon.favorites[i].included == "1") {
+                            songIt.add(MySingleTon.favorites[i])
+                            index++
+                            if (index >= MySingleTon.maxSongs) {
+                                // excess the max
+                                ScreenUtil.showToast(
+                                        activity, getString(R.string.excess_max) +
+                                        " ${MySingleTon.maxSongs}", textFontSize,
+                                        BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                                break
                             }
                         }
                     }
@@ -227,18 +225,16 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             DatabaseAccessUtil.readSavedSongList(it, false)?.also {sqlIt ->
                 var index = 0
                 for (element in sqlIt) {
-                    element.apply {
-                        included = "0"
-                        tempList.add(this)
-                        index++
-                        if (index >= MySingleTon.maxSongs) {
-                            // excess the max
-                            ScreenUtil.showToast(
-                                    activity, getString(R.string.excess_max) +
-                                    " ${MySingleTon.maxSongs}", textFontSize,
-                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                            return@also
-                        }
+                    element.included = "0"
+                    tempList.add(element)
+                    index++
+                    if (index >= MySingleTon.maxSongs) {
+                        // excess the max
+                        ScreenUtil.showToast(
+                                activity, getString(R.string.excess_max) +
+                                " ${MySingleTon.maxSongs}", textFontSize,
+                                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                        break
                     }
                 }
             }
