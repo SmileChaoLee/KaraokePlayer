@@ -51,12 +51,12 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
             videoVLCPlayerView = VLCVideoLayout(context)
             videoVLCPlayerView.layoutParams = layoutParams
             videoVLCPlayerView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.black))
-            playerViewLinearLayout.addView(videoVLCPlayerView)
+            playerViewLinearLayout?.addView(videoVLCPlayerView)
             videoVLCPlayerView.visibility = View.VISIBLE
         }
 
         val currentProgress = presenter.currentProgressForVolumeSeekBar
-        volumeSeekBar.setProgressAndThumb(currentProgress)
+        volumeSeekBar?.setProgressAndThumb(currentProgress)
         // presenter.playSongPlayedBeforeActivityCreated()  // moved to onResume()
 
         Log.d(TAG, "onViewCreated() is finished.")
@@ -97,12 +97,12 @@ class VLCPlayerFragment : PlayerBaseViewFragment(), VLCPlayerPresenter.VLCPresen
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {}
 
     override fun setMenuItemsVisibility() {
-        val channelMenuItem = mainMenu.findItem(R.id.channel)
-        channelMenuItem.isVisible = false
+        val channelMenuItem = mainMenu?.findItem(R.id.channel)
+        channelMenuItem?.isVisible = false
     }
 
     override fun setSwitchToVocalImageButtonVisibility() {
-        switchToVocalImageButton.visibility = View.GONE
+        switchToVocalImageButton?.visibility = View.GONE
     }
     // end of implementing methods of super class
 

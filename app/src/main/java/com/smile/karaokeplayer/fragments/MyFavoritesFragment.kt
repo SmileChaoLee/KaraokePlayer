@@ -28,7 +28,6 @@ private const val TAG : String = "MyFavoritesFragment"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
 
-    private lateinit var fragmentView: View
     private var textFontSize = 0f
     private var fontScale = 0f
     private var playSongs: PlaySongs? = null
@@ -77,9 +76,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         Log.d(TAG, "onViewCreated() is called.")
         super.onViewCreated(view, savedInstanceState)
 
-        fragmentView = view
-
-        fragmentView.let {
+        view.let {
             val buttonWidth = (textFontSize * 1.5f).toInt()
             myListRecyclerView = it.findViewById(R.id.myListRecyclerView)
             myListRecyclerView?.setHasFixedSize(true)

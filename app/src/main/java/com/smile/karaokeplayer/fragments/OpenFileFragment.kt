@@ -30,10 +30,9 @@ private const val TAG : String = "OpenFileFragment"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
 
-    private lateinit var fragmentView : View
     private var textFontSize = 0f
-    private lateinit var playSongs: PlaySongs
-    private lateinit var pathTextView: TextView
+    private var playSongs: PlaySongs? = null
+    private var pathTextView: TextView? = null
     private var filesRecyclerView : RecyclerView? = null
     private var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter? = null
     private var isPlayButton: Boolean = true
@@ -89,10 +88,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fragmentView = view
-
         val buttonWidth = (textFontSize*1.5f).toInt()
-        fragmentView.let {
+        view.let {
             filesRecyclerView = it.findViewById(R.id.openFilesRecyclerView)
             filesRecyclerView?.setHasFixedSize(true)
             pathTextView = it.findViewById(R.id.pathTextView)
@@ -164,7 +161,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                         } else {
                             MySingleTon.orderedSongs.clear()
                             MySingleTon.orderedSongs.addAll(songsIt)
-                            playSongs.playSelectedSongList()
+                            playSongs?.playSelectedSongList()
                         }
                     }
                     songListSQLite.closeDatabase()
@@ -277,7 +274,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                 }
             }
         }
-        pathTextView.text = FileDesList.currentPath
+        pathTextView?.text = FileDesList.currentPath
         FileDesList.fileList.clear()
         FileDesList.fileList.addAll(tempList)
         Log.d(TAG, "searchCurrentFolder.FileDesList.fileList.size = ${FileDesList.fileList.size}" )

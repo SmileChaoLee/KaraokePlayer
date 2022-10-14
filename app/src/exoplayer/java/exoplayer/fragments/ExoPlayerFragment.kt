@@ -28,7 +28,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
     private lateinit var presenter: ExoPlayerPresenter
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var playerView: StyledPlayerView
-    private lateinit var mediaRouteButton: MediaRouteButton
+    private var mediaRouteButton: MediaRouteButton? = null
     private var castPlayer: CastPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +63,7 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
             playerView = StyledPlayerView(it.applicationContext)
             playerView.layoutParams = layoutParams
             playerView.setBackgroundColor(ContextCompat.getColor(it.applicationContext, android.R.color.black))
-            playerViewLinearLayout.addView(playerView)
+            playerViewLinearLayout?.addView(playerView)
 
             playerView.visibility = View.VISIBLE
             playerView.useArtwork = true
@@ -139,11 +139,15 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
 
     override fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int) {
         // MediaRouteButton View
-        mediaRouteButton = fragmentView.findViewById(R.id.media_route_button)
+        mediaRouteButton = fragmentView?.findViewById(R.id.media_route_button)
         setMediaRouteButtonVisible(presenter.currentCastState != CastState.NO_DEVICES_AVAILABLE)
-        activity?.applicationContext?.let { CastButtonFactory.setUpMediaRouteButton(it, mediaRouteButton) }
+        mediaRouteButton?.let {
+            activity?.applicationContext?.let {ctxIt ->
+                CastButtonFactory.setUpMediaRouteButton(ctxIt, it)
+            }
+        }
 
-        val layoutParams: MarginLayoutParams = mediaRouteButton.layoutParams as MarginLayoutParams
+        val layoutParams: MarginLayoutParams = mediaRouteButton?.layoutParams as MarginLayoutParams
         layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
         val mediaRouteButtonBitmap = BitmapFactory.decodeResource(resources, R.drawable.cast)
         val mediaRouteButtonDrawable: Drawable = BitmapDrawable(
@@ -155,11 +159,11 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
                 true
             )
         )
-        mediaRouteButton.setRemoteIndicatorDrawable(mediaRouteButtonDrawable)
+        mediaRouteButton?.setRemoteIndicatorDrawable(mediaRouteButtonDrawable)
     }
 
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {
-        mediaRouteButton.visibility = if (isVisible) View.VISIBLE else View.GONE
+        mediaRouteButton?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 
     override fun setMenuItemsVisibility() {
