@@ -17,8 +17,8 @@ import com.google.android.exoplayer2.ext.cast.CastPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.google.android.gms.cast.framework.CastState
-import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import com.smile.karaokeplayer.R
+import com.smile.karaokeplayer.fragments.PlayerBaseViewFragment
 import exoplayer.presenters.ExoPlayerPresenter
 import exoplayer.presenters.ExoPlayerPresenter.ExoPlayerPresentView
 
@@ -139,30 +139,42 @@ class ExoPlayerFragment : PlayerBaseViewFragment(), ExoPlayerPresentView {
 
     override fun setMediaRouteButtonView(buttonMarginLeft: Int, imageButtonHeight: Int) {
         // MediaRouteButton View
-        mediaRouteButton = fragmentView?.findViewById(R.id.media_route_button)
-        setMediaRouteButtonVisible(presenter.currentCastState != CastState.NO_DEVICES_AVAILABLE)
-        mediaRouteButton?.let {
-            activity?.applicationContext?.let {ctxIt ->
-                CastButtonFactory.setUpMediaRouteButton(ctxIt, it)
-            }
+        Log.d(TAG, "setMediaRouteButtonView()")
+        if (!com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            return
         }
+        try {
+            mediaRouteButton = fragmentView?.findViewById(R.id.media_route_button)
+            setMediaRouteButtonVisible(presenter.currentCastState != CastState.NO_DEVICES_AVAILABLE)
+            mediaRouteButton?.let {
+                activity?.applicationContext?.let { ctxIt ->
+                    CastButtonFactory.setUpMediaRouteButton(ctxIt, it)
+                }
+            }
 
-        val layoutParams: MarginLayoutParams = mediaRouteButton?.layoutParams as MarginLayoutParams
-        layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
-        val mediaRouteButtonBitmap = BitmapFactory.decodeResource(resources, R.drawable.cast)
-        val mediaRouteButtonDrawable: Drawable = BitmapDrawable(
-            resources,
-            Bitmap.createScaledBitmap(
-                mediaRouteButtonBitmap,
-                imageButtonHeight,
-                imageButtonHeight,
-                true
+            val layoutParams: MarginLayoutParams = mediaRouteButton?.layoutParams as MarginLayoutParams
+            layoutParams.setMargins(buttonMarginLeft, 0, 0, 0)
+            val mediaRouteButtonBitmap = BitmapFactory.decodeResource(resources, R.drawable.cast)
+            val mediaRouteButtonDrawable: Drawable = BitmapDrawable(
+                    resources,
+                    Bitmap.createScaledBitmap(
+                            mediaRouteButtonBitmap,
+                            imageButtonHeight,
+                            imageButtonHeight,
+                            true
+                    )
             )
-        )
-        mediaRouteButton?.setRemoteIndicatorDrawable(mediaRouteButtonDrawable)
+            mediaRouteButton?.setRemoteIndicatorDrawable(mediaRouteButtonDrawable)
+        } catch (ex: Exception) {
+            Log.d(TAG, "setMediaRouteButtonView().Exception")
+            ex.printStackTrace()
+        }
     }
 
     override fun setMediaRouteButtonVisible(isVisible: Boolean) {
+        if (!com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            return
+        }
         mediaRouteButton?.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 

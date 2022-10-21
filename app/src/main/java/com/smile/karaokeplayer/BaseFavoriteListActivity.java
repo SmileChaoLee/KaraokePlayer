@@ -210,7 +210,7 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
 
     private void returnToPrevious() {
         Log.d(TAG, "returnToPrevious()");
-        interstitialAd.new ShowAdThread().startShowAd();
+        interstitialAd.new ShowAdThread().startShowAd(1);   // Facebook first
         setResult(Activity.RESULT_OK);   // no bundle data
         finish();
     }

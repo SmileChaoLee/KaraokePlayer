@@ -107,19 +107,6 @@ public abstract class BaseApplication extends MultiDexApplication {
         // google
         MobileAds.initialize(AppContext, initializationStatus -> Log.d(TAG, "Google AdMob was initialized successfully."));
         adMobInterstitial = new AdMobInterstitial(AppContext, googleAdMobInterstitialID);
-
-        final Handler adHandler = new Handler(Looper.getMainLooper());
-        @VisibleForTesting
-        final Runnable adRunnable = () -> {
-            adHandler.removeCallbacksAndMessages(null);
-            if (adMobInterstitial != null) {
-                adMobInterstitial.loadAd(); // load first google ad
-            }
-            if (facebookInterstitial != null) {
-                facebookInterstitial.loadAd();   // load first facebook ad
-            }
-        };
-        adHandler.postDelayed(adRunnable, 1000);
     }
 
     @Override

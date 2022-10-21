@@ -52,7 +52,7 @@ class TablayoutFragment : Fragment() {
             bannerLayoutForTab?.also { layoutIt ->
                 myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                         layoutIt, actIt.resources.configuration.orientation)
-                myBannerAdView?.showBannerAdView(0) // AdMob first
+                myBannerAdView?.showBannerAdView(1) // Facebook first
             }
         }
 
@@ -122,7 +122,7 @@ class TablayoutFragment : Fragment() {
             bannerLayoutForTab?.also {layoutIt ->
                 myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                         layoutIt, newConfig.orientation)
-                myBannerAdView?.showBannerAdView(0) // AdMob first
+                myBannerAdView?.showBannerAdView(1) // Facebook first
             }
         }
         newConfig.orientation.let {

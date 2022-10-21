@@ -258,7 +258,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                     layoutIt.visibility = View.VISIBLE // Show Banner Ad
                     myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                             layoutIt, actIt.resources.configuration.orientation)
-                    myBannerAdView?.showBannerAdView(0) // AdMob first
+                    myBannerAdView?.showBannerAdView(1) // Facebook first
                 }
             }
 
@@ -465,7 +465,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
                 layoutIt.visibility = View.VISIBLE // Show Banner Ad
                 myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
                         layoutIt, actIt.resources.configuration.orientation)
-                myBannerAdView?.showBannerAdView(0) // AdMob first
+                myBannerAdView?.showBannerAdView(1) // Facebook first
             }
         }
     }
@@ -997,7 +997,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
 
     override fun showInterstitialAd() {
         interstitialAd?.apply {
-            ShowAdThread().startShowAd()
+            ShowAdThread().startShowAd(1)   // Facebook first
         }
     }
     // end of implementing PlayerBasePresenter.BasePresentView

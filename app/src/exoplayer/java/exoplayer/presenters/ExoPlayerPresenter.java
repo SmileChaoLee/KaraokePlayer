@@ -158,35 +158,37 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         mExoPlayerListener = new ExoPlayerListener(mActivity, this);
         exoPlayer.addListener(mExoPlayerListener);
 
-        if (castContext != null) {
-            castPlayer = new CastPlayer(castContext);
-            // castPlayer.addListener(mExoPlayerEventListener); // add different listener later
-            mSessionAvailabilityListener = new SessionAvailabilityListener() {
-                @Override
-                public synchronized void onCastSessionAvailable() {
-                    Log.d(TAG, "onCastSessionAvailable");
-                    Log.d(TAG, "onCastSessionAvailable.mediaUri = " + mediaUri);
-                    if (mediaUri==null || !isOnInternet) {
-                        Log.d(TAG, "onCastSessionAvailable.Stopped casting because mediaUri is null or not online");
-                        Log.d(TAG, "onCastSessionAvailable.Set current player back to exoPlayer");
-                        MediaRouter mRouter = MediaRouter.getInstance(mActivity);  // singleton
-                        mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
-                        return;
+        if (com.smile.karaokeplayer.BuildConfig.DEBUG) {
+            if (castContext != null) {
+                castPlayer = new CastPlayer(castContext);
+                // castPlayer.addListener(mExoPlayerEventListener); // add different listener later
+                mSessionAvailabilityListener = new SessionAvailabilityListener() {
+                    @Override
+                    public synchronized void onCastSessionAvailable() {
+                        Log.d(TAG, "onCastSessionAvailable");
+                        Log.d(TAG, "onCastSessionAvailable.mediaUri = " + mediaUri);
+                        if (mediaUri == null || !isOnInternet) {
+                            Log.d(TAG, "onCastSessionAvailable.Stopped casting because mediaUri is null or not online");
+                            Log.d(TAG, "onCastSessionAvailable.Set current player back to exoPlayer");
+                            MediaRouter mRouter = MediaRouter.getInstance(mActivity);  // singleton
+                            mRouter.unselect(MediaRouter.UNSELECT_REASON_STOPPED);  // stop casting
+                            return;
+                        }
+                        setCurrentPlayer(castPlayer);
+                        Log.d(TAG, "Set current player to castPlayer");
                     }
-                    setCurrentPlayer(castPlayer);
-                    Log.d(TAG, "Set current player to castPlayer");
-                }
 
-                @Override
-                public void onCastSessionUnavailable() {
-                    Log.d(TAG, "onCastSessionUnavailable() is called.");
-                    setCurrentPlayer(exoPlayer);
-                    Log.d(TAG, "Set current player to exoPlayer");
-                }
-            };
+                    @Override
+                    public void onCastSessionUnavailable() {
+                        Log.d(TAG, "onCastSessionUnavailable() is called.");
+                        setCurrentPlayer(exoPlayer);
+                        Log.d(TAG, "Set current player to exoPlayer");
+                    }
+                };
 
-            // moved to setSessionAvailabilityListener() method
-            // castPlayer.setSessionAvailabilityListener(mSessionAvailabilityListener);
+                // moved to setSessionAvailabilityListener() method
+                // castPlayer.setSessionAvailabilityListener(mSessionAvailabilityListener);
+            }
         }
 
         currentPlayer = exoPlayer; // default is playing video on Android device
