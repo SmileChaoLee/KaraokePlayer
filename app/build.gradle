@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdkVersion 33
         multiDexEnabled true
-        versionCode 504
-        versionName "5.04"
+        versionCode 510
+        versionName "5.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -107,6 +107,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.5.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation 'androidx.core:core:1.9.0'
+    implementation 'androidx.media:media:1.6.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
@@ -145,6 +146,7 @@ dependencies {
     exoplayerImplementation project(':extension-av1')
 
     videoplayerImplementation 'org.videolan.android:libvlc-all:3.5.1'
+    // videoplayerImplementation 'org.videolan.android:libvlc-all:3.4.7'
     // videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0'
     // videoplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // videoplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'

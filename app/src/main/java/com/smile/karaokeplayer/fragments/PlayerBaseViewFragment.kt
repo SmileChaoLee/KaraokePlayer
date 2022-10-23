@@ -741,11 +741,12 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         heartImageButton?.setOnClickListener {
             // add this media file to my favorite
             mPresenter.let { pIt ->
-                if (pIt.playingParam.currentSongIndex >= 0) {
-                    Log.d(TAG,"heartImageButton.onClick.currentSongIndex = ${pIt.playingParam.currentSongIndex}")
+                val index = pIt.playingParam.currentSongIndex
+                Log.d(TAG,"heartImageButton.onClick.currentSongIndex = $index")
+                if (index>=0 && MySingleTon.orderedSongs.size>index) {
                     activity?.let {
                         SongListSQLite(it.applicationContext).also { sqlIt ->
-                            MySingleTon.orderedSongs[pIt.playingParam.currentSongIndex].run {
+                            MySingleTon.orderedSongs[index].run {
                                 // check if this file is already in database
                                 if (sqlIt.findOneSongByUriString(filePath) == null) {
                                     Log.d(TAG, "heartImageButton.onClick.findOneSongByUriString() is null")
