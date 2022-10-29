@@ -119,12 +119,10 @@ dependencies {
 
     // implementation 'com.google.android.gms:play-services-measurement:21.1.1'
     // implementation 'com.google.android.gms:play-services-measurement-sdk:21.1.1'
-    implementation 'com.google.android.material:material:1.8.0-alpha01'
+    implementation 'com.google.android.material:material:1.8.0-alpha02'
     implementation 'androidx.recyclerview:recyclerview:1.3.0-rc01'
 
     implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.work:work-runtime:2.7.1'
-    implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
     implementation files('libs/smilelibraries-release.aar')
     implementation files('libs/NativeTemplatesModels-release.aar')
@@ -147,8 +145,6 @@ dependencies {
 
     videoplayerImplementation 'org.videolan.android:libvlc-all:3.5.1'
     // videoplayerImplementation 'org.videolan.android:libvlc-all:3.4.7'
-    // videoplayerImplementation 'org.videolan.android:libvlc-all:3.3.0'
-    // videoplayerImplementation 'org.videolan.android:libvlc-all:3.1.12'
     // videoplayerImplementation 'androidx.mediarouter:mediarouter:1.1.0'
     // videoplayerImplementation 'com.google.android.gms:play-services-cast-framework:19.0.0'
 }
