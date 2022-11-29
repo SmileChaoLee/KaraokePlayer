@@ -41,7 +41,7 @@ if (project.file('src/main/jni/ffmpeg').exists()) {
 
 dependencies {
     implementation 'androidx.annotation:annotation:1.5.0'
-    implementation 'com.google.android.exoplayer:exoplayer:2.18.1'
-    compileOnly 'org.checkerframework:checker-qual:' + '2.5.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
+    compileOnly 'org.checkerframework:checker-qual:3.13.0'
     compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.7.20'
 }

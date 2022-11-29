@@ -243,6 +243,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                     Log.d(TAG, "searchCurrentFolder.element = $element")
                     tempList.add(FileDescription(File(element), false))
                     index++
+                    /*
                     if (index >= FileDesList.maxFiles) {
                         ScreenUtil.showToast(activity,
                                 getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
@@ -250,27 +251,31 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                                 Toast.LENGTH_SHORT)
                         break
                     }
+                    */
                 }
             } else {
-                val fList = File(it).listFiles()
-                Log.d(TAG, "fList = $fList")
-                fList?.also { fIt ->
-                    Log.d(TAG, "file.list().size() = ${fIt.size}")
-                    for (f in fIt) {
-                        if (f.canRead()) {
-                            Log.d(TAG, "f.name = ${f.name}, isDirectory = ${f.isDirectory}, " +
-                                    "fn.path = ${f.path}, fn.canWrite() = ${f.canWrite()}")
-                            tempList.add(FileDescription(f, false))
-                            index++
-                            if (index >= FileDesList.maxFiles) {
-                                ScreenUtil.showToast(activity,
-                                        getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
-                                        textFontSize, BaseApplication.FontSize_Scale_Type,
-                                        Toast.LENGTH_SHORT)
-                                break
-                            }
+                try {
+                    File(it).listFiles()?.also { fIt ->
+                        Log.d(TAG, "file.list().size() = ${fIt.size}")
+                        for (f in fIt) {
+                            Log.d(TAG, "isDirectory = ${f.isDirectory}, f.path = ${f.path}")
+                            // if (f.canRead()) {
+                                tempList.add(FileDescription(f, false))
+                                index++
+                                /*
+                                if (index >= FileDesList.maxFiles) {
+                                    ScreenUtil.showToast(activity,
+                                            getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
+                                            textFontSize, BaseApplication.FontSize_Scale_Type,
+                                            Toast.LENGTH_SHORT)
+                                    break
+                                }
+                                */
+                            // }
                         }
                     }
+                } catch (ex: Exception) {
+                    Log.d(TAG, "${ex.message}")
                 }
             }
         }
