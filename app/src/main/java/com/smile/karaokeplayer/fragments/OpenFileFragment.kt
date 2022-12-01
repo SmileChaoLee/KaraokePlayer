@@ -1,5 +1,9 @@
 package com.smile.karaokeplayer.fragments
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +15,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
@@ -27,6 +32,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 import java.io.File
 
 private const val TAG : String = "OpenFileFragment"
+private const val SearchFolder = "SearchCurrentFolder"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
 
@@ -36,6 +42,8 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
     private var filesRecyclerView : RecyclerView? = null
     private var myRecyclerViewAdapter : OpenFilesRecyclerViewAdapter? = null
     private var isPlayButton: Boolean = true
+    private lateinit var broadcastReceiver: BroadcastReceiver
+    private var searchCompleted = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
@@ -73,6 +81,29 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
                 }
             }
         }
+
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.d(TAG, "BroadcastReceiver.onReceive")
+                intent?.action?.let {
+                    if (it == SearchFolder) {
+                        Log.d(TAG, "BroadcastReceiver.onReceive.SearchFolder")
+                        pathTextView?.text = FileDesList.currentPath
+                        myRecyclerViewAdapter?.notifyDataSetChanged()
+                        searchCompleted = true  // searching thread finished
+                    }
+                }
+            }
+        }.also { broadcastReceiver = it }
+        activity?.let {
+            LocalBroadcastManager.getInstance(it).apply {
+                Log.d(TAG, "LocalBroadcastManager.registerReceiver")
+                registerReceiver(broadcastReceiver, IntentFilter().apply {
+                    addAction(SearchFolder)
+                })
+            }
+        }
+
         Log.d(TAG, "onCreate.FileDesList.fileList.size = ${FileDesList.fileList.size}")
     }
 
@@ -99,6 +130,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             backKeyButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 if (FileDesList.currentPath == "/") return@setOnClickListener
                 FileDesList.currentPath = if (FileDesList.rootPathSet.contains(FileDesList.currentPath)) "/"
                 else {
@@ -113,6 +145,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             selectAllButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 for (i in 0 until FileDesList.fileList.size) {
                     FileDesList.fileList[i].run {
                         if (!file.isDirectory && !selected) {
@@ -127,6 +160,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             unselectButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 for (i in 0 until FileDesList.fileList.size) {
                     FileDesList.fileList[i].run {
                         if (!file.isDirectory && selected) {
@@ -141,6 +175,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             refreshButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 searchCurrentFolder()
             }
             val playSelectedButton: ImageButton = it.findViewById(R.id.openFilePlaySelectedButton)
@@ -150,6 +185,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             playSelectedButton.setImageResource(
                     if (isPlayButton) R.drawable.play_media_button_image else R.drawable.open_files)
             playSelectedButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 // open the files to play
                 activity?.let {activityIt ->
                     val songListSQLite = SongListSQLite(activityIt)
@@ -172,6 +208,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             addToFavoriteButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 activity?.let {activityIt ->
                     val songListSQLite = SongListSQLite(activityIt)
                     getSongs(songListSQLite, "addToFavoriteButton").also { songsIt ->
@@ -216,6 +253,15 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
         super.onPause()
     }
 
+    override fun onDestroy() {
+        activity?.let {
+            LocalBroadcastManager.getInstance(it).apply {
+                unregisterReceiver(broadcastReceiver)
+            }
+        }
+        super.onDestroy()
+    }
+
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
         if (position < 0) return
@@ -235,56 +281,44 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
 
     fun searchCurrentFolder() {
         Log.d(TAG, "searchCurrentFolder() is called")
-        val tempList: ArrayList<FileDescription> = ArrayList(FileDesList.maxFiles)
-        FileDesList.currentPath.let {
-            var index = 0
-            if (it == "/") {
-                for (element in FileDesList.rootPathSet) {
-                    Log.d(TAG, "searchCurrentFolder.element = $element")
-                    tempList.add(FileDescription(File(element), false))
-                    index++
-                    /*
-                    if (index >= FileDesList.maxFiles) {
-                        ScreenUtil.showToast(activity,
-                                getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
-                                textFontSize, BaseApplication.FontSize_Scale_Type,
-                                Toast.LENGTH_SHORT)
-                        break
+        searchCompleted = false
+        Thread {
+            val tempList: ArrayList<FileDescription> = ArrayList(FileDesList.maxFiles)
+            FileDesList.currentPath.let {
+                if (it == "/") {
+                    for (element in FileDesList.rootPathSet) {
+                        Log.d(TAG, "searchCurrentFolder.element = $element")
+                        tempList.add(FileDescription(File(element), false))
                     }
-                    */
-                }
-            } else {
-                try {
-                    File(it).listFiles()?.also { fIt ->
-                        Log.d(TAG, "file.list().size() = ${fIt.size}")
-                        for (f in fIt) {
-                            Log.d(TAG, "isDirectory = ${f.isDirectory}, f.path = ${f.path}")
-                            // if (f.canRead()) {
+                } else {
+                    try {
+                        File(it).listFiles()?.also { fIt ->
+                            Log.d(TAG, "file.list().size() = ${fIt.size}")
+                            for (f in fIt) {
+                                Log.d(TAG, "isDirectory = ${f.isDirectory}, f.path = ${f.path}")
+                                // if (f.canRead()) {
                                 tempList.add(FileDescription(f, false))
-                                index++
-                                /*
-                                if (index >= FileDesList.maxFiles) {
-                                    ScreenUtil.showToast(activity,
-                                            getString(R.string.excess_max) + " ${FileDesList.maxFiles}",
-                                            textFontSize, BaseApplication.FontSize_Scale_Type,
-                                            Toast.LENGTH_SHORT)
-                                    break
-                                }
-                                */
-                            // }
+                                // }
+                            }
                         }
+                    } catch (ex: Exception) {
+                        Log.d(TAG, "${ex.message}")
                     }
-                } catch (ex: Exception) {
-                    Log.d(TAG, "${ex.message}")
                 }
             }
-        }
-        pathTextView?.text = FileDesList.currentPath
-        FileDesList.fileList.clear()
-        FileDesList.fileList.addAll(tempList)
-        Log.d(TAG, "searchCurrentFolder.FileDesList.fileList.size = ${FileDesList.fileList.size}" )
+            FileDesList.fileList.clear()
+            FileDesList.fileList.addAll(tempList)
+            Log.d(TAG, "searchCurrentFolder.FileDesList.fileList.size = ${FileDesList.fileList.size}")
 
-        myRecyclerViewAdapter?.notifyDataSetChanged()
+            activity?.let {
+                LocalBroadcastManager.getInstance(it).apply {
+                    sendBroadcast(Intent().apply {
+                        action = SearchFolder
+                    })
+                }
+            }
+
+        }.start()
     }
 
     private fun getSongs(songListSQLite : SongListSQLite, msg : String) : ArrayList<SongInfo> {

@@ -1,6 +1,9 @@
 package com.smile.karaokeplayer.fragments
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.smile.karaokeplayer.BaseApplication
@@ -25,6 +29,8 @@ import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "MyFavoritesFragment"
+private const val SearchFavorites = "SearchFavorites"
+private const val ExcessYN = "ExcessYN"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
 
@@ -35,6 +41,8 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
     private var myListRecyclerView : RecyclerView? = null
     private var myRecyclerViewAdapter : FavoriteRecyclerViewAdapter? = null
     private lateinit var editSongsActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var broadcastReceiver: BroadcastReceiver
+    private var searchCompleted = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "onCreate() is called")
@@ -59,6 +67,33 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             playMyFavorites?.restorePlayingState()
             searchFavorites()
         } // update the UI }
+
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.d(TAG, "BroadcastReceiver.onReceive")
+                intent?.action?.let {
+                    if (it == SearchFavorites) {
+                        Log.d(TAG, "BroadcastReceiver.onReceive.SearchFavorites")
+                        if (intent.getBooleanExtra(ExcessYN, false)) {
+                            ScreenUtil.showToast(
+                                    activity, getString(R.string.excess_max) +
+                                    " ${MySingleTon.maxSongs}", textFontSize,
+                                    BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
+                        }
+                        myRecyclerViewAdapter?.notifyDataSetChanged()
+                        searchCompleted = true  // searching thread finished
+                    }
+                }
+            }
+        }.also { broadcastReceiver = it }
+        activity?.let {
+            LocalBroadcastManager.getInstance(it).apply {
+                Log.d(TAG, "LocalBroadcastManager.registerReceiver")
+                registerReceiver(broadcastReceiver, IntentFilter().apply {
+                    addAction(SearchFavorites)
+                })
+            }
+        }
 
         Log.d(TAG, "onCreate.FavoriteSingleTon.favoriteList.size = ${MySingleTon.favorites.size}")
     }
@@ -85,6 +120,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             selectAllButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 for (i in 0 until MySingleTon.favorites.size) {
                     MySingleTon.favorites[i].run {
                         included = "1"
@@ -97,6 +133,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             unselectButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 for (i in 0 until MySingleTon.favorites.size) {
                     MySingleTon.favorites[i].run {
                         included = "0"
@@ -109,6 +146,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             refreshButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 searchFavorites()
             }
             val playSelectedButton: ImageButton = it.findViewById(R.id.favoritePlaySelectedButton)
@@ -116,6 +154,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             playSelectedButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 // open the files to play
                 val songs = ArrayList<SongInfo>().also { songIt ->
                     var index = 0
@@ -149,6 +188,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             editButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 ArrayList<SongInfo>().also {listIt ->
                     for (element in MySingleTon.favorites) {
                         if (element.included == "1") listIt.add(element)
@@ -177,6 +217,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             layoutParams.width = buttonWidth
             layoutParams.height = buttonWidth
             addButton.setOnClickListener {
+                if (!searchCompleted) return@setOnClickListener // searching
                 // Switching to OpenFileFragment
                 playMyFavorites?.switchToOpenFileFragment()
             }
@@ -202,6 +243,15 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
         super.onPause()
     }
 
+    override fun onDestroy() {
+        activity?.let {
+            LocalBroadcastManager.getInstance(it).apply {
+                unregisterReceiver(broadcastReceiver)
+            }
+        }
+        super.onDestroy()
+    }
+
     override fun onRecyclerItemClick(v: View?, position: Int) {
         Log.d(TAG, "onRecyclerItemClick.position = $position")
         MySingleTon.favorites[position].apply {
@@ -217,28 +267,39 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
 
     fun searchFavorites() {
         Log.d(TAG, "searchFavorites() is called")
-        val tempList: ArrayList<SongInfo> = ArrayList(MySingleTon.maxSongs)
-        activity?.let {
-            DatabaseAccessUtil.readSavedSongList(it, false)?.also {sqlIt ->
-                var index = 0
-                for (element in sqlIt) {
-                    element.included = "0"
-                    tempList.add(element)
-                    index++
-                    if (index >= MySingleTon.maxSongs) {
-                        // excess the max
-                        ScreenUtil.showToast(
-                                activity, getString(R.string.excess_max) +
-                                " ${MySingleTon.maxSongs}", textFontSize,
-                                BaseApplication.FontSize_Scale_Type, Toast.LENGTH_SHORT)
-                        break
+        searchCompleted = false
+        Thread {
+            var excessYn = false;
+            val tempList: ArrayList<SongInfo> = ArrayList(MySingleTon.maxSongs)
+            activity?.let {
+                DatabaseAccessUtil.readSavedSongList(it, false)?.also { sqlIt ->
+                    var index = 0
+                    for (element in sqlIt) {
+                        element.included = "0"
+                        tempList.add(element)
+                        index++
+                        if (index >= MySingleTon.maxSongs) {
+                            // excess the max
+                            excessYn = true
+                            break
+                        }
                     }
                 }
             }
-        }
-        MySingleTon.favorites.clear()
-        MySingleTon.favorites.addAll(tempList)
-        myRecyclerViewAdapter?.notifyDataSetChanged()
+            MySingleTon.favorites.clear()
+            MySingleTon.favorites.addAll(tempList)
+            Log.d(TAG, "searchFavorites.MySingleTon.favorites.size = ${MySingleTon.favorites.size}")
+
+            activity?.let {
+                LocalBroadcastManager.getInstance(it).apply {
+                    sendBroadcast(Intent().apply {
+                        action = SearchFavorites
+                        putExtra(ExcessYN,excessYn)
+                    })
+                }
+            }
+
+        }.start()
     }
 
     private fun initFavoriteRecyclerView() {
