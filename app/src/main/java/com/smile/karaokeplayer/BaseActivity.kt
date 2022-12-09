@@ -88,6 +88,29 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_base)
 
+        object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                Log.d(TAG, "BroadcastReceiver.onReceive")
+                intent?.action?.let {
+                    if (it == PlayerConstants.PlaySingleSongAction) {
+                        Log.d(TAG, "onReceive.PlaySingleSongAction")
+                        intent.putExtra(PlayerConstants.SingleSongVolume,
+                                playerFragment?.mPresenter?.playingParam?.currentVolume)
+                        onReceiveFunc(isSingleSong = true, needPlay = true, intent = intent, pData = null)
+                        hasPlayedSingle = true
+                    }
+                }
+            }
+        }.also { baseReceiver = it }
+
+        LocalBroadcastManager.getInstance(this).apply {
+            Log.d(TAG, "LocalBroadcastManager.registerReceiver")
+            registerReceiver(baseReceiver, IntentFilter().apply {
+                addAction(PlayerConstants.PlaySingleSongAction)
+                addAction(PlayerConstants.BackToBaseActivity)
+            })
+        }
+
         permissionExternalStorage =
                 (ActivityCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED)
@@ -159,29 +182,6 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 }
             }
             if (isReplaced) commit()
-        }
-
-        object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                Log.d(TAG, "BroadcastReceiver.onReceive")
-                intent?.action?.let {
-                    if (it == PlayerConstants.PlaySingleSongAction) {
-                        Log.d(TAG, "onReceive.PlaySingleSongAction")
-                        intent.putExtra(PlayerConstants.SingleSongVolume,
-                                playerFragment?.mPresenter?.playingParam?.currentVolume)
-                        onReceiveFunc(isSingleSong = true, needPlay = true, intent = intent, pData = null)
-                        hasPlayedSingle = true
-                    }
-                }
-            }
-        }.also { baseReceiver = it }
-
-        LocalBroadcastManager.getInstance(this).apply {
-            Log.d(TAG, "LocalBroadcastManager.registerReceiver")
-            registerReceiver(baseReceiver, IntentFilter().apply {
-                addAction(PlayerConstants.PlaySingleSongAction)
-                addAction(PlayerConstants.BackToBaseActivity)
-            })
         }
 
         onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
