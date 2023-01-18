@@ -29,7 +29,7 @@ import com.smile.karaokeplayer.utilities.DatabaseAccessUtil
 import com.smile.smilelibraries.utilities.ScreenUtil
 
 private const val TAG : String = "MyFavoritesFragment"
-private const val SearchFavorites = "SearchFavorites"
+private const val SearchFavoritesCompleted = "SearchFavorites"
 private const val ExcessYN = "ExcessYN"
 
 class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerItemClickListener {
@@ -72,7 +72,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             override fun onReceive(context: Context?, intent: Intent?) {
                 Log.d(TAG, "BroadcastReceiver.onReceive")
                 intent?.action?.let {
-                    if (it == SearchFavorites) {
+                    if (it == SearchFavoritesCompleted) {
                         Log.d(TAG, "BroadcastReceiver.onReceive.SearchFavorites")
                         if (intent.getBooleanExtra(ExcessYN, false)) {
                             ScreenUtil.showToast(
@@ -90,7 +90,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             LocalBroadcastManager.getInstance(it).apply {
                 Log.d(TAG, "LocalBroadcastManager.registerReceiver")
                 registerReceiver(broadcastReceiver, IntentFilter().apply {
-                    addAction(SearchFavorites)
+                    addAction(SearchFavoritesCompleted)
                 })
             }
         }
@@ -293,7 +293,7 @@ class MyFavoritesFragment : Fragment(), FavoriteRecyclerViewAdapter.OnRecyclerIt
             activity?.let {
                 LocalBroadcastManager.getInstance(it).apply {
                     sendBroadcast(Intent().apply {
-                        action = SearchFavorites
+                        action = SearchFavoritesCompleted
                         putExtra(ExcessYN,excessYn)
                     })
                 }

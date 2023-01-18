@@ -86,16 +86,8 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
         favoritesExitButtonLayout = findViewById(R.id.favoritesExitButtonLayout);
         setLayoutViewWeight();
 
-        /*
-        Intent callingIntent = getIntent();
-        Bundle arguments = null;
-        if (callingIntent != null) {
-            arguments = callingIntent.getExtras();
-        }
-        */
-
+        ArrayList<SongInfo> tempList;
         if (savedInstanceState != null) {
-            ArrayList<SongInfo> tempList;
             // activity being recreated
             currentAction = savedInstanceState.getString(CrudActionState);
             positionEdit = savedInstanceState.getInt(PositionEditState, -1);
@@ -111,33 +103,38 @@ public abstract class BaseFavoriteListActivity extends AppCompatActivity
             MySingleTon.INSTANCE.getSelectedFavorites().clear();
             MySingleTon.INSTANCE.getSelectedFavorites().addAll(tempList);
         } else {
-            Log.d(TAG, "onCreate.savedInstanceState is null");
             /*
+            Intent callingIntent = getIntent();
+            Bundle arguments = null;
+            if (callingIntent != null) {
+                arguments = callingIntent.getExtras();
+            }
+            Log.d(TAG, "onCreate.savedInstanceState is null");
             // first recreating then using the FavoriteSingleTon.INSTANCE.getSelectedList()
             // It won't happen in this case (no R.id.MyFavorite any more, no CommonConstants.AddActionString)
             if (arguments == null) {
                 Log.d(TAG, "onCreate.savedInstanceState is null, arguments is null");
                 currentAction = CommonConstants.AddActionString;
-                favoriteList = songListSQLite.readPlayList();
+                tempList = songListSQLite.readPlayList();
             } else {
                 Log.d(TAG, "onCreate.savedInstanceState is null, arguments is not null");
                 currentAction = CommonConstants.EditActionString;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-                    favoriteList = (ArrayList<SongInfo>) arguments
+                    tempList = (ArrayList<SongInfo>) arguments
                             .getSerializable(PlayerConstants.MyFavoriteListState, ArrayList.class);
                 else
-                    favoriteList = (ArrayList<SongInfo>) arguments
+                    tempList = (ArrayList<SongInfo>) arguments
                             .getSerializable(PlayerConstants.MyFavoriteListState);
-                if (favoriteList == null) {
+                if (tempList == null) {
                     // for all favorites
                     currentAction = CommonConstants.AddActionString;
-                    favoriteList = songListSQLite.readPlayList();
+                    tempList = songListSQLite.readPlayList();
                 } else {
-                    Log.d(TAG, "onCreate.arguments is not null, favoriteList.size() = " + favoriteList.size());
+                    Log.d(TAG, "onCreate.arguments is not null, tempList.size() = " + tempList.size());
                 }
             }
-            FavoriteSingleTon.INSTANCE.getSelectedList().clear();
-            FavoriteSingleTon.INSTANCE.getSelectedList().addAll(favoriteList);
+            MySingleTon.INSTANCE.getSelectedFavorites().clear();
+            MySingleTon.INSTANCE.getSelectedFavorites().addAll(tempList);
             */
         }
 

@@ -32,7 +32,7 @@ import com.smile.smilelibraries.utilities.ScreenUtil
 import java.io.File
 
 private const val TAG : String = "OpenFileFragment"
-private const val SearchFolder = "SearchCurrentFolder"
+private const val SearchFolderCompleted = "SearchCurrentFolder"
 
 class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItemClickListener {
 
@@ -86,7 +86,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             override fun onReceive(context: Context?, intent: Intent?) {
                 Log.d(TAG, "BroadcastReceiver.onReceive")
                 intent?.action?.let {
-                    if (it == SearchFolder) {
+                    if (it == SearchFolderCompleted) {
                         Log.d(TAG, "BroadcastReceiver.onReceive.SearchFolder")
                         pathTextView?.text = FileDesList.currentPath
                         myRecyclerViewAdapter?.notifyDataSetChanged()
@@ -99,7 +99,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             LocalBroadcastManager.getInstance(it).apply {
                 Log.d(TAG, "LocalBroadcastManager.registerReceiver")
                 registerReceiver(broadcastReceiver, IntentFilter().apply {
-                    addAction(SearchFolder)
+                    addAction(SearchFolderCompleted)
                 })
             }
         }
@@ -313,7 +313,7 @@ class OpenFileFragment : Fragment(), OpenFilesRecyclerViewAdapter.OnRecyclerItem
             activity?.let {
                 LocalBroadcastManager.getInstance(it).apply {
                     sendBroadcast(Intent().apply {
-                        action = SearchFolder
+                        action = SearchFolderCompleted
                     })
                 }
             }
