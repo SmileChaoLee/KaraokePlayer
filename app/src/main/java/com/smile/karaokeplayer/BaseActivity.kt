@@ -116,7 +116,14 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                         == PackageManager.PERMISSION_GRANTED)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!permissionExternalStorage) {
-                val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                val permissions : Array<String> =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    arrayOf(Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_MEDIA_VIDEO,
+                        Manifest.permission.READ_MEDIA_AUDIO)
+                } else {
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
                 ActivityCompat.requestPermissions(this, permissions, PERMISSION_WRITE_EXTERNAL_CODE)
             }
             // MANAGE_EXTERNAL_STORAGE
@@ -126,7 +133,9 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                 ScreenUtil.showToast(this, "Permission Denied", 60f,
                         ScreenUtil.FontSize_Pixel_Type,
                         Toast.LENGTH_LONG)
+                Log.d(TAG, "WRITE_EXTERNAL_STORAGE.Permission Denied.")
                 returnToPrevious(false)
+                return
             }
         }
 
@@ -237,12 +246,16 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        for (str : String? in permissions) {
+            Log.d(TAG, "onRequestPermissionsResult.permissions = $str")
+        }
         if (requestCode == PERMISSION_WRITE_EXTERNAL_CODE) {
             val rLen = grantResults.size
             permissionExternalStorage = rLen > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED
         }
         if (!permissionExternalStorage) {
             ScreenUtil.showToast(this, "Permission Denied", 60f, ScreenUtil.FontSize_Pixel_Type, Toast.LENGTH_LONG)
+            Log.d(TAG, "onRequestPermissionsResult.Permission Denied")
             returnToPrevious(false) // exit the activity immediately
         }
     }
