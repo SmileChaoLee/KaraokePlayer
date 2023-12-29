@@ -90,6 +90,7 @@ android {
     }
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
     namespace 'com.smile.karaokeplayer'
     testNamespace '${applicationId}.androidTest'
