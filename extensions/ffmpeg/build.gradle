@@ -2,10 +2,10 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     externalNativeBuild {
@@ -18,7 +18,7 @@ android {
     // ndkPath "home/chaolee/Android/Sdk/ndk/21.4.7075529"  // Point to your own NDK
 
     defaultConfig {
-        targetSdkVersion 33
+        targetSdk 34
         consumerProguardFiles 'proguard-rules.txt'
      	testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         ndk {
@@ -30,6 +30,8 @@ android {
         jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = [] // Disable the automatic ndk-build call by Android Studio.
     }
+
+    namespace 'com.google.android.exoplayer2.ext.ffmpeg'
 }
 
 // Configure the native build only if ffmpeg is present to avoid gradle sync
@@ -40,8 +42,8 @@ if (project.file('src/main/jni/ffmpeg').exists()) {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
-    compileOnly 'org.checkerframework:checker-qual:3.13.0'
-    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.7.20'
+    compileOnly 'org.checkerframework:checker-qual:3.42.0'
+    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.9.22'
 }

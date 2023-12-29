@@ -2,14 +2,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     defaultConfig {
-        targetSdkVersion 33
+        targetSdk 34
         consumerProguardFiles 'proguard-rules.txt'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -18,18 +18,20 @@ android {
         jniLibs.srcDir 'src/main/libs'
         jni.srcDirs = [] // Disable the automatic ndk-build call by Android Studio.
     }
+
+    namespace "com.google.android.exoplayer2.ext.vp9"
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.5.0'
+    implementation 'androidx.annotation:annotation:1.7.1'
     implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
-    compileOnly 'org.checkerframework:checker-qual:3.13.0'
-    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.7.20'
+    compileOnly 'org.checkerframework:checker-qual:3.42.0'
+    compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:1.9.22'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.ext:truth:1.5.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 }
