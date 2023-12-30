@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdk 34
         multiDexEnabled true
-        versionCode 545
-        versionName "5.45"
+        versionCode 600
+        versionName "6.00"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
@@ -28,14 +28,14 @@ android {
     productFlavors {
         exoplayer {
             dimension("player")
-            minSdkVersion 19
+            minSdk 23
             applicationId "com.smile.karaokeplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true",
                                     google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
         }
         videoplayer {
             dimension("player")
-            minSdkVersion 19
+            minSdk 23
             applicationId = "com.smile.videoplayer"
             manifestPlaceholders = [flavorLegacyExternalStorage: "true",
                                     google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
