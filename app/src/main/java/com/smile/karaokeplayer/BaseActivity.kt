@@ -206,7 +206,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
                     // Layout has been finished
                     // hove to use removeGlobalOnLayoutListener() method after API 16 or is API 16
                     viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    createViewDependingOnOrientation(resources.configuration.orientation, savedInstanceState)
+                    createViewDependingOnOrientation()
                 }
             })
         }
@@ -403,7 +403,7 @@ abstract class BaseActivity : AppCompatActivity(), PlayerBaseViewFragment.PlayBa
     }
     // Finish implementing interface PlaySongs
 
-    private fun createViewDependingOnOrientation(orientation : Int, savedInstanceState : Bundle?) {
+    private fun createViewDependingOnOrientation() {
         if (callingIntent.extras == null) {
             playerFragment?.hidePlayerView()
         }
