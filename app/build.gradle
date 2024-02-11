@@ -18,8 +18,8 @@ android {
         applicationId "com.smile.karaokeplayer"
         targetSdk 34
         multiDexEnabled true
-        versionCode 600
-        versionName "6.00"
+        versionCode 610
+        versionName "6.10"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.release
     }
