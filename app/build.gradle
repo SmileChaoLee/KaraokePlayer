@@ -15,7 +15,7 @@ android {
 
     compileSdk 34
     defaultConfig {
-        applicationId "com.smile.karaokeplayer"
+        applicationId = "com.smile.karaokeplayer"
         targetSdk 34
         multiDexEnabled true
         versionCode 610
@@ -29,16 +29,16 @@ android {
         exoplayer {
             dimension("player")
             minSdk 23
-            applicationId "com.smile.karaokeplayer"
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true",
-                                    google_AdMobAppID: "ca-app-pub-8354869049759576~5549171584"]
+            applicationId = "com.smile.karaokeplayer"
+            manifestPlaceholders["flavorLegacyExternalStorage"] = "true"
+            manifestPlaceholders["google_AdMobAppID"] = "ca-app-pub-8354869049759576~5549171584"
         }
         videoplayer {
             dimension("player")
             minSdk 23
             applicationId = "com.smile.videoplayer"
-            manifestPlaceholders = [flavorLegacyExternalStorage: "true",
-                                    google_AdMobAppID: "ca-app-pub-8354869049759576~5376732060"]
+            manifestPlaceholders["flavorLegacyExternalStorage"] = "true"
+            manifestPlaceholders["google_AdMobAppID"] = "ca-app-pub-8354869049759576~5376732060"
         }
     }
 
@@ -104,25 +104,25 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.core:core:1.12.0'
+    implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.media:media:1.7.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.annotation:annotation:1.7.1'
+    implementation 'androidx.annotation:annotation:1.8.0'
 
     implementation 'com.facebook.android:audience-network-sdk:6.16.0'
     implementation 'com.google.firebase:firebase-core:21.1.1'
-    implementation 'com.google.firebase:firebase-ads:22.6.0'
+    implementation 'com.google.firebase:firebase-ads:23.1.0'
 
     // implementation 'com.google.android.gms:play-services-measurement:21.1.1'
     // implementation 'com.google.android.gms:play-services-measurement-sdk:21.1.1'
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
 
-    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.core:core-ktx:1.13.1'
 
     implementation files('libs/smilelibraries-release.aar')
     implementation files('libs/NativeTemplatesModels-release.aar')
@@ -132,18 +132,22 @@ dependencies {
     androidTestImplementation 'androidx.test:rules:1.5.0'
     androidTestImplementation 'androidx.test.ext:truth:1.5.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
 
-    exoplayerImplementation 'com.google.android.exoplayer:exoplayer:2.18.2'
-    exoplayerImplementation 'com.google.android.exoplayer:extension-mediasession:2.18.2'
-    exoplayerImplementation 'com.google.android.exoplayer:extension-cast:2.18.2'
-    exoplayerImplementation project(':extension-ffmpeg')
-    exoplayerImplementation project(':extension-flac')
-    exoplayerImplementation project(':extension-opus')
-    exoplayerImplementation project(':extension-vp9')
-    exoplayerImplementation project(':extension-av1')
-
-    videoplayerImplementation 'org.videolan.android:libvlc-all:3.6.0-eap10'
+    gradle.startParameter.getTaskNames().each { task ->
+        if(task.contains("exoplayer")) {
+            implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
+            implementation 'com.google.android.exoplayer:extension-mediasession:2.18.2'
+            implementation 'com.google.android.exoplayer:extension-cast:2.18.2'
+            implementation project(':extension-ffmpeg')
+            implementation project(':extension-flac')
+            implementation project(':extension-opus')
+            implementation project(':extension-vp9')
+            implementation project(':extension-av1')
+        } else {
+            implementation 'org.videolan.android:libvlc-all:3.6.0-eap12'
+        }
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'

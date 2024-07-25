@@ -3,14 +3,12 @@ package com.smile.karaokeplayer;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
 import com.google.android.gms.ads.MobileAds;
-import com.google.android.gms.common.util.VisibleForTesting;
 import com.smile.karaokeplayer.constants.CommonConstants;
 import com.smile.smilelibraries.facebook_ads_util.FacebookInterstitial;
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial;
@@ -110,7 +108,7 @@ public abstract class BaseApplication extends MultiDexApplication {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         Log.d(TAG, "Configuration changed");
     }

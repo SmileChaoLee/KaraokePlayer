@@ -6,7 +6,7 @@ android {
 
     externalNativeBuild {
         cmake {
-            path file('../extensions/ffmpeg/src/main/jni/CMakeLists.txt')
+            path file('../ffmpeg/src/main/jni/CMakeLists.txt')
         }
     }
     ndkVersion '22.1.7171670'

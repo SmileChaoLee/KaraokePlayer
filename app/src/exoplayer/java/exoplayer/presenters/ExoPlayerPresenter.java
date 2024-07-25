@@ -565,7 +565,7 @@ public class ExoPlayerPresenter extends BasePlayerPresenter {
         MediaControllerCompat.setMediaController(mActivity, mediaControllerCompat);
         mediaControllerCallback = new ExoMediaControllerCallback(this);
         mediaControllerCompat.registerCallback(mediaControllerCallback);
-        mediaTransportControls = mediaControllerCompat.getTransportControls();
+        // mediaTransportControls = mediaControllerCompat.getTransportControls();
 
         // no need to create MediaSessionCallback(). It will be overridden by PlaybackPreparer
         // MediaSessionConnector will automatically update playback status to MediaControllerCallback

@@ -37,7 +37,7 @@ public abstract class BasePlayerPresenter {
     protected final float fontScale;
     protected final float toastTextSize;
     protected MediaSessionCompat mediaSessionCompat;
-    protected MediaControllerCompat.TransportControls mediaTransportControls;
+    // protected MediaControllerCompat.TransportControls mediaTransportControls;
     // instances of the following members have to be saved when configuration changed
     protected Uri mediaUri;
     protected int numberOfVideoTracks;
@@ -165,6 +165,8 @@ public abstract class BasePlayerPresenter {
         // MediaSessionConnector.PlaybackPreparer.onPrepareFromUri(Uri uri, Bundle extras)
         Bundle playingParamOriginExtras = new Bundle();
         playingParamOriginExtras.putParcelable(PlayerConstants.PlayingParamOrigin, playingParam);
+        MediaControllerCompat.TransportControls mediaTransportControls =
+                mediaSessionCompat.getController().getTransportControls();
         if (mediaTransportControls != null) {
             Log.d(TAG, "playMediaFromUri.mediaTransportControls is not null");
             mediaTransportControls.prepareFromUri(mediaUri, playingParamOriginExtras);
@@ -525,6 +527,8 @@ public abstract class BasePlayerPresenter {
                     || (playbackState == PlaybackStateCompat.STATE_REWINDING)
                     || (playbackState == PlaybackStateCompat.STATE_FAST_FORWARDING)
                     || (playbackState == PlaybackStateCompat.STATE_BUFFERING)) {
+                MediaControllerCompat.TransportControls mediaTransportControls =
+                        mediaSessionCompat.getController().getTransportControls();
                 if (mediaTransportControls != null) {
                     Log.d(TAG, "startPlay.mediaTransportControls.play() is called.");
                     mediaTransportControls.play();
@@ -542,6 +546,8 @@ public abstract class BasePlayerPresenter {
         Log.d(TAG, "pausePlay() is called.");
         if ( (mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_PAUSED) ) {
             // no media file opened or playing has been stopped
+            MediaControllerCompat.TransportControls mediaTransportControls =
+                    mediaSessionCompat.getController().getTransportControls();
             if (mediaTransportControls != null) {
                 mediaTransportControls.pause();
             }
@@ -552,6 +558,8 @@ public abstract class BasePlayerPresenter {
         Log.d(TAG, "stopPlay() is called.");
         if ((mediaUri != null && !Uri.EMPTY.equals(mediaUri)) && (playingParam.getCurrentPlaybackState() != PlaybackStateCompat.STATE_NONE)) {
             // media file opened or playing has been stopped
+            MediaControllerCompat.TransportControls mediaTransportControls =
+                    mediaSessionCompat.getController().getTransportControls();
             if (mediaTransportControls != null) {
                 Log.d(TAG, "stopPlay() ---> mediaTransportControls.stop() is called.");
                 mediaTransportControls.stop();
@@ -702,7 +710,7 @@ public abstract class BasePlayerPresenter {
             mediaSessionCompat.release();
             mediaSessionCompat = null;
         }
-        mediaTransportControls = null;
+        // mediaTransportControls = null;
     }
 
     public void saveInstanceState(@NonNull Bundle outState) {

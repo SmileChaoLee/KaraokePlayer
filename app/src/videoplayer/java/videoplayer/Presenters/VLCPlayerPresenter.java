@@ -269,7 +269,7 @@ public class VLCPlayerPresenter extends BasePlayerPresenter {
         MediaControllerCompat.setMediaController(mActivity, mediaControllerCompat);
         mediaControllerCallback = new VLCMediaControllerCallback(this);
         mediaControllerCompat.registerCallback(mediaControllerCallback);
-        mediaTransportControls = mediaControllerCompat.getTransportControls();
+        // mediaTransportControls = mediaControllerCompat.getTransportControls();
     }
 
     @Override

@@ -16,7 +16,7 @@ class VLCPlayerActivity : BaseActivity() {
 
     override fun getFragment() = VLCPlayerFragment()
     override fun comeBackFromFavorite(playData : Bundle?) {
-        onReceiveFunc(false, false, null, playData)
+        onReceiveFunc(isSingleSong = false, needPlay = false, intent = null, pData = playData)
     }
 
     // implementing interface PlayMyFavorites
