@@ -3,12 +3,19 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdk 34
-
-    externalNativeBuild {
-        cmake {
-            path file('../ffmpeg/src/main/jni/CMakeLists.txt')
+    /*
+    gradle.startParameter.getTaskNames().each { task ->
+        println("build.gradle(:extension-ffmpeg).task = $task")
+        if (task.containsIgnoreCase("exoplayer")) {
+            externalNativeBuild {
+                cmake {
+                    path file('../ffmpeg/src/main/jni/CMakeLists.txt')
+                }
+            }
         }
     }
+    */
+
     ndkVersion '22.1.7171670'
     // or
     // ndkPath "home/chaolee/Android/Sdk/ndk/21.4.7075529"  // Point to your own NDK
@@ -32,9 +39,14 @@ android {
 
 // Configure the native build only if ffmpeg is present to avoid gradle sync
 // failures if ffmpeg hasn't been built according to the README instructions.
-if (project.file('src/main/jni/ffmpeg').exists()) {
-    android.externalNativeBuild.cmake.path = 'src/main/jni/CMakeLists.txt'
-    android.externalNativeBuild.cmake.version = '3.7.1+'
+gradle.startParameter.getTaskNames().each { task ->
+    println("build.gradle(:extension-ffmpeg).task = $task")
+    if (task.containsIgnoreCase("exoplayer")) {
+        if (project.file('src/main/jni/ffmpeg').exists()) {
+            android.externalNativeBuild.cmake.path = 'src/main/jni/CMakeLists.txt'
+            android.externalNativeBuild.cmake.version = '3.7.1+'
+        }
+    }
 }
 
 dependencies {

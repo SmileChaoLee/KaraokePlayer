@@ -1,11 +1,9 @@
 include ':app'
-gradle.startParameter.getTaskNames().each { task ->
-    if(task.contains("exoplayer")) {
-        include ':extension-ffmpeg', ':extension-vp9', ':extension-flac', ':extension-opus', ':extension-av1'
-        project(':extension-ffmpeg').projectDir = new File('extensions/ffmpeg')
-        project(':extension-vp9').projectDir = new File('extensions/vp9')
-        project(':extension-flac').projectDir = new File('extensions/flac')
-        project(':extension-opus').projectDir = new File('extensions/opus')
-        project(':extension-av1').projectDir = new File('extensions/av1')
-    }
-}
+println("settings.gradle")
+println("settings.gradle.exoplayer")
+include ':extension-ffmpeg', ':extension-vp9', ':extension-flac', ':extension-opus', ':extension-av1'
+project(':extension-ffmpeg').projectDir = new File('extensions/ffmpeg')
+project(':extension-vp9').projectDir = new File('extensions/vp9')
+project(':extension-flac').projectDir = new File('extensions/flac')
+project(':extension-opus').projectDir = new File('extensions/opus')
+project(':extension-av1').projectDir = new File('extensions/av1')

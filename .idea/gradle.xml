@@ -10,6 +10,11 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/extensions/av1" />
+            <option value="$PROJECT_DIR$/extensions/ffmpeg" />
+            <option value="$PROJECT_DIR$/extensions/flac" />
+            <option value="$PROJECT_DIR$/extensions/opus" />
+            <option value="$PROJECT_DIR$/extensions/vp9" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

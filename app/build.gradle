@@ -135,7 +135,9 @@ dependencies {
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
 
     gradle.startParameter.getTaskNames().each { task ->
-        if(task.contains("exoplayer")) {
+        println("build.gradle.task = $task")
+        if (task.containsIgnoreCase("exoplayer")) {
+            println("build.gradle.exoplayer")
             implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
             implementation 'com.google.android.exoplayer:extension-mediasession:2.18.2'
             implementation 'com.google.android.exoplayer:extension-cast:2.18.2'
@@ -144,7 +146,8 @@ dependencies {
             implementation project(':extension-opus')
             implementation project(':extension-vp9')
             implementation project(':extension-av1')
-        } else {
+        } else if (task.containsIgnoreCase("videoplayer")) {
+            println("build.gradle.videoplayer")
             implementation 'org.videolan.android:libvlc-all:3.6.0-eap12'
         }
     }
