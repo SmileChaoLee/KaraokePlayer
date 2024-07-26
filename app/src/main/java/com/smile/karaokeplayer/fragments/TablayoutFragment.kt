@@ -13,6 +13,7 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.smile.karaokeplayer.R
 import com.smile.karaokeplayer.utilities.BannerAdUtil
+import com.smile.karaokeplayer.utilities.MyBannerAdView
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
 
 private const val TAG : String = "TablayoutFragment"
@@ -55,11 +56,7 @@ class TablayoutFragment : Fragment() {
                 myBannerAdView?.showBannerAdView(0) // AdMob first
             }
         }
-
-        resources.configuration.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
-            else bannerLayoutForTab?.visibility = View.VISIBLE
-        }
+        MyBannerAdView.setVisible(resources.configuration.orientation, bannerLayoutForTab)
 
         playTabLayout = view.findViewById(R.id.fragmentsTabLayout)
         val tabText = arrayOf(getString(R.string.open_files), getString(R.string.my_favorites))
@@ -125,20 +122,14 @@ class TablayoutFragment : Fragment() {
                 myBannerAdView?.showBannerAdView(0) // AdMob first
             }
         }
-        newConfig.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
-            else bannerLayoutForTab?.visibility = View.VISIBLE
-        }
+        MyBannerAdView.setVisible(newConfig.orientation, bannerLayoutForTab)
     }
 
     override fun onResume() {
         Log.d(TAG, "onResume()")
         super.onResume()
         myBannerAdView?.resume()
-        resources.configuration.orientation.let {
-            if (it == Configuration.ORIENTATION_LANDSCAPE) bannerLayoutForTab?.visibility = View.GONE
-            else bannerLayoutForTab?.visibility = View.VISIBLE
-        }
+        MyBannerAdView.setVisible(resources.configuration.orientation, bannerLayoutForTab)
     }
 
     override fun onPause() {

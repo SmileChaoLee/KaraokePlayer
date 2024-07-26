@@ -15,12 +15,23 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import android.view.WindowManager
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import android.widget.*
+import android.widget.FrameLayout
+import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.appcompat.widget.ActionMenuView
@@ -39,6 +50,7 @@ import com.smile.karaokeplayer.models.VerticalSeekBar
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter
 import com.smile.karaokeplayer.presenters.BasePlayerPresenter.BasePresentView
 import com.smile.karaokeplayer.utilities.BannerAdUtil
+import com.smile.karaokeplayer.utilities.MyBannerAdView
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.models.ExitAppTimer
 import com.smile.smilelibraries.privacy_policy.PrivacyPolicyUtil
@@ -443,7 +455,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
         Log.d(TAG, "onResume() is called.")
         super.onResume()
         myBannerAdView?.resume()
-        bannerLinearLayout?.visibility = View.VISIBLE
+        MyBannerAdView.setVisible(resources.configuration.orientation, bannerLinearLayout)
     }
 
     override fun onPause() {
@@ -464,10 +476,11 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             bannerLinearLayout?.also {layoutIt ->
                 layoutIt.visibility = View.VISIBLE // Show Banner Ad
                 myBannerAdView = BannerAdUtil.getBannerAdView(actIt as Activity, null,
-                        layoutIt, actIt.resources.configuration.orientation)
+                        layoutIt, newConfig.orientation)
                 myBannerAdView?.showBannerAdView(0) // AdMob first
             }
         }
+        MyBannerAdView.setVisible(newConfig.orientation, bannerLinearLayout)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -704,7 +717,7 @@ abstract class PlayerBaseViewFragment : Fragment(), BasePresentView {
             audioControllerView?.visibility = View.GONE
             nativeAdsFrameLayout?.visibility = nativeAdViewVisibility
             closeMenu(mainMenu)
-            bannerLinearLayout?.visibility = View.VISIBLE
+            MyBannerAdView.setVisible(resources.configuration.orientation, bannerLinearLayout)
         }
     }
 
