@@ -654,11 +654,7 @@ abstract class PlayerBaseFragment : Fragment(),
         myBannerAdView?.resume()
         activity?.let {
             val res = it.resources
-            if (res.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                bannerAdsLayout?.visibility = View.GONE
-            } else {
-                CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
-            }
+            checkBannerAdByOrientation(res.configuration.orientation)
         }
         startAndBindPlayService()
         hideVideoImageButton?.post { hideVideoImageButton?.requestFocus() }
@@ -698,12 +694,7 @@ abstract class PlayerBaseFragment : Fragment(),
         }
         setOrientationImageButton(newConfig.orientation)
         setButtonsPositionAndSize(newConfig)
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            bannerAdsLayout?.visibility = View.GONE
-        } else {
-            CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
-        }
-
+        checkBannerAdByOrientation(newConfig.orientation)
         super.onConfigurationChanged(newConfig)
     }
 
@@ -724,6 +715,17 @@ abstract class PlayerBaseFragment : Fragment(),
         unbindAndStopPlayService()
         fragmentView?.viewTreeObserver?.removeOnGlobalFocusChangeListener(focusChangeListener)
         super.onDestroy()
+    }
+
+    private fun checkBannerAdByOrientation(orientation: Int) {
+        /*
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            bannerAdsLayout?.visibility = View.GONE
+        } else {
+            CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
+        }
+        */
+        CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
     }
 
     fun onBackPressed() {
@@ -943,11 +945,7 @@ abstract class PlayerBaseFragment : Fragment(),
             CommonUtil.closeMenu(mainMenu)
             activity?.let { actIt ->
                 val res = actIt.resources
-                if (res.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    bannerAdsLayout?.visibility = View.GONE
-                } else {
-                    CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
-                }
+                checkBannerAdByOrientation(res.configuration.orientation)
             }
         }
         fragmentView?.let { it.post { it.requestFocus() } }
@@ -1429,11 +1427,7 @@ abstract class PlayerBaseFragment : Fragment(),
                     hideNativeAd()
                     activity?.let { actIt ->
                         val res = actIt.resources
-                        if (res.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                            bannerAdsLayout?.visibility = View.GONE
-                        } else {
-                            CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
-                        }
+                        checkBannerAdByOrientation(res.configuration.orientation)
                     }
                 }
             }
@@ -1442,11 +1436,7 @@ abstract class PlayerBaseFragment : Fragment(),
             // show the banner ad if in the right place
             activity?.let { act ->
                 val res = act.resources
-                if (res.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    bannerAdsLayout?.visibility = View.GONE
-                } else {
-                    CommonUtil.setVisible(bannerAdsLayout, nativeAdViewVisibility)
-                }
+                checkBannerAdByOrientation(res.configuration.orientation)
             }
         }
 

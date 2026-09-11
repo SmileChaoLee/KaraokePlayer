@@ -44,12 +44,12 @@ class SmileKaraokeApp : SmileAppBase() {
     override fun showBannerAd(activity: Activity?, bannerLayout: LinearLayout?): SetBannerAdView? {
         LogUtil.d(TAG, "showBannerAd")
         val act = activity ?: return null
-        var bannerDpWidth = (ScreenUtil.getScreenSize(act).x * 0.98).toFloat()
-        bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
+        // var bannerDpWidth = (ScreenUtil.getScreenSize(act).x * 0.98).toFloat()
+        // bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
         return SetBannerAdView(
             act, null,
             bannerLayout,
-            adMobBannerID, facebookBannerID, bannerDpWidth.toInt()
+            adMobBannerID, facebookBannerID, 0
         )
     }
 
