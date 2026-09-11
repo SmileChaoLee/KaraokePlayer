@@ -12,6 +12,7 @@ import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
 import com.smile.smilelibraries.utilities.ScreenUtil
+import com.smile.karaoke.BuildConfig
 
 class SmileVideoApp : SmileAppBase() {
 
@@ -30,7 +31,8 @@ class SmileVideoApp : SmileAppBase() {
         // App ID: 633653050588487
         // No facebook ads for video player
         // facebookInterstitialID = "296677124739445_296678328072658";
-        // facebookBannerID = testString + "296677124739445_296687284738429";
+        val testString = if (BuildConfig.DEBUG) "IMG_16_9_APP_INSTALL#" else ""
+        facebookBannerID = testString + "296677124739445_296687284738429";
         // googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060"
         adMobBannerID = "ca-app-pub-8354869049759576/2158051096"
         adMobNativeID = "ca-app-pub-8354869049759576/6498242044"

@@ -12,6 +12,7 @@ import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
 import com.smile.smilelibraries.utilities.ScreenUtil
+import com.smile.karaoke.BuildConfig
 
 class SmileKaraokeApp : SmileAppBase() {
 
@@ -27,8 +28,8 @@ class SmileKaraokeApp : SmileAppBase() {
         // facebookInterstitial = new FacebookInterstitial(appContext,
         //         facebookInterstitialID);
         // for debug mode and for facebook
-        // val testString = if (BuildConfig.DEBUG) "IMG_16_9_APP_INSTALL#" else ""
-        // facebookBannerID = testString + "1712962715503258_2019623008170559"
+        val testString = if (BuildConfig.DEBUG) "IMG_16_9_APP_INSTALL#" else ""
+        facebookBannerID = testString + "1712962715503258_2019623008170559"
         // googleAdMobAppID = "ca-app-pub-8354869049759576~5549171584"
         adMobBannerID = "ca-app-pub-8354869049759576/8267060571"
         adMobNativeID = "ca-app-pub-8354869049759576/7985456524"
@@ -52,14 +53,14 @@ class SmileKaraokeApp : SmileAppBase() {
         )
     }
 
-    override fun getInterstitial(): AdMobInterstitial? {
+    override fun getInterstitial(): AdMobInterstitial {
         val adMobInterstitialID = "ca-app-pub-8354869049759576/1418354889"
         return AdMobInterstitial(applicationContext, adMobInterstitialID)
     }
 
     override fun getNativeTemplate(activity: Activity?, nativeLayout: FrameLayout?,
                                    nativeAdView: TemplateView?)
-    : GoogleAdMobNativeTemplate? {
+    : GoogleAdMobNativeTemplate {
         LogUtil.d(TAG, "getNativeTemplate")
         return GoogleAdMobNativeTemplate(
             activity,

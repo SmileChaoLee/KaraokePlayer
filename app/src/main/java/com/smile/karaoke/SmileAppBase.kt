@@ -56,12 +56,12 @@ abstract class SmileAppBase : MultiDexApplication() {
         leftChannelString = getString(R.string.leftChannelString)
         rightChannelString = getString(R.string.rightChannelString)
         stereoChannelString = getString(R.string.stereoChannelString)
-        audioChannelMap.put(CommonConstants.LEFT_CHANNEL, leftChannelString)
-        audioChannelMap.put(CommonConstants.RIGHT_CHANNEL, rightChannelString)
-        audioChannelMap.put(CommonConstants.STEREO, stereoChannelString)
-        audioChannelReverseMap.put(leftChannelString, CommonConstants.LEFT_CHANNEL)
-        audioChannelReverseMap.put(rightChannelString, CommonConstants.RIGHT_CHANNEL)
-        audioChannelReverseMap.put(stereoChannelString, CommonConstants.STEREO)
+        audioChannelMap[CommonConstants.LEFT_CHANNEL] = leftChannelString
+        audioChannelMap[CommonConstants.RIGHT_CHANNEL] = rightChannelString
+        audioChannelMap[CommonConstants.STEREO] = stereoChannelString
+        audioChannelReverseMap[leftChannelString] = CommonConstants.LEFT_CHANNEL
+        audioChannelReverseMap[rightChannelString] = CommonConstants.RIGHT_CHANNEL
+        audioChannelReverseMap[stereoChannelString] = CommonConstants.STEREO
 
         initAds()
 
