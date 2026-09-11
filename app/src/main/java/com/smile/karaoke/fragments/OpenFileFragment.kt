@@ -374,7 +374,6 @@ abstract class OpenFileFragment : ComOpenFragment(), RecyclerItemListener {
             val logStr = "playSelectedButton.setOnClickListener"
             LogUtil.d(TAG, "$logStr.searchCompleted = $searchCompleted")
             if (!searchCompleted) return@setOnClickListener // searching
-            viewModel.handleIntent(OpenFileUiIntent.AddToFavorites(activity))
             viewModel.handleIntent(OpenFileUiIntent.StartPlaySelectedSong(activity, playSongs))
         }
         addToFavoriteButton?.setOnClickListener {
