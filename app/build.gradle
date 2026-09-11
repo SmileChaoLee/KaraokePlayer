@@ -36,57 +36,57 @@ android {
 
     flavorDimensions += ["karaoke"]
     productFlavors {
-        create("karaokeplayer") {
+        register("karaokeplayer") {
             dimension = "karaoke"
             applicationId = "com.smile.karaokeplayer"
         }
-        create("karaokeplayer2") {
+        register("karaokeplayer2") {
             // for Amazon app store only
             // has same package name with "karaokeplayer"
             dimension = "karaoke"
             applicationId = "com.smile.karaokeplayer"
         }
-        create("videoplayer") {
+        register("videoplayer") {
             dimension = "karaoke"
             applicationId = "com.smile.videoplayer"
         }
-        create("videoplayer2") {
+        register("videoplayer2") {
             // for Amazon app store only
             // has same package name with "videoplayer"
             dimension = "karaoke"
             applicationId = "com.smile.videoplayer"
         }
-        create("karaoketvplayer") {
+        register("karaoketvplayer") {
             dimension = "karaoke"
             applicationId = "com.smile.karaoketvplayer"
             isDefault = true
         }
-        create("u2bplayer") {
+        register("u2bplayer") {
             dimension = "karaoke"
             versionCode 125
             versionName "1.25"
             applicationId = "com.smile.u2bplayer"
         }
-        create("u2bplayer2") {
+        register("u2bplayer2") {
             // for Amazon app store only
             dimension = "karaoke"
             versionCode 125
             versionName "1.25"
             applicationId = "com.smile.youtubeplayer"
         }
-        create("u2bkaraoke") {
+        register("u2bkaraoke") {
             dimension = "karaoke"
-            versionCode 113
-            versionName "1.13"
+            versionCode 114
+            versionName "1.14"
             applicationId = "com.smile.u2bkaraoke"
         }
-        create("u2bkktool") {
+        register("u2bkktool") {
             dimension = "karaoke"
             versionCode 103
             versionName "1.03"
             applicationId = "com.smile.u2bkktool"
         }
-        create("u2bkktool2") {
+        register("u2bkktool2") {
             dimension = "karaoke"
             versionCode 103
             versionName "1.03"
@@ -253,9 +253,9 @@ allprojects {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
-    implementation 'androidx.core:core-ktx:1.18.0'
+    implementation 'androidx.appcompat:appcompat:1.8.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
+    implementation 'androidx.core:core-ktx:1.19.0'
     implementation 'androidx.media:media:1.8.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     // implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -267,12 +267,12 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.4.0'
     implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
 
-    implementation 'com.facebook.android:audience-network-sdk:6.21.0'
+    implementation 'com.facebook.android:audience-network-sdk:6.22.0'
     implementation 'com.facebook.infer.annotation:infer-annotation:0.18.0'
 
     // Compose BOM (Bill of Materials) - Recommended for managing versions
     // Use the latest BOM version
-    implementation platform('androidx.compose:compose-bom:2026.05.01')
+    implementation platform('androidx.compose:compose-bom:2026.09.00')
     // Compose Runtime
     implementation 'androidx.compose.runtime:runtime'
     // Other Compose dependencies you might be using (UI, Material, etc.)
@@ -280,16 +280,17 @@ dependencies {
     implementation 'androidx.compose.material3:material3' // Or material
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.activity:activity-ktx:1.13.0'
-    implementation('androidx.fragment:fragment-ktx:1.8.9')
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.10.0'
+    implementation('androidx.fragment:fragment-ktx:1.9.0')
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.11.0'
     implementation 'androidx.activity:activity-compose:1.13.0'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.mediarouter:mediarouter:1.8.1'
-    implementation 'androidx.media3:media3-cast:1.10.1'  // for exoplayer and vlcplayer
+    implementation 'androidx.media3:media3-cast:1.11.1'  // for exoplayer and vlcplayer
+    // implementation 'androidx.media3:media3-exoplayer:1.11.1'
     // implementation 'com.google.android.gms:play-services-cast-framework:22.1.0'
     // implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0"
 
-    implementation 'com.android.billingclient:billing-ktx:9.0.0'
+    implementation 'com.android.billingclient:billing-ktx:9.1.0'
 
     implementation 'androidx.tracing:tracing-perfetto-handshake:1.0.1'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
@@ -300,31 +301,20 @@ dependencies {
     // ... other dependencies
     implementation 'com.squareup.retrofit2:retrofit:3.0.0'
     implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:5.3.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:5.5.0'
     // For coroutines (optional, but recommended for modern Android development)
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
     implementation 'io.coil-kt:coil:2.7.0'
 
-    implementation 'androidx.room:room-ktx:2.8.4'
-    ksp 'androidx.room:room-compiler:2.8.4'
-    implementation 'androidx.room:room-runtime:2.8.4'
-    // implementation 'androidx.room:room-common-jvm:2.8.3'
-    // implementation 'androidx.media3:media3-session:1.9.0'
-    /*
-    implementation("io.ktor:ktor-server-core-jvm:3.2.0") // Or latest version
-    implementation("io.ktor:ktor-server-cio-jvm:3.2.0")  // CIO engine for Ktor
-    implementation("io.ktor:ktor-server-content-negotiation-jvm:3.2.0") // For content negotiation if needed
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:3.2.0") // If you need JSON
-    */
+    implementation 'androidx.room:room-ktx:2.8.5'
+    ksp 'androidx.room:room-compiler:2.8.5'
+    implementation 'androidx.room:room-runtime:2.8.5'
 
-    implementation 'com.google.dagger:dagger:2.59.2'
-    // annotationProcessor 'com.google.dagger:dagger-compiler:2.59.2'
-    // kapt 'com.google.dagger:dagger-android-processor:2.59.2'
-    // kapt 'com.google.dagger:dagger-compiler:2.59.2'
-    ksp 'com.google.dagger:dagger-android-processor:2.59.2'
-    ksp 'com.google.dagger:dagger-compiler:2.59.2'
+    implementation 'com.google.dagger:dagger:2.60.1'
+    ksp 'com.google.dagger:dagger-android-processor:2.60.1'
+    ksp 'com.google.dagger:dagger-compiler:2.60.1'
 
     // This block runs after the project is configured
     afterEvaluate {
@@ -333,11 +323,11 @@ dependencies {
                 // println("variant.name = ${variant.name}")
                 if (flavor.name.containsIgnoreCase("karaoke")) {
                     // Dynamically add a dependency to this variant
-                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer:1.10.1")
-                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer-dash:1.10.1")
-                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-decoder:1.10.1")
-                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-ui:1.10.1")
-                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-session:1.10.1")
+                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer:1.11.1")
+                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer-dash:1.11.1")
+                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-decoder:1.11.1")
+                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-ui:1.11.1")
+                    dependencies.add(variant.name + "Implementation", "androidx.media3:media3-session:1.11.1")
                     dependencies.add(variant.name + "Implementation", project(":extension-ffmpeg"))
                     dependencies.add(variant.name + "Implementation", project(":extension-flac"))
                     dependencies.add(variant.name + "Implementation", project(":extension-opus"))
@@ -368,16 +358,16 @@ dependencies {
     }
 
     debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest:1.11.2'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest:1.12.1'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'androidx.room:room-testing:2.8.4'
-    androidTestImplementation platform('androidx.compose:compose-bom:2026.05.01')
+    testImplementation 'androidx.room:room-testing:2.8.5'
+    androidTestImplementation platform('androidx.compose:compose-bom:2026.09.00')
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test:rules:1.7.0'
     androidTestImplementation 'androidx.test.ext:truth:1.7.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.3.0'
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.4.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
