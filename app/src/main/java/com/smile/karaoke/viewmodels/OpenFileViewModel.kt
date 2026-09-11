@@ -468,10 +468,12 @@ class OpenFileViewModel: ViewModel() {
         val fileDes = MySingleton.fileList[position]
         var isUpdated = false
         if (fileDes.selected) {
+            LogUtil.d(TAG, "$logStr.fileDes.selected = true")
             selectedSongs.remove(CommonUtil.fileDescriptionToSongInfo(fileDes))
             fileDes.selected = false
             isUpdated = true
         } else {
+            LogUtil.d(TAG, "$logStr.fileDes.selected = false")
             if (selectedSongs.size >= MySingleton.MAX_SONGS) {
                 _uiState.update {
                     OpenFileUiState.ShowToast(OpenFileUiState.EXCESS_MAX)
@@ -483,7 +485,9 @@ class OpenFileViewModel: ViewModel() {
             }
         }
         if (isUpdated) {
+            LogUtil.d(TAG, "$logStr.isUpdated = true")
             _uiState.update {
+                LogUtil.d(TAG, "$logStr.isUpdated = true.position = $position")
                 OpenFileUiState.UpdateSelectedSong(position = position)
             }
         }

@@ -151,6 +151,7 @@ abstract class OpenFileFragment : ComOpenFragment(), RecyclerItemListener {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     // Update your RecyclerView adapter or UI here
+                    LogUtil.d(TAG, "viewLifecycleOwner.lifecycleScope.updateMviScreen(state)")
                     updateMviScreen(state)
                 }
             }
@@ -282,6 +283,7 @@ abstract class OpenFileFragment : ComOpenFragment(), RecyclerItemListener {
         if (position < 0) return
         val fileDes = MySingleton.fileList[position]
         if (fileDes.file.isFile) {
+            LogUtil.i(TAG, "onItemClick.position = $position isFile")
             viewModel.handleIntent(OpenFileUiIntent.SongOnClicked(position))
         } else {
             LogUtil.d(TAG, "onItemClick.fileDes.file is not file")
