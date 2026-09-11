@@ -2,7 +2,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdk sdk_version.compile
+    compileSdk = sdk_version.compile
 
     defaultConfig {
         targetSdk sdk_version.target
@@ -35,9 +35,9 @@ android {
 
 dependencies {
     implementation "androidx.annotation:annotation:1.10.0"
-    implementation 'androidx.media3:media3-common:1.10.1'
-    implementation 'androidx.media3:media3-exoplayer:1.10.1'
-    implementation 'androidx.media3:media3-decoder:1.10.1'
-    compileOnly 'org.checkerframework:checker-qual:4.1.0'
+    implementation 'androidx.media3:media3-common:1.11.1'
+    implementation 'androidx.media3:media3-exoplayer:1.11.1'
+    implementation 'androidx.media3:media3-decoder:1.11.1'
+    compileOnly 'org.checkerframework:checker-qual:4.2.3'
     compileOnly 'org.jetbrains.kotlin:kotlin-annotations-jvm:2.2.21'
 }
