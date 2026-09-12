@@ -20,7 +20,6 @@ class SmileKaraoke2App : SmileAppBase() {
     override fun onCreate() {
         super.onCreate()
         LogUtil.d(TAG, "onCreate")
-        smileAppsMenuVisible = false
     }
 
     override fun initAds() {

@@ -750,11 +750,6 @@ abstract class PlayerBaseFragment : Fragment(),
         audioTrackMenuItem?.isVisible = true
         // val channelMenuItem = mainMenu?.findItem(R.id.channel)
         channelMenuItem?.isVisible = true
-        val smileAppsMenuItem = mainMenu?.findItem(R.id.smileApps)
-        activity?.let { actIt ->
-            val app = (actIt.application as SmileAppBase)
-            smileAppsMenuItem?.isVisible = app.smileAppsMenuVisible
-        }
         val privacyPolicyMenuItem = mainMenu?.findItem(R.id.privacyPolicy)
         privacyPolicyMenuItem?.isVisible = true
         setupMenuItems() // abstract method

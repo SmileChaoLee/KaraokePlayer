@@ -19,7 +19,6 @@ class U2bPlayer2App : SmileAppBase() {
     override fun onCreate() {
         super.onCreate()
         LogUtil.i(TAG, "onCreate")
-        smileAppsMenuVisible = false
     }
 
     override fun initAds() {
