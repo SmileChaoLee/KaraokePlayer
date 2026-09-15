@@ -49,7 +49,7 @@ class SmileKaraokeApp : SmileAppBase() {
         return SetBannerAdView(
             act, null,
             bannerLayout,
-            adMobBannerID, facebookBannerID, 0
+            adMobBannerID, "", 0
         )
     }
 

@@ -51,7 +51,7 @@ class SmileVideoApp : SmileAppBase() {
         // bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
         return SetBannerAdView(act, null,
             bannerLayout,
-            adMobBannerID, facebookBannerID, 0
+            adMobBannerID, "", 0
         )
     }
 
