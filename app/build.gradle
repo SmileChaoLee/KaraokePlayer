@@ -41,7 +41,6 @@ android {
         task.containsIgnoreCase("videoplayer") || task.containsIgnoreCase("karaoketvplayer")
     }
     if (isIdeSync || isVideoTask) {
-        // ndkVersion '27.3.13750724'
         externalNativeBuild {
             cmake {
                 path file('src/videoplayer/jni/CMakeLists.txt')
@@ -103,14 +102,13 @@ android {
             applicationId = "com.smile.u2bkktool"
         }
         register("u2bkktool2") {
+            // for Amazon app store only
             dimension = "karaoke"
             versionCode 103
             versionName "1.03"
             applicationId = "com.smile.u2bkktool2"
         }
     }
-
-    // println("projectDir = ${project.projectDir}")
 
     sourceSets {
         main {
@@ -234,13 +232,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    /*
-    kotlinOptions {
-        jvmTarget = '17'    // deprecated
-        // for default fun of Kotlin
-        freeCompilerArgs = ['-Xjvm-default=all']    // deprecated
-    }
-    */
 
     composeOptions {
         kotlinCompilerExtensionVersion '1.5.15'
@@ -258,7 +249,6 @@ android {
     }
 
     namespace 'com.smile.karaoke'
-    // testNamespace 'com.smile.karaoke.androidTest'
 }
 
 allprojects {
@@ -334,9 +324,7 @@ dependencies {
     afterEvaluate {
         android.applicationVariants.all { variant ->
             variant.productFlavors.each { flavor ->
-                // println("variant.name = ${variant.name}")
                 if (flavor.name.containsIgnoreCase("karaoke")) {
-                    // Dynamically add a dependency to this variant
                     dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer:1.11.1")
                     dependencies.add(variant.name + "Implementation", "androidx.media3:media3-exoplayer-dash:1.11.1")
                     dependencies.add(variant.name + "Implementation", "androidx.media3:media3-decoder:1.11.1")
@@ -346,14 +334,11 @@ dependencies {
                     dependencies.add(variant.name + "Implementation", project(":extension-flac"))
                     dependencies.add(variant.name + "Implementation", project(":extension-opus"))
                     dependencies.add(variant.name + "Implementation", project(":extension-av1"))
-                    // dependencies.add(variant.name + "Implementation", project(":extension-vp9"))
-                    // Note: You use the full variant name (e.g., "karaokeplayerDebugImplementation")
                 }
                 if (flavor.name.containsIgnoreCase("karaoketvplayer")
                         || flavor.name.containsIgnoreCase("u2bplayer")
                         || flavor.name.containsIgnoreCase("u2bkaraoke")
                         || flavor.name.containsIgnoreCase("u2bkktool")) {
-                    // Check for latest version
                     dependencies.add(variant.name + "Implementation",
                             "com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0")
                     dependencies.add(variant.name + "Implementation",
@@ -364,13 +349,10 @@ dependencies {
                 if (flavor.name.containsIgnoreCase("videoplayer")   // includes videoplayer2
                         || flavor.name.containsIgnoreCase("karaoketvplayer")) {
                     dependencies.add(variant.name + "Implementation", "org.videolan.android:libvlc-all:3.7.6")
-                    // Note: You use the full variant name (e.g., "videoDebugImplementation")
                 }
             }
         }
     }
-
-    // implementation "org.videolan.android:libvlc-all:3.7.6"
 
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest:1.12.1'
