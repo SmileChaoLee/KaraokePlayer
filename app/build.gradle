@@ -8,14 +8,37 @@ plugins {
     id 'androidx.room'
 }
 
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+def getSecretProperty = { String key ->
+    println("System.getenv(key) = ${System.getenv(key)}")
+    def value = System.getenv(key) ?: findProperty(key) ?: localProperties.getProperty(key)
+    if (value != null) {
+        value = value.trim()
+        if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+            value = value.substring(1, value.length() - 1)
+        }
+    }
+    return value
+}
+
 android {
 
     signingConfigs {
         release {
-            storeFile file('/home/chaolee/AndroidStudioProjects/keystore/new_key.jks')
-            storePassword '86637971'
-            keyAlias = 'chaolee1959'
-            keyPassword '86637971'
+            // Keystore credentials come from environment, gradle.properties, or local.properties
+            def storeFilePath = getSecretProperty("NEW_KEYSTORE_FILE")
+            def storeFileObj = storeFilePath ? file(storeFilePath) : null
+            if (storeFileObj != null && storeFileObj.exists()) {
+                storeFile storeFileObj
+                storePassword getSecretProperty("NEW_KEYSTORE_PASSWORD")
+                keyAlias getSecretProperty("NEW_KEY_ALIAS")
+                keyPassword getSecretProperty("NEW_KEY_PASSWORD")
+            }
         }
     }
 
@@ -31,16 +54,21 @@ android {
         versionName "10.25"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.release
     }
 
-    // Configure native CMake build for video player flavors AND during IDE sync
-    boolean isIdeSync = gradle.startParameter.taskNames.isEmpty() ||
-            Boolean.parseBoolean(findProperty("android.injected.build.model.only")?.toString())
+    // Configure native CMake build for video player flavors AND during IDE sync.
+    // Enable for any real build (assemble/bundle) so the videoplayer and
+    // karaoketvplayer APKs contain the native .so, even when built without an
+    // explicit flavor selector (e.g. `./gradlew assembleRelease`).
+    boolean isIdeSync = Boolean.parseBoolean(
+            findProperty("android.injected.build.model.only")?.toString())
     boolean isVideoTask = gradle.startParameter.taskNames.any { task ->
         task.containsIgnoreCase("videoplayer") || task.containsIgnoreCase("karaoketvplayer")
     }
-    if (isIdeSync || isVideoTask) {
+    boolean isBuildTask = gradle.startParameter.taskNames.any { task ->
+        task.containsIgnoreCase("assemble") || task.containsIgnoreCase("bundle")
+    }
+    if (isIdeSync || isVideoTask || isBuildTask) {
         externalNativeBuild {
             cmake {
                 path file('src/videoplayer/jni/CMakeLists.txt')
@@ -213,7 +241,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            if (signingConfigs.release.storeFile != null) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
         debug {
             minifyEnabled false
@@ -231,10 +263,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.15'
     }
 
     buildFeatures  {

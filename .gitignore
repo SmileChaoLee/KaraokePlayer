@@ -1,4 +1,5 @@
 # Project exclude paths
+local.properties
 app/google-services.json
 app/src/u2bplayer/java/com/smile/u2bplayer/u2bplay_constants/PrivateConstants.kt
 
@@ -31,3 +32,4 @@ app/u2bplayer/
 app/u2bplayer2/
 app/videoplayer/
 app/videoplayer2/
+.aider*
