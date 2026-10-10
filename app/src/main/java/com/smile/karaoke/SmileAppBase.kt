@@ -1,11 +1,11 @@
 package com.smile.karaoke
 
 import android.app.Activity
+import android.app.Application
 import android.content.res.Configuration
 import android.graphics.Color
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.multidex.MultiDexApplication
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.cast.framework.CastContext
 import com.smile.karaoke.constants.CommonConstants
@@ -15,7 +15,7 @@ import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
 
-abstract class SmileAppBase : MultiDexApplication() {
+abstract class SmileAppBase : Application() {
 
     companion object {
         private const val TAG = "SmileAppBase"
