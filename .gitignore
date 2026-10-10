@@ -7,6 +7,7 @@ app/src/u2bplayer/java/com/smile/u2bplayer/u2bplay_constants/PrivateConstants.kt
 .idea/.name
 .idea/caches/
 .idea/deploymentTargetSelector.xml
+.idea/gradle.xml
 .idea/markdown.xml
 .idea/misc.xml
 .idea/modules/app/KaraokePlayer.app.iml
@@ -14,6 +15,7 @@ app/src/u2bplayer/java/com/smile/u2bplayer/u2bplay_constants/PrivateConstants.kt
 .idea/modules/app/KaraokePlayer.app.unitTest.iml
 .idea/planningMode.xml
 .idea/studiobot.xml
+.idea/vcs.xml
 .idea/workspace.xml
 
 # Build & Native output folders
@@ -33,3 +35,6 @@ app/u2bplayer2/
 app/videoplayer/
 app/videoplayer2/
 .aider*
+
+# Local Continue configuration
+/.continueignore
