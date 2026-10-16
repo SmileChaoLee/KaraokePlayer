@@ -43,7 +43,7 @@ class U2bKaraokeApp : SmileAppBase() {
         // bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
         return SetBannerAdView(act, null,
             bannerLayout,
-            adMobBannerID, "", 0
+            adMobBannerID, 0
         )
     }
 

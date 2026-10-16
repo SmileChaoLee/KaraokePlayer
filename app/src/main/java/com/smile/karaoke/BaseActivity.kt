@@ -242,7 +242,7 @@ abstract class BaseActivity : AppCompatActivity(),
             addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
         val app = application as? SmileAppBase
-        interstitialAd = ShowInterstitial(this, null,
+        interstitialAd = ShowInterstitial(this,
             app?.getInterstitial())
     }
 
@@ -451,7 +451,7 @@ abstract class BaseActivity : AppCompatActivity(),
 
     private fun showInterstitialAd() {
         LogUtil.d(TAG, "showInterstitialAd = $interstitialAd")
-        interstitialAd?.ShowAdThread()?.startShowAd(0) // AdMob first
+        interstitialAd?.ShowAdThread()?.startShowAd() // AdMob first
     }
 
     private fun finishThisActivity() {

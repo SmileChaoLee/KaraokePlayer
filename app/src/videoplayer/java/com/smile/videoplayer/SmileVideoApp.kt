@@ -24,13 +24,6 @@ class SmileVideoApp : SmileAppBase() {
     }
 
     override fun initAds() {
-        // AudienceNetworkAds.initialize(this)  // no need for mediation
-        // Token: EAAEN04aiEXUBAHBQwZBZB4gmWOueuRTEZCHMCAWOHZBB7hjavIuXgKELNvtfcIGCJV72zkohipkSZALG51WCXX6xbN3oUy84i8NrIvuc44RTfypgdcyOTnaPyM1W4JZBjQvDGuWsCRGmbusWaZCKmWt5iCkhQklOKeZC4Edx6FDIGTUUiHMKURzS
-        // App ID: 633653050588487
-        // No facebook ads for video player
-        // facebookInterstitialID = "296677124739445_296678328072658";
-        // val testString = if (BuildConfig.DEBUG) "IMG_16_9_APP_INSTALL#" else ""
-        // facebookBannerID = testString + "296677124739445_296687284738429";
         // googleAdMobAppID = "ca-app-pub-8354869049759576~5376732060"
         adMobBannerID = "ca-app-pub-8354869049759576/2158051096"
         adMobNativeID = "ca-app-pub-8354869049759576/6498242044"
@@ -49,7 +42,7 @@ class SmileVideoApp : SmileAppBase() {
         // bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
         return SetBannerAdView(act, null,
             bannerLayout,
-            adMobBannerID, "", 0
+            adMobBannerID, 0
         )
     }
 

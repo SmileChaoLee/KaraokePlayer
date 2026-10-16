@@ -11,7 +11,6 @@ import com.smile.karaoke.utilities.LogUtil
 import com.smile.nativetemplates_models.GoogleAdMobNativeTemplate
 import com.smile.smilelibraries.google_ads_util.AdMobInterstitial
 import com.smile.smilelibraries.show_banner_ads.SetBannerAdView
-import com.smile.smilelibraries.utilities.ScreenUtil
 
 class U2bPlayerApp : SmileAppBase() {
 
@@ -45,7 +44,7 @@ class U2bPlayerApp : SmileAppBase() {
         // bannerDpWidth = ScreenUtil.pixelToDp(bannerDpWidth)
         return SetBannerAdView(act, null,
             bannerLayout,
-            adMobBannerID, "", 0
+            adMobBannerID, 0
         )
     }
 

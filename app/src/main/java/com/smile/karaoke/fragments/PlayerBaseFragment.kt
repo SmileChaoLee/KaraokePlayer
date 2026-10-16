@@ -961,7 +961,7 @@ abstract class PlayerBaseFragment : Fragment(),
             myBannerAdView = (actIt.application as SmileAppBase)
                 .showBannerAd(actIt, bannerLinearLayout)
             LogUtil.d(TAG, "showBannerAd.myBannerAdView = $myBannerAdView")
-            myBannerAdView?.showBannerAdView(0) // AdMob first
+            myBannerAdView?.showBannerAdView() // AdMob first
         }
     }
 

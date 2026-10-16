@@ -31,7 +31,6 @@ abstract class SmileAppBase : Application() {
         val audioChannelMap = LinkedHashMap<Int, String>()
         @JvmField
         val audioChannelReverseMap = LinkedHashMap<String, Int>()
-        var facebookBannerID = ""
         var adMobBannerID = ""
         var adMobNativeID = ""
     }

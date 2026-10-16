@@ -132,7 +132,7 @@ class TablayoutFragment : Fragment() {
             myBannerAdView = (actIt.application as SmileAppBase)
                 .showBannerAd(actIt, bannerLayoutForTab)
             LogUtil.d(TAG, "showBannerAd.myBannerAdView = $myBannerAdView")
-            myBannerAdView?.showBannerAdView(0) // AdMob first
+            myBannerAdView?.showBannerAdView() // AdMob first
         }
     }
 }

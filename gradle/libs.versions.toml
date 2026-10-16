@@ -15,8 +15,6 @@ firebase-ads = "23.6.0"
 material = "1.14.0"
 recyclerview = "1.4.0"
 ump = "4.0.0"
-facebook-audience-network = "6.22.0"
-infer-annotation = "0.18.0"
 compose-bom = "2026.09.00"
 activity = "1.13.0"
 fragment = "1.9.1"
@@ -64,8 +62,6 @@ firebase-ads = { module = "com.google.firebase:firebase-ads", version.ref = "fir
 material = { module = "com.google.android.material:material", version.ref = "material" }
 recyclerview = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerview" }
 ump = { module = "com.google.android.ump:user-messaging-platform", version.ref = "ump" }
-facebook-audience-network = { module = "com.facebook.android:audience-network-sdk", version.ref = "facebook-audience-network" }
-infer-annotation = { module = "com.facebook.infer.annotation:infer-annotation", version.ref = "infer-annotation" }
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
 compose-runtime = { module = "androidx.compose.runtime:runtime" }
 compose-ui = { module = "androidx.compose.ui:ui" }
