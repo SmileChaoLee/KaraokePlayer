@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">Karaoke Senyum</string>
+    <string name="video_app_name">Pemain Video Senyum</string>
+    <string name="karaoke_tv_app_name">Karaoke TV Senyum</string>
     <string name="fileString">Fail</string>
     <string name="accessExternalStoragePermissionDeniedString">Kebenaran storan ditolak</string>
     <string name="noReadableExternalStorageString">Tiada storan luaran yang boleh dibaca</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">Padam</string>
     <string name="no_my_favorites">Tiada kegemaran</string>
     <string name="noFilesSelectedString">Tiada fail dipilih</string>
-    <string name="bufferingString">Menimbal...</string>
+    <string name="bufferingString">Menimbal…</string>
     <string name="saveString">Simpan</string>
     <string name="backKeyToExitApp">Tekan butang kembali sekali lagi untuk keluar.</string>
     <string name="musicString">Muzik</string>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">အပြုံး ကာရာအိုကေ</string>
+    <string name="video_app_name">အပြုံး ဗီဒီယိုဖွင့်စက်</string>
+    <string name="karaoke_tv_app_name">အပြုံး တီဗီ ကာရာအိုကေ</string>
     <string name="fileString">ဖိုင်</string>
     <string name="accessExternalStoragePermissionDeniedString">သိုလှောင်မှု အသုံးပြုခွင့် ငြင်းပယ်ခံရသည်</string>
     <string name="noReadableExternalStorageString">ဖတ်ရှုနိုင်သော ပြင်ပသိုလှောင်မှု မရှိပါ</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">ဖျက်ရန်</string>
     <string name="no_my_favorites">အကြိုက်ဆုံးများ မရှိပါ</string>
     <string name="noFilesSelectedString">ဖိုင်များကို မရွေးထားပါ</string>
-    <string name="bufferingString">ဘာဖာလုပ်နေသည်...</string>
+    <string name="bufferingString">ဘာဖာလုပ်နေသည်…</string>
     <string name="saveString">သိမ်းရန်</string>
     <string name="backKeyToExitApp">ထွက်ရန် နောက်ပြန်ခလုတ်ကို ထပ်နှိပ်ပါ။</string>
     <string name="musicString">တေးဂီတ</string>

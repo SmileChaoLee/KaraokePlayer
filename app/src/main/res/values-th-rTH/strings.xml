@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">คาราโอเกะ รอยยิ้ม</string>
+    <string name="video_app_name">เครื่องเล่นวิดีโอ รอยยิ้ม</string>
+    <string name="karaoke_tv_app_name">คาราโอเกะทีวี รอยยิ้ม</string>
     <string name="fileString">ไฟล์</string>
     <string name="accessExternalStoragePermissionDeniedString">ไม่ได้รับอนุญาตให้เข้าถึงพื้นที่จัดเก็บ</string>
     <string name="noReadableExternalStorageString">ไม่มีพื้นที่จัดเก็บภายนอกที่อ่านได้</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">ลบ</string>
     <string name="no_my_favorites">ไม่มีรายการโปรด</string>
     <string name="noFilesSelectedString">ไม่ได้เลือกไฟล์</string>
-    <string name="bufferingString">กำลังบัฟเฟอร์...</string>
+    <string name="bufferingString">กำลังบัฟเฟอร์…</string>
     <string name="saveString">บันทึก</string>
     <string name="backKeyToExitApp">กดปุ่มย้อนกลับอีกครั้งเพื่อออก</string>
     <string name="musicString">เพลง</string>

@@ -50,7 +50,7 @@
     <string name="deleteString">删除</string>
     <string name="no_my_favorites">没有收藏</string>
     <string name="noFilesSelectedString">没有选择文件</string>
-    <string name="bufferingString">缓冲中 .....</string>
+    <string name="bufferingString">缓冲中 …</string>
     <string name="saveString">保存</string>
     <string name="backKeyToExitApp">再按一次返回键退出程序</string>
     <string name="musicString">音乐</string>

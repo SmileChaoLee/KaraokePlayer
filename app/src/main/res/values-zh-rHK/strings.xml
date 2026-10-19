@@ -50,7 +50,7 @@
     <string name="deleteString">刪除</string>
     <string name="no_my_favorites">沒有我的最愛</string>
     <string name="noFilesSelectedString">沒有選擇檔案</string>
-    <string name="bufferingString">緩衝中 .....</string>
+    <string name="bufferingString">緩衝中 …</string>
     <string name="saveString">儲存</string>
     <string name="backKeyToExitApp">再按一次倒退鍵離開程式</string>
     <string name="musicString">音樂</string>

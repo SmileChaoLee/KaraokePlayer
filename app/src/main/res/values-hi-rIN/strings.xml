@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">मुस्कान कराओके</string>
+    <string name="video_app_name">मुस्कान वीडियो प्लेयर</string>
+    <string name="karaoke_tv_app_name">मुस्कान टीवी कराओके</string>
     <string name="fileString">फ़ाइल</string>
     <string name="accessExternalStoragePermissionDeniedString">स्टोरेज की अनुमति अस्वीकृत</string>
     <string name="noReadableExternalStorageString">पढ़ने योग्य बाहरी स्टोरेज उपलब्ध नहीं है</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">हटाएँ</string>
     <string name="no_my_favorites">कोई पसंदीदा नहीं</string>
     <string name="noFilesSelectedString">कोई फ़ाइल नहीं चुनी गई</string>
-    <string name="bufferingString">बफ़रिंग...</string>
+    <string name="bufferingString">बफ़रिंग…</string>
     <string name="saveString">सहेजें</string>
     <string name="backKeyToExitApp">बाहर निकलने के लिए बैक बटन फिर दबाएँ।</string>
     <string name="musicString">संगीत</string>

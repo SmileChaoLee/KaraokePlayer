@@ -49,7 +49,7 @@
     <string name="deleteString">Delete</string>
     <string name="no_my_favorites">No Favorites</string>
     <string name="noFilesSelectedString">No files selected</string>
-    <string name="bufferingString">Buffering .....</string>
+    <string name="bufferingString">Buffering …</string>
     <string name="saveString">Save</string>
     <string name="backKeyToExitApp">Press the back key again to exit.</string>
     <string name="musicString">Music</string>

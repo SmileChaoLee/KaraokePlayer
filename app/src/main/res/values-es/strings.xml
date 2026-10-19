@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">Karaoke Sonrisa</string>
+    <string name="video_app_name">Reproductor de video Sonrisa</string>
+    <string name="karaoke_tv_app_name">Karaoke TV Sonrisa</string>
     <string name="fileString">Archivo</string>
     <string name="accessExternalStoragePermissionDeniedString">Permiso de almacenamiento denegado</string>
     <string name="noReadableExternalStorageString">No hay almacenamiento externo legible</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">Eliminar</string>
     <string name="no_my_favorites">No hay favoritos</string>
     <string name="noFilesSelectedString">No hay archivos seleccionados</string>
-    <string name="bufferingString">Almacenando en búfer...</string>
+    <string name="bufferingString">Almacenando en búfer…</string>
     <string name="saveString">Guardar</string>
     <string name="backKeyToExitApp">Pulsa atrás de nuevo para salir.</string>
     <string name="musicString">Música</string>

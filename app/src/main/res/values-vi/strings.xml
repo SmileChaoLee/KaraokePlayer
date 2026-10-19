@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="karaoke_app_name">Smile Karaoke</string>
-    <string name="video_app_name">Smile VideoPlayer</string>
-    <string name="karaoke_tv_app_name">Smile TV Karaoke</string>
+    <string name="karaoke_app_name">Karaoke Nụ Cười</string>
+    <string name="video_app_name">Trình phát video Nụ Cười</string>
+    <string name="karaoke_tv_app_name">Karaoke TV Nụ Cười</string>
     <string name="fileString">Tệp</string>
     <string name="accessExternalStoragePermissionDeniedString">Quyền truy cập bộ nhớ bị từ chối</string>
     <string name="noReadableExternalStorageString">Không có bộ nhớ ngoài có thể đọc</string>
@@ -50,7 +50,7 @@
     <string name="deleteString">Xóa</string>
     <string name="no_my_favorites">Không có mục yêu thích</string>
     <string name="noFilesSelectedString">Chưa chọn tệp nào</string>
-    <string name="bufferingString">Đang đệm .....</string>
+    <string name="bufferingString">Đang đệm …</string>
     <string name="saveString">Lưu</string>
     <string name="backKeyToExitApp">Nhấn nút Quay lại lần nữa để thoát.</string>
     <string name="musicString">Nhạc nền</string>
