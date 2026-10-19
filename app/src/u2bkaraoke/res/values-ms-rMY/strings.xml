@@ -1,73 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="u2bkaraoke_app_name">U2B Songs</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_song_query">SongQuery</string>
-    <string name="title_activity_singer_query">SingerQuery</string>
-    <string name="title_activity_singer_area_query">SingerArea</string>
-    <string name="title_activity_language_query">LanguageQuery</string>
-    <string name="noResultString">No result.</string>
-    <string name="failedMessage">Failed.</string>
-    <string name="succeededMessage">Succeeded.</string>
-    <string name="loadingString">Loading …</string>
-
-    <string name="mainMenuTitle">Select One Option</string>
-    <string name="singerOrderString">Songs By Singer</string>
-    <string name="newSongOrderString">New Songs</string>
-    <string name="hotSongOrderString">Popular Songs"</string>
-    <string name="languageOrderString">Songs By Language</string>
-    <string name="exitProgram">Exit Program</string>
-
-    <string name="maleSinger">Male Singers</string>
-    <string name="femaleSinger">Female Singers</string>
-    <string name="groupSinger">Group Singers</string>
-    <string name="returnToPrevious">Return</string>
-
-    <string name="languagesListString">Languages</string>
-    <string name="wordsListString">Number of Words</string>
-    <string name="newSongLanguagesListString">Languages of New Songs</string>
-    <string name="hotSongLanguagesListString">Languages of Hot Songs</string>
-    <string name="singerAreasListString">Singer Areas</string>
-    <string name="allSingersString">All Singers</string>
-    <string name="songsListString">Songs</string>
-    <string name="singersListString">Singers</string>
-    <string name="allSongsString">All Songs</string>
-
-    <string name="firstPage">First Page</string>
-    <string name="previousPage">Prev Page</string>
-    <string name="nextPage">Next Page</string>
-    <string name="lastPage">Last Page</string>
-    <string name="pageNoTotal">Page</string>
-    <string name="returnTo">Return</string>
-
-    <string name="areaNo">Area No</string>
-    <string name="areaNa">Area Name</string>
-    <string name="sex">Sex</string>
-    <string name="male">Male</string>
-    <string name="female">Female</string>
-
-    <string name="oneWordOrderString">One Word</string>
-    <string name="twoWordsOrderString">Two Words</string>
-    <string name="threeWordsOrderString">Three Words</string>
-    <string name="fourWordsOrderString">Four Words</string>
-    <string name="fiveWordsOrderString">Five Words</string>
-    <string name="sixWordsOrderString">Six Words</string>
-    <string name="sevenWordsOrderString">Seven Words</string>
-    <string name="eightWordsOrderString">Eight Words</string>
-    <string name="nineWordsOrderString">Nine Words</string>
-    <string name="tenWordsOrderString">Ten Words or More</string>
-
-    <string name="singerNameString">"Singer's Name"</string>
-    <string name="songNameString">"Song's Name"</string>
-
-    <string name="newString">New</string>
-    <string name="hotString">Hot</string>
-
-    <string name="songNotReadyYet">Red Alert\nSong Not Ready Yet</string>
-    <string name="numWords">Number of Words</string>
-    <string name="selectStr">Select</string>
-    <string name="search_singers">Search Singers</string>
-    <string name="search_songs">Search Songs</string>
-
+    <string name="u2bkaraoke_app_name">Lagu U2B</string>
+    <string name="action_settings">Tetapan</string>
+    <string name="title_activity_song_query">Cari lagu</string>
+    <string name="title_activity_singer_query">Cari penyanyi</string>
+    <string name="title_activity_singer_area_query">Kawasan penyanyi</string>
+    <string name="title_activity_language_query">Cari bahasa</string>
+    <string name="noResultString">Tiada hasil.</string>
+    <string name="failedMessage">Gagal.</string>
+    <string name="succeededMessage">Berjaya.</string>
+    <string name="loadingString">Memuatkan …</string>
+    <string name="mainMenuTitle">Pilih satu pilihan</string>
+    <string name="singerOrderString">Lagu mengikut penyanyi</string>
+    <string name="newSongOrderString">Lagu baharu</string>
+    <string name="hotSongOrderString">Lagu popular</string>
+    <string name="languageOrderString">Lagu mengikut bahasa</string>
+    <string name="exitProgram">Keluar</string>
+    <string name="maleSinger">Penyanyi lelaki</string>
+    <string name="femaleSinger">Penyanyi wanita</string>
+    <string name="groupSinger">Kumpulan penyanyi</string>
+    <string name="returnToPrevious">Kembali</string>
+    <string name="languagesListString">Bahasa</string>
+    <string name="wordsListString">Bilangan perkataan</string>
+    <string name="newSongLanguagesListString">Bahasa lagu baharu</string>
+    <string name="hotSongLanguagesListString">Bahasa lagu popular</string>
+    <string name="singerAreasListString">Kawasan penyanyi</string>
+    <string name="allSingersString">Semua penyanyi</string>
+    <string name="songsListString">Lagu</string>
+    <string name="singersListString">Penyanyi</string>
+    <string name="allSongsString">Semua lagu</string>
+    <string name="firstPage">Halaman pertama</string>
+    <string name="previousPage">Halaman sebelumnya</string>
+    <string name="nextPage">Halaman seterusnya</string>
+    <string name="lastPage">Halaman terakhir</string>
+    <string name="pageNoTotal">Halaman</string>
+    <string name="returnTo">Kembali</string>
+    <string name="areaNo">Nombor kawasan</string>
+    <string name="areaNa">Nama kawasan</string>
+    <string name="sex">Jantina</string>
+    <string name="male">Lelaki</string>
+    <string name="female">Perempuan</string>
+    <string name="oneWordOrderString">Satu perkataan</string>
+    <string name="twoWordsOrderString">Dua perkataan</string>
+    <string name="threeWordsOrderString">Tiga perkataan</string>
+    <string name="fourWordsOrderString">Empat perkataan</string>
+    <string name="fiveWordsOrderString">Lima perkataan</string>
+    <string name="sixWordsOrderString">Enam perkataan</string>
+    <string name="sevenWordsOrderString">Tujuh perkataan</string>
+    <string name="eightWordsOrderString">Lapan perkataan</string>
+    <string name="nineWordsOrderString">Sembilan perkataan</string>
+    <string name="tenWordsOrderString">Sepuluh perkataan atau lebih</string>
+    <string name="singerNameString">"Nama Penyanyi"</string>
+    <string name="songNameString">"Nama Lagu"</string>
+    <string name="newString">Baharu</string>
+    <string name="hotString">Popular</string>
+    <string name="songNotReadyYet">Amaran\nLagu belum tersedia</string>
+    <string name="numWords">Bilangan perkataan</string>
+    <string name="selectStr">Pilih</string>
+    <string name="search_singers">Cari penyanyi</string>
+    <string name="search_songs">Cari lagu</string>
 </resources>

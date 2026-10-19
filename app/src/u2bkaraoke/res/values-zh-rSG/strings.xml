@@ -1,52 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="u2bkaraoke_app_name">優2B歌曲</string>
-    <string name="action_settings">設定</string>
-    <string name="title_activity_song_query">歌曲查詢</string>
-    <string name="title_activity_singer_query">歌星查詢</string>
-    <string name="title_activity_singer_area_query">歌星地區</string>
-    <string name="title_activity_language_query">歌曲語言查詢</string>
-    <string name="noResultString">沒有結果</string>
-    <string name="failedMessage">失敗</string>
+    <string name="u2bkaraoke_app_name">优2B歌曲</string>
+    <string name="action_settings">设置</string>
+    <string name="title_activity_song_query">歌曲查询</string>
+    <string name="title_activity_singer_query">歌星查询</string>
+    <string name="title_activity_singer_area_query">歌星地区</string>
+    <string name="title_activity_language_query">歌曲语言查询</string>
+    <string name="noResultString">没有结果</string>
+    <string name="failedMessage">失败</string>
     <string name="succeededMessage">成功</string>
-    <string name="loadingString">下載中 …</string>
-
-    <string name="mainMenuTitle">請選擇以下其中一個功能</string>
-    <string name="singerOrderString">歌星點歌</string>
-    <string name="newSongOrderString">新歌點歌</string>
-    <string name="hotSongOrderString">排行榜點歌</string>
-    <string name="languageOrderString">語言分類點歌</string>
-    <string name="exitProgram">結束程式</string>
-
+    <string name="loadingString">加载中 …</string>
+    <string name="mainMenuTitle">请选择以下其中一个功能</string>
+    <string name="singerOrderString">歌星点歌</string>
+    <string name="newSongOrderString">新歌点歌</string>
+    <string name="hotSongOrderString">排行榜点歌</string>
+    <string name="languageOrderString">语言分类点歌</string>
+    <string name="exitProgram">退出</string>
     <string name="maleSinger">男性歌手</string>
     <string name="femaleSinger">女性歌手</string>
-    <string name="groupSinger">團體歌手</string>
-    <string name="returnToPrevious">回上一個功能</string>
-
-    <string name="languagesListString">語言類別</string>
-    <string name="wordsListString">字部選項</string>
-    <string name="newSongLanguagesListString">最新歌曲的語言</string>
-    <string name="hotSongLanguagesListString">排行歌曲的語言</string>
-    <string name="singerAreasListString">歌星地區</string>
+    <string name="groupSinger">团体歌手</string>
+    <string name="returnToPrevious">回上一个功能</string>
+    <string name="languagesListString">语言类别</string>
+    <string name="wordsListString">字数选项</string>
+    <string name="newSongLanguagesListString">最新歌曲的语言</string>
+    <string name="hotSongLanguagesListString">排行歌曲的语言</string>
+    <string name="singerAreasListString">歌星地区</string>
     <string name="allSingersString">所有歌星</string>
     <string name="songsListString">歌曲</string>
     <string name="singersListString">歌星</string>
     <string name="allSongsString">所有歌曲</string>
-
-    <string name="firstPage">首頁</string>
-    <string name="previousPage">上頁</string>
-    <string name="nextPage">下頁</string>
-    <string name="lastPage">末頁</string>
-    <string name="pageNoTotal">頁次</string>
+    <string name="firstPage">首页</string>
+    <string name="previousPage">上页</string>
+    <string name="nextPage">下页</string>
+    <string name="lastPage">末页</string>
+    <string name="pageNoTotal">页次</string>
     <string name="returnTo">返回</string>
-
-    <string name="areaNo">區域編號</string>
-    <string name="areaNa">區域名稱</string>
-    <string name="sex">性別</string>
+    <string name="areaNo">区域编号</string>
+    <string name="areaNa">区域名称</string>
+    <string name="sex">性别</string>
     <string name="male">男性</string>
     <string name="female">女性</string>
-
     <string name="oneWordOrderString">一字部</string>
     <string name="twoWordsOrderString">二字部</string>
     <string name="threeWordsOrderString">三字部</string>
@@ -57,17 +50,13 @@
     <string name="eightWordsOrderString">八字部</string>
     <string name="nineWordsOrderString">九字部</string>
     <string name="tenWordsOrderString">十字部或以上</string>
-
     <string name="singerNameString">歌星名字</string>
-    <string name="songNameString">歌曲名稱</string>
-
+    <string name="songNameString">歌曲名称</string>
     <string name="newString">新</string>
     <string name="hotString">排行</string>
-
-    <string name="songNotReadyYet">紅色警告\n歌曲尚未準備好</string>
+    <string name="songNotReadyYet">红色警告\n歌曲尚未准备好</string>
     <string name="numWords">字部</string>
-    <string name="selectStr">選歌</string>
-    <string name="search_singers">搜尋歌星</string>
-    <string name="search_songs">搜尋歌曲</string>
-
+    <string name="selectStr">选歌</string>
+    <string name="search_singers">搜索歌星</string>
+    <string name="search_songs">搜索歌曲</string>
 </resources>
